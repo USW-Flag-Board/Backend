@@ -7,7 +7,7 @@
 | [sdoaolo]()         |     |
 | [woooang](https://github.com/woooang)          |     |
 | [yabueng0219]() |     |
-| [yeongchul]()     |     |
+| [yeongchul](https://github.com/yeongchul)     |     |
 | [부회장님]()                |     |
 
 
