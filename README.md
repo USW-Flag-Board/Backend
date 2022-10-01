@@ -5,7 +5,7 @@
 | [Hejow](https://github.com/Hejow)             ||
 | [K-Diger](https://github.com/K-Diger)         |     |
 | [sdoaolo]()         |     |
-| [woooang]()          |     |
+| [woooang](https://github.com/woooang)          |     |
 | [yabueng0219]() |     |
 | [yeongchul]()     |     |
 | [부회장님]()                |     |
