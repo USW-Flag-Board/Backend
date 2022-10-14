@@ -8,4 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Repository
 public interface ReplyRepository extends JpaRepository<Reply, Long> {
+
+
 }
