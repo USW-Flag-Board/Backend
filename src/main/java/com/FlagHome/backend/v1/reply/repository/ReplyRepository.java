@@ -8,6 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Repository
 public interface ReplyRepository extends JpaRepository<Reply, Long> {
-
+    // Contribute를 위한 테스트 커밋용 (2022.10.18 윤희승)
 
 }
