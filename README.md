@@ -9,6 +9,7 @@
 | [yabueng0219](https://github.com/yabueng0219) |     |
 | [yeongchul](https://github.com/yeongchul)     |     |
 | [부회장님]()                |     |
+| [gmltmd23](https://github.com/gmltmd23)     |     |
 
 
 ---
