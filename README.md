@@ -4,12 +4,12 @@
 |-----------------------------------------------|-----|
 | [Hejow](https://github.com/Hejow)             ||
 | [K-Diger](https://github.com/K-Diger)         |     |
-| [sdoaolo](https://github.com/sdoaolo)         |     |
+| [sdoaolo](https://github.com/sdoaolo)         |  Reply  |
 | [woooang](https://github.com/woooang)          |     |
 | [yabueng0219](https://github.com/yabueng0219) |     |
 | [yeongchul](https://github.com/yeongchul)     |     |
 | [부회장님]()                |     |
-| [gmltmd23](https://github.com/gmltmd23)     |     |
+| [gmltmd23](https://github.com/gmltmd23)     | Reply  |
 
 
 ---
