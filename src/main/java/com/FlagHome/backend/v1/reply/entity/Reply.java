@@ -31,6 +31,15 @@ public class Reply extends BaseEntity {
     @Column
     private String content;
 
+    @Column
+    private Long group;
+
+    @Column
+    private Long order;
+
+    @Column
+    private Long depth;
+
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private Status status;
