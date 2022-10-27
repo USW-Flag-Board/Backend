@@ -31,14 +31,14 @@ public class Reply extends BaseEntity {
     @Column
     private String content;
 
-    @Column
-    private Long group;
+    @Column(name = "reply_group")
+    private Long replyGroup;
 
-    @Column
-    private Long order;
+    @Column(name = "reply_order")
+    private Long replyOrder;
 
-    @Column
-    private Long depth;
+    @Column(name = "reply_depth")
+    private Long replyDepth;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
