@@ -25,4 +25,9 @@ public class ReplyController {
     public ResponseEntity<List<Reply>> getReplies(@RequestParam(name = "id") long postId) {
         return ResponseEntity.status(HttpStatus.OK).body(replyService.findReplies(postId));
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Boolean> deleteReply(@PathVariable(name = "id") long replyId) {
+        return ResponseEntity.status(HttpStatus.OK).body(replyService.deleteReply(replyId));
+    }
 }
