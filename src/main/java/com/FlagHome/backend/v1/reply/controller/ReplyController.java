@@ -1,5 +1,6 @@
 package com.FlagHome.backend.v1.reply.controller;
 
+import com.FlagHome.backend.v1.reply.dto.ReplyDto;
 import com.FlagHome.backend.v1.reply.entity.Reply;
 import com.FlagHome.backend.v1.reply.service.ReplyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,11 @@ import java.util.List;
 public class ReplyController {
     @Autowired
     private ReplyService replyService;
+
+    @PostMapping("/create")
+    public ResponseEntity<ReplyDto> createReply(@RequestBody ReplyDto replyDto) {
+        return ResponseEntity.status(HttpStatus.OK).body(replyService.createReply(replyDto));
+    }
 
     @GetMapping("/get")
     public ResponseEntity<List<Reply>> getReplies(@RequestParam(name = "id") long postId) {
