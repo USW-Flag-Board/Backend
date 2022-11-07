@@ -2,6 +2,8 @@ package com.FlagHome.backend.v1.reply.controller;
 
 import com.FlagHome.backend.v1.post.entity.Post;
 import com.FlagHome.backend.v1.reply.dto.ReplyDto;
+import com.FlagHome.backend.v1.reply.entity.Reply;
+import com.FlagHome.backend.v1.reply.repository.ReplyRepository;
 import com.FlagHome.backend.v1.user.entity.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -18,6 +20,7 @@ import javax.transaction.Transactional;
 
 import static org.hamcrest.core.Is.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -31,12 +34,13 @@ class ReplyControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
     @Mock
     private User mockUser;
-
     @Mock
     private Post mockPost;
+
+    @Autowired
+    private ReplyRepository replyRepository;
 
     private final String baseUrl = "/reply";
 
@@ -64,5 +68,21 @@ class ReplyControllerTest {
                 .andExpect(jsonPath("replyOrder", is(2)))
                 .andExpect(jsonPath("replyDepth", is(3)))
                 .andDo(print());
+    }
+
+    @Test
+    @DisplayName("댓글 삭제 테스트")
+    public void deleteReplyTest() throws Exception {
+        Reply reply = Reply.builder().user(mockUser).post(mockPost).build();
+        Reply savedReply = replyRepository.save(reply);
+        long savedReplyId = savedReply.getId();
+
+        mockMvc.perform(delete(baseUrl + "/delete/" + savedReplyId)
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        Reply isDelete = replyRepository.findById(savedReplyId).orElse(null);
+        assert (isDelete == null);
     }
 }

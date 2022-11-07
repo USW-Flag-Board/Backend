@@ -10,10 +10,12 @@ import com.FlagHome.backend.v1.user.entity.User;
 import com.FlagHome.backend.v1.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class ReplyService {
     @Autowired
     private PostRepository postRepository;
@@ -45,5 +47,10 @@ public class ReplyService {
 
     public List<Reply> findReplies(Long postId) {
         return replyRepository.findByPostId(postId);
+    }
+
+    public boolean deleteReply(long replyId) {
+        replyRepository.deleteById(replyId);
+        return true;
     }
 }
