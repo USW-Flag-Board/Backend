@@ -20,8 +20,7 @@ import javax.transaction.Transactional;
 
 import static org.hamcrest.core.Is.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -84,5 +83,32 @@ class ReplyControllerTest {
 
         Reply isDelete = replyRepository.findById(savedReplyId).orElse(null);
         assert (isDelete == null);
+    }
+
+    @Test
+    @DisplayName("댓글 수정 테스트")
+    public void updateReplyTest() throws Exception {
+        final String originalContent = "원래내용";
+        final String modifiedContent = "바뀐내용";
+
+        Reply reply = replyRepository.save(Reply.builder().post(mockPost).user(mockUser).content(originalContent).build());
+        assert reply.getContent().equals(originalContent);
+
+        ReplyDto replyDto = new ReplyDto();
+        replyDto.setId(reply.getId());
+        replyDto.setContent(modifiedContent);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonBody = objectMapper.writeValueAsString(replyDto);
+
+        mockMvc.perform(put(baseUrl + "/modify")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonBody))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        Reply modifiedReply = replyRepository.findById(replyDto.getId()).orElse(null);
+        assert modifiedReply != null;
+        assert modifiedReply.getContent().equals(modifiedContent);
     }
 }
