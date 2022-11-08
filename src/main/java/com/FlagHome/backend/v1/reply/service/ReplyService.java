@@ -53,4 +53,11 @@ public class ReplyService {
         replyRepository.deleteById(replyId);
         return true;
     }
+
+    public ReplyDto updateReply(ReplyDto replyDto) {
+        Reply reply = replyRepository.findById(replyDto.getId()).orElse(null);
+        assert reply != null;
+        reply.setContent(replyDto.getContent());
+        return replyDto;
+    }
 }
