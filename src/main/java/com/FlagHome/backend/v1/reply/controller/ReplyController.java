@@ -18,7 +18,7 @@ public class ReplyController {
 
     @PostMapping("/create")
     public ResponseEntity<ReplyDto> createReply(@RequestBody ReplyDto replyDto) {
-        return ResponseEntity.status(HttpStatus.OK).body(replyService.createReply(replyDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(replyService.createReply(replyDto));
     }
 
     @GetMapping("/get")
@@ -28,7 +28,7 @@ public class ReplyController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Boolean> deleteReply(@PathVariable(name = "id") long replyId) {
-        return ResponseEntity.status(HttpStatus.OK).body(replyService.deleteReply(replyId));
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(replyService.deleteReply(replyId));
     }
 
     @PutMapping("/modify")
