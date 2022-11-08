@@ -30,4 +30,9 @@ public class ReplyController {
     public ResponseEntity<Boolean> deleteReply(@PathVariable(name = "id") long replyId) {
         return ResponseEntity.status(HttpStatus.OK).body(replyService.deleteReply(replyId));
     }
+
+    @PutMapping("/modify")
+    public ResponseEntity<ReplyDto> updateReply(@RequestBody ReplyDto replyDto) {
+        return ResponseEntity.status(HttpStatus.OK).body(replyService.updateReply(replyDto));
+    }
 }
