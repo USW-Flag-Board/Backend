@@ -1,11 +1,15 @@
 package com.FlagHome.backend.v1.reply.controller;
 
 import com.FlagHome.backend.v1.post.entity.Post;
+import com.FlagHome.backend.v1.post.repository.PostRepository;
 import com.FlagHome.backend.v1.reply.dto.ReplyDto;
 import com.FlagHome.backend.v1.reply.entity.Reply;
 import com.FlagHome.backend.v1.reply.repository.ReplyRepository;
 import com.FlagHome.backend.v1.user.entity.User;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -15,8 +19,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 import javax.transaction.Transactional;
+
+import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -33,15 +43,32 @@ class ReplyControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+
     @Mock
     private User mockUser;
     @Mock
     private Post mockPost;
 
     @Autowired
+    private PostRepository postRepository;
+
+    @Autowired
     private ReplyRepository replyRepository;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     private final String baseUrl = "/reply";
+
+    @BeforeEach
+    public void testSetup() {
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+                .addFilter(new CharacterEncodingFilter("UTF-8", true))
+                .build();
+    }
 
     @Test
     @DisplayName("댓글 생성 테스트")
@@ -53,8 +80,6 @@ class ReplyControllerTest {
         replyDto.setReplyOrder(2);
         replyDto.setReplyDepth(3);
         replyDto.setContent("testReplyContent");
-
-        ObjectMapper objectMapper = new ObjectMapper();
         String jsonBody = objectMapper.writeValueAsString(replyDto);
 
         mockMvc.perform(post(baseUrl + "/create")
@@ -70,6 +95,31 @@ class ReplyControllerTest {
     }
 
     @Test
+    @DisplayName("PostID로 댓글 조회 테스트")
+    public void findRepliesByPostIdTest() throws Exception {
+        Post post = Post.builder().user(mockUser).title("제목이다").content("내용이다").build();
+        Post savedPost = postRepository.save(post);
+
+        for(int i = 0; i < 4; ++i) {
+            Reply reply = Reply.builder().post(savedPost).user(mockUser).content(i + "번째").replyGroup(1L).replyOrder((long)i).replyDepth(1L).build();
+            replyRepository.save(reply);
+        }
+
+        String postId = Long.toString(post.getId());
+        MvcResult mvcResult = mockMvc.perform(get(baseUrl + "/get")
+                .param("id", postId))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        List<ReplyDto> foundReplies = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<ReplyDto>>() {});
+        for(long i = 0; i < 4; ++i) {
+            ReplyDto replyDto = foundReplies.get((int)i);
+            assert replyDto.getContent().equals(i + "번째");
+            assert replyDto.getReplyOrder() == i;
+        }
+    }
+
+    @Test
     @DisplayName("댓글 삭제 테스트")
     public void deleteReplyTest() throws Exception {
         Reply reply = Reply.builder().user(mockUser).post(mockPost).build();
@@ -78,7 +128,7 @@ class ReplyControllerTest {
 
         mockMvc.perform(delete(baseUrl + "/delete/" + savedReplyId)
                         .with(csrf()))
-                .andExpect(status().isOk())
+                .andExpect(status().isNoContent())
                 .andDo(print());
 
         Reply isDelete = replyRepository.findById(savedReplyId).orElse(null);
@@ -97,7 +147,6 @@ class ReplyControllerTest {
         ReplyDto replyDto = new ReplyDto();
         replyDto.setId(reply.getId());
         replyDto.setContent(modifiedContent);
-        ObjectMapper objectMapper = new ObjectMapper();
         String jsonBody = objectMapper.writeValueAsString(replyDto);
 
         mockMvc.perform(put(baseUrl + "/modify")
