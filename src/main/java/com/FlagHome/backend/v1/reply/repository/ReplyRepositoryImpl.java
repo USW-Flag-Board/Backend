@@ -19,4 +19,13 @@ public class ReplyRepositoryImpl implements ReplyRepositoryCustom{
                 .where(reply.post.id.eq(postId))
                 .fetch();
     }
+
+    @Override
+    public List<Reply> findByPostIdAndReplyGroup(long postId, long replyGroup) {
+        return jpaQueryFactory
+                .selectFrom(reply)
+                .where(reply.post.id.eq(postId)
+                        .and(reply.replyGroup.eq(replyGroup)))
+                .fetch();
+    }
 }
