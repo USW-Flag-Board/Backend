@@ -8,7 +8,6 @@ import com.FlagHome.backend.v1.reply.repository.ReplyRepository;
 import com.FlagHome.backend.v1.user.entity.User;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +25,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import javax.transaction.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
@@ -111,7 +111,7 @@ class ReplyControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        List<ReplyDto> foundReplies = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<ReplyDto>>() {});
+        List<ReplyDto> foundReplies = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {});
         for(long i = 0; i < 4; ++i) {
             ReplyDto replyDto = foundReplies.get((int)i);
             assert replyDto.getContent().equals(i + "번째");
@@ -120,9 +120,10 @@ class ReplyControllerTest {
     }
 
     @Test
-    @DisplayName("댓글 삭제 테스트")
+    @DisplayName("단일 댓글 삭제 테스트")
     public void deleteReplyTest() throws Exception {
-        Reply reply = Reply.builder().user(mockUser).post(mockPost).build();
+        Post dummyPost = postRepository.save(Post.builder().title("더미제목").content("더미내용").build());
+        Reply reply = Reply.builder().user(mockUser).post(dummyPost).replyGroup(1L).replyDepth(0L).replyOrder(0L).build();
         Reply savedReply = replyRepository.save(reply);
         long savedReplyId = savedReply.getId();
 
@@ -133,6 +134,50 @@ class ReplyControllerTest {
 
         Reply isDelete = replyRepository.findById(savedReplyId).orElse(null);
         assert (isDelete == null);
+    }
+
+    @Test
+    @DisplayName("Depth가 0인 댓글 삭제 테스트")
+    public void deleteDepthZeroReplyTest() throws Exception {
+        Post dummyPost = postRepository.save(Post.builder().title("더미제목").content("더미내용").build());
+        ArrayList<Reply> savedReplyList = new ArrayList<>();
+        for(int i = 0; i < 3; ++i) {
+            Reply reply = Reply.builder().user(mockUser).post(dummyPost).content(i + "번째 내용").replyGroup((long)i).replyDepth(0L).replyOrder(0L).build();
+            savedReplyList.add(replyRepository.save(reply));
+        }
+
+        Reply targetReply = savedReplyList.get(1);
+        mockMvc.perform(delete(baseUrl + "/delete/" + targetReply.getId())
+                .with(csrf()))
+                .andExpect(status().isNoContent())
+                .andDo(print());
+
+        List<Reply> afterReplies = replyRepository.findByPostId(dummyPost.getId());
+        Reply checkReply = afterReplies.get(1);
+        assert checkReply.getReplyGroup() == 1;
+        assert checkReply.getContent().equals("2번째 내용");
+    }
+
+    @Test
+    @DisplayName("자신보다 Order가 큰 댓글이 있는 댓글의 삭제 테스트")
+    public void deleteNotZeroOrderReplyTest() throws Exception {
+        Post dummyPost = postRepository.save(Post.builder().title("더미제목").content("더미내용").build());
+        ArrayList<Reply> savedReplyList = new ArrayList<>();
+        for(int i = 0; i < 3; ++i) {
+            Reply reply = Reply.builder().user(mockUser).post(dummyPost).content(i + "번째 내용").replyGroup(0L).replyDepth(1L).replyOrder((long)i).build();
+            savedReplyList.add(replyRepository.save(reply));
+        }
+
+        Reply targetReply = savedReplyList.get(1);
+        mockMvc.perform(delete(baseUrl + "/delete/" + targetReply.getId())
+                        .with(csrf()))
+                .andExpect(status().isNoContent())
+                .andDo(print());
+
+        List<Reply> afterReplies = replyRepository.findByPostId(dummyPost.getId());
+        Reply checkReply = afterReplies.get(1);
+        assert checkReply.getReplyOrder() == 1;
+        assert checkReply.getContent().equals("2번째 내용");
     }
 
     @Test

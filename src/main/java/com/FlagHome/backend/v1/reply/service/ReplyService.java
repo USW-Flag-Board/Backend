@@ -56,7 +56,35 @@ public class ReplyService {
     }
 
     public void deleteReply(long replyId) {
-        replyRepository.deleteById(replyId);
+        Reply replyEntity = replyRepository.findById(replyId).orElse(null);
+        if(replyEntity != null) {
+            long replyEntityGroup = replyEntity.getReplyGroup();
+            long postId = replyEntity.getPost().getId();
+
+            if(replyEntity.getReplyDepth() == 0) {
+                List<Reply> allReplies = replyRepository.findByPostId(replyEntity.getPost().getId());
+                System.out.println("올리플 : " + allReplies.size());
+                List<Reply> deleteCandidate = new LinkedList<>();
+                for(Reply eachReply : allReplies) {
+                    long eachReplyGroup = eachReply.getReplyGroup();
+                    if(replyEntityGroup < eachReplyGroup)
+                        eachReply.setReplyGroup(eachReplyGroup - 1);
+                    else if(replyEntityGroup == eachReplyGroup)
+                        deleteCandidate.add(eachReply);
+                }
+                replyRepository.deleteAll(deleteCandidate);
+            }
+            else {
+                List<Reply> sameGroupReplies = replyRepository.findByPostIdAndReplyGroup(postId, replyEntityGroup);
+                long replyEntityOrder = replyEntity.getReplyOrder();
+                for(Reply eachReply : sameGroupReplies) {
+                    long eachReplyOrder = eachReply.getReplyOrder();
+                    if(replyEntityOrder < eachReplyOrder)
+                        eachReply.setReplyOrder(eachReplyOrder - 1);
+                }
+                replyRepository.delete(replyEntity);
+            }
+        }
     }
 
     public ReplyDto updateReply(ReplyDto replyDto) {
