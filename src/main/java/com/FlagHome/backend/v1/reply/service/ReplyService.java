@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -45,13 +46,17 @@ public class ReplyService {
         return replyDto;
     }
 
-    public List<Reply> findReplies(Long postId) {
-        return replyRepository.findByPostId(postId);
+    public List<ReplyDto> findReplies(Long postId) {
+        List<Reply> foundReplyEntities = replyRepository.findByPostId(postId);
+        List<ReplyDto> replyDtoList = new LinkedList<>();
+        for(Reply replyEntity : foundReplyEntities)
+            replyDtoList.add(new ReplyDto(replyEntity));
+
+        return replyDtoList;
     }
 
-    public boolean deleteReply(long replyId) {
+    public void deleteReply(long replyId) {
         replyRepository.deleteById(replyId);
-        return true;
     }
 
     public ReplyDto updateReply(ReplyDto replyDto) {
