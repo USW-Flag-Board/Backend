@@ -63,7 +63,6 @@ public class ReplyService {
 
             if(replyEntity.getReplyDepth() == 0) {
                 List<Reply> allReplies = replyRepository.findByPostId(replyEntity.getPost().getId());
-                System.out.println("올리플 : " + allReplies.size());
                 List<Reply> deleteCandidate = new LinkedList<>();
                 for(Reply eachReply : allReplies) {
                     long eachReplyGroup = eachReply.getReplyGroup();
