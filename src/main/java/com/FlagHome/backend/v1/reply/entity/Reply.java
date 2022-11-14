@@ -20,18 +20,29 @@ public class Reply extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
     private Post post;
 
     @Column
     private String content;
 
+    @Column(name = "reply_group")
+    private Long replyGroup;
+
+    @Column(name = "reply_order")
+    private Long replyOrder;
+
+    @Column(name = "reply_depth")
+    private Long replyDepth;
+
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private Status status;
 }
+
+// branch test
