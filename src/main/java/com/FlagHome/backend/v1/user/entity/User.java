@@ -4,16 +4,17 @@ import com.FlagHome.backend.v1.BaseEntity;
 import com.FlagHome.backend.v1.Status;
 import com.FlagHome.backend.v1.user.Major;
 import com.FlagHome.backend.v1.user.Role;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 @Entity
 @Builder
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class User extends BaseEntity {

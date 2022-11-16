@@ -7,5 +7,12 @@ public enum Role {
     /**
      * 일반 유저, 관리자?
      */
-    admin, normal
+    ADMIN("ROLE_ADMIN"),
+    NORMAL("ROLE_NORMAL");
+
+    Role(String value) {
+        this.value = value;
+    }
+
+    private final String value;
 }
