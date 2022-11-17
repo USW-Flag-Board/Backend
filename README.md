@@ -2,7 +2,7 @@
 
 | Git                                           | 기능  |
 |-----------------------------------------------|-----|
-| [Hejow](https://github.com/Hejow)             ||
+| [Hejow](https://github.com/Hejow)             | User |
 | [K-Diger](https://github.com/K-Diger)         |     |
 | [sdoaolo](https://github.com/sdoaolo)         |  Reply, Post  |
 | [woooang](https://github.com/woooang)          |     |
@@ -15,8 +15,8 @@
 ---
 
 ## ERD
-
-![]()
+#### 임시 ERD
+!<img width="745" alt="image" src="https://user-images.githubusercontent.com/81742959/202502959-1e4fdd85-404b-4d38-980b-cce264db2015.png">
 
 ---
 
@@ -27,4 +27,5 @@
 ---
 
 ## 네이밍 컨벤션 및 프로젝트 협업 시 규칙
+![image](https://user-images.githubusercontent.com/81742959/202502783-ce793b7d-cbfe-40d1-ae32-636ee3efd778.png)
 
