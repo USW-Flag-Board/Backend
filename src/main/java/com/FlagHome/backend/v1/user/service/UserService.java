@@ -16,30 +16,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@RequiredArgsConstructor
 @Service
-public class UserSecurityService implements UserDetailsService {
+@RequiredArgsConstructor
+public class UserService implements UserDetailsService {
     private UserRepository userRepository;
 
-
-
-    // User에서 UserDto로 변경중
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<UserDto> _user = userRepository.findByusername(username);
-        if (_user.isEmpty()) {
+    public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
+        Optional<User> loadUser = userRepository.findByLoginId(loginId);
+        if (loadUser.isEmpty()) {
             throw new UsernameNotFoundException("사용자를 찾을수 없습니다.");
         }
 
-        User User = _user.get();
-
-        //분리...ㅠㅠㅠㅠ
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        if ("ADMIN".equals(username)) {
-            authorities.add(new SimpleGrantedAuthority(Role.ADMIN.getValue()));
-        } else {
-            authorities.add(new SimpleGrantedAuthority(Role.NORMAL.getValue()));
-        }
-        return new org.springframework.security.core.userdetails.User(User.getName(), User.getPassword(), authorities);
+        return loadUser.get();
     }
 }
