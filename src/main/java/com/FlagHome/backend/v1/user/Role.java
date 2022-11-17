@@ -1,18 +1,17 @@
 package com.FlagHome.backend.v1.user;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
+@RequiredArgsConstructor
 public enum Role {
     /**
-     * 일반 유저, 관리자?
+     * 일반 유저, 관리자
      */
-    ADMIN("ROLE_ADMIN"),
-    NORMAL("ROLE_NORMAL");
+    USER("USER", "사용자"),
+    ADMIN("ADMIN", "관리자");
 
-    Role(String value) {
-        this.value = value;
-    }
-
+    private final String key;
     private final String value;
 }
