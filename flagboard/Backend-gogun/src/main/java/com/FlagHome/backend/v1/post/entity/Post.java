@@ -10,7 +10,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 
 @Entity
 @Data
@@ -20,18 +19,15 @@ import javax.validation.constraints.NotEmpty;
 public class Post extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
     private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @NotEmpty
-    @Column(name = "title", nullable = false)
+    @Column
     private String title;
 
-    @NotEmpty
     @Column
     private String content;
 

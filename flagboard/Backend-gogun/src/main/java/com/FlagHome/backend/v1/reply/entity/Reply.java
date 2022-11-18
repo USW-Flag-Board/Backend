@@ -1,8 +1,8 @@
-package com.FlagHome.backend.v1.post.entity;
+package com.FlagHome.backend.v1.reply.entity;
 
 import com.FlagHome.backend.v1.BaseEntity;
 import com.FlagHome.backend.v1.Status;
-import com.FlagHome.backend.v1.post.Category;
+import com.FlagHome.backend.v1.post.entity.Post;
 import com.FlagHome.backend.v1.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,39 +10,30 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 
 @Entity
-@Data
+@Data @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class Post extends BaseEntity {
+public class Reply extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
     private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @NotEmpty
-    @Column(name = "title", nullable = false)
-    private String title;
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    private Post post;
 
-    @NotEmpty
     @Column
     private String content;
-
-    @Column(name = "category")
-    @Enumerated(EnumType.STRING)
-    private Category category;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private Status status;
-
-    @Column
-    private Long viewCount;
 }
+
+// branch test
