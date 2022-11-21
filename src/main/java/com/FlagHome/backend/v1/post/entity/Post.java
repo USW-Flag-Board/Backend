@@ -20,7 +20,6 @@ import javax.validation.constraints.NotEmpty;
 public class Post extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
     private Long id;
 
     @ManyToOne
@@ -28,7 +27,7 @@ public class Post extends BaseEntity {
     private User user;
 
     @NotEmpty
-    @Column(name = "title", nullable = false)
+    @Column(name = "title")
     private String title;
 
     @NotEmpty

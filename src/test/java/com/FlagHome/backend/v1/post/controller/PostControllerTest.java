@@ -9,6 +9,7 @@ import com.FlagHome.backend.v1.user.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,9 +18,11 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.hamcrest.core.Is.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -87,5 +90,23 @@ class PostControllerTest {
         assert changedPostEntity.getTitle().equals(changedTitle);
         assert changedPostEntity.getContent().equals(changedContent);
         assert changedPostEntity.getCategory().equals(changedCategory);
+    }
+
+    @Test
+    @DisplayName("게시물작성")
+    public void GetPostTest() throws Exception{
+        PostDto postDto = new PostDto();
+        postDto.setTitle("testPostTitle");
+        postDto.setContent("testPostContent");
+        Category requestedCategory = Category.notice;
+        String jsonBody = objectMapper.writeValueAsString (postDto);
+
+        mockMvc.perform (get(baseUrl + "/get")
+               .with(csrf())
+               .contentType(MediaType.APPLICATION_JSON))
+               .andExpect (jsonPath("title", is("testPostTitle")))
+               .andExpect (jsonPath("content", is("testPostContent")))
+               .andDo (print());
+
     }
 }
