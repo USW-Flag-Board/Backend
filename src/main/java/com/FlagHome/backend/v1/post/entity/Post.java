@@ -25,12 +25,7 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-<<<<<<< HEAD
-    @NotEmpty
-    @Column(name = "title")
-=======
     @Column
->>>>>>> parent of cf7abe5 (임시 커밋)
     private String title;
 
     @Column
