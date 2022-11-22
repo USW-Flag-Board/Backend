@@ -10,7 +10,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 
 @Entity
 @Data
@@ -26,11 +25,14 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+<<<<<<< HEAD
     @NotEmpty
     @Column(name = "title")
+=======
+    @Column
+>>>>>>> parent of cf7abe5 (임시 커밋)
     private String title;
 
-    @NotEmpty
     @Column
     private String content;
 
