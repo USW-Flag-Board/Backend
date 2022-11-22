@@ -28,4 +28,9 @@ public class ReplyRepositoryImpl implements ReplyRepositoryCustom{
                         .and(reply.replyGroup.eq(replyGroup)))
                 .fetch();
     }
+
+    public JPAQueryFactory getJpaQueryFactory() {
+        return jpaQueryFactory
+                .selectFrom()
+    }
 }
