@@ -128,7 +128,7 @@ class ReplyControllerTest {
         long savedReplyId = savedReply.getId();
 
         mockMvc.perform(delete(baseUrl + "/delete/" + savedReplyId)
-                        .with(csrf()))
+                .with(csrf()))
                 .andExpect(status().isNoContent())
                 .andDo(print());
 
