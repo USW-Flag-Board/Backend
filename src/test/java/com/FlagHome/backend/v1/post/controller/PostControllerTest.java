@@ -9,6 +9,7 @@ import com.FlagHome.backend.v1.user.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,6 +42,9 @@ class PostControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Mock
+    private User mockUser;
 
     @Test
     @DisplayName("게시글 수정 테스트")
@@ -87,5 +91,23 @@ class PostControllerTest {
         assert changedPostEntity.getTitle().equals(changedTitle);
         assert changedPostEntity.getContent().equals(changedContent);
         assert changedPostEntity.getCategory().equals(changedCategory);
+    }
+
+    @Test
+    @DisplayName("게시물생성테스트")
+    public void CreatePostTest() throws Exception {
+        PostDto postDto = new PostDto();
+        postDto.setTitle("testPostTitle");
+        postDto.setContent("testPostContent");
+        postDto.setCategory(Category.valueOf("notice"));
+        postDto.setUserId(mockUser.getId());
+        String jsonBody = objectMapper.writeValueAsString(postDto);
+
+        mockMvc.perform(post(baseUrl + "/create")
+                .with(csrf())
+                .content(jsonBody)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
     }
 }
