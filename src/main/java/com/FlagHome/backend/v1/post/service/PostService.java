@@ -10,8 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class PostService {
+    private final PostRepository postRepository;
+
     @Autowired
-    private PostRepository postRepository;
+    public PostService(PostRepository postRepository) {
+        this.postRepository = postRepository;
+    }
 
     public void updatePost(PostDto postDto) {
         Post postEntity = postRepository.findById(postDto.getId()).orElse(null);
