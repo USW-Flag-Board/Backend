@@ -3,7 +3,7 @@ package com.FlagHome.backend.v1.reply.entity;
 import com.FlagHome.backend.v1.BaseEntity;
 import com.FlagHome.backend.v1.Status;
 import com.FlagHome.backend.v1.post.entity.Post;
-import com.FlagHome.backend.v1.user.entity.User;
+import com.FlagHome.backend.v1.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,7 +22,7 @@ public class Reply extends BaseEntity {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
-    private User user;
+    private Member member;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
