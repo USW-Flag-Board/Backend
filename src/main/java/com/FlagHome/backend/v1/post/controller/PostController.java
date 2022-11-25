@@ -12,9 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/post")
 public class PostController {
+    private final PostService postService;
 
     @Autowired
-    private PostService postService;
+    public PostController(PostService postService) {
+        this.postService = postService;
+    }
 
     @PutMapping("/update")
     public ResponseEntity<Void> updatePost(@RequestBody PostDto postDto) {
