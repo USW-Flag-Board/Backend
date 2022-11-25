@@ -86,7 +86,7 @@ class ReplyControllerTest {
                 .with(csrf())
                 .content(jsonBody)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("content", is("testReplyContent")))
                 .andExpect(jsonPath("replyGroup", is(1)))
                 .andExpect(jsonPath("replyOrder", is(2)))
