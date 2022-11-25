@@ -10,15 +10,15 @@ import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 
+@Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-@Getter
 abstract public class BaseEntity {
     @CreatedDate
-    @Column(name="createdAt", updatable = false)
+    @Column(name="created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(name="updatedAt")
+    @Column(name="updated_at")
     private LocalDateTime updatedAt;
 }
