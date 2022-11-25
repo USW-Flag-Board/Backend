@@ -1,6 +1,6 @@
-package com.FlagHome.backend.v1.user.repository;
+package com.FlagHome.backend.v1.member.repository;
 
-import com.FlagHome.backend.v1.user.entity.User;
+import com.FlagHome.backend.v1.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,6 +9,6 @@ import java.util.Optional;
 
 @Transactional
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByLoginId(String LoginId);
+public interface MemberRepository extends JpaRepository<Member, Long> {
+    Optional<Member> findByLoginId(String LoginId);
 }

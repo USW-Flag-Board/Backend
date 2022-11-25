@@ -2,7 +2,7 @@ package com.FlagHome.backend.v1.log.entity;
 
 import com.FlagHome.backend.v1.BaseEntity;
 import com.FlagHome.backend.v1.post.entity.Post;
-import com.FlagHome.backend.v1.user.entity.User;
+import com.FlagHome.backend.v1.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,7 +22,7 @@ public class PostLog extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private Member member;
 
     @OneToOne
     @JoinColumn(name = "post_id")

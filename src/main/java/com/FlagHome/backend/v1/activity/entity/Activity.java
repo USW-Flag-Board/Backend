@@ -2,7 +2,7 @@ package com.FlagHome.backend.v1.activity.entity;
 
 import com.FlagHome.backend.v1.BaseEntity;
 import com.FlagHome.backend.v1.Status;
-import com.FlagHome.backend.v1.user.entity.User;
+import com.FlagHome.backend.v1.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +21,7 @@ public class Activity extends BaseEntity {
     private Long id;
 
     @ManyToOne
-    private User user;
+    private Member member;
 
     @Column
     private String name;

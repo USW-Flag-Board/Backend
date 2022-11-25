@@ -1,5 +1,8 @@
 package com.FlagHome.backend.global.jwt;
 
+import com.FlagHome.backend.global.exception.CustomException;
+import com.FlagHome.backend.global.exception.ErrorCode;
+import com.FlagHome.backend.v1.token.dto.TokenResponse;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -33,12 +37,43 @@ public class JwtUtilizer {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
+    public TokenResponse generateTokenDto(Authentication authentication) {
+        // 권한들 가져오기
+        String authorities = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        Date now = new Date();
+        Date accessTokenExpiresIn = new Date(now.getTime() + ACCESS_TOKEN_EXPIRE_TIME);
+
+        // Access Token 생성
+        String accessToken = Jwts.builder()
+                .setSubject(authentication.getName())       // payload "sub": "name"
+                .claim(AUTHORITIES_KEY, authorities)        // payload "auth": "ROLE_USER"
+                .setExpiration(accessTokenExpiresIn)        // payload "exp": 1516239022 (예시)
+                .signWith(key, SignatureAlgorithm.HS512)    // header "alg": "HS512"
+                .compact();
+
+        // Refresh Token 생성
+        String refreshToken = Jwts.builder()
+                .setExpiration(new Date(now.getTime() + REFRESH_TOKEN_EXPIRE_TIME))
+                .signWith(key, SignatureAlgorithm.HS512)
+                .compact();
+
+        return TokenResponse.builder()
+                .grantType(BEARER_TYPE)
+                .accessToken(accessToken)
+                .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
+                .refreshToken(refreshToken)
+                .build();
+    }
+
     public Authentication getAuthentication(String accessToken) {
         // 토큰 복호화
         Claims claims = parseClaims(accessToken);
 
         if (claims.get(AUTHORITIES_KEY) == null) {
-            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
+            throw new CustomException(ErrorCode.JWT_IllegalARGUMENT_EXCEPTION);
         }
 
         // 클레임에서 권한 정보 가져오기

@@ -13,6 +13,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
+
+    /** http://localhost:8080/swagger-ui.html 에서 API 보기 */
     @Bean
     public Docket swagger() {
         return new Docket(DocumentationType.SWAGGER_2)
