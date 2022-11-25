@@ -1,14 +1,14 @@
-package com.FlagHome.backend.v1.member.auth.service;
+package com.FlagHome.backend.v1.auth.service;
 
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.jwt.JwtUtilizer;
-import com.FlagHome.backend.v1.member.auth.dto.LogInRequest;
-import com.FlagHome.backend.v1.member.auth.dto.SignUpRequest;
+import com.FlagHome.backend.v1.auth.dto.LogInRequest;
+import com.FlagHome.backend.v1.auth.dto.SignUpRequest;
+import com.FlagHome.backend.v1.auth.dto.SignUpResponse;
 import com.FlagHome.backend.v1.member.entity.Member;
 import com.FlagHome.backend.v1.member.repository.MemberRepository;
 import com.FlagHome.backend.v1.token.dto.TokenResponse;
-import com.FlagHome.backend.v1.token.entity.RefreshToken;
 import com.FlagHome.backend.v1.token.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,13 +28,14 @@ public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     @Transactional
-    public void signUp(SignUpRequest signUpRequest) {
+    public SignUpResponse signUp(SignUpRequest signUpRequest) {
         if (memberRepository.existsByLoginId(signUpRequest.getLoginId())) {
             throw new CustomException(ErrorCode.USER_ID_EXISTS);
         }
 
         Member member = signUpRequest.toMember(passwordEncoder);
         memberRepository.save(member);
+        return SignUpResponse.of(member);
     }
 
     @Transactional

@@ -1,4 +1,4 @@
-package com.FlagHome.backend.v1.member.auth.service;
+package com.FlagHome.backend.v1.auth.service;
 
 import com.FlagHome.backend.v1.member.entity.Member;
 import com.FlagHome.backend.v1.member.repository.MemberRepository;
