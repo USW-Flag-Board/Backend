@@ -1,4 +1,4 @@
-package com.FlagHome.backend.v1.member.auth.dto;
+package com.FlagHome.backend.v1.auth.dto;
 
 import com.FlagHome.backend.v1.member.Major;
 import com.FlagHome.backend.v1.member.entity.Member;

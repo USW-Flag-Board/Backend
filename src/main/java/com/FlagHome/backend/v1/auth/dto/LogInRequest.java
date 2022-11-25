@@ -1,4 +1,4 @@
-package com.FlagHome.backend.v1.member.auth.dto;
+package com.FlagHome.backend.v1.auth.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
