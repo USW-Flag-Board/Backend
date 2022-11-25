@@ -1,7 +1,6 @@
 package com.FlagHome.backend.v1.reply.controller;
 
 import com.FlagHome.backend.v1.reply.dto.ReplyDto;
-import com.FlagHome.backend.v1.reply.entity.Reply;
 import com.FlagHome.backend.v1.reply.service.ReplyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,8 +12,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/reply")
 public class ReplyController {
+    private final ReplyService replyService;
+
     @Autowired
-    private ReplyService replyService;
+    public ReplyController(ReplyService replyService) {
+        this.replyService = replyService;
+    }
 
     @PostMapping("/create")
     public ResponseEntity<ReplyDto> createReply(@RequestBody ReplyDto replyDto) {

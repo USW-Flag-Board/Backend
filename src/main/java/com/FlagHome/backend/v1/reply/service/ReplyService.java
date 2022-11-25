@@ -18,14 +18,15 @@ import java.util.List;
 @Service
 @Transactional
 public class ReplyService {
-    @Autowired
-    private PostRepository postRepository;
+    private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
+    private final ReplyRepository replyRepository;
 
-    @Autowired
-    private MemberRepository memberRepository;
-
-    @Autowired
-    private ReplyRepository replyRepository;
+    public ReplyService(PostRepository postRepository, MemberRepository memberRepository, ReplyRepository replyRepository) {
+        this.postRepository = postRepository;
+        this.memberRepository = memberRepository;
+        this.replyRepository = replyRepository;
+    }
 
     public ReplyDto createReply(ReplyDto replyDto) {
         Post foundPost = postRepository.findById(replyDto.getPostId()).orElse(null);
