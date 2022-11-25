@@ -1,12 +1,16 @@
-import com.FlagHome.backend.v1.user.service.UserSecurityService;
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+package com.FlagHome.backend.v1.user.controller;
 
-@Controller
-@AllArgsConstructor
+import com.FlagHome.backend.v1.user.service.UserService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
 public class UserController {
-    private UserSecurityService userService;
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/login")
     public String login() {

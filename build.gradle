@@ -36,7 +36,6 @@ dependencies {
     // QueryDSL 추가
     // QueryDSL APT : 코드 제네레이션 -> QHello 만들어주는 라이브러리
     implementation "com.querydsl:querydsl-apt:5.0.0"
-
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
     // OAUTH
@@ -65,7 +64,6 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
-
 
     // TEST Implementation
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
