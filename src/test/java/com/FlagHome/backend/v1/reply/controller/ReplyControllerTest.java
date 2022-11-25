@@ -1,11 +1,11 @@
 package com.FlagHome.backend.v1.reply.controller;
 
+import com.FlagHome.backend.v1.member.entity.Member;
 import com.FlagHome.backend.v1.post.entity.Post;
 import com.FlagHome.backend.v1.post.repository.PostRepository;
 import com.FlagHome.backend.v1.reply.dto.ReplyDto;
 import com.FlagHome.backend.v1.reply.entity.Reply;
 import com.FlagHome.backend.v1.reply.repository.ReplyRepository;
-import com.FlagHome.backend.v1.user.entity.User;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,7 +48,7 @@ class ReplyControllerTest {
     private WebApplicationContext webApplicationContext;
 
     @Mock
-    private User mockUser;
+    private Member mockMember;
     @Mock
     private Post mockPost;
 
@@ -74,7 +74,7 @@ class ReplyControllerTest {
     @DisplayName("댓글 생성 테스트")
     public void createReplyTest() throws Exception {
         ReplyDto replyDto = new ReplyDto();
-        replyDto.setUserId(mockUser.getId());
+        replyDto.setUserId(mockMember.getId());
         replyDto.setPostId(mockPost.getId());
         replyDto.setReplyGroup(1);
         replyDto.setReplyOrder(2);
@@ -97,11 +97,11 @@ class ReplyControllerTest {
     @Test
     @DisplayName("PostID로 댓글 조회 테스트")
     public void findRepliesByPostIdTest() throws Exception {
-        Post post = Post.builder().user(mockUser).title("제목이다").content("내용이다").build();
+        Post post = Post.builder().member(mockMember).title("제목이다").content("내용이다").build();
         Post savedPost = postRepository.save(post);
 
         for(int i = 0; i < 4; ++i) {
-            Reply reply = Reply.builder().post(savedPost).user(mockUser).content(i + "번째").replyGroup(1L).replyOrder((long)i).replyDepth(1L).build();
+            Reply reply = Reply.builder().post(savedPost).member(mockMember).content(i + "번째").replyGroup(1L).replyOrder((long)i).replyDepth(1L).build();
             replyRepository.save(reply);
         }
 
@@ -123,7 +123,7 @@ class ReplyControllerTest {
     @DisplayName("단일 댓글 삭제 테스트")
     public void deleteReplyTest() throws Exception {
         Post dummyPost = postRepository.save(Post.builder().title("더미제목").content("더미내용").build());
-        Reply reply = Reply.builder().user(mockUser).post(dummyPost).replyGroup(1L).replyDepth(0L).replyOrder(0L).build();
+        Reply reply = Reply.builder().member(mockMember).post(dummyPost).replyGroup(1L).replyDepth(0L).replyOrder(0L).build();
         Reply savedReply = replyRepository.save(reply);
         long savedReplyId = savedReply.getId();
 
@@ -142,7 +142,7 @@ class ReplyControllerTest {
         Post dummyPost = postRepository.save(Post.builder().title("더미제목").content("더미내용").build());
         ArrayList<Reply> savedReplyList = new ArrayList<>();
         for(int i = 0; i < 3; ++i) {
-            Reply reply = Reply.builder().user(mockUser).post(dummyPost).content(i + "번째 내용").replyGroup((long)i).replyDepth(0L).replyOrder(0L).build();
+            Reply reply = Reply.builder().member(mockMember).post(dummyPost).content(i + "번째 내용").replyGroup((long)i).replyDepth(0L).replyOrder(0L).build();
             savedReplyList.add(replyRepository.save(reply));
         }
 
@@ -164,7 +164,7 @@ class ReplyControllerTest {
         Post dummyPost = postRepository.save(Post.builder().title("더미제목").content("더미내용").build());
         ArrayList<Reply> savedReplyList = new ArrayList<>();
         for(int i = 0; i < 3; ++i) {
-            Reply reply = Reply.builder().user(mockUser).post(dummyPost).content(i + "번째 내용").replyGroup(0L).replyDepth(1L).replyOrder((long)i).build();
+            Reply reply = Reply.builder().member(mockMember).post(dummyPost).content(i + "번째 내용").replyGroup(0L).replyDepth(1L).replyOrder((long)i).build();
             savedReplyList.add(replyRepository.save(reply));
         }
 
@@ -186,7 +186,7 @@ class ReplyControllerTest {
         final String originalContent = "원래내용";
         final String modifiedContent = "바뀐내용";
 
-        Reply reply = replyRepository.save(Reply.builder().post(mockPost).user(mockUser).content(originalContent).build());
+        Reply reply = replyRepository.save(Reply.builder().post(mockPost).member(mockMember).content(originalContent).build());
         assert reply.getContent().equals(originalContent);
 
         ReplyDto replyDto = new ReplyDto();

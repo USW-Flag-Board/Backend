@@ -1,13 +1,13 @@
 package com.FlagHome.backend.v1.reply.service;
 
 import com.FlagHome.backend.v1.Status;
+import com.FlagHome.backend.v1.member.entity.Member;
 import com.FlagHome.backend.v1.post.entity.Post;
 import com.FlagHome.backend.v1.post.repository.PostRepository;
 import com.FlagHome.backend.v1.reply.dto.ReplyDto;
 import com.FlagHome.backend.v1.reply.entity.Reply;
 import com.FlagHome.backend.v1.reply.repository.ReplyRepository;
-import com.FlagHome.backend.v1.user.entity.User;
-import com.FlagHome.backend.v1.user.repository.UserRepository;
+import com.FlagHome.backend.v1.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,17 +22,17 @@ public class ReplyService {
     private PostRepository postRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private MemberRepository memberRepository;
 
     @Autowired
     private ReplyRepository replyRepository;
 
     public ReplyDto createReply(ReplyDto replyDto) {
         Post foundPost = postRepository.findById(replyDto.getPostId()).orElse(null);
-        User foundUser = userRepository.findById(replyDto.getUserId()).orElse(null);
+        Member foundMember = memberRepository.findById(replyDto.getUserId()).orElse(null);
 
         Reply replyEntity = Reply.builder()
-                                .user(foundUser)
+                                .member(foundMember)
                                 .post(foundPost)
                                 .content(replyDto.getContent())
                                 .replyGroup(replyDto.getReplyGroup())

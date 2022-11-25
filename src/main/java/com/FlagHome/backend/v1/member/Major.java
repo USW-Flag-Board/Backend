@@ -1,4 +1,4 @@
-package com.FlagHome.backend.v1.user;
+package com.FlagHome.backend.v1.member;
 
 import lombok.Getter;
 
