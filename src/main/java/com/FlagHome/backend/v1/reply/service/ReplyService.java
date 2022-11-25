@@ -8,7 +8,6 @@ import com.FlagHome.backend.v1.reply.entity.Reply;
 import com.FlagHome.backend.v1.reply.repository.ReplyRepository;
 import com.FlagHome.backend.v1.user.entity.User;
 import com.FlagHome.backend.v1.user.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,14 +17,15 @@ import java.util.List;
 @Service
 @Transactional
 public class ReplyService {
-    @Autowired
-    private PostRepository postRepository;
+    private final PostRepository postRepository;
+    private final UserRepository userRepository;
+    private final ReplyRepository replyRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private ReplyRepository replyRepository;
+    public ReplyService(PostRepository postRepository, UserRepository userRepository, ReplyRepository replyRepository) {
+        this.postRepository = postRepository;
+        this.userRepository = userRepository;
+        this.replyRepository = replyRepository;
+    }
 
     public ReplyDto createReply(ReplyDto replyDto) {
         Post foundPost = postRepository.findById(replyDto.getPostId()).orElse(null);
