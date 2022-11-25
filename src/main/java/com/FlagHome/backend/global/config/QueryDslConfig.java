@@ -1,4 +1,4 @@
-package com.FlagHome.backend.global.querydsl;
+package com.FlagHome.backend.global.config;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.context.annotation.Bean;

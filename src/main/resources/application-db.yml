@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: mhj102380!
+    url: jdbc:mysql://localhost:3306/demo?serverTimezone=UTC&characterEncoding=UTF-8
+
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        ddl-auto: create
+        use-new-id-generator-mappings: false
