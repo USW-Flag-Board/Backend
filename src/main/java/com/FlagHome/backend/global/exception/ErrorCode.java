@@ -21,6 +21,7 @@ public enum ErrorCode {
     JWT_MALFORMED_EXCEPTION(BAD_REQUEST, "토큰이 올바르지 않습니다."),
     JWT_UNSUPPORTED_EXCEPTION(BAD_REQUEST, "지원하지 않는 토큰 형식입니다."),
     JWT_IllegalARGUMENT_EXCEPTION(BAD_REQUEST, "허용하지 않는 토큰입니다."),
+    POST_NOT_EXISTS(BAD_REQUEST, "존재하지 않는 게시물 입니다."),
 
     /** 401 - UNAUTHORIZED  */
     UNAUTHENTICATED(UNAUTHORIZED, "로그인이 필요한 기능입니다."),

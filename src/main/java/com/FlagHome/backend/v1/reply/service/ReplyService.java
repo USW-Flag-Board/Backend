@@ -8,7 +8,7 @@ import com.FlagHome.backend.v1.reply.dto.ReplyDto;
 import com.FlagHome.backend.v1.reply.entity.Reply;
 import com.FlagHome.backend.v1.reply.repository.ReplyRepository;
 import com.FlagHome.backend.v1.member.repository.MemberRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,18 +16,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Service
-@Transactional
+@RequiredArgsConstructor
 public class ReplyService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final ReplyRepository replyRepository;
 
-    public ReplyService(PostRepository postRepository, MemberRepository memberRepository, ReplyRepository replyRepository) {
-        this.postRepository = postRepository;
-        this.memberRepository = memberRepository;
-        this.replyRepository = replyRepository;
-    }
-
+    @Transactional
     public ReplyDto createReply(ReplyDto replyDto) {
         Post foundPost = postRepository.findById(replyDto.getPostId()).orElse(null);
         Member foundMember = memberRepository.findById(replyDto.getUserId()).orElse(null);
@@ -47,6 +42,7 @@ public class ReplyService {
         return replyDto;
     }
 
+    @Transactional
     public List<ReplyDto> findReplies(Long postId) {
         List<Reply> foundReplyEntities = replyRepository.findByPostId(postId);
         List<ReplyDto> replyDtoList = new LinkedList<>();
@@ -56,6 +52,7 @@ public class ReplyService {
         return replyDtoList;
     }
 
+    @Transactional
     public void deleteReply(long replyId) {
         Reply replyEntity = replyRepository.findById(replyId).orElse(null);
         if(replyEntity != null) {
@@ -87,6 +84,7 @@ public class ReplyService {
         }
     }
 
+    @Transactional
     public ReplyDto updateReply(ReplyDto replyDto) {
         Reply reply = replyRepository.findById(replyDto.getId()).orElse(null);
         assert reply != null;

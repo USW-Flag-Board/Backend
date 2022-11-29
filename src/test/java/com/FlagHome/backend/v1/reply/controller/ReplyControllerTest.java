@@ -40,28 +40,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @WithMockUser
 class ReplyControllerTest {
+    private final String baseUrl = "/reply";
 
     @Autowired
-    private MockMvc mockMvc;
-
+    private PostRepository postRepository;
+    @Autowired
+    private ReplyRepository replyRepository;
+    @Autowired
+    private ObjectMapper objectMapper;
     @Autowired
     private WebApplicationContext webApplicationContext;
+    @Autowired
+    private MockMvc mockMvc;
 
     @Mock
     private Member mockMember;
     @Mock
     private Post mockPost;
-
-    @Autowired
-    private PostRepository postRepository;
-
-    @Autowired
-    private ReplyRepository replyRepository;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    private final String baseUrl = "/reply";
 
     @BeforeEach
     public void testSetup() {
