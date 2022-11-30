@@ -1,6 +1,8 @@
 package com.FlagHome.backend.v1.auth.dto;
 
+import com.FlagHome.backend.v1.Status;
 import com.FlagHome.backend.v1.member.Major;
+import com.FlagHome.backend.v1.member.Role;
 import com.FlagHome.backend.v1.member.entity.Member;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -20,9 +22,6 @@ public class SignUpRequest {
     @ApiModelProperty(example = "1234")
     private String password;
 
-    @ApiModelProperty(example = "1234")
-    private String rePassword;
-
     @ApiModelProperty(example = "문희조")
     private String name;
 
@@ -36,9 +35,13 @@ public class SignUpRequest {
         return Member.builder()
                 .loginId(loginId)
                 .password(passwordEncoder.encode(password))
+                .email("")
                 .name(name)
                 .major(major)
+                .phoneNumber("")
                 .studentId(studentId)
+                .role(Role.USER)
+                .status(Status.GENERAL)
                 .build();
     }
 }
