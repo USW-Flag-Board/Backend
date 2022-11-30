@@ -69,6 +69,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.batch:spring-batch-test'
     testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation "org.assertj:assertj-core:3.23.1"
 
     // JUnit 5
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'

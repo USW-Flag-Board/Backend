@@ -3,18 +3,15 @@ package com.FlagHome.backend.v1.activity.entity;
 import com.FlagHome.backend.v1.BaseEntity;
 import com.FlagHome.backend.v1.Status;
 import com.FlagHome.backend.v1.member.entity.Member;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
-@Data
+@Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class Activity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,9 +26,8 @@ public class Activity extends BaseEntity {
     @Column
     private String discription;
 
-    // 기간 처리???
-    // @Column
-    // private LocalDateTime preiod;
+     @Column
+     private String preiod;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)

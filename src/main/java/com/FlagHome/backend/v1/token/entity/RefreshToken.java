@@ -2,14 +2,12 @@ package com.FlagHome.backend.v1.token.entity;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
 @Builder
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 public class RefreshToken {
@@ -17,10 +15,10 @@ public class RefreshToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(name = "token_key")
     private String key;
 
-    @Column
+    @Column(name = "token_value")
     private String value;
 
     @Column(name = "expired_at")

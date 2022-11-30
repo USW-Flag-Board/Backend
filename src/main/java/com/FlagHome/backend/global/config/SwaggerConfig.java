@@ -20,7 +20,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.any())
+                .apis(RequestHandlerSelectors.basePackage("com.FlagHome.backend.v1"))
                 .paths(PathSelectors.any())
                 .build();
     }
@@ -28,7 +28,7 @@ public class SwaggerConfig {
     public ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("FLAG_BOARD API")
-                .version("1.0.0")
+                .version("v1")
                 .description("FLAG 홈페이지 API Docs 입니다.")
                 .build();
     }

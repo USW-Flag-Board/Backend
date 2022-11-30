@@ -2,13 +2,12 @@ package com.FlagHome.backend.v1.reply.service;
 
 import com.FlagHome.backend.v1.Status;
 import com.FlagHome.backend.v1.member.entity.Member;
+import com.FlagHome.backend.v1.member.repository.MemberRepository;
 import com.FlagHome.backend.v1.post.entity.Post;
 import com.FlagHome.backend.v1.post.repository.PostRepository;
 import com.FlagHome.backend.v1.reply.dto.ReplyDto;
 import com.FlagHome.backend.v1.reply.entity.Reply;
 import com.FlagHome.backend.v1.reply.repository.ReplyRepository;
-import com.FlagHome.backend.v1.member.repository.MemberRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
