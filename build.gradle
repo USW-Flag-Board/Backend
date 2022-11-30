@@ -64,6 +64,8 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.8'
+
 
     // TEST Implementation
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

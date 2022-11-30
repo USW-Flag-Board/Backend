@@ -8,6 +8,7 @@ import com.FlagHome.backend.v1.auth.dto.SignUpRequest;
 import com.FlagHome.backend.v1.auth.dto.SignUpResponse;
 import com.FlagHome.backend.v1.member.entity.Member;
 import com.FlagHome.backend.v1.member.repository.MemberRepository;
+import com.FlagHome.backend.v1.token.dto.TokenRequest;
 import com.FlagHome.backend.v1.token.dto.TokenResponse;
 import com.FlagHome.backend.v1.token.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
@@ -55,5 +56,10 @@ public class AuthService {
 
         // 토큰 발급
         return tokenResponse;
+    }
+
+    @Transactional
+    public TokenResponse reissueToken(TokenRequest tokenRequest) {
+        return refreshTokenService.reissueToken(tokenRequest);
     }
 }
