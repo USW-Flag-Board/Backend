@@ -9,6 +9,7 @@ import com.FlagHome.backend.v1.member.Major;
 import com.FlagHome.backend.v1.member.Role;
 import com.FlagHome.backend.v1.member.entity.Member;
 import com.FlagHome.backend.v1.member.repository.MemberRepository;
+import com.FlagHome.backend.v1.token.dto.TokenRequest;
 import com.FlagHome.backend.v1.token.dto.TokenResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -84,7 +85,7 @@ public class AuthServiceTest {
         // when
         TokenResponse tokenResponse = authService.logIn(logInRequest);
 
-        // then : 토큰이 잘 반환되는지, 토큰이 유효한지
+        // then : 정상적으로 발급되는 지, 유효한 지, 데이터가 일치하는 지
         assertThat(tokenResponse.getAccessToken()).isNotNull();
         assertThat(tokenResponse.getRefreshToken()).isNotNull();
         assertThat(tokenResponse.getAccessTokenExpiresIn()).isNotNull();
@@ -93,6 +94,52 @@ public class AuthServiceTest {
         String accessToken = tokenResponse.getAccessToken();
 
         assertThat(jwtUtilizer.validateToken(accessToken)).isTrue();
+
+        Authentication authentication = jwtUtilizer.getAuthentication(accessToken);
+        long memberId = Long.parseLong(authentication.getName());
+        Member member = memberRepository.findByLoginId(loginId).get();
+        assertThat(member.getId()).isEqualTo(memberId);
+    }
+
+    @Test
+    @DisplayName("토큰 재발급 테스트")
+    void reIssueToken() {
+        // given
+        String loginId = "gmlwh124";
+        String password = "1234";
+
+        SignUpRequest signUpRequest = SignUpRequest.builder()
+                .loginId(loginId)
+                .password(password)
+                .name("문희조")
+                .major(Major.컴퓨터SW)
+                .studentId("19017041")
+                .build();
+
+        Member signUpMember = signUpRequest.toMember(passwordEncoder);
+        memberRepository.save(signUpMember);
+
+        LogInRequest logInRequest = LogInRequest.builder()
+                .loginID(loginId)
+                .password(password)
+                .build();
+
+        TokenResponse loginToken = authService.logIn(logInRequest);
+        TokenRequest tokenRequest = TokenRequest.builder()
+                .accessToken(loginToken.getAccessToken())
+                .refreshToken(loginToken.getRefreshToken())
+                .build();
+
+        // when
+        TokenResponse reissueToken = authService.reissueToken(tokenRequest);
+
+        // then : 정상적으로 재발급되는 지, 유효한 지, 데이터가 일치하는 지
+        assertThat(reissueToken.getAccessToken()).isNotNull();
+        assertThat(reissueToken.getRefreshToken()).isNotNull();
+        assertThat(reissueToken.getGrantType()).isEqualTo("Bearer");
+        assertThat(reissueToken.getAccessTokenExpiresIn()).isNotNull();
+
+        String accessToken = reissueToken.getAccessToken();
 
         Authentication authentication = jwtUtilizer.getAuthentication(accessToken);
         long memberId = Long.parseLong(authentication.getName());
