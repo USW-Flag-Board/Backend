@@ -2,7 +2,7 @@ package com.FlagHome.backend.v1.reply.controller;
 
 import com.FlagHome.backend.v1.reply.dto.ReplyDto;
 import com.FlagHome.backend.v1.reply.service.ReplyService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,13 +11,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/reply")
+@RequiredArgsConstructor
 public class ReplyController {
     private final ReplyService replyService;
-
-    @Autowired
-    public ReplyController(ReplyService replyService) {
-        this.replyService = replyService;
-    }
 
     @PostMapping("/create")
     public ResponseEntity<ReplyDto> createReply(@RequestBody ReplyDto replyDto) {
