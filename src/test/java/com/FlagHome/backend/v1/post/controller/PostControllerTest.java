@@ -4,8 +4,8 @@ import com.FlagHome.backend.v1.post.Category;
 import com.FlagHome.backend.v1.post.dto.PostDto;
 import com.FlagHome.backend.v1.post.entity.Post;
 import com.FlagHome.backend.v1.post.repository.PostRepository;
-import com.FlagHome.backend.v1.user.entity.User;
-import com.FlagHome.backend.v1.user.repository.UserRepository;
+import com.FlagHome.backend.v1.member.entity.Member;
+import com.FlagHome.backend.v1.member.repository.MemberRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ class PostControllerTest {
     private final String baseUrl = "/post";
 
     @Autowired
-    private UserRepository userRepository;
+    private MemberRepository memberRepository;
 
     @Autowired
     private PostRepository postRepository;
@@ -45,7 +45,7 @@ class PostControllerTest {
     @Test
     @DisplayName("게시글 수정 테스트")
     public void updatePostTest() throws Exception {
-        User dummyUser = userRepository.save(User.builder()
+        Member dummyUser = memberRepository.save(Member.builder()
                                         .loginId("gildong11")
                                         .password("123123")
                                         .email("gildong@naver.com")
@@ -61,7 +61,7 @@ class PostControllerTest {
                                         .content(originalContent)
                                         .category(originalCategory)
                                         .viewCount(0L)
-                                        .user(dummyUser)
+                                        .member(dummyUser)
                                         .build());
 
         String changedTitle = "바뀐제목";

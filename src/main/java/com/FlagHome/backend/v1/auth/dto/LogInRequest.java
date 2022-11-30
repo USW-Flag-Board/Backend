@@ -18,7 +18,7 @@ public class LogInRequest {
     @ApiModelProperty(example = "1234")
     private String password;
 
-    public UsernamePasswordAuthenticationToken toAuthenticationToken() {
+    public UsernamePasswordAuthenticationToken toAuthentication() {
         return new UsernamePasswordAuthenticationToken(loginID, password);
     }
 }
