@@ -1,15 +1,12 @@
-package com.FlagHome.backend.v1.user.entity;
+package com.FlagHome.backend.v1.member.entity;
 
 import com.FlagHome.backend.v1.BaseEntity;
 import com.FlagHome.backend.v1.Status;
-import com.FlagHome.backend.v1.user.Major;
-import com.FlagHome.backend.v1.user.Role;
+import com.FlagHome.backend.v1.member.Major;
+import com.FlagHome.backend.v1.member.Role;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
 
 @Entity
 @Builder
@@ -17,7 +14,7 @@ import java.util.Collection;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User extends BaseEntity {
+public class Member extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,18 +31,15 @@ public class User extends BaseEntity {
     @Column
     private String name;
 
-    @Column
+    @Column(name = "student_id")
     private String studentId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "major")
     private Major major;
 
-    @Column
+    @Column(name = "phone_number")
     private String phoneNumber;
-
-    @Column
-    private String profileImg;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
