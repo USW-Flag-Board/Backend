@@ -20,7 +20,7 @@ public class Reply extends BaseEntity {
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @ManyToOne(cascade = CascadeType.ALL)

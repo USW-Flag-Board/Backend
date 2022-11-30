@@ -4,6 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+<<<<<<< HEAD
+=======
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+
+>>>>>>> main
 @Getter
 @AllArgsConstructor
 public enum ErrorCode {
@@ -16,6 +24,7 @@ public enum ErrorCode {
     NONE_AUTHORIZATION_TOKEN(HttpStatus.BAD_REQUEST, "권한 정보가 없는 토큰입니다."),
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않는 토큰입니다."),
     TOKEN_NOT_MATCH(HttpStatus.BAD_REQUEST, "토큰의 정보가 일치하지 않습니다."),
+    POST_NOT_EXISTS(HttpStatus.BAD_REQUEST, "존재하지 않는 게시물 입니다."),
 
     /** 401 - UNAUTHORIZED  */
     UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, "로그인이 필요한 기능입니다."),

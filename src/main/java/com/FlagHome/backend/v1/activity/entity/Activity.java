@@ -3,7 +3,10 @@ package com.FlagHome.backend.v1.activity.entity;
 import com.FlagHome.backend.v1.BaseEntity;
 import com.FlagHome.backend.v1.Status;
 import com.FlagHome.backend.v1.member.entity.Member;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
