@@ -73,7 +73,7 @@ public class JwtUtilizer {
         Claims claims = parseClaims(accessToken);
 
         if (claims.get(AUTHORITIES_KEY) == null) {
-            throw new CustomException(ErrorCode.JWT_IllegalARGUMENT_EXCEPTION);
+            throw new CustomException(ErrorCode.NONE_AUTHORIZATION_TOKEN);
         }
 
         // 클레임에서 권한 정보 가져오기
@@ -106,7 +106,10 @@ public class JwtUtilizer {
 
     private Claims parseClaims(String accessToken) {
         try {
-            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
+            return Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(accessToken).getBody();
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
