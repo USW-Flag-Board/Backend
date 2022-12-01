@@ -3,16 +3,15 @@ package com.FlagHome.backend.v1.reply.entity;
 import com.FlagHome.backend.v1.BaseEntity;
 import com.FlagHome.backend.v1.Status;
 import com.FlagHome.backend.v1.post.entity.Post;
-import com.FlagHome.backend.v1.user.entity.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.FlagHome.backend.v1.member.entity.Member;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
-@Data @Builder
+@Getter
+@Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Reply extends BaseEntity {
@@ -21,8 +20,8 @@ public class Reply extends BaseEntity {
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")

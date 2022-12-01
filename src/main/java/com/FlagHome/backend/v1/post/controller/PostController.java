@@ -2,16 +2,27 @@ package com.FlagHome.backend.v1.post.controller;
 
 import com.FlagHome.backend.v1.post.dto.PostDto;
 import com.FlagHome.backend.v1.post.service.PostService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/post")
+@RequiredArgsConstructor
 public class PostController {
+    private final PostService postService;
 
-    @Autowired
-    private PostService postService;
+    @PostMapping("/create")
+    public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto) {
+        postService.createPost(postDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/get")
+    public ResponseEntity<PostDto> getPost(@RequestParam(value = "postId") long postId) {
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getPost(postId));
+    }
 
     @PutMapping("/update")
     public ResponseEntity<Void> updatePost(@RequestBody PostDto postDto) {
@@ -19,15 +30,9 @@ public class PostController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/post")
-    public ResponseEntity<Void> getPost(@RequestBody PostDto postDto) {
-        postService.createPost(postDto);
-        return ResponseEntity.ok().build();
-    }
-
-    @PutMapping("/post/{id}")
-    public ResponseEntity<Long> putPost(@RequestBody PostDto postDto) {
-        postService.createPost(postDto);//여기 분명 코드를 넣어야 하는데 뭘 넣어야 할지 모르겠어요ㅠㅠ...
-        return ResponseEntity.ok().build();
+    @DeleteMapping("/delete/{post_id}")
+    public ResponseEntity<Void> deletePost(@PathVariable(name = "post_id") long postId) {
+        postService.deletePost(postId);
+        return ResponseEntity.noContent().build();
     }
 }
