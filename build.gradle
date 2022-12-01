@@ -36,7 +36,6 @@ dependencies {
     // QueryDSL 추가
     // QueryDSL APT : 코드 제네레이션 -> QHello 만들어주는 라이브러리
     implementation "com.querydsl:querydsl-apt:5.0.0"
-
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
     // OAUTH
@@ -65,12 +64,13 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
-
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.8'
 
     // TEST Implementation
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.batch:spring-batch-test'
     testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation "org.assertj:assertj-core:3.23.1"
 
     // JUnit 5
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'

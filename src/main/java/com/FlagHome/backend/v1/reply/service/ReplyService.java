@@ -1,14 +1,14 @@
 package com.FlagHome.backend.v1.reply.service;
 
 import com.FlagHome.backend.v1.Status;
+import com.FlagHome.backend.v1.member.entity.Member;
 import com.FlagHome.backend.v1.post.entity.Post;
 import com.FlagHome.backend.v1.post.repository.PostRepository;
 import com.FlagHome.backend.v1.reply.dto.ReplyDto;
 import com.FlagHome.backend.v1.reply.entity.Reply;
 import com.FlagHome.backend.v1.reply.repository.ReplyRepository;
-import com.FlagHome.backend.v1.user.entity.User;
-import com.FlagHome.backend.v1.user.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.FlagHome.backend.v1.member.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,23 +16,19 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Service
-@Transactional
+@RequiredArgsConstructor
 public class ReplyService {
-    @Autowired
-    private PostRepository postRepository;
+    private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
+    private final ReplyRepository replyRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private ReplyRepository replyRepository;
-
+    @Transactional
     public ReplyDto createReply(ReplyDto replyDto) {
         Post foundPost = postRepository.findById(replyDto.getPostId()).orElse(null);
-        User foundUser = userRepository.findById(replyDto.getUserId()).orElse(null);
+        Member foundMember = memberRepository.findById(replyDto.getUserId()).orElse(null);
 
         Reply replyEntity = Reply.builder()
-                                .user(foundUser)
+                                .member(foundMember)
                                 .post(foundPost)
                                 .content(replyDto.getContent())
                                 .replyGroup(replyDto.getReplyGroup())
@@ -46,6 +42,7 @@ public class ReplyService {
         return replyDto;
     }
 
+    @Transactional
     public List<ReplyDto> findReplies(Long postId) {
         List<Reply> foundReplyEntities = replyRepository.findByPostId(postId);
         List<ReplyDto> replyDtoList = new LinkedList<>();
@@ -55,6 +52,7 @@ public class ReplyService {
         return replyDtoList;
     }
 
+    @Transactional
     public void deleteReply(long replyId) {
         Reply replyEntity = replyRepository.findById(replyId).orElse(null);
         if(replyEntity != null) {
@@ -86,6 +84,7 @@ public class ReplyService {
         }
     }
 
+    @Transactional
     public ReplyDto updateReply(ReplyDto replyDto) {
         Reply reply = replyRepository.findById(replyDto.getId()).orElse(null);
         assert reply != null;
