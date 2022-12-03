@@ -11,7 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LogInRequest {
+public class LoginRequest {
     @ApiModelProperty(example = "gmlwh124")
     private String loginID;
 

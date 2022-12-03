@@ -1,7 +1,7 @@
 package com.FlagHome.backend.v1.auth;
 
 import com.FlagHome.backend.global.jwt.JwtUtilizer;
-import com.FlagHome.backend.v1.auth.dto.LogInRequest;
+import com.FlagHome.backend.v1.auth.dto.LoginRequest;
 import com.FlagHome.backend.v1.auth.dto.SignUpRequest;
 import com.FlagHome.backend.v1.auth.dto.SignUpResponse;
 import com.FlagHome.backend.v1.auth.service.AuthService;
@@ -77,13 +77,13 @@ public class AuthServiceTest {
         Member signUpMember = signUpRequest.toMember(passwordEncoder);
         memberRepository.saveAndFlush(signUpMember);
 
-        LogInRequest logInRequest = LogInRequest.builder()
+        LoginRequest logInRequest = LoginRequest.builder()
                 .loginID(loginId)
                 .password(password)
                 .build();
 
         // when
-        TokenResponse tokenResponse = authService.logIn(logInRequest);
+        TokenResponse tokenResponse = authService.login(logInRequest);
 
         // then : 정상적으로 발급되는 지, 유효한 지, 데이터가 일치하는 지
         assertThat(tokenResponse.getAccessToken()).isNotNull();
@@ -119,12 +119,12 @@ public class AuthServiceTest {
         Member signUpMember = signUpRequest.toMember(passwordEncoder);
         memberRepository.save(signUpMember);
 
-        LogInRequest logInRequest = LogInRequest.builder()
+        LoginRequest logInRequest = LoginRequest.builder()
                 .loginID(loginId)
                 .password(password)
                 .build();
 
-        TokenResponse loginToken = authService.logIn(logInRequest);
+        TokenResponse loginToken = authService.login(logInRequest);
         TokenRequest tokenRequest = TokenRequest.builder()
                 .accessToken(loginToken.getAccessToken())
                 .refreshToken(loginToken.getRefreshToken())
