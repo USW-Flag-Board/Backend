@@ -4,6 +4,7 @@ import com.FlagHome.backend.v1.auth.dto.LogInRequest;
 import com.FlagHome.backend.v1.auth.dto.SignUpRequest;
 import com.FlagHome.backend.v1.auth.dto.SignUpResponse;
 import com.FlagHome.backend.v1.auth.service.AuthService;
+import com.FlagHome.backend.v1.token.dto.TokenRequest;
 import com.FlagHome.backend.v1.token.dto.TokenResponse;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -30,5 +31,11 @@ public class AuthController {
     @ApiOperation(value = "로그인")
     public ResponseEntity<TokenResponse> logIn(@RequestBody LogInRequest logInRequest) {
         return ResponseEntity.ok(authService.logIn(logInRequest));
+    }
+
+    @PostMapping("/reissue")
+    @ApiOperation(value = "JWT 재발급")
+    public ResponseEntity<TokenResponse> reissue(@RequestBody TokenRequest tokenRequest) {
+        return ResponseEntity.ok(authService.reissueToken(tokenRequest));
     }
 }

@@ -48,6 +48,8 @@ public class RefreshTokenService {
 
         TokenResponse tokenResponse = jwtUtilizer.generateTokenDto(authentication);
 
+        refreshToken.resetValue(tokenResponse.getRefreshToken(), LocalDateTime.now().plusWeeks(1));
+
         return tokenResponse;
     }
 
