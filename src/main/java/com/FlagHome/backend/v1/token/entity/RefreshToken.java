@@ -24,4 +24,8 @@ public class RefreshToken {
     @Column(name = "expired_at")
     private LocalDateTime expiredAt;
 
+    public void resetValue(String value, LocalDateTime expiredAt) {
+        this.value = value;
+        this.expiredAt = expiredAt;
+    }
 }

@@ -24,5 +24,4 @@ public class PostLog extends BaseEntity {
     @OneToOne
     @JoinColumn(name = "post_id")
     private Post post;
-
 }
