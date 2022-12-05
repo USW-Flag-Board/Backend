@@ -34,9 +34,15 @@ public class Member extends BaseEntity {
     @Column(name = "student_id")
     private String studentId;
 
+    @Column
+    private String bio;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "major")
     private Major major;
+
+    @Column(name = "profile_img")
+    private String profileImg;
 
     @Column(name = "phone_number")
     private String phoneNumber;
