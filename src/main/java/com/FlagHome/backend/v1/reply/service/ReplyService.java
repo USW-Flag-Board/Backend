@@ -1,5 +1,7 @@
 package com.FlagHome.backend.v1.reply.service;
 
+import com.FlagHome.backend.global.exception.CustomException;
+import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.v1.Status;
 import com.FlagHome.backend.v1.member.entity.Member;
 import com.FlagHome.backend.v1.post.entity.Post;
@@ -25,7 +27,12 @@ public class ReplyService {
     @Transactional
     public ReplyDto createReply(ReplyDto replyDto) {
         Post foundPost = postRepository.findById(replyDto.getPostId()).orElse(null);
-        Member foundMember = memberRepository.findById(replyDto.getUserId()).orElse(null);
+        if(foundPost == null)
+            throw new CustomException(ErrorCode.POST_NOT_EXISTS);
+
+        Member foundMember = memberRepository.findById(replyDto.getMemberId()).orElse(null);
+        if(foundMember == null)
+            throw new CustomException(ErrorCode.USER_NOT_EXISTS);
 
         Reply replyEntity = Reply.builder()
                                 .member(foundMember)
@@ -55,40 +62,44 @@ public class ReplyService {
     @Transactional
     public void deleteReply(long replyId) {
         Reply replyEntity = replyRepository.findById(replyId).orElse(null);
-        if(replyEntity != null) {
-            long replyEntityGroup = replyEntity.getReplyGroup();
-            long postId = replyEntity.getPost().getId();
+        if(replyEntity == null)
+            throw new CustomException(ErrorCode.REPLY_NOT_EXISTS);
 
-            if(replyEntity.getReplyDepth() == 0) {
-                List<Reply> allReplies = replyRepository.findByPostId(replyEntity.getPost().getId());
-                List<Reply> deleteCandidate = new LinkedList<>();
-                for(Reply eachReply : allReplies) {
-                    long eachReplyGroup = eachReply.getReplyGroup();
-                    if(replyEntityGroup < eachReplyGroup)
-                        eachReply.setReplyGroup(eachReplyGroup - 1);
-                    else if(replyEntityGroup == eachReplyGroup)
-                        deleteCandidate.add(eachReply);
-                }
-                replyRepository.deleteAll(deleteCandidate);
+        long replyEntityGroup = replyEntity.getReplyGroup();
+        long postId = replyEntity.getPost().getId();
+
+        if(replyEntity.getReplyDepth() == 0) {
+            List<Reply> allReplies = replyRepository.findByPostId(replyEntity.getPost().getId());
+            List<Reply> deleteCandidate = new LinkedList<>();
+            for(Reply eachReply : allReplies) {
+                long eachReplyGroup = eachReply.getReplyGroup();
+                if(replyEntityGroup < eachReplyGroup)
+                    eachReply.setReplyGroup(eachReplyGroup - 1);
+                else if(replyEntityGroup == eachReplyGroup)
+                    deleteCandidate.add(eachReply);
             }
-            else {
-                List<Reply> sameGroupReplies = replyRepository.findByPostIdAndReplyGroup(postId, replyEntityGroup);
-                long replyEntityOrder = replyEntity.getReplyOrder();
-                for(Reply eachReply : sameGroupReplies) {
-                    long eachReplyOrder = eachReply.getReplyOrder();
-                    if(replyEntityOrder < eachReplyOrder)
-                        eachReply.setReplyOrder(eachReplyOrder - 1);
-                }
-                replyRepository.delete(replyEntity);
+            replyRepository.deleteAll(deleteCandidate);
+        }
+        else {
+            List<Reply> sameGroupReplies = replyRepository.findByPostIdAndReplyGroup(postId, replyEntityGroup);
+            long replyEntityOrder = replyEntity.getReplyOrder();
+            for(Reply eachReply : sameGroupReplies) {
+                long eachReplyOrder = eachReply.getReplyOrder();
+                if(replyEntityOrder < eachReplyOrder)
+                    eachReply.setReplyOrder(eachReplyOrder - 1);
             }
+            replyRepository.delete(replyEntity);
         }
     }
 
     @Transactional
     public ReplyDto updateReply(ReplyDto replyDto) {
         Reply reply = replyRepository.findById(replyDto.getId()).orElse(null);
-        assert reply != null;
+        if(reply == null)
+            throw new CustomException(ErrorCode.REPLY_NOT_EXISTS);
+
         reply.setContent(replyDto.getContent());
+
         return replyDto;
     }
 }
