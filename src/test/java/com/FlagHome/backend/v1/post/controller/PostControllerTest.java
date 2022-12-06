@@ -6,8 +6,6 @@ import com.FlagHome.backend.v1.post.Category;
 import com.FlagHome.backend.v1.post.dto.PostDto;
 import com.FlagHome.backend.v1.post.entity.Post;
 import com.FlagHome.backend.v1.post.repository.PostRepository;
-import com.FlagHome.backend.v1.member.entity.Member;
-import com.FlagHome.backend.v1.member.repository.MemberRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -70,7 +68,7 @@ class PostControllerTest {
         postDto.setUserId(dummyMember.getId());
         postDto.setCategory(Category.free);
 
-        mockMvc.perform(post(baseUrl + "/create")
+        mockMvc.perform(post(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(postDto)))
                 .andDo(print());
@@ -96,7 +94,7 @@ class PostControllerTest {
                 .member(dummyMember)
                 .build());
 
-        mockMvc.perform(get(baseUrl + "/get?postId=" + postEntity.getId()))
+        mockMvc.perform(get(baseUrl + "?postId=" + postEntity.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("title", is(title)))
                 .andExpect(jsonPath("content", is(content)))
@@ -129,7 +127,7 @@ class PostControllerTest {
 
         String jsonBody = objectMapper.writeValueAsString(changedPostDto);
 
-        mockMvc.perform(put(baseUrl + "/update")
+        mockMvc.perform(put(baseUrl)
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
@@ -155,7 +153,7 @@ class PostControllerTest {
 
         long deleteTargetPostId = postEntity.getId();
 
-        mockMvc.perform(delete(baseUrl + "/delete/" + deleteTargetPostId))
+        mockMvc.perform(delete(baseUrl + "/" + deleteTargetPostId))
                 .andDo(print());
 
         Post post = postRepository.findById(deleteTargetPostId).orElse(null);
