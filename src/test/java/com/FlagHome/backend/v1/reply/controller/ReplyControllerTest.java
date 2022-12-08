@@ -1,6 +1,7 @@
 package com.FlagHome.backend.v1.reply.controller;
 
 import com.FlagHome.backend.v1.member.entity.Member;
+import com.FlagHome.backend.v1.member.repository.MemberRepository;
 import com.FlagHome.backend.v1.post.entity.Post;
 import com.FlagHome.backend.v1.post.repository.PostRepository;
 import com.FlagHome.backend.v1.reply.dto.ReplyDto;
@@ -47,6 +48,8 @@ class ReplyControllerTest {
     @Autowired
     private ReplyRepository replyRepository;
     @Autowired
+    private MemberRepository memberRepository;
+    @Autowired
     private ObjectMapper objectMapper;
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -68,17 +71,19 @@ class ReplyControllerTest {
     @Test
     @DisplayName("댓글 생성 테스트")
     public void createReplyTest() throws Exception {
+        Member dummyMember = memberRepository.save(Member.builder().name("gildong").loginId("gildong1234").password("1111").email("gildong@gmail.com").build());
+        Post dummyPost = postRepository.save(Post.builder().member(dummyMember).title("가짜포스트").content("가짜포스트내용").build());
+
         ReplyDto replyDto = new ReplyDto();
-        replyDto.setUserId(mockMember.getId());
-        replyDto.setPostId(mockPost.getId());
+        replyDto.setMemberId(dummyMember.getId());
+        replyDto.setPostId(dummyPost.getId());
         replyDto.setReplyGroup(1);
         replyDto.setReplyOrder(2);
         replyDto.setReplyDepth(3);
         replyDto.setContent("testReplyContent");
         String jsonBody = objectMapper.writeValueAsString(replyDto);
 
-        mockMvc.perform(post(baseUrl + "/create")
-                .with(csrf())
+        mockMvc.perform(post(baseUrl)
                 .content(jsonBody)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
@@ -101,7 +106,7 @@ class ReplyControllerTest {
         }
 
         String postId = Long.toString(post.getId());
-        MvcResult mvcResult = mockMvc.perform(get(baseUrl + "/get")
+        MvcResult mvcResult = mockMvc.perform(get(baseUrl)
                 .param("id", postId))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -122,7 +127,7 @@ class ReplyControllerTest {
         Reply savedReply = replyRepository.save(reply);
         long savedReplyId = savedReply.getId();
 
-        mockMvc.perform(delete(baseUrl + "/delete/" + savedReplyId)
+        mockMvc.perform(delete(baseUrl + "/" + savedReplyId)
                         .with(csrf()))
                 .andExpect(status().isNoContent())
                 .andDo(print());
@@ -142,7 +147,7 @@ class ReplyControllerTest {
         }
 
         Reply targetReply = savedReplyList.get(1);
-        mockMvc.perform(delete(baseUrl + "/delete/" + targetReply.getId())
+        mockMvc.perform(delete(baseUrl + "/" + targetReply.getId())
                 .with(csrf()))
                 .andExpect(status().isNoContent())
                 .andDo(print());
@@ -164,7 +169,7 @@ class ReplyControllerTest {
         }
 
         Reply targetReply = savedReplyList.get(1);
-        mockMvc.perform(delete(baseUrl + "/delete/" + targetReply.getId())
+        mockMvc.perform(delete(baseUrl + "/" + targetReply.getId())
                         .with(csrf()))
                 .andExpect(status().isNoContent())
                 .andDo(print());
@@ -189,7 +194,7 @@ class ReplyControllerTest {
         replyDto.setContent(modifiedContent);
         String jsonBody = objectMapper.writeValueAsString(replyDto);
 
-        mockMvc.perform(put(baseUrl + "/modify")
+        mockMvc.perform(put(baseUrl)
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
