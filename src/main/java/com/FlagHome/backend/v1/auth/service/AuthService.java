@@ -20,8 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class AuthService {
     private final JwtUtilizer jwtUtilizer;
     private final PasswordEncoder passwordEncoder;
@@ -49,4 +49,5 @@ public class AuthService {
 
     public TokenResponse reissueToken(TokenRequest tokenRequest) {
         return refreshTokenService.reissueToken(tokenRequest);
+    }
 }

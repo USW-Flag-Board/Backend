@@ -130,7 +130,7 @@ public class AuthServiceTest {
                 .password(password)
                 .build();
 
-        TokenResponse tokenResponse = authService.logIn(logInRequest);
+        TokenResponse tokenResponse = authService.login(logInRequest);
 
         TokenRequest tokenRequest = TokenRequest.builder()
                 .accessToken(tokenResponse.getAccessToken())
