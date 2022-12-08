@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
 
@@ -28,18 +29,15 @@ public class RefreshTokenService {
                 .value(value)
                 .expiredAt(LocalDateTime.now().plusWeeks(1))
                 .build();
-
         refreshTokenRepository.save(refreshToken);
     }
 
-    @Transactional
     public TokenResponse reissueToken(TokenRequest tokenRequest) {
         if (!jwtUtilizer.validateToken(tokenRequest.getRefreshToken())) {
             throw new CustomException(ErrorCode.INVALID_TOKEN);
         }
 
         Authentication authentication = jwtUtilizer.getAuthentication(tokenRequest.getAccessToken());
-
         RefreshToken refreshToken = findToken(authentication.getName());
 
         if (!StringUtils.equals(refreshToken.getValue(), tokenRequest.getRefreshToken())) {
@@ -47,7 +45,6 @@ public class RefreshTokenService {
         }
 
         TokenResponse tokenResponse = jwtUtilizer.generateTokenDto(authentication);
-
         return tokenResponse;
     }
 
