@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -16,7 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig{
+public class SecurityConfig {
 
     private final JwtUtilizer jwtUtilizer;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
@@ -34,23 +33,23 @@ public class SecurityConfig{
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
-            .httpBasic().disable()
-            .formLogin().disable()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .httpBasic().disable()
+                .formLogin().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http
-            .exceptionHandling()
-            .accessDeniedHandler(jwtAccessDeniedHandler)
-            .authenticationEntryPoint(jwtAuthenticationEntryPoint);
+                .exceptionHandling()
+                .accessDeniedHandler(jwtAccessDeniedHandler)
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint);
 
         http
-            .apply(new JwtSecurityConfig(jwtUtilizer));
+                .apply(new JwtSecurityConfig(jwtUtilizer));
 
         http.authorizeRequests()
-            .antMatchers(whiteListURI).permitAll()
-            .anyRequest().authenticated();
+                .antMatchers(whiteListURI).permitAll()
+                .anyRequest().authenticated();
 
         return http.build();
     }
