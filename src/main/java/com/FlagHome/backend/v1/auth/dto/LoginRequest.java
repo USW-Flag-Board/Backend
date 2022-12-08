@@ -11,14 +11,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LogInRequest {
+public class LoginRequest {
     @ApiModelProperty(example = "gmlwh124")
     private String loginID;
 
     @ApiModelProperty(example = "1234")
     private String password;
 
-    public UsernamePasswordAuthenticationToken toAuthenticationToken() {
+    public UsernamePasswordAuthenticationToken toAuthentication() {
         return new UsernamePasswordAuthenticationToken(loginID, password);
     }
 }

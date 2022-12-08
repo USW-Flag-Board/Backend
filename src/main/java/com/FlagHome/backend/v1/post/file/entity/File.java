@@ -4,18 +4,15 @@ import com.FlagHome.backend.v1.BaseEntity;
 
 import com.FlagHome.backend.v1.Status;
 import com.FlagHome.backend.v1.post.entity.Post;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
-@Data
+@Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class File extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

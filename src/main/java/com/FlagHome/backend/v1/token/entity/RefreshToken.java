@@ -5,9 +5,9 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
 @Getter
 @Builder
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 public class RefreshToken {
@@ -15,10 +15,10 @@ public class RefreshToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(name = "token_key")
     private String key;
 
-    @Column
+    @Column(name = "token_value")
     private String value;
 
     @Column(name = "expired_at")

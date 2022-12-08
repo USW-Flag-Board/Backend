@@ -1,13 +1,13 @@
 package com.FlagHome.backend.v1.auth.service;
 
 import com.FlagHome.backend.global.exception.CustomException;
-import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.jwt.JwtUtilizer;
-import com.FlagHome.backend.v1.auth.dto.LogInRequest;
+import com.FlagHome.backend.v1.auth.dto.LoginRequest;
 import com.FlagHome.backend.v1.auth.dto.SignUpRequest;
 import com.FlagHome.backend.v1.auth.dto.SignUpResponse;
 import com.FlagHome.backend.v1.member.entity.Member;
 import com.FlagHome.backend.v1.member.repository.MemberRepository;
+import com.FlagHome.backend.v1.token.dto.TokenRequest;
 import com.FlagHome.backend.v1.token.dto.TokenResponse;
 import com.FlagHome.backend.v1.token.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +18,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.FlagHome.backend.global.exception.ErrorCode.USER_ID_EXISTS;
+
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AuthService {
     private final JwtUtilizer jwtUtilizer;
     private final PasswordEncoder passwordEncoder;
@@ -27,33 +30,24 @@ public class AuthService {
     private final MemberRepository memberRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
-    @Transactional
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
-        if (memberRepository.existsByLoginId(signUpRequest.getLoginId())) {
-            throw new CustomException(ErrorCode.USER_ID_EXISTS);
-        }
+        if(memberRepository.existsByLoginId(signUpRequest.getLoginId()))
+            throw new CustomException(USER_ID_EXISTS);
 
         Member member = signUpRequest.toMember(passwordEncoder);
         memberRepository.save(member);
         return SignUpResponse.of(member);
     }
 
-    @Transactional
-    public TokenResponse logIn(LogInRequest logInRequest) {
-        // 로그인 id, pw로 Authentication Token 발급
-        UsernamePasswordAuthenticationToken authenticationToken = logInRequest.toAuthenticationToken();
-
-        // 실제로 검증하는 부분
-        // authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
+    public TokenResponse login(LoginRequest logInRequest) {
+        UsernamePasswordAuthenticationToken authenticationToken = logInRequest.toAuthentication();
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        TokenResponse tokenResponse = jwtUtilizer.generateTokenDto(authentication);
+        refreshTokenService.issueToken(authentication.getName(), tokenResponse.getRefreshToken());
+        return tokenResponse;
+    }
 
-        // 인증 정보를 기반한 JWT 토큰 생성
-        TokenResponse tokenDTO = jwtUtilizer.generateTokenDto(authentication);
-
-        // RefreshToken 저장
-        refreshTokenService.issueToken(authentication.getName(), tokenDTO.getRefreshToken());
-
-        // 토큰 발급
-        return tokenDTO;
+    public TokenResponse reissueToken(TokenRequest tokenRequest) {
+        return refreshTokenService.reissueToken(tokenRequest);
     }
 }

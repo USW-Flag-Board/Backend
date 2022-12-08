@@ -14,10 +14,10 @@ public class TokenResponse {
     @ApiModelProperty(example = "Bearer")
     private String grantType;
 
-    @ApiModelProperty(example = "")
+    @ApiModelProperty(value = "Access Token")
     private String accessToken;
 
-    @ApiModelProperty(example = "")
+    @ApiModelProperty(value = "Refresh Token")
     private String refreshToken;
 
     @ApiModelProperty(example = "1659476381416")

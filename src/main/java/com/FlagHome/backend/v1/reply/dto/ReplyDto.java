@@ -14,7 +14,7 @@ import lombok.*;
 @JsonNaming(PropertyNamingStrategies.LowerCamelCaseStrategy.class)
 public class ReplyDto {
     private long id;
-    private long userId;
+    private long memberId;
     private long postId;
     private String content;
     private long replyGroup;
@@ -24,7 +24,7 @@ public class ReplyDto {
 
     public ReplyDto(Reply replyEntity) {
         this.id = replyEntity.getId();
-        this.userId = replyEntity.getMember().getId();
+        this.memberId = replyEntity.getMember().getId();
         this.postId = replyEntity.getPost().getId();
         this.content = replyEntity.getContent();
         this.replyGroup = replyEntity.getReplyGroup();
