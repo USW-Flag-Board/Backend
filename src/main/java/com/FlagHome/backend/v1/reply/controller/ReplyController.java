@@ -15,23 +15,23 @@ import java.util.List;
 public class ReplyController {
     private final ReplyService replyService;
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<ReplyDto> createReply(@RequestBody ReplyDto replyDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(replyService.createReply(replyDto));
     }
 
-    @GetMapping("/get")
+    @GetMapping
     public ResponseEntity<List<ReplyDto>> getReplies(@RequestParam(name = "id") long postId) {
         return ResponseEntity.status(HttpStatus.OK).body(replyService.findReplies(postId));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteReply(@PathVariable(name = "id") long replyId) {
         replyService.deleteReply(replyId);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/modify")
+    @PutMapping
     public ResponseEntity<ReplyDto> updateReply(@RequestBody ReplyDto replyDto) {
         return ResponseEntity.status(HttpStatus.OK).body(replyService.updateReply(replyDto));
     }

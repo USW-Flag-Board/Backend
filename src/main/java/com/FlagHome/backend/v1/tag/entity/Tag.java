@@ -7,7 +7,8 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Data @Builder
+@Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Tag extends BaseEntity {
@@ -21,5 +22,4 @@ public class Tag extends BaseEntity {
 
     @Column
     private String description;
-
 }
