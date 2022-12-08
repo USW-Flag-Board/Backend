@@ -29,6 +29,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     runtimeOnly 'mysql:mysql-connector-java'
 
+    // aws
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
     // QueryDSL 추가
     // QueryDSL JPA : 실제 애플리케이션 코드를 작성할 때 필요함
     implementation "com.querydsl:querydsl-jpa:5.0.0"
