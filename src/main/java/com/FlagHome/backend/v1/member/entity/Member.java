@@ -54,4 +54,7 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private Status status;
+
+    @Column
+    private boolean emailAuth;
 }
