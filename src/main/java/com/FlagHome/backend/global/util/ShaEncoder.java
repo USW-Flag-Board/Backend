@@ -1,4 +1,4 @@
-package com.FlagHome.backend.v1.util;
+package com.FlagHome.backend.global.util;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

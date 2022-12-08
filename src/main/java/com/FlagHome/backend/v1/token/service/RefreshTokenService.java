@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
@@ -32,14 +33,12 @@ public class RefreshTokenService {
         refreshTokenRepository.save(refreshToken);
     }
 
-    @Transactional
     public TokenResponse reissueToken(TokenRequest tokenRequest) {
         if (!jwtUtilizer.validateToken(tokenRequest.getRefreshToken())) {
             throw new CustomException(ErrorCode.INVALID_TOKEN);
         }
 
         Authentication authentication = jwtUtilizer.getAuthentication(tokenRequest.getAccessToken());
-
         RefreshToken refreshToken = findToken(authentication.getName());
 
         if (!StringUtils.equals(refreshToken.getValue(), tokenRequest.getRefreshToken())) {
