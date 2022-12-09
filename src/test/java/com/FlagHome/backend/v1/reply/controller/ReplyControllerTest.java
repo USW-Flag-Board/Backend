@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,15 +29,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@Transactional
 @AutoConfigureMockMvc
+@Transactional
 @WithMockUser
 class ReplyControllerTest {
     private final String baseUrl = "/reply";
@@ -55,8 +53,6 @@ class ReplyControllerTest {
     private WebApplicationContext webApplicationContext;
     @Autowired
     private MockMvc mockMvc;
-    @Mock
-    private Post mockPost;
 
     private Member dummyMember;
 
@@ -77,7 +73,7 @@ class ReplyControllerTest {
     @Test
     @DisplayName("댓글 생성 테스트")
     public void createReplyTest() throws Exception {
-        Post dummyPost = postRepository.save(Post.builder().member(dummyMember).title("가짜포스트").content("가짜포스트내용").build());
+        Post dummyPost = postRepository.save(Post.builder().member(dummyMember).title("가짜포스트").replyList(new ArrayList<>()).content("가짜포스트내용").build());
 
         ReplyDto replyDto = new ReplyDto();
         replyDto.setMemberId(dummyMember.getId());
@@ -97,20 +93,28 @@ class ReplyControllerTest {
                 .andExpect(jsonPath("replyOrder", is(2)))
                 .andExpect(jsonPath("replyDepth", is(3)))
                 .andDo(print());
+
+        postRepository.flush();
+
+        Reply createdReply = dummyPost.getReplyList().get(0);
+        assert createdReply.getContent().equals("testReplyContent");
+        assert createdReply.getReplyGroup().equals(1L);
+        assert createdReply.getReplyOrder().equals(2L);
+        assert createdReply.getReplyDepth().equals(3L);
     }
 
     @Test
     @DisplayName("PostID로 댓글 조회 테스트")
     public void findRepliesByPostIdTest() throws Exception {
-        Post post = Post.builder().member(dummyMember).title("제목이다").content("내용이다").build();
-        Post savedPost = postRepository.save(post);
+        Post savedPost = postRepository.save(Post.builder().member(dummyMember).title("제목이다").replyList(new ArrayList<>()).content("내용이다").build());
 
         for(int i = 0; i < 4; ++i) {
             Reply reply = Reply.builder().post(savedPost).member(dummyMember).content(i + "번째").replyGroup(1L).replyOrder((long)i).replyDepth(1L).build();
-            replyRepository.save(reply);
+            savedPost.getReplyList().add(reply);
         }
+        postRepository.flush();
 
-        String postId = Long.toString(post.getId());
+        String postId = Long.toString(savedPost.getId());
         MvcResult mvcResult = mockMvc.perform(get(baseUrl)
                 .param("id", postId))
                 .andExpect(status().isOk())
@@ -127,15 +131,18 @@ class ReplyControllerTest {
     @Test
     @DisplayName("단일 댓글 삭제 테스트")
     public void deleteReplyTest() throws Exception {
-        Post dummyPost = postRepository.save(Post.builder().title("더미제목").member(dummyMember).content("더미내용").build());
+        Post dummyPost = postRepository.save(Post.builder().title("더미제목").member(dummyMember).replyList(new ArrayList<>()).content("더미내용").build());
         Reply reply = Reply.builder().member(dummyMember).post(dummyPost).replyGroup(1L).replyDepth(0L).replyOrder(0L).build();
-        Reply savedReply = replyRepository.save(reply);
-        long savedReplyId = savedReply.getId();
+        dummyPost.getReplyList().add(reply);
+        postRepository.flush();
 
-        mockMvc.perform(delete(baseUrl + "/" + savedReplyId)
-                        .with(csrf()))
+        long savedReplyId = dummyPost.getReplyList().get(0).getId();
+
+        mockMvc.perform(delete(baseUrl + "/" + savedReplyId))
                 .andExpect(status().isNoContent())
                 .andDo(print());
+
+        postRepository.flush();
 
         Reply isDelete = replyRepository.findById(savedReplyId).orElse(null);
         assert (isDelete == null);
@@ -144,45 +151,45 @@ class ReplyControllerTest {
     @Test
     @DisplayName("Depth가 0인 댓글 삭제 테스트")
     public void deleteDepthZeroReplyTest() throws Exception {
-        Post dummyPost = postRepository.save(Post.builder().title("더미제목").member(dummyMember).content("더미내용").build());
-        ArrayList<Reply> savedReplyList = new ArrayList<>();
+        Post dummyPost = postRepository.save(Post.builder().title("더미제목").member(dummyMember).replyList(new ArrayList<>()).content("더미내용").build());
         for(int i = 0; i < 3; ++i) {
             Reply reply = Reply.builder().member(dummyMember).post(dummyPost).content(i + "번째 내용").replyGroup((long)i).replyDepth(0L).replyOrder(0L).build();
-            savedReplyList.add(replyRepository.save(reply));
+            dummyPost.getReplyList().add(reply);
         }
+        postRepository.flush();
 
-        Reply targetReply = savedReplyList.get(1);
-        mockMvc.perform(delete(baseUrl + "/" + targetReply.getId())
-                .with(csrf()))
+        Reply targetReply = dummyPost.getReplyList().get(1);
+        mockMvc.perform(delete(baseUrl + "/" + targetReply.getId()))
                 .andExpect(status().isNoContent())
                 .andDo(print());
 
+        postRepository.flush();
+
         List<Reply> afterReplies = replyRepository.findByPostId(dummyPost.getId());
-        Reply checkReply = afterReplies.get(1);
-        assert checkReply.getReplyGroup() == 1;
-        assert checkReply.getContent().equals("2번째 내용");
+        for(Reply reply : afterReplies)
+            assert !reply.getContent().equals("1번째 내용");
     }
 
     @Test
     @DisplayName("자신보다 Order가 큰 댓글이 있는 댓글의 삭제 테스트")
     public void deleteNotZeroOrderReplyTest() throws Exception {
-        Post dummyPost = postRepository.save(Post.builder().title("더미제목").member(dummyMember).content("더미내용").build());
-        ArrayList<Reply> savedReplyList = new ArrayList<>();
+        Post dummyPost = postRepository.save(Post.builder().title("더미제목").member(dummyMember).replyList(new ArrayList<>()).content("더미내용").build());
         for(int i = 0; i < 3; ++i) {
             Reply reply = Reply.builder().member(dummyMember).post(dummyPost).content(i + "번째 내용").replyGroup(0L).replyDepth(1L).replyOrder((long)i).build();
-            savedReplyList.add(replyRepository.save(reply));
+            dummyPost.getReplyList().add(reply);
         }
+        postRepository.flush();
 
-        Reply targetReply = savedReplyList.get(1);
-        mockMvc.perform(delete(baseUrl + "/" + targetReply.getId())
-                        .with(csrf()))
+        Reply targetReply = dummyPost.getReplyList().get(1);
+        mockMvc.perform(delete(baseUrl + "/" + targetReply.getId()))
                 .andExpect(status().isNoContent())
                 .andDo(print());
 
+        postRepository.flush();
+
         List<Reply> afterReplies = replyRepository.findByPostId(dummyPost.getId());
-        Reply checkReply = afterReplies.get(1);
-        assert checkReply.getReplyOrder() == 1;
-        assert checkReply.getContent().equals("2번째 내용");
+        for(Reply reply : afterReplies)
+            assert !reply.getContent().equals("1번째 내용");
     }
 
     @Test
@@ -191,22 +198,27 @@ class ReplyControllerTest {
         final String originalContent = "원래내용";
         final String modifiedContent = "바뀐내용";
 
-        Reply reply = replyRepository.save(Reply.builder().post(mockPost).member(dummyMember).content(originalContent).build());
-        assert reply.getContent().equals(originalContent);
+        Post dummyPost = postRepository.save(Post.builder().title("더미제목").member(dummyMember).replyList(new ArrayList<>()).content("더미내용").build());
+        Reply reply = Reply.builder().post(dummyPost).member(dummyMember).content(originalContent).build();
+        dummyPost.getReplyList().add(reply);
+        postRepository.flush();
 
         ReplyDto replyDto = new ReplyDto();
-        replyDto.setId(reply.getId());
+        replyDto.setId(dummyPost.getReplyList().get(0).getId());
+        replyDto.setPostId(dummyPost.getId());
         replyDto.setContent(modifiedContent);
         String jsonBody = objectMapper.writeValueAsString(replyDto);
 
         mockMvc.perform(put(baseUrl)
-                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        Reply modifiedReply = replyRepository.findById(replyDto.getId()).orElse(null);
+        postRepository.flush();
+        replyRepository.flush();
+
+        Reply modifiedReply = replyRepository.findById(dummyPost.getReplyList().get(0).getId()).orElse(null);
         assert modifiedReply != null;
         assert modifiedReply.getContent().equals(modifiedContent);
     }

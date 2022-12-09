@@ -6,8 +6,6 @@ import com.FlagHome.backend.v1.post.Category;
 import com.FlagHome.backend.v1.post.dto.PostDto;
 import com.FlagHome.backend.v1.post.entity.Post;
 import com.FlagHome.backend.v1.post.repository.PostRepository;
-import com.FlagHome.backend.v1.member.entity.Member;
-import com.FlagHome.backend.v1.member.repository.MemberRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,6 +18,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
@@ -93,6 +92,7 @@ class PostControllerTest {
                 .title(title)
                 .content(content)
                 .viewCount(0L)
+                .replyList(new ArrayList<>())
                 .member(dummyMember)
                 .build());
 
@@ -115,6 +115,7 @@ class PostControllerTest {
                                         .content(originalContent)
                                         .category(originalCategory)
                                         .viewCount(0L)
+                                        .replyList(new ArrayList<>())
                                         .member(dummyMember)
                                         .build());
 
