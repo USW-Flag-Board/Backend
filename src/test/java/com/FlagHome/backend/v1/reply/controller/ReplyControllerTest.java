@@ -55,23 +55,28 @@ class ReplyControllerTest {
     private WebApplicationContext webApplicationContext;
     @Autowired
     private MockMvc mockMvc;
-
-    @Mock
-    private Member mockMember;
     @Mock
     private Post mockPost;
+
+    private Member dummyMember;
 
     @BeforeEach
     public void testSetup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
                 .addFilter(new CharacterEncodingFilter("UTF-8", true))
                 .build();
+
+        dummyMember = memberRepository.save(Member.builder()
+                .loginId("gilgil")
+                .password("hohho")
+                .email("gildong@naver.com")
+                .name("honggildong")
+                .build());
     }
 
     @Test
     @DisplayName("댓글 생성 테스트")
     public void createReplyTest() throws Exception {
-        Member dummyMember = memberRepository.save(Member.builder().name("gildong").loginId("gildong1234").password("1111").email("gildong@gmail.com").build());
         Post dummyPost = postRepository.save(Post.builder().member(dummyMember).title("가짜포스트").content("가짜포스트내용").build());
 
         ReplyDto replyDto = new ReplyDto();
@@ -97,11 +102,11 @@ class ReplyControllerTest {
     @Test
     @DisplayName("PostID로 댓글 조회 테스트")
     public void findRepliesByPostIdTest() throws Exception {
-        Post post = Post.builder().member(mockMember).title("제목이다").content("내용이다").build();
+        Post post = Post.builder().member(dummyMember).title("제목이다").content("내용이다").build();
         Post savedPost = postRepository.save(post);
 
         for(int i = 0; i < 4; ++i) {
-            Reply reply = Reply.builder().post(savedPost).member(mockMember).content(i + "번째").replyGroup(1L).replyOrder((long)i).replyDepth(1L).build();
+            Reply reply = Reply.builder().post(savedPost).member(dummyMember).content(i + "번째").replyGroup(1L).replyOrder((long)i).replyDepth(1L).build();
             replyRepository.save(reply);
         }
 
@@ -122,8 +127,8 @@ class ReplyControllerTest {
     @Test
     @DisplayName("단일 댓글 삭제 테스트")
     public void deleteReplyTest() throws Exception {
-        Post dummyPost = postRepository.save(Post.builder().title("더미제목").content("더미내용").build());
-        Reply reply = Reply.builder().member(mockMember).post(dummyPost).replyGroup(1L).replyDepth(0L).replyOrder(0L).build();
+        Post dummyPost = postRepository.save(Post.builder().title("더미제목").member(dummyMember).content("더미내용").build());
+        Reply reply = Reply.builder().member(dummyMember).post(dummyPost).replyGroup(1L).replyDepth(0L).replyOrder(0L).build();
         Reply savedReply = replyRepository.save(reply);
         long savedReplyId = savedReply.getId();
 
@@ -139,10 +144,10 @@ class ReplyControllerTest {
     @Test
     @DisplayName("Depth가 0인 댓글 삭제 테스트")
     public void deleteDepthZeroReplyTest() throws Exception {
-        Post dummyPost = postRepository.save(Post.builder().title("더미제목").content("더미내용").build());
+        Post dummyPost = postRepository.save(Post.builder().title("더미제목").member(dummyMember).content("더미내용").build());
         ArrayList<Reply> savedReplyList = new ArrayList<>();
         for(int i = 0; i < 3; ++i) {
-            Reply reply = Reply.builder().member(mockMember).post(dummyPost).content(i + "번째 내용").replyGroup((long)i).replyDepth(0L).replyOrder(0L).build();
+            Reply reply = Reply.builder().member(dummyMember).post(dummyPost).content(i + "번째 내용").replyGroup((long)i).replyDepth(0L).replyOrder(0L).build();
             savedReplyList.add(replyRepository.save(reply));
         }
 
@@ -161,10 +166,10 @@ class ReplyControllerTest {
     @Test
     @DisplayName("자신보다 Order가 큰 댓글이 있는 댓글의 삭제 테스트")
     public void deleteNotZeroOrderReplyTest() throws Exception {
-        Post dummyPost = postRepository.save(Post.builder().title("더미제목").content("더미내용").build());
+        Post dummyPost = postRepository.save(Post.builder().title("더미제목").member(dummyMember).content("더미내용").build());
         ArrayList<Reply> savedReplyList = new ArrayList<>();
         for(int i = 0; i < 3; ++i) {
-            Reply reply = Reply.builder().member(mockMember).post(dummyPost).content(i + "번째 내용").replyGroup(0L).replyDepth(1L).replyOrder((long)i).build();
+            Reply reply = Reply.builder().member(dummyMember).post(dummyPost).content(i + "번째 내용").replyGroup(0L).replyDepth(1L).replyOrder((long)i).build();
             savedReplyList.add(replyRepository.save(reply));
         }
 
@@ -186,7 +191,7 @@ class ReplyControllerTest {
         final String originalContent = "원래내용";
         final String modifiedContent = "바뀐내용";
 
-        Reply reply = replyRepository.save(Reply.builder().post(mockPost).member(mockMember).content(originalContent).build());
+        Reply reply = replyRepository.save(Reply.builder().post(mockPost).member(dummyMember).content(originalContent).build());
         assert reply.getContent().equals(originalContent);
 
         ReplyDto replyDto = new ReplyDto();
