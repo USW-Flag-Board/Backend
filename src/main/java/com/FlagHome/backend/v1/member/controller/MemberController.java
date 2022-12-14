@@ -1,21 +1,18 @@
 package com.FlagHome.backend.v1.member.controller;
 
+import com.FlagHome.backend.v1.member.repository.MemberRepository;
 import com.FlagHome.backend.v1.member.service.MemberService;
-import org.springframework.web.bind.annotation.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/member")
+@RequestMapping("/api/v1/member")
+@RequiredArgsConstructor
 public class MemberController {
-    private final MemberService userService;
-
-    public MemberController(MemberService userService) {
-        this.userService = userService;
-    }
-
-    @GetMapping("/login")
-    public String login() {
-        return "login";  //리턴값 뭐라고 하죠...?
-    }
-
+    private final MemberService memberService;
 
 }
