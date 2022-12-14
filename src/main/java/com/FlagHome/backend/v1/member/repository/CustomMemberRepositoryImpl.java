@@ -1,13 +1,13 @@
-package com.FlagHome.backend.v1.member.service;
+package com.FlagHome.backend.v1.member.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
+@Repository
 @Transactional
 @RequiredArgsConstructor
-public class MemberService {
+public class CustomMemberRepositoryImpl implements CustomMemberRepository {
     private final JPAQueryFactory queryFactory;
 }
