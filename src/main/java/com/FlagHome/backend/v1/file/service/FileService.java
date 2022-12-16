@@ -1,4 +1,4 @@
-package com.FlagHome.backend.v1.util;
+package com.FlagHome.backend.v1.file.service;
 
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
@@ -9,25 +9,24 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
-@Component
+@Service
 @RequiredArgsConstructor
-public class FileUploadService {
+public class FileService {
     private final AmazonS3Client amazonS3Client;
 
     /**
      * <Parameter>
-     *  dirName : "카테고리 이름"
+     *  dirName : "카테고리 이름" // 굳이 카테고리 이름을 넣어 분류할 필요가 없을것 같아 일단은 지웁니다 (2022.12.16 윤희승)
      *  imageName : "uuid.확장자"
      *
      * <Method>
@@ -38,24 +37,29 @@ public class FileUploadService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public String upload(MultipartFile file, String dirName) {
-        String fileName = createFileName(file, dirName);
-        String uploadFileUrl = putS3(file, fileName);
-        return uploadFileUrl;
+    public List<String> upload(List<MultipartFile> fileList) {
+        List<String> uploadedFileUriList = new ArrayList<>();
+
+        for(MultipartFile eachFile : fileList) {
+            String fileName = createFileName(eachFile);
+            String uploadedFileUri = putS3(eachFile, fileName);
+            uploadedFileUriList.add(uploadedFileUri);
+        }
+
+        return uploadedFileUriList;
     }
 
-    public void delete(String imageName, String dirName) {
-        String fileName = dirName + "/" + imageName;
-        amazonS3Client.deleteObject(bucket, fileName);
+    public void delete(String imageName) {
+        amazonS3Client.deleteObject(bucket, imageName);
     }
 
     /**
      * S3에 저장될 고유한 파일명을 리턴
      */
-    private String createFileName(MultipartFile file, String dirName) {
+    private String createFileName(MultipartFile file) {
         String[] split = Objects.requireNonNull(file.getContentType().split("/"));
         String extension = split[split.length - 1];
-        return dirName + "/" + UUID.randomUUID() + "." + extension;
+        return UUID.randomUUID() + "." + extension;
     }
 
     /**
