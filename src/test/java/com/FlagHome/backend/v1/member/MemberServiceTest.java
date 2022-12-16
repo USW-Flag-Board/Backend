@@ -1,7 +1,6 @@
 package com.FlagHome.backend.v1.member;
 
 import com.FlagHome.backend.v1.auth.dto.SignUpRequest;
-import com.FlagHome.backend.v1.member.dto.InitRequest;
 import com.FlagHome.backend.v1.member.entity.Member;
 import com.FlagHome.backend.v1.member.repository.MemberRepository;
 import com.FlagHome.backend.v1.member.service.MemberService;
@@ -43,15 +42,6 @@ public class MemberServiceTest {
 
         Member signUpMember = signUpRequest.toMember(passwordEncoder);
         Member savedMember = memberRepository.saveAndFlush(signUpMember);
-
-        InitRequest initRequest = InitRequest.builder()
-                .email(email)
-                .bio(bio)
-                .phoneNumber(phoneNumber)
-                .build();
-
-        // when
-        memberService.initMember(savedMember.getId(), initRequest);
 
         // then : 추가한 정보가 잘 반영이 되었는지
         Member member = memberRepository.findByLoginId(loginId).get();
