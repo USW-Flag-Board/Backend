@@ -24,7 +24,6 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private  final PasswordEncoder passwordEncoder;
 
-    public void
     @Transactional
     public void update(UpdateRequest updateRequest) {
 
