@@ -6,6 +6,7 @@ import com.FlagHome.backend.v1.member.Major;
 import com.FlagHome.backend.v1.member.Role;
 import lombok.*;
 
+
 import javax.persistence.*;
 
 @Entity
@@ -19,7 +20,7 @@ public class Member extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(name = "login_id")
     private String loginId;
 
     @Column
@@ -34,9 +35,15 @@ public class Member extends BaseEntity {
     @Column(name = "student_id")
     private String studentId;
 
+    @Column
+    private String bio;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "major")
     private Major major;
+
+    @Column(name = "profile_img")
+    private String profileImg;
 
     @Column(name = "phone_number")
     private String phoneNumber;

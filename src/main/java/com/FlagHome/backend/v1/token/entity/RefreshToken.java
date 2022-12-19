@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "refresh_token", indexes = @Index(columnList = "token_key"))
 public class RefreshToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,4 +25,8 @@ public class RefreshToken {
     @Column(name = "expired_at")
     private LocalDateTime expiredAt;
 
+    public void resetValue(String value, LocalDateTime expiredAt) {
+        this.value = value;
+        this.expiredAt = expiredAt;
+    }
 }

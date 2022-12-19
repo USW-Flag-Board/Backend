@@ -13,5 +13,5 @@ public enum Status {
     // User
     GENERAL("일반"), SUSPENDED("활동 정지"), WITHDRAW("탈퇴"), WATCHING("감시");
 
-    private String status;
+    private final String status;
 }

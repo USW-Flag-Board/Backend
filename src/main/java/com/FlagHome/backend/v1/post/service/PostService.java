@@ -45,8 +45,7 @@ public class PostService {
     @Transactional
     public void updatePost(PostDto postDto) {
         Post postEntity = postRepository.findById(postDto.getId()).orElse(null);
-        if(postEntity == null)
-            throw new CustomException(ErrorCode.POST_NOT_EXISTS);
+        assert postEntity != null;
 
         postEntity.setTitle(postDto.getTitle());
         postEntity.setContent(postDto.getContent());

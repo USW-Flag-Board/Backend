@@ -9,7 +9,8 @@ import java.util.Optional;
 
 @Transactional
 @Repository
-public interface MemberRepository extends JpaRepository<Member, Long> {
+public interface MemberRepository extends JpaRepository<Member, Long>, CustomMemberRepository {
+    Optional<Member> findById(Long memberId);
     Optional<Member> findByLoginId(String LoginId);
     boolean existsByLoginId(String LoginId);
 }

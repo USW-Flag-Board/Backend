@@ -1,23 +1,23 @@
 package com.FlagHome.backend.v1.member.controller;
 
+import com.FlagHome.backend.v1.Status;
+import com.FlagHome.backend.v1.member.dto.WithdrawRequest;
 import com.FlagHome.backend.v1.member.service.MemberService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import io.swagger.models.Response;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/member")
+@RequestMapping("/api/v1/member")
+@RequiredArgsConstructor
 public class MemberController {
-    private final MemberService userService;
+    private final MemberService memberService;
 
-    public MemberController(MemberService userService) {
-        this.userService = userService;
+    @PostMapping("/withdraw")
+    public ResponseEntity<Void> withdraw(WithdrawRequest withdrawRequest){
+        memberService.withdrawMember(withdrawRequest);
+        return ResponseEntity.ok().build();
     }
-
-    @GetMapping("/login")
-    public String login() {
-        return "login";  //리턴값 뭐라고 하죠...?
-    }
-
-
 }

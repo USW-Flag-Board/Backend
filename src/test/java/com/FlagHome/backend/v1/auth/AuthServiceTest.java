@@ -1,7 +1,7 @@
 package com.FlagHome.backend.v1.auth;
 
 import com.FlagHome.backend.global.jwt.JwtUtilizer;
-import com.FlagHome.backend.v1.auth.dto.LoginRequest;
+import com.FlagHome.backend.v1.auth.dto.LogInRequest;
 import com.FlagHome.backend.v1.auth.dto.SignUpRequest;
 import com.FlagHome.backend.v1.auth.dto.SignUpResponse;
 import com.FlagHome.backend.v1.auth.service.AuthService;
@@ -11,6 +11,8 @@ import com.FlagHome.backend.v1.member.entity.Member;
 import com.FlagHome.backend.v1.member.repository.MemberRepository;
 import com.FlagHome.backend.v1.token.dto.TokenRequest;
 import com.FlagHome.backend.v1.token.dto.TokenResponse;
+import com.FlagHome.backend.v1.token.entity.RefreshToken;
+import com.FlagHome.backend.v1.token.service.RefreshTokenService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +26,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @Transactional
 public class AuthServiceTest {
+    private final String baseUri = "/api/v1/auth";
     @Autowired
     private AuthService authService;
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private RefreshTokenService refreshTokenService;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
@@ -77,13 +83,13 @@ public class AuthServiceTest {
         Member signUpMember = signUpRequest.toMember(passwordEncoder);
         memberRepository.saveAndFlush(signUpMember);
 
-        LoginRequest logInRequest = LoginRequest.builder()
+        LogInRequest logInRequest = LogInRequest.builder()
                 .loginID(loginId)
                 .password(password)
                 .build();
 
         // when
-        TokenResponse tokenResponse = authService.login(logInRequest);
+        TokenResponse tokenResponse = authService.logIn(logInRequest);
 
         // then : 정상적으로 발급되는 지, 유효한 지, 데이터가 일치하는 지
         assertThat(tokenResponse.getAccessToken()).isNotNull();
@@ -116,30 +122,32 @@ public class AuthServiceTest {
                 .studentId("19017041")
                 .build();
 
-        Member signUpMember = signUpRequest.toMember(passwordEncoder);
-        memberRepository.save(signUpMember);
+        authService.signUp(signUpRequest);
 
-        LoginRequest logInRequest = LoginRequest.builder()
+        LogInRequest logInRequest = LogInRequest.builder()
                 .loginID(loginId)
                 .password(password)
                 .build();
 
-        TokenResponse loginToken = authService.login(logInRequest);
+        TokenResponse tokenResponse = authService.logIn(logInRequest);
+
         TokenRequest tokenRequest = TokenRequest.builder()
-                .accessToken(loginToken.getAccessToken())
-                .refreshToken(loginToken.getRefreshToken())
+                .accessToken(tokenResponse.getAccessToken())
+                .refreshToken(tokenResponse.getRefreshToken())
                 .build();
 
         // when
         TokenResponse reissueToken = authService.reissueToken(tokenRequest);
 
-        // then : 정상적으로 재발급되는 지, 유효한 지, 데이터가 일치하는 지
+        // then
         assertThat(reissueToken.getAccessToken()).isNotNull();
         assertThat(reissueToken.getRefreshToken()).isNotNull();
-        assertThat(reissueToken.getGrantType()).isEqualTo("Bearer");
+        assertThat(reissueToken.getGrantType()).isNotNull();
         assertThat(reissueToken.getAccessTokenExpiresIn()).isNotNull();
 
         String accessToken = reissueToken.getAccessToken();
+
+        assertThat(jwtUtilizer.validateToken(accessToken)).isTrue();
 
         Authentication authentication = jwtUtilizer.getAuthentication(accessToken);
         long memberId = Long.parseLong(authentication.getName());

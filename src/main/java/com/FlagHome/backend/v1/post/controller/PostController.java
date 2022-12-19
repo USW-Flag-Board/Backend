@@ -13,24 +13,24 @@ import org.springframework.web.bind.annotation.*;
 public class PostController {
     private final PostService postService;
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto) {
         postService.createPost(postDto);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping
+    @GetMapping("/get")
     public ResponseEntity<PostDto> getPost(@RequestParam(value = "postId") long postId) {
         return ResponseEntity.status(HttpStatus.OK).body(postService.getPost(postId));
     }
 
-    @PutMapping
+    @PutMapping("/update")
     public ResponseEntity<Void> updatePost(@RequestBody PostDto postDto) {
         postService.updatePost(postDto);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{post_id}")
+    @DeleteMapping("/delete/{post_id}")
     public ResponseEntity<Void> deletePost(@PathVariable(name = "post_id") long postId) {
         postService.deletePost(postId);
         return ResponseEntity.noContent().build();
