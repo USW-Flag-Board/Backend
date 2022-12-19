@@ -1,5 +1,6 @@
 package com.FlagHome.backend.v1.member.dto;
 
+import com.FlagHome.backend.v1.member.entity.Member;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +18,4 @@ public class UpdateRequest {
 
     @ApiModelProperty(value = "핸드폰 번호")
     private String phoneNumber;
-
-//    @ApiModelProperty(value = "이미지")
-//    private String profileImg;
 }
