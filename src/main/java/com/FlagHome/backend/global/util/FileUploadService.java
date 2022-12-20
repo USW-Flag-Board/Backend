@@ -1,4 +1,4 @@
-package com.FlagHome.backend.v1.util;
+package com.FlagHome.backend.global.util;
 
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;

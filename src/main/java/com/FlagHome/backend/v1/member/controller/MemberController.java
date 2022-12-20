@@ -18,7 +18,7 @@ public class MemberController {
 
     @PostMapping("/check-id")
     @ApiOperation(value = "아이디 중복 체크")
-    public ResponseEntity<Void> checkId(IdCheckRequest idCheckRequest) {
+    public ResponseEntity<Void> checkId(@RequestBody IdCheckRequest idCheckRequest) {
         memberService.validateDuplicateLoginId(idCheckRequest.getLoginId());
 
         return ResponseEntity.ok().build();
@@ -26,7 +26,7 @@ public class MemberController {
 
     @PostMapping("/check-email")
     @ApiOperation(value = "이메일 중복 체크", notes = "이메일 하나만 하나의 계정만 생성 가능")
-    public ResponseEntity<Void> checkEmail(EmailCheckRequest emailCheckRequest) {
+    public ResponseEntity<Void> checkEmail(@RequestBody EmailCheckRequest emailCheckRequest) {
         memberService.validateEmail(emailCheckRequest.getEmail());
 
         return ResponseEntity.ok().build();
@@ -34,7 +34,7 @@ public class MemberController {
 
     @PostMapping("/withdraw")
     @ApiOperation(value = "회원 탈퇴")
-    public ResponseEntity<Void> withdraw(WithdrawRequest withdrawRequest) {
+    public ResponseEntity<Void> withdraw(@RequestBody WithdrawRequest withdrawRequest) {
         memberService.withdrawMember(withdrawRequest.getPassword());
 
         return ResponseEntity.ok().build();
@@ -42,7 +42,7 @@ public class MemberController {
 
     @PostMapping("/find-id")
     @ApiOperation(value = "아이디 찾기", notes = "요청 시 아이디를 찾아서 메일로 전송")
-    public ResponseEntity<Void> findId(FindIdRequest findIdRequest) {
+    public ResponseEntity<Void> findId(@RequestBody FindIdRequest findIdRequest) {
         memberService.sendFindIdResult(findIdRequest.getName(), findIdRequest.getEmail());
 
         return ResponseEntity.ok().build();
@@ -50,7 +50,7 @@ public class MemberController {
 
     @PostMapping("/find-password")
     @ApiOperation(value = "비밀번호 찾기", notes = "비밀번호 찾기 요청 시 새로운 비밀번호 발급 후 재설정")
-    public ResponseEntity<Void> findPassword(FindPasswordRequest findPasswordRequest) {
+    public ResponseEntity<Void> findPassword(@RequestBody FindPasswordRequest findPasswordRequest) {
         String newPassword = memberService
                 .updatePassword(findPasswordRequest.getLoginId(), findPasswordRequest.getEmail());
 
