@@ -16,8 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
 
@@ -29,6 +29,7 @@ public class RefreshTokenService {
                 .value(value)
                 .expiredAt(LocalDateTime.now().plusWeeks(1))
                 .build();
+
         refreshTokenRepository.save(refreshToken);
     }
 
@@ -45,6 +46,9 @@ public class RefreshTokenService {
         }
 
         TokenResponse tokenResponse = jwtUtilizer.generateTokenDto(authentication);
+
+        refreshToken.resetValue(tokenResponse.getRefreshToken(), LocalDateTime.now().plusWeeks(1));
+
         return tokenResponse;
     }
 
