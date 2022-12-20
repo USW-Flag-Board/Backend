@@ -52,9 +52,6 @@ public class Member extends BaseEntity {
     @Column(name = "status")
     private Status status;
 
-    @Column
-    private boolean emailAuth;
-
     @Builder
     public Member(String loginId, String password, String email, String name,
                   String studentId, String bio, Major major, Role role, Status status) {

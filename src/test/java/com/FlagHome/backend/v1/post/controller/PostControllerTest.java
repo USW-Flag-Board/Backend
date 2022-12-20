@@ -21,6 +21,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
@@ -93,6 +94,7 @@ class PostControllerTest {
                 .title(title)
                 .content(content)
                 .viewCount(0L)
+                .replyList(new ArrayList<>())
                 .member(dummyMember)
                 .build());
 
@@ -115,6 +117,7 @@ class PostControllerTest {
                                         .content(originalContent)
                                         .category(originalCategory)
                                         .viewCount(0L)
+                                        .replyList(new ArrayList<>())
                                         .member(dummyMember)
                                         .build());
 
