@@ -31,9 +31,6 @@ public class Member extends BaseEntity {
     @Column(name = "student_id")
     private String studentId;
 
-    @Column
-    private String bio;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "major")
     private Major major;
@@ -53,8 +50,9 @@ public class Member extends BaseEntity {
     private Status status;
 
     @Builder
-    public Member(String loginId, String password, String email, String name,
+    public Member(long id, String loginId, String password, String email, String name,
                   String studentId, String bio, Major major, Role role, Status status) {
+        this.id = id;
         this.loginId = loginId;
         this.password = password;
         this.email = email;
@@ -63,6 +61,5 @@ public class Member extends BaseEntity {
         this.major = major;
         this.role = role;
         this.status = status;
-        this.emailAuth = false;
     }
 }
