@@ -22,6 +22,7 @@ public enum ErrorCode {
     NAME_EMAIL_NOT_MATCH(HttpStatus.BAD_REQUEST, "이메일과 일치하지 않는 이름입니다."),
     ID_EMAIL_NOT_MATCH(HttpStatus.BAD_REQUEST, "이메일과 일치하지 않는 아이디입니다."),
     NOT_USW_EMAIL(HttpStatus.BAD_REQUEST, "교내 웹 메일 주소가 아닙니다."),
+    CATEGORY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "존재하지 않는 카테고리 입니다."),
 
     /** 401 - UNAUTHORIZED  */
     UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, "로그인이 필요한 기능입니다."),
