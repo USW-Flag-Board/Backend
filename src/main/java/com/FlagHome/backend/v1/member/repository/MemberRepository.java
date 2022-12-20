@@ -12,7 +12,14 @@ import java.util.Optional;
 
 @Transactional
 @Repository
-public interface MemberRepository extends JpaRepository<Member, Long> {
-    Optional<Member> findByLoginId(String LoginId);
-    boolean existsByLoginId(String LoginId);
+public interface MemberRepository extends JpaRepository<Member, Long>, CustomMemberRepository {
+    Optional<Member> findById(Long memberId);
+
+    Optional<Member> findByLoginId(String loginId);
+    
+    boolean existsByLoginId(String loginId);
+
+    boolean existsByEmail(String email);
+
+    Optional<Member> findByEmail(String email);
 }

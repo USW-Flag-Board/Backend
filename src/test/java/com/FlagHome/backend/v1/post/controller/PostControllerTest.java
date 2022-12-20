@@ -8,6 +8,7 @@ import com.FlagHome.backend.v1.post.entity.Post;
 import com.FlagHome.backend.v1.post.repository.PostRepository;
 import com.FlagHome.backend.v1.member.entity.Member;
 import com.FlagHome.backend.v1.member.repository.MemberRepository;
+import com.FlagHome.backend.v1.reply.dto.ReplyDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
