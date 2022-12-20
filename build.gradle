@@ -24,6 +24,9 @@ dependencies {
     // Spring Batch
     implementation 'org.springframework.boot:spring-boot-starter-batch'
 
+    // Spring Mail
+    implementation 'org.springframework.boot:spring-boot-starter-mail:'
+
     // DB Communication
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
@@ -31,6 +34,9 @@ dependencies {
 
     // aws
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+    // ses
+    implementation 'com.amazonaws:aws-java-sdk-ses:1.12.367'
 
     // QueryDSL 추가
     // QueryDSL JPA : 실제 애플리케이션 코드를 작성할 때 필요함
@@ -41,17 +47,13 @@ dependencies {
     implementation "com.querydsl:querydsl-apt:5.0.0"
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
-    // OAUTH
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
-
     //JWT
     compileOnly('io.jsonwebtoken:jjwt-api:0.11.5')
     runtimeOnly('io.jsonwebtoken:jjwt-impl:0.11.5')
     runtimeOnly('io.jsonwebtoken:jjwt-jackson:0.11.5')
 
     // Spring Scheduler
-    implementation 'org.springframework.boot:spring-boot-starter-quartz'
+    // implementation 'org.springframework.boot:spring-boot-starter-quartz'
 
     // Spring Security
     implementation 'org.springframework.boot:spring-boot-starter-security'

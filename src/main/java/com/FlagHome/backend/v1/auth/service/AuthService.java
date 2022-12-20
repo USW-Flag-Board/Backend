@@ -30,10 +30,6 @@ public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
-        if (memberRepository.existsByLoginId(signUpRequest.getLoginId())) {
-            throw new CustomException(ErrorCode.USER_ID_EXISTS);
-        }
-
         Member member = signUpRequest.toMember(passwordEncoder);
         memberRepository.save(member);
         return SignUpResponse.of(member);
