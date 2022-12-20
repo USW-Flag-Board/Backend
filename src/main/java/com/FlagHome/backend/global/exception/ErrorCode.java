@@ -13,12 +13,15 @@ public enum ErrorCode {
     USER_ID_EXISTS(HttpStatus.BAD_REQUEST, "아이디가 이미 존재합니다."),
     USER_NOT_EXISTS(HttpStatus.BAD_REQUEST, "사용자가 존재하지 않습니다."),
     USER_JOIN_FAILED(HttpStatus.BAD_REQUEST, "회원 가입에 실패 했습니다."),
-    PASSWORD_ERROR(HttpStatus.BAD_REQUEST, "비밀번호를 확인해주세요."),
     NONE_AUTHORIZATION_TOKEN(HttpStatus.BAD_REQUEST, "권한 정보가 없는 토큰입니다."),
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않는 토큰입니다."),
     TOKEN_NOT_MATCH(HttpStatus.BAD_REQUEST, "토큰의 정보가 일치하지 않습니다."),
     POST_NOT_EXISTS(HttpStatus.BAD_REQUEST, "존재하지 않는 게시물 입니다."),
     REPLY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "존재하지 않는 댓글 입니다."),
+    PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
+    NAME_EMAIL_NOT_MATCH(HttpStatus.BAD_REQUEST, "이메일과 일치하지 않는 이름입니다."),
+    ID_EMAIL_NOT_MATCH(HttpStatus.BAD_REQUEST, "이메일과 일치하지 않는 아이디입니다."),
+    NOT_USW_EMAIL(HttpStatus.BAD_REQUEST, "교내 웹 메일 주소가 아닙니다."),
 
     /** 401 - UNAUTHORIZED  */
     UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, "로그인이 필요한 기능입니다."),

@@ -9,10 +9,7 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Builder
 @Getter
-@Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class Member extends BaseEntity {
     @Id
@@ -55,6 +52,17 @@ public class Member extends BaseEntity {
     @Column(name = "status")
     private Status status;
 
-    @Column
-    private boolean emailAuth;
+    @Builder
+    public Member(String loginId, String password, String email, String name,
+                  String studentId, String bio, Major major, Role role, Status status) {
+        this.loginId = loginId;
+        this.password = password;
+        this.email = email;
+        this.name = name;
+        this.studentId = studentId;
+        this.major = major;
+        this.role = role;
+        this.status = status;
+        this.emailAuth = false;
+    }
 }
