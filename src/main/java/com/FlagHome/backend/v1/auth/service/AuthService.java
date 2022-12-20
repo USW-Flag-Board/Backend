@@ -1,6 +1,7 @@
 package com.FlagHome.backend.v1.auth.service;
 
 import com.FlagHome.backend.global.exception.CustomException;
+import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.jwt.JwtUtilizer;
 import com.FlagHome.backend.v1.auth.dto.LoginRequest;
 import com.FlagHome.backend.v1.auth.dto.SignUpRequest;
@@ -18,11 +19,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.FlagHome.backend.global.exception.ErrorCode.USER_ID_EXISTS;
-
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class AuthService {
     private final JwtUtilizer jwtUtilizer;
     private final PasswordEncoder passwordEncoder;
@@ -31,16 +30,17 @@ public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
-        if(memberRepository.existsByLoginId(signUpRequest.getLoginId()))
-            throw new CustomException(USER_ID_EXISTS);
+        if (memberRepository.existsByLoginId(signUpRequest.getLoginId())) {
+            throw new CustomException(ErrorCode.USER_ID_EXISTS);
+        }
 
         Member member = signUpRequest.toMember(passwordEncoder);
         memberRepository.save(member);
         return SignUpResponse.of(member);
     }
 
-    public TokenResponse login(LoginRequest logInRequest) {
-        UsernamePasswordAuthenticationToken authenticationToken = logInRequest.toAuthentication();
+    public TokenResponse login(LoginRequest loginRequest) {
+        UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         TokenResponse tokenResponse = jwtUtilizer.generateTokenDto(authentication);
         refreshTokenService.issueToken(authentication.getName(), tokenResponse.getRefreshToken());
