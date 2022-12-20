@@ -2,8 +2,7 @@ package com.FlagHome.backend.v1.member.mail;
 
 public enum MailType {
     AUTH_EMAIL("[FLAG] 재학생 이메일 인증 요청입니다.",
-            "<div>" +
-                    "재학생 인증이 완료되면 아이디/비밀번호 찾기 기능을 사용하실 수 있습니다.<br>" +
+            "<div>재학생 인증이 완료되면 아이디/비밀번호 찾기 기능을 사용하실 수 있습니다.<br>" +
                     "다음 6자리 인증번호를 입력해주세요.</div>"),
 
     FIND_ID("[FLAG] 아이디 찾기 결과입니다.",

@@ -55,7 +55,6 @@ class PostControllerTest {
                 .loginId("gildong11")
                 .password("123123")
                 .email("gildong@naver.com")
-                .phoneNumber("010-4444-4444")
                 .studentId("2").build());
     }
 

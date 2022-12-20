@@ -16,13 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     private final JwtUtilizer jwtUtilizer;
-
+    @Transactional
     public void issueToken(String key, String value) {
         RefreshToken refreshToken = RefreshToken.builder()
                 .key(key)
@@ -33,6 +32,7 @@ public class RefreshTokenService {
         refreshTokenRepository.save(refreshToken);
     }
 
+    @Transactional
     public TokenResponse reissueToken(TokenRequest tokenRequest) {
         if (!jwtUtilizer.validateToken(tokenRequest.getRefreshToken())) {
             throw new CustomException(ErrorCode.INVALID_TOKEN);
@@ -47,12 +47,13 @@ public class RefreshTokenService {
 
         TokenResponse tokenResponse = jwtUtilizer.generateTokenDto(authentication);
 
+        // dirty checking
         refreshToken.resetValue(tokenResponse.getRefreshToken(), LocalDateTime.now().plusWeeks(1));
 
         return tokenResponse;
     }
 
-    public RefreshToken findToken(String key) {
+    private RefreshToken findToken(String key) {
         return refreshTokenRepository.findFirstByKeyOrderByIdDesc(key)
                 .orElseThrow(() -> new CustomException(ErrorCode.UNAUTHORIZED_TOKEN));
     }

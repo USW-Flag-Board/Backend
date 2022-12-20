@@ -1,7 +1,6 @@
 package com.FlagHome.backend.v1.member.repository;
 
 import com.FlagHome.backend.v1.Status;
-import com.FlagHome.backend.v1.util.SecurityUtils;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
