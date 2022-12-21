@@ -4,7 +4,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-@Transactional
 public interface CustomMemberRepository {
     void withdraw(Long memberId);
+
+    void updatePassword(Long memberId, String newPassword);
 }

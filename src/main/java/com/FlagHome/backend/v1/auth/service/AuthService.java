@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AuthService {
     private final JwtUtilizer jwtUtilizer;
@@ -30,10 +31,6 @@ public class AuthService {
 
     @Transactional
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
-        if (memberRepository.existsByLoginId(signUpRequest.getLoginId())) {
-            throw new CustomException(ErrorCode.USER_ID_EXISTS);
-        }
-
         Member member = signUpRequest.toMember(passwordEncoder);
         memberRepository.save(member);
         return SignUpResponse.of(member);
@@ -42,10 +39,9 @@ public class AuthService {
     @Transactional
     public TokenResponse logIn(LogInRequest logInRequest) {
         // 로그인 id, pw로 Authentication Token 발급
-        UsernamePasswordAuthenticationToken authenticationToken = logInRequest.toAuthentication();
-
         // 실제로 검증하는 부분
         // authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
+        UsernamePasswordAuthenticationToken authenticationToken = logInRequest.toAuthentication();
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
         // 인증 정보를 기반한 JWT 토큰 생성

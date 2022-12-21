@@ -25,6 +25,9 @@ public class SignUpRequest {
     @ApiModelProperty(example = "문희조")
     private String name;
 
+    @ApiModelProperty(value = "학교 이메일", example = "gmlwh124@suwon.ac.kr")
+    private String email;
+
     @ApiModelProperty(example = "컴퓨터SW")
     private Major major;
 
@@ -35,10 +38,9 @@ public class SignUpRequest {
         return Member.builder()
                 .loginId(loginId)
                 .password(passwordEncoder.encode(password))
-                .email("")
                 .name(name)
+                .email(email)
                 .major(major)
-                .phoneNumber("")
                 .studentId(studentId)
                 .role(Role.USER)
                 .status(Status.GENERAL)

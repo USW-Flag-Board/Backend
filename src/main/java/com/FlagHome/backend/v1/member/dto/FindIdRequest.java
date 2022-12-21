@@ -8,7 +8,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class WithdrawRequest {
-    @ApiModelProperty(value = "비밀번호")
-    private String password;
+public class FindIdRequest {
+    @ApiModelProperty(value = "이름")
+    private String name;
+    
+    @ApiModelProperty(value = "이메일")
+    private String email;
 }

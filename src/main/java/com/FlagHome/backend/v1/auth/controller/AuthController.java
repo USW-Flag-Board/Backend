@@ -29,8 +29,13 @@ public class AuthController {
 
     @PostMapping("/login")
     @ApiOperation(value = "로그인")
+<<<<<<< HEAD
     public ResponseEntity<TokenResponse> logIn(@RequestBody LogInRequest logInRequest) {
         return ResponseEntity.ok(authService.logIn(logInRequest));
+=======
+    public ResponseEntity<TokenResponse> logIn(@RequestBody LoginRequest loginRequest) {
+        return ResponseEntity.ok(authService.login(loginRequest));
+>>>>>>> 10db1e7f7856099eb3c5bc28576266379acc2045
     }
 
     @PostMapping("/reissue")

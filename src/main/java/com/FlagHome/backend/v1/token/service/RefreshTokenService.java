@@ -21,7 +21,7 @@ public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     private final JwtUtilizer jwtUtilizer;
-
+    @Transactional
     public void issueToken(String key, String value) {
         RefreshToken refreshToken = RefreshToken.builder()
                 .key(key)
@@ -48,12 +48,13 @@ public class RefreshTokenService {
 
         TokenResponse tokenResponse = jwtUtilizer.generateTokenDto(authentication);
 
+        // dirty checking
         refreshToken.resetValue(tokenResponse.getRefreshToken(), LocalDateTime.now().plusWeeks(1));
 
         return tokenResponse;
     }
 
-    public RefreshToken findToken(String key) {
+    private RefreshToken findToken(String key) {
         return refreshTokenRepository.findFirstByKeyOrderByIdDesc(key)
                 .orElseThrow(() -> new CustomException(ErrorCode.UNAUTHORIZED_TOKEN));
     }
