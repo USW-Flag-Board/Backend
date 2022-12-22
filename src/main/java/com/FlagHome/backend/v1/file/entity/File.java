@@ -1,4 +1,4 @@
-package com.FlagHome.backend.v1.post.file.entity;
+package com.FlagHome.backend.v1.file.entity;
 
 import com.FlagHome.backend.v1.BaseEntity;
 

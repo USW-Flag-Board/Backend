@@ -23,7 +23,7 @@ public class PostService {
     public void createPost(PostDto postDto) {
         Member memberEntity = memberRepository.findById(postDto.getUserId()).orElse(null);
         if(memberEntity == null)
-            throw new CustomException(ErrorCode.USER_NOT_EXISTS);
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
         postRepository.save(Post.builder()
                 .member(memberEntity)
@@ -40,7 +40,7 @@ public class PostService {
     public PostDto getPost(long postId) {
         Post postEntity = postRepository.findById(postId).orElse(null);
         if(postEntity == null)
-            throw new CustomException(ErrorCode.POST_NOT_EXISTS);
+            throw new CustomException(ErrorCode.POST_NOT_FOUND);
 
         return new PostDto(postEntity);
     }
@@ -49,7 +49,7 @@ public class PostService {
     public void updatePost(PostDto postDto) {
         Post postEntity = postRepository.findById(postDto.getId()).orElse(null);
         if(postEntity == null)
-            throw new CustomException(ErrorCode.POST_NOT_EXISTS);
+            throw new CustomException(ErrorCode.POST_NOT_FOUND);
 
         postEntity.setTitle(postDto.getTitle());
         postEntity.setContent(postDto.getContent());

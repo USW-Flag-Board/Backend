@@ -7,6 +7,7 @@ import com.FlagHome.backend.v1.member.Role;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -53,8 +54,9 @@ public class Member extends BaseEntity {
     private Status status;
 
     @Builder
-    public Member(String loginId, String password, String email, String name,
-                  String studentId, String bio, Major major, Role role, Status status) {
+    public Member(Long id, String loginId, String password, String email, String name,
+                  String studentId, Major major, Role role, Status status) {
+        this.id = id;
         this.loginId = loginId;
         this.password = password;
         this.email = email;
@@ -63,6 +65,11 @@ public class Member extends BaseEntity {
         this.major = major;
         this.role = role;
         this.status = status;
-        this.emailAuth = false;
     }
+
+    public void updateStatus(Status status) {
+        this.status = status;
+    }
+
+    public void updatePassword(String password) { this.password = password; }
 }

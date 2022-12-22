@@ -5,8 +5,6 @@ import java.security.SecureRandom;
 public class RandomNumberGenerator {
     private static final SecureRandom RANDOM = new SecureRandom();
 
-    private RandomNumberGenerator() { }
-
     /**
      * 이메일 인증에 필요한 6자리 숫자(난수) 생성
      * @return (String) 6자리 인증번호
