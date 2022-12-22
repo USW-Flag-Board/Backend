@@ -20,6 +20,7 @@ public enum ErrorCode {
     ID_EMAIL_NOT_MATCH(HttpStatus.BAD_REQUEST, "이메일과 일치하지 않는 아이디입니다."),
     NOT_USW_EMAIL(HttpStatus.BAD_REQUEST, "수원대학교 웹 메일 주소가 아닙니다."),
     PASSWORD_IS_SAME(HttpStatus.BAD_REQUEST, "기존과 같은 비밀번호는 사용할 수 없습니다."),
+    CATEGORY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "존재하지 않는 카테고리 입니다."),
 
     /** 401 - UNAUTHORIZED  */
     UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, "로그인이 필요한 기능입니다."),
