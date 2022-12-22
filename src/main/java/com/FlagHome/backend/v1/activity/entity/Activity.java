@@ -29,8 +29,8 @@ public class Activity extends BaseEntity {
     @Column
     private String discription;
 
-     @Column
-     private String preiod;
+    @Column
+    private String preiod;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)

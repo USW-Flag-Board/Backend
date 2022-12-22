@@ -1,12 +1,10 @@
 package com.FlagHome.backend.v1.member.controller;
 
-import com.FlagHome.backend.global.util.SecurityUtils;
 import com.FlagHome.backend.v1.member.dto.*;
 import com.FlagHome.backend.v1.member.mail.MailService;
 import com.FlagHome.backend.v1.member.mail.MailType;
 import com.FlagHome.backend.v1.member.repository.MemberRepository;
 import com.FlagHome.backend.v1.member.service.MemberService;
-import com.FlagHome.backend.v1.util.SecurityUtils;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -58,13 +56,6 @@ public class MemberController {
 
         memberService.sendFindPasswordResult(findPasswordRequest.getEmail(), newPassword);
 
-        return ResponseEntity.ok().build();
-    }
-
-    @PutMapping("/profile")
-    @ApiOperation(value = "프로필 업데이트")
-    public ResponseEntity<Void> updateProfile(@RequestBody UpdateProfileRequest updateProfileRequest) {
-        memberService.updateProfile(SecurityUtils.getMemberId(), updateProfileRequest);
         return ResponseEntity.ok().build();
     }
 }
