@@ -11,8 +11,6 @@ import javax.persistence.*;
 @Entity
 @Builder
 @Getter
-@Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class Member extends BaseEntity {
     @Id
@@ -55,6 +53,19 @@ public class Member extends BaseEntity {
     @Column(name = "status")
     private Status status;
 
-    @Column
-    private boolean emailAuth;
+    @Builder
+    public Member(long id, String loginId, String password, String email, String bio, String name, String phoneNumber,
+                  String studentId, Major major, Role role, Status status) {
+        this.id = id;
+        this.loginId = loginId;
+        this.password = password;
+        this.email = email;
+        this.bio = bio;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.studentId = studentId;
+        this.major = major;
+        this.role = role;
+        this.status = status;
+    }
 }
