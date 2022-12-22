@@ -28,11 +28,11 @@ public class ReplyService {
     public ReplyDto createReply(ReplyDto replyDto) {
         Post foundPost = postRepository.findById(replyDto.getPostId()).orElse(null);
         if(foundPost == null)
-            throw new CustomException(ErrorCode.POST_NOT_EXISTS);
+            throw new CustomException(ErrorCode.POST_NOT_FOUND);
 
         Member foundMember = memberRepository.findById(replyDto.getMemberId()).orElse(null);
         if(foundMember == null)
-            throw new CustomException(ErrorCode.USER_NOT_EXISTS);
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
         Reply replyEntity = Reply.builder()
                                 .member(foundMember)
@@ -54,7 +54,7 @@ public class ReplyService {
     public List<ReplyDto> findReplies(Long postId) {
         Post foundPost = postRepository.findById(postId).orElse(null);
         if(foundPost == null)
-            throw new CustomException(ErrorCode.POST_NOT_EXISTS);
+            throw new CustomException(ErrorCode.POST_NOT_FOUND);
 
         List<Reply> foundReplyEntities = foundPost.getReplyList();
         List<ReplyDto> replyDtoList = new LinkedList<>();
@@ -68,7 +68,7 @@ public class ReplyService {
     public void deleteReply(long replyId) {
         Reply replyEntity = replyRepository.findById(replyId).orElse(null);
         if(replyEntity == null)
-            throw new CustomException(ErrorCode.REPLY_NOT_EXISTS);
+            throw new CustomException(ErrorCode.REPLY_NOT_FOUND);
 
         Post postEntity = replyEntity.getPost();
         long replyEntityGroup = replyEntity.getReplyGroup();
@@ -110,7 +110,7 @@ public class ReplyService {
     public ReplyDto updateReply(ReplyDto replyDto) {
         Post postEntity = postRepository.findById(replyDto.getPostId()).orElse(null);
         if(postEntity == null)
-            throw new CustomException(ErrorCode.POST_NOT_EXISTS);
+            throw new CustomException(ErrorCode.POST_NOT_FOUND);
 
         List<Reply> postReplyList = postEntity.getReplyList();
         for(Reply eachReply : postReplyList) {

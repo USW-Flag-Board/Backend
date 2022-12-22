@@ -1,5 +1,7 @@
-package com.FlagHome.backend.v1.member.mail;
+package com.FlagHome.backend.v1.member.mail.service;
 
+import com.FlagHome.backend.v1.member.mail.MailType;
+import com.FlagHome.backend.v1.member.mail.dto.MailRequest;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

@@ -8,16 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateRequest {
+public class CheckEmailRequest {
     @ApiModelProperty(value = "이메일")
     private String email;
-
-    @ApiModelProperty(value = "자기소개")
-    private String bio;
-
-    @ApiModelProperty(value = "핸드폰 번호")
-    private String phoneNumber;
-
-//    @ApiModelProperty(value = "이미지")
-//    private String profileImg;
 }
