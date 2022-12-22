@@ -9,7 +9,6 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Builder
 @Getter
 @NoArgsConstructor
 public class Member extends BaseEntity {
@@ -32,9 +31,6 @@ public class Member extends BaseEntity {
     @Column(name = "student_id")
     private String studentId;
 
-    @Column
-    private String bio;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "major")
     private Major major;
@@ -54,15 +50,13 @@ public class Member extends BaseEntity {
     private Status status;
 
     @Builder
-    public Member(long id, String loginId, String password, String email, String bio, String name, String phoneNumber,
+    public Member(long id, String loginId, String password, String email, String name,
                   String studentId, Major major, Role role, Status status) {
         this.id = id;
         this.loginId = loginId;
         this.password = password;
         this.email = email;
-        this.bio = bio;
         this.name = name;
-        this.phoneNumber = phoneNumber;
         this.studentId = studentId;
         this.major = major;
         this.role = role;

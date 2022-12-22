@@ -43,15 +43,20 @@ public class ReplyService {
                                 .replyDepth(replyDto.getReplyDepth())
                                 .status(Status.ON)
                                 .build();
-        replyRepository.save(replyEntity);
 
-        replyDto.setId(replyEntity.getId());
+        List<Reply> replyList = foundPost.getReplyList();
+        replyList.add(replyEntity);
+
         return replyDto;
     }
 
     @Transactional
     public List<ReplyDto> findReplies(Long postId) {
-        List<Reply> foundReplyEntities = replyRepository.findByPostId(postId);
+        Post foundPost = postRepository.findById(postId).orElse(null);
+        if(foundPost == null)
+            throw new CustomException(ErrorCode.POST_NOT_EXISTS);
+
+        List<Reply> foundReplyEntities = foundPost.getReplyList();
         List<ReplyDto> replyDtoList = new LinkedList<>();
         for(Reply replyEntity : foundReplyEntities)
             replyDtoList.add(new ReplyDto(replyEntity));
@@ -65,40 +70,55 @@ public class ReplyService {
         if(replyEntity == null)
             throw new CustomException(ErrorCode.REPLY_NOT_EXISTS);
 
+        Post postEntity = replyEntity.getPost();
         long replyEntityGroup = replyEntity.getReplyGroup();
-        long postId = replyEntity.getPost().getId();
 
+        List<Reply> allReplies = postEntity.getReplyList();
         if(replyEntity.getReplyDepth() == 0) {
-            List<Reply> allReplies = replyRepository.findByPostId(replyEntity.getPost().getId());
-            List<Reply> deleteCandidate = new LinkedList<>();
-            for(Reply eachReply : allReplies) {
+            for(int i = 0; i < allReplies.size(); ++i) {
+                Reply eachReply = allReplies.get(i);
                 long eachReplyGroup = eachReply.getReplyGroup();
                 if(replyEntityGroup < eachReplyGroup)
                     eachReply.setReplyGroup(eachReplyGroup - 1);
-                else if(replyEntityGroup == eachReplyGroup)
-                    deleteCandidate.add(eachReply);
+                else if(replyEntityGroup == eachReplyGroup) {
+                    eachReply.setPost(null);
+                    allReplies.set(i, null);
+                }
             }
-            replyRepository.deleteAll(deleteCandidate);
         }
         else {
-            List<Reply> sameGroupReplies = replyRepository.findByPostIdAndReplyGroup(postId, replyEntityGroup);
             long replyEntityOrder = replyEntity.getReplyOrder();
-            for(Reply eachReply : sameGroupReplies) {
-                long eachReplyOrder = eachReply.getReplyOrder();
-                if(replyEntityOrder < eachReplyOrder)
-                    eachReply.setReplyOrder(eachReplyOrder - 1);
+            int deleteTargetIndex = 0;
+            for(int i = 0; i < allReplies.size(); ++i) {
+                Reply eachReply = allReplies.get(i);
+                if(replyEntityGroup == eachReply.getReplyGroup()) {
+                    long eachReplyOrder = eachReply.getReplyOrder();
+                    if(replyEntityOrder < eachReplyOrder)
+                        eachReply.setReplyOrder(eachReplyOrder - 1);
+                }
+
+                if(eachReply == replyEntity) {
+                    eachReply.setPost(null);
+                    deleteTargetIndex = i;
+                }
             }
-            replyRepository.delete(replyEntity);
+            allReplies.set(deleteTargetIndex, null);
         }
     }
 
     @Transactional
     public ReplyDto updateReply(ReplyDto replyDto) {
-        Reply reply = replyRepository.findById(replyDto.getId()).orElse(null);
-        if(reply == null)
-            throw new CustomException(ErrorCode.REPLY_NOT_EXISTS);
+        Post postEntity = postRepository.findById(replyDto.getPostId()).orElse(null);
+        if(postEntity == null)
+            throw new CustomException(ErrorCode.POST_NOT_EXISTS);
 
-        reply.setContent(replyDto.getContent());
+        List<Reply> postReplyList = postEntity.getReplyList();
+        for(Reply eachReply : postReplyList) {
+            if(eachReply.getId() == replyDto.getId()) {
+                eachReply.setContent(replyDto.getContent());
+                break;
+            }
+        }
 
         return replyDto;
     }
