@@ -7,7 +7,6 @@ import com.FlagHome.backend.v1.member.Role;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
