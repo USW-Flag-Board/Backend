@@ -6,7 +6,7 @@ import com.FlagHome.backend.global.util.RandomNumberGenerator;
 import com.FlagHome.backend.v1.Status;
 import com.FlagHome.backend.v1.member.dto.UpdatePasswordRequest;
 import com.FlagHome.backend.v1.member.entity.Member;
-import com.FlagHome.backend.v1.member.mail.MailService;
+import com.FlagHome.backend.v1.member.mail.service.MailService;
 import com.FlagHome.backend.v1.member.mail.MailType;
 import com.FlagHome.backend.v1.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
