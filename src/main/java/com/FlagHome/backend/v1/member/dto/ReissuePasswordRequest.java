@@ -8,7 +8,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class EmailCheckRequest {
+public class ReissuePasswordRequest {
+    @ApiModelProperty(value = "로그인 아이디")
+    private String loginId;
+
     @ApiModelProperty(value = "이메일")
     private String email;
 }
