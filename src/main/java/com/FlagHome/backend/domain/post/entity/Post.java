@@ -2,7 +2,7 @@ package com.FlagHome.backend.domain.post.entity;
 
 import com.FlagHome.backend.domain.BaseEntity;
 import com.FlagHome.backend.domain.Status;
-import com.FlagHome.backend.domain.post.Category;
+import com.FlagHome.backend.domain.category.entity.Category;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.reply.entity.Reply;
 import lombok.*;
@@ -34,8 +34,8 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reply> replyList;
 
-    @Column(name = "category")
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "category_id")
     private Category category;
 
     @Column(name = "status")
