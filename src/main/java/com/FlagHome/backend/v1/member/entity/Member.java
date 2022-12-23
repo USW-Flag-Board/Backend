@@ -49,21 +49,17 @@ public class Member extends BaseEntity {
     @Column(name = "status")
     private Status status;
 
-    @Column(name = "자기소개")
-    private String bio;
-
     @Builder
     public Member(long id, String loginId, String password, String email, String name,
-                  String studentId, String bio, String phoneNumber, Role role, Status status) {
+                  String studentId, Major major, Role role, Status status) {
         this.id = id;
         this.loginId = loginId;
         this.password = password;
         this.email = email;
         this.name = name;
         this.studentId = studentId;
-        this.bio = bio;
+        this.major = major;
         this.role = role;
         this.status = status;
-        this.phoneNumber = phoneNumber;
     }
 }

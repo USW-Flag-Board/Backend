@@ -10,9 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-
-@Transactional
-@Repository
 public interface MemberRepository extends JpaRepository<Member, Long>, CustomMemberRepository {
     Optional<Member> findById(Long memberId);
 
@@ -23,13 +20,4 @@ public interface MemberRepository extends JpaRepository<Member, Long>, CustomMem
     boolean existsByEmail(String email);
 
     Optional<Member> findByEmail(String email);
-
-    @Query("update Member m set m.email = :email, m.bio = :bio, m.phoneNumber = :phoneNumber WHERE m.id = :memberId")
-    void setUpdateRequest(
-            @Param("memberId") Long id,
-            @Param("email") String email,
-            @Param("bio") String bio,
-            @Param("phoneNumber") String phoneNumber
-        );
-
-    }
+}
