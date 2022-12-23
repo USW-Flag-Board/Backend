@@ -1,7 +1,6 @@
 package com.FlagHome.backend.domain.post.dto;
 
 import com.FlagHome.backend.domain.Status;
-//import com.FlagHome.backend.domain.post.Category;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.reply.dto.ReplyDto;
 import com.FlagHome.backend.domain.reply.entity.Reply;
@@ -34,7 +33,6 @@ public class PostDto {
         this.title = postEntity.getTitle();
         this.content = postEntity.getContent();
         this.categoryId = postEntity.getCategory().getId();
-//        this.category = postEntity.getCategory();
         this.status = postEntity.getStatus();
         this.viewCount = postEntity.getViewCount();
 
