@@ -18,7 +18,10 @@ public class Category {
     private Long id;
 
     @Column
-    private String name;
+    private String koreanName;
+
+    @Column
+    private String englishName;
 
     @Column
     private Long categoryDepth;
