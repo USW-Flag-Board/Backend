@@ -73,7 +73,6 @@ class PostControllerTest {
                 .categoryDepth(1L)
                 .parent(dummyCategory1)
                 .build());
-
     }
 
     @Test
@@ -87,7 +86,6 @@ class PostControllerTest {
         postDto.setContent(content);
         postDto.setUserId(dummyMember.getId());
         postDto.setCategoryId(1L);
-        //postDto.setCategory(Category.free);
 
         mockMvc.perform(post(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -144,8 +142,6 @@ class PostControllerTest {
         String changedContent = "바뀐내용";
 
         Category changedCategory = dummyCategory2;
-
-        //Category changedCategory = Category.free;
 
         PostDto changedPostDto = new PostDto(postEntity);
         changedPostDto.setTitle(changedTitle);
