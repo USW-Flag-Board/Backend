@@ -2,6 +2,7 @@ package com.FlagHome.backend.v1.member.service;
 
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
+import com.FlagHome.backend.v1.member.dto.UpdateProfileRequest;
 import com.FlagHome.backend.v1.member.entity.Member;
 import com.FlagHome.backend.v1.member.mail.MailService;
 import com.FlagHome.backend.v1.member.mail.MailType;
@@ -87,5 +88,9 @@ public class MemberService {
         if (!StringUtils.equals(email.substring(separateIndex), "@suwon.ac.kr")) {
             throw new CustomException(ErrorCode.NOT_USW_EMAIL);
         }
+    }
+
+    public void updateProfile(Long memberId, UpdateProfileRequest updateProfileRequest) {
+        Member member = memberRepository.updateProfile(memberId, updateProfileRequest);
     }
 }
