@@ -4,8 +4,7 @@ import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.v1.category.dto.CategoryDto;
 import com.FlagHome.backend.v1.category.entity.Category;
-import com.FlagHome.backend.v1.category.entity.CategoryResult;
-import com.FlagHome.backend.v1.category.repository.CategoryCustomRepository;
+import com.FlagHome.backend.v1.category.dto.CategoryResultDto;
 import com.FlagHome.backend.v1.category.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +18,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CategoryService {
     private CategoryRepository categoryRepository;
-    private CategoryCustomRepository categoryCustomRepository;
-
 
     @Autowired
-    public CategoryService(CategoryRepository categoryRepository, CategoryCustomRepository categoryCustomRepository) {
+    public CategoryService(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
-        this.categoryCustomRepository = categoryCustomRepository;
     }
 
     @Transactional
@@ -71,10 +67,10 @@ public class CategoryService {
     }
 
     @Transactional
-    public List<CategoryResult> getCategories () {
+    public List<CategoryResultDto> getCategories () {
 
-        List<CategoryResult> categories = categoryCustomRepository
-                .findAll().stream().map(CategoryResult::of)
+        List<CategoryResultDto> categories = categoryRepository
+                .findAll().stream().map(CategoryResultDto::of)
                 .collect(Collectors.toList());
 
         return categories;

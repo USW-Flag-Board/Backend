@@ -1,6 +1,7 @@
-package com.FlagHome.backend.v1.category.entity;
+package com.FlagHome.backend.v1.category.dto;
 
 
+import com.FlagHome.backend.v1.category.entity.Category;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,19 +12,18 @@ import java.util.stream.Collectors;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryResult{
+public class CategoryResultDto {
     private Long id;
     private String name;
     private Long depth;
-    private List<CategoryResult> children;
+    private List<CategoryResultDto> children;
 
-    public static CategoryResult of(Category category) {
-        return new CategoryResult(
+    public static CategoryResultDto of(Category category) {
+        return new CategoryResultDto(
                 category.getId(),
                 category.getName(),
                 category.getCategoryDepth(),
-                category.getChildren().stream().map(CategoryResult::of).collect(Collectors.toList())
+                category.getChildren().stream().map(CategoryResultDto::of).collect(Collectors.toList())
         );
     }
-
 }
