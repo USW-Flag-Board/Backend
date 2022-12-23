@@ -85,7 +85,7 @@ class PostControllerTest {
         postDto.setTitle(title);
         postDto.setContent(content);
         postDto.setUserId(dummyMember.getId());
-        postDto.setCategoryId(1L);
+        postDto.setCategoryId(dummyCategory1.getId());
 
         mockMvc.perform(post(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON)
