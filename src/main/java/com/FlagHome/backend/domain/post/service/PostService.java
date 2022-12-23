@@ -56,6 +56,7 @@ public class PostService {
         Post postEntity = postRepository.findById(postDto.getId()).orElse(null);
         if(postEntity == null)
             throw new CustomException(ErrorCode.POST_NOT_FOUND);
+
         Category categoryEntity = categoryRepository.findById(postDto.getCategoryId()).orElse(null);
         if(categoryEntity == null)
             throw new CustomException(ErrorCode.CATEGORY_NOT_EXISTS);
