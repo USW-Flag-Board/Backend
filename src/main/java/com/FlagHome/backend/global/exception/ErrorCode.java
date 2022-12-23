@@ -21,6 +21,9 @@ public enum ErrorCode {
     NOT_USW_EMAIL(HttpStatus.BAD_REQUEST, "수원대학교 웹 메일 주소가 아닙니다."),
     PASSWORD_IS_SAME(HttpStatus.BAD_REQUEST, "기존과 같은 비밀번호는 사용할 수 없습니다."),
     CATEGORY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "존재하지 않는 카테고리 입니다."),
+    INVALID_PASSWORD(HttpStatus.BAD_REQUEST,
+            "사용할 수 없는 비밀번호 입니다. (8~20자 이내 영문, 숫자, 특수문자를 모두 포함)"),
+    CERTIFICATION_NOT_MATCH(HttpStatus.BAD_REQUEST, "인증번호가 일치하지 않습니다."),
 
     /** 401 - UNAUTHORIZED  */
     UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, "로그인이 필요한 기능입니다."),
@@ -32,6 +35,7 @@ public enum ErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다."),
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 게시물 입니다."),
     REPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 댓글 입니다."),
+    AUTH_TARGET_NOT_FOUND(HttpStatus.NOT_FOUND, "가입 대상이 존재하지 않습니다."),
 
     /** 500 - INTERNAL_SERVER_ERROR */
     FILE_CONVERT_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "파일 변환에 실패했습니다.")
