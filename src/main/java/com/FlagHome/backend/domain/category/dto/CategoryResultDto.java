@@ -14,14 +14,16 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class CategoryResultDto {
     private Long id;
-    private String name;
+    private String koreanName;
+    private String englishName;
     private Long depth;
     private List<CategoryResultDto> children;
 
     public static CategoryResultDto of(Category category) {
         return new CategoryResultDto(
                 category.getId(),
-                category.getName(),
+                category.getKoreanName(),
+                category.getEnglishName(),
                 category.getCategoryDepth(),
                 category.getChildren().stream().map(CategoryResultDto::of).collect(Collectors.toList())
         );

@@ -36,7 +36,8 @@ public class CategoryService {
         }
 
         Category category = Category.builder()
-                .name(categoryDto.getName())
+                .koreanName(categoryDto.getKoreanName())
+                .englishName(categoryDto.getEnglishName())
                 .parent(parentCategory)
                 .categoryDepth(categoryDto.getCategoryDepth())
                 .build();
@@ -60,7 +61,8 @@ public class CategoryService {
         if (categoryDto.getCategoryDepth() > 0){
             parentCategory = categoryRepository.findById(categoryDto.getParentId()).orElse(null);
         }
-        category.setName(categoryDto.getName());
+        category.setKoreanName(categoryDto.getKoreanName());
+        category.setEnglishName(categoryDto.getEnglishName());
         category.setParent(parentCategory);
         category.setCategoryDepth(categoryDto.getCategoryDepth());
 
