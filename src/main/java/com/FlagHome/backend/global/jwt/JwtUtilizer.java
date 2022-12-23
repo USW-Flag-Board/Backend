@@ -2,7 +2,7 @@ package com.FlagHome.backend.global.jwt;
 
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
-import com.FlagHome.backend.v1.token.dto.TokenResponse;
+import com.FlagHome.backend.domain.token.dto.TokenResponse;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
