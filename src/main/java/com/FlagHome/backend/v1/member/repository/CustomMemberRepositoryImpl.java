@@ -1,8 +1,6 @@
 package com.FlagHome.backend.v1.member.repository;
 
 import com.FlagHome.backend.v1.Status;
-import com.FlagHome.backend.v1.member.dto.UpdateProfileRequest;
-import com.FlagHome.backend.v1.member.entity.Member;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,18 +33,5 @@ public class CustomMemberRepositoryImpl implements CustomMemberRepository {
                 .set(member.password, passwordEncoder.encode(newPassword))
                 .where(member.id.eq(memberId))
                 .execute();
-    }
-
-    @Override
-    public Member updateProfile(Long memberId, UpdateProfileRequest updateProfileRequest) {
-        queryFactory
-                .update(member)
-                .set(member.major, updateProfileRequest.getMajor())
-                .set(member.bio, updateProfileRequest.getBio())
-                .set(member.phoneNumber, updateProfileRequest.getPhoneNumber())
-                .set(member.studentId, updateProfileRequest.getStudentId())
-                .where(member.id.eq(memberId))
-                .execute();
-        return null;
     }
 }
