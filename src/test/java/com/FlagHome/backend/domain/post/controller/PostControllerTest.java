@@ -1,8 +1,9 @@
 package com.FlagHome.backend.domain.post.controller;
 
+import com.FlagHome.backend.domain.category.entity.Category;
+import com.FlagHome.backend.domain.category.repository.CategoryRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
-import com.FlagHome.backend.domain.post.Category;
 import com.FlagHome.backend.domain.post.dto.PostDto;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
@@ -40,12 +41,19 @@ class PostControllerTest {
     private MemberRepository memberRepository;
     @Autowired
     private PostRepository postRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
 
     private Member dummyMember;
+
+    private Category dummyCategory1, dummyCategory2;
+
 
     @BeforeEach
     public void testSetting() {
@@ -54,6 +62,18 @@ class PostControllerTest {
                 .password("123123")
                 .email("gildong@naver.com")
                 .studentId("2").build());
+        dummyCategory1 = categoryRepository.save(Category.builder()
+                        .koreanName("일반게시판")
+                        .englishName("board")
+                        .categoryDepth(0L)
+                .build());
+        dummyCategory2 = categoryRepository.save(Category.builder()
+                .koreanName("활동")
+                .englishName("activity")
+                .categoryDepth(1L)
+                .parent(dummyCategory1)
+                .build());
+
     }
 
     @Test
@@ -66,7 +86,8 @@ class PostControllerTest {
         postDto.setTitle(title);
         postDto.setContent(content);
         postDto.setUserId(dummyMember.getId());
-        postDto.setCategory(Category.free);
+        postDto.setCategoryId(1L);
+        //postDto.setCategory(Category.free);
 
         mockMvc.perform(post(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -93,6 +114,7 @@ class PostControllerTest {
                 .viewCount(0L)
                 .replyList(new ArrayList<>())
                 .member(dummyMember)
+                .category(dummyCategory2)
                 .build());
 
         mockMvc.perform(get(baseUrl + "?postId=" + postEntity.getId()))
@@ -107,7 +129,7 @@ class PostControllerTest {
     public void updatePostTest() throws Exception {
         String originalTitle = "원래제목";
         String originalContent = "원래내용";
-        Category originalCategory = Category.study;
+        Category originalCategory = dummyCategory1;
 
         Post postEntity = postRepository.save(Post.builder()
                                         .title(originalTitle)
@@ -120,12 +142,15 @@ class PostControllerTest {
 
         String changedTitle = "바뀐제목";
         String changedContent = "바뀐내용";
-        Category changedCategory = Category.free;
+
+        Category changedCategory = dummyCategory2;
+
+        //Category changedCategory = Category.free;
 
         PostDto changedPostDto = new PostDto(postEntity);
         changedPostDto.setTitle(changedTitle);
         changedPostDto.setContent(changedContent);
-        changedPostDto.setCategory(changedCategory);
+        changedPostDto.setCategoryId(changedCategory.getId());
 
         String jsonBody = objectMapper.writeValueAsString(changedPostDto);
 
@@ -149,7 +174,7 @@ class PostControllerTest {
         Post postEntity = postRepository.save(Post.builder()
                         .title("삭제될 게시글 제목")
                         .content("삭제될 게시글 내용")
-                        .category(Category.free)
+                        .category(dummyCategory2)
                         .member(dummyMember)
                         .build());
 
