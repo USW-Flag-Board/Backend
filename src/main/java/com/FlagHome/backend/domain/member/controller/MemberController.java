@@ -44,4 +44,11 @@ public class MemberController {
         memberService.withdraw(SecurityUtils.getMemberId(), withdrawRequest.getPassword());
         return ResponseEntity.ok().build();
     }
+
+    @PutMapping("/profile")
+    @ApiOperation(value = "프로필 업데이트")
+    public ResponseEntity<Void> updateProfile(@RequestBody UpdateProfileRequest updateProfileRequest) {
+        memberService.updateProfile(SecurityUtils.getMemberId(), updateProfileRequest);
+        return ResponseEntity.ok().build();
+    }
 }
