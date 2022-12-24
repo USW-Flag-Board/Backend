@@ -1,7 +1,5 @@
 package com.FlagHome.backend.domain.member.controller;
 
-import com.FlagHome.backend.domain.auth.dto.CheckEmailRequest;
-import com.FlagHome.backend.domain.auth.dto.CheckIdRequest;
 import com.FlagHome.backend.global.util.SecurityUtils;
 import com.FlagHome.backend.domain.member.dto.*;
 import com.FlagHome.backend.domain.member.service.MemberService;
