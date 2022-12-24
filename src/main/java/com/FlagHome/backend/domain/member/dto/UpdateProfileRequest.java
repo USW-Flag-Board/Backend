@@ -2,7 +2,11 @@ package com.FlagHome.backend.domain.member.dto;
 
 import com.FlagHome.backend.domain.member.Major;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
+import lombok.Getter;
 
+@Getter
+@Builder
 public class UpdateProfileRequest {
 
     @ApiModelProperty(value = "자기소개")
@@ -16,4 +20,5 @@ public class UpdateProfileRequest {
 
     @ApiModelProperty(value = "학번")
     private String studentId;
+
 }
