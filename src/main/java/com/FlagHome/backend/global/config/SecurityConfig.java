@@ -6,6 +6,7 @@ import com.FlagHome.backend.global.jwt.JwtUtilizer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -20,12 +21,6 @@ public class SecurityConfig {
     private final JwtUtilizer jwtUtilizer;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-
-    private static final String[] whiteListURI = {
-            "/**",
-//            "/api/v1/auth/login", "/api/v1/auth/signup"
-    };
-//    private static final String[] needJWTFilter = { "/" };
 
     @Bean
     public BCryptPasswordEncoder encodPassword() {
@@ -44,12 +39,17 @@ public class SecurityConfig {
                 .accessDeniedHandler(jwtAccessDeniedHandler)
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint);
 
+        http.authorizeRequests()
+                .antMatchers("/api/auth/**").permitAll()
+                .antMatchers("/api/post/**").hasRole("USER")
+                .antMatchers("/api/reply/**").hasRole("USER")
+                .antMatchers("/api/file/**").hasRole("USER")
+                .antMatchers(HttpMethod.PUT, "/api/member/**").hasRole("USER")
+                .antMatchers(HttpMethod.POST, "/api/member/**").permitAll()
+                .anyRequest().authenticated();
+
         http
                 .apply(new JwtSecurityConfig(jwtUtilizer));
-
-        http.authorizeRequests()
-                .antMatchers(whiteListURI).permitAll()
-                .anyRequest().authenticated();
 
         return http.build();
     }
