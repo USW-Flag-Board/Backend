@@ -1,14 +1,6 @@
-## 기여한 사람
+## 프로젝트 설명
 
-| Git                                           | 기능  |
-|-----------------------------------------------|-----|
-| [Hejow](https://github.com/Hejow)             | User |
-| [K-Diger](https://github.com/K-Diger)         |     |
-| [sdoaolo](https://github.com/sdoaolo)         |  Reply, Post  |
-| [woooang](https://github.com/woooang)          |     |
-| [yabueng0219](https://github.com/yabueng0219) |     |
-| [yeongchul](https://github.com/yeongchul)     |     |
-| [gmltmd23](https://github.com/gmltmd23)     | Reply, Post  |
+* 수원대학교 학생 및 Flag 동아리 회원을 위한 게시판 프로젝트 입니다.
 
 
 ---

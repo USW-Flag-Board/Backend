@@ -53,7 +53,7 @@ dependencies {
     runtimeOnly('io.jsonwebtoken:jjwt-jackson:0.11.5')
 
     // Spring Scheduler
-    // implementation 'org.springframework.boot:spring-boot-starter-quartz'
+    implementation 'org.springframework.boot:spring-boot-starter-quartz'
 
     // Spring Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
