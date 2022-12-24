@@ -109,7 +109,8 @@ public class AuthService {
 
     private void validatePassword(String password) {
         Pattern passwordPattern = Pattern
-                .compile("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d~!@#$%^&*()+|=]{8,20}$");
+                .compile("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,20}$");
+
         Matcher matcher = passwordPattern.matcher(password);
 
         if (!matcher.find()) {
