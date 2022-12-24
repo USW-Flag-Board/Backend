@@ -7,5 +7,5 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @Repository
-public interface ActivityRepository extends JpaRepository<Activity, Long> {
+public interface ActivityRepository extends JpaRepository<Activity, Long>, ActivityRepositoryCustom {
 }
