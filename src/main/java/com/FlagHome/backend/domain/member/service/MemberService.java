@@ -1,5 +1,6 @@
 package com.FlagHome.backend.domain.member.service;
 
+import com.FlagHome.backend.domain.member.dto.UpdateProfileRequest;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.util.RandomNumberGenerator;
@@ -79,6 +80,11 @@ public class MemberService {
 
         // dirty checking
         member.updatePassword(passwordEncoder.encode(updatePasswordRequest.getNewPassword()));
+    }
+
+    @Transactional
+    public void updateProfile(Long id, UpdateProfileRequest updateProfileRequest) {
+        memberRepository.updateProfile(id, updateProfileRequest);
     }
 
     private void validatePassword(Long memberId, String password) {
