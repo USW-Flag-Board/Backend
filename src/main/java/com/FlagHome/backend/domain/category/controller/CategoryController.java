@@ -1,7 +1,10 @@
 package com.FlagHome.backend.domain.category.controller;
 
 import com.FlagHome.backend.domain.category.dto.CategoryDto;
+import com.FlagHome.backend.domain.category.dto.CategoryResultDto;
+import com.FlagHome.backend.domain.category.entity.Category;
 import com.FlagHome.backend.domain.category.service.CategoryService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,14 +12,10 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/categories")
+@RequiredArgsConstructor
 public class CategoryController {
 
     private final CategoryService categoryService;
-
-    @Autowired
-    public CategoryController(CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
 
     @PostMapping
     public ResponseEntity createCategory(@RequestBody CategoryDto categoryDto) {
@@ -24,11 +23,11 @@ public class CategoryController {
         return new ResponseEntity(HttpStatus.CREATED); //BODY 던져주기!
     }
 
-    @PutMapping("/{categoryId}")
+    @PatchMapping("/{categoryId}")
     public ResponseEntity updateCategory(@PathVariable long categoryId,
                                          @RequestBody CategoryDto categoryDto) {
         categoryDto.setId(categoryId);
-        categoryService.updateCategory(categoryDto);
+        Category result =categoryService.updateCategory(categoryDto);
         return new ResponseEntity(HttpStatus.OK);
     }
 
