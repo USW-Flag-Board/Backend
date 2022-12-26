@@ -5,14 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Transactional
 @Repository
-public interface ActivityRepository extends JpaRepository<Activity, Long>, ActivityRepositoryCustom {
+public interface ActivityRepository extends JpaRepository<Activity, Long> {
 
-    static void deleteById(Activity activityId) {
-    }
-
-    Optional<Activity> findByID(Long activityId);
 }
