@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain.member.mail.dto;
+package com.FlagHome.backend.domain.mail.dto;
 
 import com.amazonaws.services.simpleemail.model.*;
 import lombok.Builder;
