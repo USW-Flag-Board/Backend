@@ -2,7 +2,7 @@ package com.FlagHome.backend.global.util;
 
 import java.security.SecureRandom;
 
-public class RandomNumberGenerator {
+public class RandomGenerator {
     private static final SecureRandom RANDOM = new SecureRandom();
 
     /**

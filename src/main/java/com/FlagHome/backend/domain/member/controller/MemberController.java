@@ -14,6 +14,14 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
     private final MemberService memberService;
 
+    // 활동, 잔디 기능 필요!!
+    @GetMapping("/{id}")
+    @ApiOperation(value = "멤버 정보 보기")
+    public ResponseEntity<Void> getProfile(@RequestParam long id) {
+
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/find-id")
     @ApiOperation(value = "아이디 찾기", notes = "요청 시 아이디를 찾아서 메일로 전송")
     public ResponseEntity<Void> findId(@RequestBody FindIdRequest findIdRequest) {
