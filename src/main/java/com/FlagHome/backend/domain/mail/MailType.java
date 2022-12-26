@@ -1,5 +1,8 @@
-package com.FlagHome.backend.domain.member.mail;
+package com.FlagHome.backend.domain.mail;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 public enum MailType {
     AUTH_EMAIL("[FLAG] 재학생 이메일 인증 요청입니다.",
             "<div>재학생 인증이 완료되면 아이디/비밀번호 찾기 기능을 사용하실 수 있습니다.<br>" +
@@ -12,11 +15,6 @@ public enum MailType {
             "<div>로그인을 위한 임시비밀번호가 발급되었습니다.<br>" +
                     "로그인 후 반드시 비밀번호를 변경해주시기 바랍니다.<br>" +
                     "임시 비밀번호는 다음과 같습니다.</div>");
-
-    MailType(String subject, String content) {
-        this.subject = subject;
-        this.content = content;
-    }
 
     private final String subject;
     private final String content;

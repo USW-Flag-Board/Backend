@@ -15,6 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+
 import static org.assertj.core.api.Assertions.*;
 
 @Transactional
@@ -28,6 +30,9 @@ public class MemberServiceTest {
 
     @Autowired
     private MemberService memberService;
+
+    @Autowired
+    private EntityManager entityManager;
     
     @Nested
     @DisplayName("유저 탈퇴 테스트")
@@ -154,12 +159,12 @@ public class MemberServiceTest {
 
         // when
         memberService.updateProfile(memberEntity.getId(), updateProfileRequest);
+        entityManager.clear();
 
         // then 멤버정보가 제대로 수정되었는지 확인, 수정할 멤버랑 수정된 멤버가 같은 멤버인지 확인
         Member member = memberRepository.findById(memberEntity.getId()).get();
         assertThat(member.getId()).isEqualTo(memberEntity.getId());
         assertThat(member.getBio()).isNotEqualTo(memberEntity.getBio());
         assertThat(member.getPhoneNumber()).isNotEqualTo(memberEntity.getPhoneNumber());
-
     }
 }
