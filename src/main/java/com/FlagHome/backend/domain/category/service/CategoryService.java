@@ -12,27 +12,20 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
-    private CategoryRepository categoryRepository;
-
-    @Autowired
-    public CategoryService(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
-    }
-
+    private final CategoryRepository categoryRepository;
     @Transactional
     public void createCategory (CategoryDto categoryDto) {
 
         Category parentCategory = null;
 
         if(categoryDto.getCategoryDepth()!=0){
-            parentCategory = categoryRepository.findById(categoryDto.getParentId()).orElse(null);
-            if(parentCategory == null)
-                throw new CustomException(ErrorCode.CATEGORY_NOT_EXISTS);
+            parentCategory = findVerifiedCategory(categoryDto.getParentId());
         }
 
         Category category = Category.builder()
@@ -50,21 +43,23 @@ public class CategoryService {
     }
 
     @Transactional
-    public void updateCategory (CategoryDto categoryDto) {
+    public Category updateCategory (CategoryDto categoryDto) {
 
-        Category category = categoryRepository.findById(categoryDto.getId()).orElse(null);
-        if(category == null) {
-            throw new CustomException(ErrorCode.CATEGORY_NOT_EXISTS);
-        }
+        Category category = findVerifiedCategory(categoryDto.getId());
 
-        Category parentCategory = null;
-        if (categoryDto.getCategoryDepth() > 0){
-            parentCategory = categoryRepository.findById(categoryDto.getParentId()).orElse(null);
-        }
-        category.setKoreanName(categoryDto.getKoreanName());
-        category.setEnglishName(categoryDto.getEnglishName());
-        category.setParent(parentCategory);
-        category.setCategoryDepth(categoryDto.getCategoryDepth());
+
+        Optional.ofNullable(categoryDto.getKoreanName())
+                .ifPresent(koreanName -> category.setKoreanName(koreanName));
+        Optional.ofNullable(categoryDto.getEnglishName())
+                .ifPresent(englishName -> category.setEnglishName(englishName));
+        Optional.ofNullable(categoryDto.getCategoryDepth())
+                .ifPresent(depth -> category.setCategoryDepth(depth));
+        Optional.ofNullable(categoryDto.getParentId())
+                .ifPresent(parent -> category.setParent(
+                        findVerifiedCategory(categoryDto.getParentId())
+                ));
+
+        return categoryRepository.save(category);
 
     }
 
@@ -72,7 +67,8 @@ public class CategoryService {
     public List<CategoryResultDto> getCategories () {
 
         List<CategoryResultDto> categories = categoryRepository
-                .findAll().stream().map(CategoryResultDto::of)
+                .findAll().stream()
+                .map(CategoryResultDto::of)
                 .collect(Collectors.toList());
 
         return categories;
@@ -80,6 +76,13 @@ public class CategoryService {
 
     @Transactional
     public void deleteCategory (long categoryId) {
-        categoryRepository.deleteById(categoryId);
+        Category category = findVerifiedCategory(categoryId);
+        categoryRepository.delete(category);
+    }
+
+    private Category findVerifiedCategory(long categoryId) {
+        Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
+        Category findCategory = optionalCategory.orElseThrow(()-> new CustomException(ErrorCode.CATEGORY_NOT_EXISTS));
+        return findCategory;
     }
 }
