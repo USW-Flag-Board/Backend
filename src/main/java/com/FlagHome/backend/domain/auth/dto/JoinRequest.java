@@ -1,16 +1,12 @@
 package com.FlagHome.backend.domain.auth.dto;
 
-import com.FlagHome.backend.domain.Status;
-import com.FlagHome.backend.domain.auth.entity.AuthMember;
+import com.FlagHome.backend.domain.auth.JoinType;
 import com.FlagHome.backend.domain.member.Major;
-import com.FlagHome.backend.domain.member.Role;
-import com.FlagHome.backend.domain.member.entity.Member;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Getter
 @Builder
@@ -34,4 +30,7 @@ public class JoinRequest {
 
     @ApiModelProperty(example = "19017041")
     private String studentId;
+
+    @ApiModelProperty(value = "유저 가입 구분", notes = "일반 유저 : NORMAL, 동아리원 : CLUB")
+    private JoinType joinType;
 }
