@@ -7,7 +7,9 @@ import java.util.List;
 
 @Repository
 public interface AuthRepositoryCustom {
-    List<AuthMember> findAllNotProceedAuthMember();
+    List<AuthMember> getAllNotProceedAuthMember();
 
-    void deleteNotProceedAuthMember(List<AuthMember> authMemberList);
+    List<AuthMember> getAllAuthorizedAuthMember();
+
+    void deleteAllNotProceedAuthMember(List<AuthMember> authMemberList);
 }

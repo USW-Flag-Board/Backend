@@ -39,7 +39,7 @@ public class MemberService {
         Member member = findMemberByEmail(email);
 
         if (!StringUtils.equals(member.getName(), name)) {
-            throw new CustomException(ErrorCode.NAME_EMAIL_NOT_MATCH);
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
         sendFindIdResult(member.getLoginId(), email);
@@ -55,7 +55,7 @@ public class MemberService {
         Member member = findMemberByEmail(email);
 
         if (!StringUtils.equals(member.getLoginId(), loginId)) {
-            throw new CustomException(ErrorCode.ID_EMAIL_NOT_MATCH);
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
         String newPassword = RandomGenerator.getRandomPassword();
