@@ -1,6 +1,7 @@
 package com.FlagHome.backend.domain.auth.entity;
 
 import com.FlagHome.backend.domain.Status;
+import com.FlagHome.backend.domain.auth.JoinType;
 import com.FlagHome.backend.domain.auth.dto.JoinRequest;
 import com.FlagHome.backend.domain.member.Major;
 import com.FlagHome.backend.domain.member.Role;
@@ -42,6 +43,13 @@ public class AuthMember {
     @Enumerated(value = EnumType.STRING)
     private Major major;
 
+    @Column(name = "join_type")
+    @Enumerated(value = EnumType.STRING)
+    private JoinType joinType;
+
+    @Column
+    private boolean isAuthorizedClubMember;
+
     @Column
     private String certification;
 
@@ -56,8 +64,14 @@ public class AuthMember {
                 .email(joinRequest.getEmail())
                 .major(joinRequest.getMajor())
                 .studentId(joinRequest.getStudentId())
+                .joinType(joinRequest.getJoinType())
+                .isAuthorizedClubMember(false)
                 .certification(certification)
                 .createdAt(LocalDateTime.now())
                 .build();
+    }
+
+    public void updateAuthorizedTrue() {
+        this.isAuthorizedClubMember = true;
     }
 }

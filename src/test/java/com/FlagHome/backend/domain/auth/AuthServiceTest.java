@@ -1,15 +1,12 @@
 package com.FlagHome.backend.domain.auth;
 
-import com.FlagHome.backend.domain.auth.dto.JoinRequest;
 import com.FlagHome.backend.domain.auth.dto.LoginRequest;
-import com.FlagHome.backend.domain.auth.dto.SignUpResponse;
 import com.FlagHome.backend.domain.auth.service.AuthService;
-import com.FlagHome.backend.domain.member.Major;
 import com.FlagHome.backend.domain.member.Role;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
+import com.FlagHome.backend.domain.token.dto.TokenRequest;
 import com.FlagHome.backend.domain.token.dto.TokenResponse;
-import com.FlagHome.backend.domain.token.service.RefreshTokenService;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.jwt.JwtUtilizer;
 import org.junit.jupiter.api.DisplayName;
@@ -22,20 +19,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @SpringBootTest
 @Transactional
 public class AuthServiceTest {
-    private final String baseUri = "/api/auth";
     @Autowired
     private AuthService authService;
 
     @Autowired
     private MemberRepository memberRepository;
-
-    @Autowired
-    private RefreshTokenService refreshTokenService;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
@@ -141,95 +133,84 @@ public class AuthServiceTest {
 //
 //    }
 
-//    @Test
-//    @DisplayName("로그인 테스트")
-//    void loginTest() {
-//        // given
-//        String loginId = "gmlwh124";
-//        String password = "1234";
-//
-//        JoinRequest joinRequest = JoinRequest.builder()
-//                .loginId(loginId)
-//                .password(password)
-//                .name("문희조")
-//                .major(Major.컴퓨터SW)
-//                .studentId("19017041")
-//                .build();
-//
-//        Member signUpMember = joinRequest.toMember(passwordEncoder);
-//        memberRepository.saveAndFlush(signUpMember);
-//
-//        LoginRequest logInRequest = LoginRequest.builder()
-//                .loginID(loginId)
-//                .password(password)
-//                .build();
-//
-//        // when
-//        TokenResponse tokenResponse = authService.login(logInRequest);
-//
-//        // then : 정상적으로 발급되는 지, 유효한 지, 데이터가 일치하는 지
-//        assertThat(tokenResponse.getAccessToken()).isNotNull();
-//        assertThat(tokenResponse.getRefreshToken()).isNotNull();
-//        assertThat(tokenResponse.getAccessTokenExpiresIn()).isNotNull();
-//        assertThat(tokenResponse.getGrantType()).isEqualTo("Bearer");
-//
-//        String accessToken = tokenResponse.getAccessToken();
-//
-//        assertThat(jwtUtilizer.validateToken(accessToken)).isTrue();
-//
-//        Authentication authentication = jwtUtilizer.getAuthentication(accessToken);
-//        long memberId = Long.parseLong(authentication.getName());
-//        Member member = memberRepository.findByLoginId(loginId).get();
-//        assertThat(member.getId()).isEqualTo(memberId);
-//    }
+    @Test
+    @DisplayName("로그인 테스트")
+    void loginTest() {
+        // given
+        String loginId = "gmlwh124";
+        String password = "1234";
 
-//    @Test
-//    @DisplayName("토큰 재발급 테스트")
-//    void reIssueToken() {
-//        // given
-//        String loginId = "gmlwh124";
-//        String password = "1234";
-//
-//        JoinRequest joinRequest = JoinRequest.builder()
-//                .loginId(loginId)
-//                .password(password)
-//                .name("문희조")
-//                .major(Major.컴퓨터SW)
-//                .studentId("19017041")
-//                .build();
-//
-//        Member signUpMember =
-//                joinRequest.toMember(passwordEncoder);
-//        memberRepository.save(signUpMember);
-//
-//        LoginRequest logInRequest = LoginRequest.builder()
-//                .loginID(loginId)
-//                .password(password)
-//                .build();
-//
-//        TokenResponse tokenResponse = authService.login(logInRequest);
-//
-//        TokenRequest tokenRequest = TokenRequest.builder()
-//                .accessToken(tokenResponse.getAccessToken())
-//                .refreshToken(tokenResponse.getRefreshToken())
-//                .build();
-//
-//        // when
-//        TokenResponse reissueToken = authService.reissueToken(tokenRequest);
-//
-//        // then
-//        assertThat(reissueToken.getAccessToken()).isNotNull();
-//        assertThat(reissueToken.getRefreshToken()).isNotNull();
-//        assertThat(reissueToken.getGrantType()).isNotNull();
-//        assertThat(reissueToken.getAccessTokenExpiresIn()).isNotNull();
-//
-//        String accessToken = reissueToken.getAccessToken();
-//
-//        assertThat(jwtUtilizer.validateToken(accessToken)).isTrue();
-//
-//        Authentication authentication = jwtUtilizer.getAuthentication(accessToken);
-//        long memberId = Long.parseLong(authentication.getName());
-//        Member member = memberRepository.findByLoginId(loginId).get();
-//        assertThat(member.getId()).isEqualTo(memberId);
-//    }
+        memberRepository.saveAndFlush(Member.builder()
+                        .loginId(loginId)
+                        .password(passwordEncoder.encode(password))
+                        .role(Role.ROLE_USER)
+                        .build());
+
+        LoginRequest logInRequest = LoginRequest.builder()
+                .loginId(loginId)
+                .password(password)
+                .build();
+
+        // when
+        TokenResponse tokenResponse = authService.login(logInRequest);
+
+        // then : 정상적으로 발급되는 지, 유효한 지, 데이터가 일치하는 지
+        assertThat(tokenResponse.getAccessToken()).isNotNull();
+        assertThat(tokenResponse.getRefreshToken()).isNotNull();
+        assertThat(tokenResponse.getAccessTokenExpiresIn()).isNotNull();
+        assertThat(tokenResponse.getGrantType()).isEqualTo("Bearer");
+
+        String accessToken = tokenResponse.getAccessToken();
+
+        assertThat(jwtUtilizer.validateToken(accessToken)).isTrue();
+
+        Authentication authentication = jwtUtilizer.getAuthentication(accessToken);
+        long memberId = Long.parseLong(authentication.getName());
+        Member member = memberRepository.findByLoginId(loginId).get();
+        assertThat(member.getId()).isEqualTo(memberId);
+    }
+
+    @Test
+    @DisplayName("토큰 재발급 테스트")
+    void reIssueToken() {
+        // given
+        String loginId = "gmlwh124";
+        String password = "1234";
+
+        memberRepository.saveAndFlush(Member.builder()
+                        .loginId(loginId)
+                        .password(passwordEncoder.encode(password))
+                        .role(Role.ROLE_USER)
+                        .build());
+
+        LoginRequest logInRequest = LoginRequest.builder()
+                .loginId(loginId)
+                .password(password)
+                .build();
+
+        TokenResponse tokenResponse = authService.login(logInRequest);
+
+        TokenRequest tokenRequest = TokenRequest.builder()
+                .accessToken(tokenResponse.getAccessToken())
+                .refreshToken(tokenResponse.getRefreshToken())
+                .build();
+
+        // when
+        TokenResponse reissueToken = authService.reissueToken(tokenRequest);
+
+        // then
+        assertThat(reissueToken.getAccessToken()).isNotNull();
+        assertThat(reissueToken.getRefreshToken()).isNotNull();
+        assertThat(reissueToken.getGrantType()).isNotNull();
+        assertThat(reissueToken.getAccessTokenExpiresIn()).isNotNull();
+
+        String accessToken = reissueToken.getAccessToken();
+
+        assertThat(jwtUtilizer.validateToken(accessToken)).isTrue();
+
+        Authentication authentication = jwtUtilizer.getAuthentication(accessToken);
+        long memberId = Long.parseLong(authentication.getName());
+        Member member = memberRepository.findByLoginId(loginId).get();
+        assertThat(member.getId()).isEqualTo(memberId);
+    }
 }

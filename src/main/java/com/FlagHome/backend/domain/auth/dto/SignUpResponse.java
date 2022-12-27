@@ -1,5 +1,6 @@
 package com.FlagHome.backend.domain.auth.dto;
 
+import com.FlagHome.backend.domain.auth.JoinType;
 import com.FlagHome.backend.domain.auth.entity.AuthMember;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,10 @@ public class SignUpResponse {
     @ApiModelProperty(value = "이메일", notes = "회원가입 정보에 적은 이메일")
     private String email;
 
-    public static SignUpResponse of(AuthMember authMember) {
-        return new SignUpResponse(authMember.getLoginId(), authMember.getEmail());
+    @ApiModelProperty(value = "유저 가입 구분")
+    private JoinType joinType;
+
+    public static SignUpResponse from(AuthMember authMember) {
+        return new SignUpResponse(authMember.getLoginId(), authMember.getEmail(), authMember.getJoinType());
     }
 }

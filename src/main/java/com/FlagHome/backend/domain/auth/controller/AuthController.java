@@ -39,14 +39,14 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    @ApiOperation(value = "회원가입", notes = "메일인증 완료 시 회원가입")
+    @ApiOperation(value = "회원가입", notes = "메일 인증 완료 시 회원가입 처리, 가입 구분에 따라 다름")
     public ResponseEntity<SignUpResponse> signup(@RequestBody SignUpRequest signUpRequest) {
         return ResponseEntity.ok(authService.signUp(signUpRequest));
     }
 
     @PostMapping("/login")
     @ApiOperation(value = "로그인")
-    public ResponseEntity<TokenResponse> logIn(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest loginRequest) {
         return ResponseEntity.ok(authService.login(loginRequest));
     }
 
