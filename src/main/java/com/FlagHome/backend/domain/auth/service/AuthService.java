@@ -1,5 +1,6 @@
 package com.FlagHome.backend.domain.auth.service;
 
+import com.FlagHome.backend.domain.auth.JoinType;
 import com.FlagHome.backend.domain.auth.dto.*;
 import com.FlagHome.backend.domain.auth.entity.AuthMember;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
@@ -69,13 +70,16 @@ public class AuthService {
         AuthMember authMember = authRepository.findByEmail(signUpRequest.getEmail())
                 .orElseThrow(() -> new CustomException(ErrorCode.AUTH_TARGET_NOT_FOUND));
 
-        if (!StringUtils.equals(signUpRequest.getCertification(), authMember.getCertification())) {
-            throw new CustomException(ErrorCode.CERTIFICATION_NOT_MATCH);
+        validateCertification(signUpRequest.getCertification(), authMember.getCertification());
+
+        // 동아리원이면 인증 상태를 업데이트한다.
+        if (authMember.getJoinType() == JoinType.CLUB) {
+            authMember.updateAuthorizedTrue();
+            return SignUpResponse.from(authMember);
         }
 
         memberRepository.save(Member.of(authMember, passwordEncoder));
-
-        return SignUpResponse.of(authMember);
+        return SignUpResponse.from(authMember);
     }
 
     @Transactional
@@ -98,6 +102,12 @@ public class AuthService {
     @Transactional
     public TokenResponse reissueToken(TokenRequest tokenRequest) {
         return refreshTokenService.reissueToken(tokenRequest);
+    }
+
+    private void validateCertification(String inputCertification, String savedCertification) {
+        if (!StringUtils.equals(inputCertification, savedCertification)) {
+            throw new CustomException(ErrorCode.CERTIFICATION_NOT_MATCH);
+        }
     }
 
     private void validateUSWEmail(String email) {
