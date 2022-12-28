@@ -1,26 +1,22 @@
 package com.FlagHome.backend.domain.member;
 
-import com.FlagHome.backend.domain.member.dto.UpdateProfileRequest;
-import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.domain.Status;
 import com.FlagHome.backend.domain.member.dto.UpdatePasswordRequest;
+import com.FlagHome.backend.domain.member.dto.UpdateProfileRequest;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
+import com.FlagHome.backend.global.exception.CustomException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
-import static org.assertj.core.api.Assertions.*;
-
-@Transactional
-@SpringBootTest
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 public class MemberServiceTest {
     @Autowired
     private MemberRepository memberRepository;
