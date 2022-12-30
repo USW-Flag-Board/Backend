@@ -1,11 +1,13 @@
 package com.FlagHome.backend.domain.category.repository;
 
 import com.FlagHome.backend.domain.category.entity.Category;
-import com.FlagHome.backend.domain.category.entity.QCategory;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
+import java.util.HashSet;
 import java.util.List;
+
+import static com.FlagHome.backend.domain.category.entity.QCategory.category;
 
 @RequiredArgsConstructor
 public class CategoryRepositoryImpl implements CategoryRepositoryCustom{
@@ -14,13 +16,21 @@ public class CategoryRepositoryImpl implements CategoryRepositoryCustom{
 
     @Override
     public List<Category> findAll(){
-        QCategory category = QCategory.category;
-        List<Category> result = queryFactory
+        return queryFactory
                 .select(category)
                 .from(category)
                 .where(category.parent.isNull())
                 .fetch();
+    }
 
-        return result;
+    @Override
+    public HashSet<String> findHashSetOfCategoriesName() {
+        HashSet<String> categoryNameSet = new HashSet<>();
+        List<Category> fetchResult = queryFactory.selectFrom(category).fetch();
+
+        for(Category eachCategory : fetchResult)
+            categoryNameSet.add(eachCategory.getEnglishName());
+
+        return categoryNameSet;
     }
 }
