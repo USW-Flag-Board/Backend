@@ -1,6 +1,8 @@
 package com.FlagHome.backend.domain.auth;
 
-import com.FlagHome.backend.domain.auth.dto.LoginRequest;
+import com.FlagHome.backend.domain.auth.dto.*;
+import com.FlagHome.backend.domain.auth.entity.AuthMember;
+import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import com.FlagHome.backend.domain.auth.service.AuthService;
 import com.FlagHome.backend.domain.member.Role;
 import com.FlagHome.backend.domain.member.entity.Member;
@@ -8,7 +10,9 @@ import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.token.dto.TokenRequest;
 import com.FlagHome.backend.domain.token.dto.TokenResponse;
 import com.FlagHome.backend.global.exception.CustomException;
+import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.jwt.JwtUtilizer;
+import com.FlagHome.backend.global.util.RandomGenerator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,12 +29,13 @@ import static org.assertj.core.api.Assertions.*;
 public class AuthServiceTest {
     @Autowired
     private AuthService authService;
-
     @Autowired
     private MemberRepository memberRepository;
-
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AuthRepository authRepository;
 
     @Autowired
     private JwtUtilizer jwtUtilizer;
@@ -66,7 +71,7 @@ public class AuthServiceTest {
 
             assertThatExceptionOfType(CustomException.class)
                     .isThrownBy(() -> authService.validateDuplicateLoginId(loginId))
-                    .withMessage("이미 존재하는 아이디 입니다.");
+                    .withMessage(ErrorCode.LOGIN_ID_EXISTS.getMessage());
         }
     }
 
@@ -93,19 +98,11 @@ public class AuthServiceTest {
         @Test
         @DisplayName("수원대 이메일이 아니라 실패")
         void validateUSWEmailFailTest() {
-            String loginId = "gmlwh124";
             String email = "gmlwh124@naver.com";
-            String password = "1234";
-
-            memberRepository.save(Member.builder()
-                    .loginId(loginId)
-                    .email(email)
-                    .password(password)
-                    .build());
 
             assertThatExceptionOfType(CustomException.class)
                     .isThrownBy(() -> authService.validateEmail(email))
-                    .withMessage("수원대학교 웹 메일 주소가 아닙니다.");
+                    .withMessage(ErrorCode.NOT_USW_EMAIL.getMessage());
         }
 
         @Test
@@ -123,15 +120,157 @@ public class AuthServiceTest {
 
             assertThatExceptionOfType(CustomException.class)
                     .isThrownBy(() -> authService.validateEmail(email))
-                    .withMessage("이미 가입된 이메일 입니다.");
+                    .withMessage(ErrorCode.EMAIL_EXISTS.getMessage());
         }
     }
 
-//    @Test
-//    @DisplayName("회원가입 테스트")
-//    void signUpTest() {
-//
-//    }
+    @Nested
+    @DisplayName("회원가입(join) 테스트")
+    class signupJoinTest {
+        @Test
+        @DisplayName("회원가입 join 성공")
+        void joinSuccessTest() {
+            // given
+            String loginId = "gmlwh124";
+            String password = "qwer1234!";
+            String email = "gmlwh124@suwon.ac.kr";
+
+            JoinRequest joinRequest = JoinRequest.builder()
+                    .loginId(loginId)
+                    .password(password)
+                    .email(email)
+                    .build();
+
+            // when
+            JoinResponse joinResponse = authService.join(joinRequest);
+
+            // then
+            assertThat(joinResponse.getEmail()).isEqualTo(email);
+            AuthMember authMember = authRepository.findByEmail(joinResponse.getEmail()).get();
+            assertThat(authMember.getLoginId()).isEqualTo(loginId);
+            assertThat(authMember.getPassword()).isEqualTo(password);
+        }
+
+        @Test
+        @DisplayName("비밀번호 유효성 검사 실패로 join 실패")
+        void joinFailTest() {
+            String loginId = "gmlwh124";
+            String password = "1234";
+            String email = "gmlwh124@suwon.ac.kr";
+
+            JoinRequest joinRequest = JoinRequest.builder()
+                    .loginId(loginId)
+                    .password(password)
+                    .email(email)
+                    .build();
+
+            assertThatExceptionOfType(CustomException.class)
+                    .isThrownBy(() -> authService.join(joinRequest))
+                    .withMessage(ErrorCode.INVALID_PASSWORD.getMessage());
+        }
+    }
+
+    @Nested
+    @DisplayName("회원가입 테스트")
+    class signUpTest {
+        @Test
+        @DisplayName("일반유저 회원가입 성공")
+        void signUpSuccessTest() {
+            // given
+            String loginId = "gmlwh124";
+            String password = "qwer1234!";
+            String email = "gmlwh124@suwon.ac.kr";
+            JoinType joinType = JoinType.NORMAL;
+            String certification = RandomGenerator.getRandomNumber();
+
+            JoinRequest joinRequest = JoinRequest.builder()
+                    .loginId(loginId)
+                    .password(password)
+                    .email(email)
+                    .joinType(joinType)
+                    .build();
+
+            AuthMember authMember = AuthMember.of(joinRequest, certification);
+            authRepository.saveAndFlush(authMember);
+
+            SignUpRequest signUpRequest = SignUpRequest.builder()
+                    .email(email)
+                    .certification(certification)
+                    .build();
+
+            // when
+            SignUpResponse signUpResponse = authService.signUp(signUpRequest);
+
+            // then
+            assertThat(signUpResponse.getEmail()).isEqualTo(email);
+
+            Member member = memberRepository.findByLoginId(loginId).get();
+            assertThat(passwordEncoder.matches(password, member.getPassword())).isTrue();
+            assertThat(member.getRole()).isEqualTo(Role.from(joinType));
+        }
+
+        @Test
+        @DisplayName("동아리회원 회원가입 성공")
+        void crewSignUpSuccessTest() {
+            // given
+            String loginId = "gmlwh124";
+            String password = "qwer1234!";
+            String email = "gmlwh124@suwon.ac.kr";
+            JoinType joinType = JoinType.CLUB;
+            String certification = RandomGenerator.getRandomNumber();
+
+            JoinRequest joinRequest = JoinRequest.builder()
+                    .loginId(loginId)
+                    .password(password)
+                    .email(email)
+                    .joinType(joinType)
+                    .build();
+
+            AuthMember authMember = AuthMember.of(joinRequest, certification);
+            authRepository.saveAndFlush(authMember);
+
+            SignUpRequest signUpRequest = SignUpRequest.builder()
+                    .email(email)
+                    .certification(certification)
+                    .build();
+
+            // when
+            SignUpResponse signUpResponse = authService.signUp(signUpRequest);
+
+            // then
+            assertThat(signUpResponse.getEmail()).isEqualTo(email);
+
+            AuthMember signupAuthMember = authRepository.findByEmail(signUpResponse.getEmail()).get();
+            assertThat(signupAuthMember.isAuthorizedClubMember()).isTrue();
+        }
+
+        @Test
+        @DisplayName("회원가입 인증번호 오류로 실패")
+        void signupCertificationFailTest() {
+            String loginId = "gmlwh124";
+            String password = "qwer1234!";
+            String email = "gmlwh124@suwon.ac.kr";
+            String certification = "123456";
+            String wrongCertification = "234567";
+
+            JoinRequest joinRequest = JoinRequest.builder()
+                    .loginId(loginId)
+                    .password(password)
+                    .email(email)
+                    .build();
+
+            authRepository.saveAndFlush(AuthMember.of(joinRequest, certification));
+
+            SignUpRequest signUpRequest = SignUpRequest.builder()
+                    .email(email)
+                    .certification(wrongCertification)
+                    .build();
+
+            assertThatExceptionOfType(CustomException.class)
+                    .isThrownBy(() -> authService.signUp(signUpRequest))
+                    .withMessage(ErrorCode.CERTIFICATION_NOT_MATCH.getMessage());
+        }
+    }
 
     @Test
     @DisplayName("로그인 테스트")

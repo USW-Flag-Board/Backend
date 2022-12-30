@@ -47,7 +47,7 @@ public class MemberService {
 
     @Transactional
     public void sendFindIdResult(String loginId, String email) {
-        mailService.sendMailByTypeAndResult(email, MailType.FIND_ID, loginId);
+        mailService.sendMailByType(email, MailType.FIND_ID, loginId);
     }
 
     @Transactional
@@ -66,7 +66,7 @@ public class MemberService {
 
     @Transactional
     public void sendFindPasswordResult(String email, String newPassword) {
-        mailService.sendMailByTypeAndResult(email, MailType.REISSUE_PASSWORD, newPassword);
+        mailService.sendMailByType(email, MailType.REISSUE_PASSWORD, newPassword);
     }
 
     @Transactional
