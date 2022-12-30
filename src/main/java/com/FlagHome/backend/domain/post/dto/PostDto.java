@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,10 +23,13 @@ public class PostDto {
     private long userId;
     private String title;
     private String content;
+    private String memberName;
     private List<ReplyDto> replyList;
     private long categoryId;
     private Status status;
     private long viewCount;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public PostDto(Post postEntity) {
         this.id = postEntity.getId();
@@ -39,5 +43,15 @@ public class PostDto {
         replyList = new ArrayList<>();
         for(Reply reply : postEntity.getReplyList())
             replyList.add(new ReplyDto(reply));
+    }
+
+    // Projection용 생성자
+    public PostDto(long id, String title, LocalDateTime createdAt, long categoryId, String memberName, long viewCount) {
+        this.id = id;
+        this.title = title;
+        this.createdAt = createdAt;
+        this.categoryId = categoryId;
+        this.memberName = memberName;
+        this.viewCount = viewCount;
     }
 }
