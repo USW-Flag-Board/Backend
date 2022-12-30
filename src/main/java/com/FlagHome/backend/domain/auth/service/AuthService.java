@@ -59,7 +59,7 @@ public class AuthService {
         String certificationNumber = RandomGenerator.getRandomNumber();
         AuthMember authMember = AuthMember.of(joinRequest, certificationNumber);
 
-        mailService.sendMailByTypeAndResult(joinRequest.getEmail(), MailType.AUTH_EMAIL, certificationNumber);
+        mailService.sendMailByType(joinRequest.getEmail(), MailType.AUTH_EMAIL, certificationNumber);
         authRepository.save(authMember);
 
         return JoinResponse.from(authMember);
