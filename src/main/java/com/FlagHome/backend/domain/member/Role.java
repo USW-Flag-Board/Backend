@@ -11,11 +11,14 @@ public enum Role {
     ;
 
     /**
-     * JoinTpye에 맞는 권한을 리턴 (Casting이 일어날 일이 없어 NPE가 발생 X - 삼항 연산자로 구현)
+     * JoinTpye에 맞는 권한을 리턴
      * @param joinType
      * @return 유저 권한
      */
-    public static Role getRole(JoinType joinType) {
-        return joinType == JoinType.CLUB ? ROLE_CLUB : ROLE_USER;
+    public static Role from(JoinType joinType) {
+        if (joinType == JoinType.CLUB) {
+            return ROLE_CLUB;
+        }
+        return ROLE_USER;
     }
 }

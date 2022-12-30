@@ -1,5 +1,6 @@
 package com.FlagHome.backend.domain.admin.service;
 
+import com.FlagHome.backend.domain.Status;
 import com.FlagHome.backend.domain.auth.entity.AuthMember;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
@@ -36,5 +37,17 @@ public class AdminService {
     @Transactional
     public void deleteAuthMember(Long authMemberId) {
         authRepository.deleteById(authMemberId);
+    }
+
+    @Transactional
+    public void withdrawMember(Long memberId) {
+        Member member = memberRepository.findById(memberId).get();
+        member.updateStatus(Status.WITHDRAW);
+    }
+
+    @Transactional
+    public void banMember(Long memberId) {
+        Member member = memberRepository.findById(memberId).get();
+        member.updateStatus(Status.BANNED);
     }
 }

@@ -3,7 +3,6 @@ package com.FlagHome.backend.domain.admin.controller;
 import com.FlagHome.backend.domain.admin.dto.ApproveSignUpRequest;
 import com.FlagHome.backend.domain.admin.service.AdminService;
 import com.FlagHome.backend.domain.auth.entity.AuthMember;
-import com.FlagHome.backend.domain.auth.service.AuthMemberService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +26,20 @@ public class AdminController {
     @ApiOperation(value = "회원가입 승인", notes = "동아리원 정보 암호화 후 DB에 저장, 인증 정보 삭제")
     public ResponseEntity<Void> approveAuthMember(@RequestBody ApproveSignUpRequest approveSignUpRequest) {
         adminService.approveAuthMember(approveSignUpRequest.getId());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/ban")
+    @ApiOperation(value = "회원 정지")
+    public ResponseEntity<Void> banMember(long memberId) {
+        adminService.banMember(memberId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/withdraw")
+    @ApiOperation(value = "회원 추방")
+    public ResponseEntity<Void> withdrawMember(long memberId) {
+        adminService.withdrawMember(memberId);
         return ResponseEntity.ok().build();
     }
 

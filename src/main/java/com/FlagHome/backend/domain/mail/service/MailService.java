@@ -19,7 +19,7 @@ public class MailService {
      * @param mailType (AUTH_EMAIL, FIND_ID, REISSUE_PASSWORD)
      * @param result (6자리 인증번호, 로그인 아이디, 재발급한 비밀번호)
      */
-    public void sendMailByTypeAndResult(String email, MailType mailType, String result) {
+    public void sendMailByType(String email, MailType mailType, String result) {
         MailRequest mailRequest = MailRequest.builder()
                 .to(email)
                 .subject(mailType.getSubject())
