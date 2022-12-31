@@ -44,10 +44,11 @@ public class Category {
     private List<Post> postList;
 
     @Builder //PostControllerTest에 빌더 사용한게 남아있어서 남겼습니다. (22.12.31 강지은)
-    public Category(String koreanName, String englishName, Long categoryDepth, Category parent) {
+    public Category(String koreanName, String englishName, Long categoryDepth, Category parent, List<Post> postList) {
         this.koreanName = koreanName;
         this.englishName = englishName;
         this.categoryDepth = categoryDepth;
+        this.postList = postList;
         this.parent = parent;
     }
 }
