@@ -1,13 +1,14 @@
 package com.FlagHome.backend.domain.member.service;
 
+import com.FlagHome.backend.domain.member.dto.UpdateProfileRequest;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
-import com.FlagHome.backend.global.util.RandomNumberGenerator;
+import com.FlagHome.backend.global.util.RandomGenerator;
 import com.FlagHome.backend.domain.Status;
 import com.FlagHome.backend.domain.member.dto.UpdatePasswordRequest;
 import com.FlagHome.backend.domain.member.entity.Member;
-import com.FlagHome.backend.domain.member.mail.service.MailService;
-import com.FlagHome.backend.domain.member.mail.MailType;
+import com.FlagHome.backend.domain.mail.service.MailService;
+import com.FlagHome.backend.domain.mail.MailType;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -38,7 +39,7 @@ public class MemberService {
         Member member = findMemberByEmail(email);
 
         if (!StringUtils.equals(member.getName(), name)) {
-            throw new CustomException(ErrorCode.NAME_EMAIL_NOT_MATCH);
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
         sendFindIdResult(member.getLoginId(), email);
@@ -46,7 +47,7 @@ public class MemberService {
 
     @Transactional
     public void sendFindIdResult(String loginId, String email) {
-        mailService.sendMail(email, MailType.FIND_ID, loginId);
+        mailService.sendMailByType(email, MailType.FIND_ID, loginId);
     }
 
     @Transactional
@@ -54,10 +55,10 @@ public class MemberService {
         Member member = findMemberByEmail(email);
 
         if (!StringUtils.equals(member.getLoginId(), loginId)) {
-            throw new CustomException(ErrorCode.ID_EMAIL_NOT_MATCH);
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
-        String newPassword = RandomNumberGenerator.getRandomPassword();
+        String newPassword = RandomGenerator.getRandomPassword();
         // dirty checking
         member.updatePassword(passwordEncoder.encode(newPassword));
         sendFindPasswordResult(email, newPassword);
@@ -65,7 +66,7 @@ public class MemberService {
 
     @Transactional
     public void sendFindPasswordResult(String email, String newPassword) {
-        mailService.sendMail(email, MailType.REISSUE_PASSWORD, newPassword);
+        mailService.sendMailByType(email, MailType.REISSUE_PASSWORD, newPassword);
     }
 
     @Transactional
@@ -79,6 +80,11 @@ public class MemberService {
 
         // dirty checking
         member.updatePassword(passwordEncoder.encode(updatePasswordRequest.getNewPassword()));
+    }
+
+    @Transactional
+    public void updateProfile(Long id, UpdateProfileRequest updateProfileRequest) {
+        memberRepository.updateProfile(id, updateProfileRequest);
     }
 
     private void validatePassword(Long memberId, String password) {

@@ -1,12 +1,13 @@
 package com.FlagHome.backend.domain.member;
 
-import com.FlagHome.backend.domain.auth.service.AuthService;
+import com.FlagHome.backend.domain.member.dto.UpdateProfileRequest;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.domain.Status;
 import com.FlagHome.backend.domain.member.dto.UpdatePasswordRequest;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
+import com.FlagHome.backend.global.exception.ErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,9 @@ public class MemberServiceTest {
 
     @Autowired
     private MemberService memberService;
+
+    @Autowired
+    private EntityManager entityManager;
     
     @Nested
     @DisplayName("유저 탈퇴 테스트")
@@ -72,7 +76,7 @@ public class MemberServiceTest {
 
             assertThatExceptionOfType(CustomException.class)
                     .isThrownBy(() -> memberService.withdraw(saveMember.getId(), wrongPassword))
-                    .withMessage("비밀번호가 일치하지 않습니다.");
+                    .withMessage(ErrorCode.PASSWORD_NOT_MATCH.getMessage());
         }
     }
 
@@ -126,7 +130,42 @@ public class MemberServiceTest {
 
             assertThatExceptionOfType(CustomException.class)
                     .isThrownBy(() -> memberService.updatePassword(savedMember.getId(), updatePasswordRequest))
-                    .withMessage("기존과 같은 비밀번호는 사용할 수 없습니다.");
+                    .withMessage(ErrorCode.PASSWORD_IS_SAME.getMessage());
         }
+    }
+
+    @Test
+    @DisplayName("멤버 정보 수정")
+    void updateTest() {
+        // given
+        String originalloginId = "gmlwh124";
+        String originalpassword = "1234";
+        String originalbio = "안녕하세요?";
+        String originalphonenumber = "01040380540";
+
+        Member memberEntity = memberRepository.saveAndFlush(Member.builder()
+                .loginId(originalloginId)
+                .password(originalpassword)
+                .bio(originalbio)
+                .phoneNumber(originalphonenumber)
+                .build());
+
+        String changedbio = "접니다";
+        String changedphonenumber = "01049964346";
+
+        UpdateProfileRequest updateProfileRequest = UpdateProfileRequest.builder()
+                .bio(changedbio)
+                .phoneNumber(changedphonenumber)
+                .build();
+
+        // when
+        memberService.updateProfile(memberEntity.getId(), updateProfileRequest);
+        entityManager.clear();
+
+        // then 멤버정보가 제대로 수정되었는지 확인, 수정할 멤버랑 수정된 멤버가 같은 멤버인지 확인
+        Member member = memberRepository.findById(memberEntity.getId()).get();
+        assertThat(member.getId()).isEqualTo(memberEntity.getId());
+        assertThat(member.getBio()).isNotEqualTo(memberEntity.getBio());
+        assertThat(member.getPhoneNumber()).isNotEqualTo(memberEntity.getPhoneNumber());
     }
 }

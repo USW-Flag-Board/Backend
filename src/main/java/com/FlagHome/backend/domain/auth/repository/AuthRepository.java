@@ -9,4 +9,8 @@ import java.util.Optional;
 @Repository
 public interface AuthRepository extends JpaRepository<AuthMember, Long>, AuthRepositoryCustom {
     Optional<AuthMember> findByEmail(String email);
+
+    Optional<AuthMember> findById(Long authMemberId);
+
+    void deleteById(Long authMemberId);
 }
