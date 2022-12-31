@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain.member.mail.dto;
+package com.FlagHome.backend.domain.mail.dto;
 
 import com.amazonaws.services.simpleemail.model.*;
 import lombok.Builder;
@@ -29,7 +29,7 @@ public class MailRequest {
                         .withHtml(createContent(this.content)));
 
         return new SendEmailRequest()
-                .withSource(FROM)
+                .withSource("gmlwh124@naver.com")
                 .withDestination(destination)
                 .withMessage(message);
     }

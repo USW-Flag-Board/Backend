@@ -1,7 +1,5 @@
 package com.FlagHome.backend.domain.member.controller;
 
-import com.FlagHome.backend.domain.auth.dto.CheckEmailRequest;
-import com.FlagHome.backend.domain.auth.dto.CheckIdRequest;
 import com.FlagHome.backend.global.util.SecurityUtils;
 import com.FlagHome.backend.domain.member.dto.*;
 import com.FlagHome.backend.domain.member.service.MemberService;
@@ -15,6 +13,14 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
+
+//     활동, 잔디 기능 필요!!
+//    @GetMapping("/{id}")
+//    @ApiOperation(value = "멤버 정보 보기")
+//    public ResponseEntity<Void> getProfile() {
+//
+//        return ResponseEntity.ok().build();
+//    }
 
     @PostMapping("/find-id")
     @ApiOperation(value = "아이디 찾기", notes = "요청 시 아이디를 찾아서 메일로 전송")
@@ -42,6 +48,13 @@ public class MemberController {
     @ApiOperation(value = "회원 탈퇴", notes = "회원 탈퇴 시 탈퇴 상태로만 변경")
     public ResponseEntity<Void> withdraw(@RequestBody WithdrawRequest withdrawRequest) {
         memberService.withdraw(SecurityUtils.getMemberId(), withdrawRequest.getPassword());
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/profile")
+    @ApiOperation(value = "프로필 업데이트")
+    public ResponseEntity<Void> updateProfile(@RequestBody UpdateProfileRequest updateProfileRequest) {
+        memberService.updateProfile(SecurityUtils.getMemberId(), updateProfileRequest);
         return ResponseEntity.ok().build();
     }
 }
