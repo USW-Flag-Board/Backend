@@ -70,6 +70,8 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.8'
+    implementation 'org.mapstruct:mapstruct:1.4.2.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
 
     // TEST Implementation
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
