@@ -25,11 +25,12 @@ public class Activity {
     private String period;
     private String etc;
 
-    @OneToOne(mappedBy = "member")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "leader_id")
     private Member leader;
 
-    @OneToMany(mappedBy = "member")
-    private List<Member> members;
+    // OneToMany의 떨어지는 성능에 더 고려필요.
+//    private List<Member> members;
 
     @Column
     @Enumerated(EnumType.STRING)
