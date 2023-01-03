@@ -39,8 +39,6 @@ dependencies {
 
     // aws
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
-
-    // ses
     implementation 'com.amazonaws:aws-java-sdk-ses:1.12.367'
 
     // QueryDSL 추가
@@ -83,6 +81,7 @@ dependencies {
     testImplementation 'org.springframework.batch:spring-batch-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation "org.assertj:assertj-core:3.23.1"
+    runtimeOnly 'com.h2database:h2'
 
     // JUnit 5
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
