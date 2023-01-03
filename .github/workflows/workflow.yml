@@ -41,9 +41,11 @@ jobs:
         cd ./src/main/resources
         touch ./application-aws.yml
         touch ./application-ses.yml
+        touch ./application-jwt.yml
         echo ">> put values"
         echo "${{ secrets.AWS_S3 }}" >> ./application-aws.yml
         echo "${{ secrets.AWS_SES }}" >> ./application-ses.yml
+        echo "${{ secrets.JWT }}" >> ./application-jwt.yml
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
