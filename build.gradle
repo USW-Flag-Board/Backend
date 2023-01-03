@@ -20,6 +20,11 @@ repositories {
     mavenCentral()
 }
 
+// plain.jar 방지
+jar {
+    enabled = false
+}
+
 dependencies {
     // Spring Batch
     implementation 'org.springframework.boot:spring-boot-starter-batch'

@@ -29,7 +29,7 @@ public class MailRequest {
                         .withHtml(createContent(this.content)));
 
         return new SendEmailRequest()
-                .withSource("gmlwh124@naver.com")
+                .withSource("no-reply@naver.com")
                 .withDestination(destination)
                 .withMessage(message);
     }

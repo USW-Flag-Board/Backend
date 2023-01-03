@@ -12,7 +12,7 @@ import com.FlagHome.backend.domain.token.dto.TokenResponse;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.jwt.JwtUtilizer;
-import com.FlagHome.backend.global.util.RandomGenerator;
+import com.FlagHome.backend.global.utility.RandomGenerator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
