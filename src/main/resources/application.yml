@@ -1,0 +1,23 @@
+spring:
+  profiles:
+    include:
+      - db
+      - jwt
+      - aws
+      - ses
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  security:
+    basic:
+      enabled: false
+
+server:
+  error:
+    include-exception: false # Response 에 Exception 을 표기할 것인가?
+    include-message: always # Response 에 Exception Message 를 표시할 것인가?
+    include-stacktrace: on_param # Response 에 Stack Trace 를 표시할 것인가?
+    whitelabel:
+      enabled: true
