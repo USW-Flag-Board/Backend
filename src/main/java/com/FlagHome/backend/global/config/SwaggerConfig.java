@@ -28,7 +28,7 @@ public class SwaggerConfig {
     public ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("FLAG_BOARD API")
-                .version("v1")
+                .version("0.0.1")
                 .description("FLAG 홈페이지 API Docs 입니다.")
                 .build();
     }

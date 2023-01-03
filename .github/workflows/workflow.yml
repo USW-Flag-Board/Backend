@@ -1,8 +1,6 @@
 name: Java CI/CD with Gradle and AWS
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
