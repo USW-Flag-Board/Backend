@@ -1,6 +1,9 @@
 package com.FlagHome.backend.domain.auth;
 
-import com.FlagHome.backend.domain.auth.dto.*;
+import com.FlagHome.backend.domain.auth.dto.JoinRequest;
+import com.FlagHome.backend.domain.auth.dto.LoginRequest;
+import com.FlagHome.backend.domain.auth.dto.SignUpRequest;
+import com.FlagHome.backend.domain.auth.dto.SignUpResponse;
 import com.FlagHome.backend.domain.auth.entity.AuthMember;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import com.FlagHome.backend.domain.auth.service.AuthService;
@@ -13,6 +16,7 @@ import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.jwt.JwtUtilizer;
 import com.FlagHome.backend.global.utility.RandomGenerator;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -29,8 +33,10 @@ import static org.assertj.core.api.Assertions.*;
 public class AuthServiceTest {
     @Autowired
     private AuthService authService;
+
     @Autowired
     private MemberRepository memberRepository;
+
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
@@ -43,9 +49,8 @@ public class AuthServiceTest {
     @Nested
     @DisplayName("아이디 유효성 테스트")
     class validateIdTest {
-        @Test
-        @DisplayName("아이디가 중복이 아님")
-        void validateIdSuccessTest() {
+        @BeforeEach
+        void beforeValidateId() {
             String loginId = "gmlwh124";
             String password = "1234";
 
@@ -53,24 +58,24 @@ public class AuthServiceTest {
                     .loginId(loginId)
                     .password(password)
                     .build());
+        }
+
+        @Test
+        @DisplayName("아이디가 중복이 아님")
+        void validateIdSuccessTest() {
+            String validId = "hejow124";
 
             assertThatNoException()
-                    .isThrownBy(() -> authService.validateDuplicateLoginId("hejow124"));
+                    .isThrownBy(() -> authService.validateDuplicateLoginId(validId));
         }
 
         @Test
         @DisplayName("아이디가 중복되어 실패")
         void validateIdFailTest() {
-            String loginId = "gmlwh124";
-            String password = "1234";
-
-            memberRepository.save(Member.builder()
-                    .loginId(loginId)
-                    .password(password)
-                    .build());
+            String overlapedId = "gmlwh124";
 
             assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> authService.validateDuplicateLoginId(loginId))
+                    .isThrownBy(() -> authService.validateDuplicateLoginId(overlapedId))
                     .withMessage(ErrorCode.LOGIN_ID_EXISTS.getMessage());
         }
     }
@@ -126,7 +131,7 @@ public class AuthServiceTest {
 
     @Nested
     @DisplayName("회원가입(join) 테스트")
-    class signupJoinTest {
+    class signUpJoinTest {
         @Test
         @DisplayName("회원가입 join 성공")
         void joinSuccessTest() {
@@ -142,11 +147,11 @@ public class AuthServiceTest {
                     .build();
 
             // when
-            JoinResponse joinResponse = authService.join(joinRequest);
+            authService.join(joinRequest);
 
             // then
-            assertThat(joinResponse.getEmail()).isEqualTo(email);
-            AuthMember authMember = authRepository.findByEmail(joinResponse.getEmail()).get();
+            AuthMember authMember = authRepository.findByEmail(email).get();
+            assertThat(authMember).isNotNull();
             assertThat(authMember.getLoginId()).isEqualTo(loginId);
             assertThat(authMember.getPassword()).isEqualTo(password);
         }

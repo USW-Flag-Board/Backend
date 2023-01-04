@@ -4,7 +4,6 @@ spring:
       - db
       - jwt
       - aws
-      - ses
 
   mvc:
     pathmatch:

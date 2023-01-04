@@ -35,6 +35,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     runtimeOnly 'mysql:mysql-connector-java'
+    runtimeOnly 'com.h2database:h2'
 
     // aws
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
@@ -80,7 +81,6 @@ dependencies {
     testImplementation 'org.springframework.batch:spring-batch-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation "org.assertj:assertj-core:3.23.1"
-    runtimeOnly 'com.h2database:h2'
 
     // JUnit 5
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
@@ -89,15 +89,15 @@ dependencies {
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.9.0'
 
     // Swagger
-    implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
-    implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+    implementation("io.springfox:springfox-boot-starter:3.0.0")
+    implementation("io.springfox:springfox-swagger-ui:3.0.0")
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
 
-// Querydsl Setting Start
+// Querydsl Setting
 def querydslDir = "$buildDir/generated/querydsl"
 
 querydsl {
@@ -116,4 +116,3 @@ configurations {
     }
     querydsl.extendsFrom compileClasspath
 }
-// Querydsl Setting End

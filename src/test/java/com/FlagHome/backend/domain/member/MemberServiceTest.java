@@ -8,6 +8,7 @@ import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.global.exception.ErrorCode;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,103 @@ public class MemberServiceTest {
 
     @Autowired
     private EntityManager entityManager;
+
+    @Nested
+    @DisplayName("아이디 찾기 테스트")
+    class findLoginIdTest {
+        @Test
+        @DisplayName("수원대 이메일이 아니라서 실패")
+        void validateUSWEmailFailTest() {
+            String wrongEmail = "gmlwh124@naver.com";
+
+            assertThatExceptionOfType(CustomException.class)
+                    .isThrownBy(() -> memberService.findLoginId(wrongEmail))
+                    .withMessage(ErrorCode.NOT_USW_EMAIL.getMessage());
+        }
+
+        @Test
+        @DisplayName("유저 정보가 존재하지 않아 실패")
+        void findLoginIdFailTest() {
+            String neverUsedEmail = "hejow124@suwon.ac.kr";
+
+            assertThatExceptionOfType(CustomException.class)
+                    .isThrownBy(() -> memberService.findLoginId(neverUsedEmail))
+                    .withMessage(ErrorCode.USER_NOT_FOUND.getMessage());
+        }
+
+        @Test
+        @DisplayName("유저 정보 조회 성공")
+        void findLoginIdSuccessTest() {
+            String loginId = "gmlwh124";
+            String email = "gmlwh124@suwon.ac.kr";
+
+            memberRepository.save(Member.builder()
+                    .loginId(loginId)
+                    .email(email)
+                    .build());
+
+            assertThatNoException()
+                    .isThrownBy(() -> memberService.findLoginId(email));
+        }
+    }
+
+    @Nested
+    @DisplayName("비밀번호 재발급 인증 테스트")
+    class reissuePasswordTest {
+        @Test
+        @DisplayName("수원대 이메일이 아니라서 실패")
+        void validateUSWEmailFailTest() {
+            String loginId = "gmlwh124";
+            String wrongEmail = "gmlwh124@naver.com";
+
+            assertThatExceptionOfType(CustomException.class)
+                    .isThrownBy(() -> memberService.reissuePassword(loginId, wrongEmail))
+                    .withMessage(ErrorCode.NOT_USW_EMAIL.getMessage());
+        }
+
+        @Test
+        @DisplayName("유저 정보가 존재하지 않아 실패")
+        void findLoginIdFailTest() {
+            String loginId = "gmlwh124";
+            String neverUsedEmail = "hejow124@suwon.ac.kr";
+
+            assertThatExceptionOfType(CustomException.class)
+                    .isThrownBy(() -> memberService.reissuePassword(loginId, neverUsedEmail))
+                    .withMessage(ErrorCode.USER_NOT_FOUND.getMessage());
+        }
+
+        @Test
+        @DisplayName("가입 정보가 일치하지 않아 실패")
+        void loginIdAndEmailNotMatchTest() {
+            String loginId = "gmlwh124";
+            String wrongLoginId = "hejow124";
+            String email = "gmlwh124@suwon.ac.kr";
+
+            memberRepository.save(Member.builder()
+                            .loginId(loginId)
+                            .email(email)
+                            .build());
+
+            assertThatExceptionOfType(CustomException.class)
+                    .isThrownBy(() -> memberService.reissuePassword(wrongLoginId, email))
+                    .withMessage(ErrorCode.EMAIL_USER_NOT_MATCH.getMessage());
+        }
+        
+        @Test
+        @DisplayName("비밀번호 재발급 인증 성공")
+        void reissuePasswordSuccessTest() {
+            String loginId = "gmlwh124";
+            String email = "gmlwh124@suwon.ac.kr";
+
+            memberRepository.save(Member.builder()
+                    .loginId(loginId)
+                    .email(email)
+                    .build());
+
+            assertThatNoException()
+                    .isThrownBy(() -> memberService.reissuePassword(loginId, email));
+        }
+    }
     
     @Nested
     @DisplayName("유저 탈퇴 테스트")

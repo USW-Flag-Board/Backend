@@ -8,7 +8,6 @@ import com.FlagHome.backend.domain.Status;
 import com.FlagHome.backend.domain.member.dto.UpdatePasswordRequest;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.mail.service.MailService;
-import com.FlagHome.backend.domain.mail.MailType;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -29,51 +28,47 @@ public class MemberService {
     public void withdraw(Long memberId, String password) {
         validatePassword(memberId, password);
 
-        Member member = memberRepository.findById(memberId).get();
+        Member member = findById(memberId);
         // dirty checking
         member.updateStatus(Status.WITHDRAW);
     }
 
-    @Transactional
-    public void findLoginId(String name, String email) {
-        Member member = findMemberByEmail(email);
+    public void findLoginId(String email) {
+        validateUSWEmail(email);
 
-        if (!StringUtils.equals(member.getName(), name)) {
+        if (!memberRepository.existsByEmail(email)) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
-
-        sendFindIdResult(member.getLoginId(), email);
     }
 
-    @Transactional
-    public void sendFindIdResult(String loginId, String email) {
-        mailService.sendMailByType(email, MailType.FIND_ID, loginId);
+    public void sendFindIdResult(String email) {
+        Member member = findByEmail(email);
+        mailService.sendFindIdResult(email, member.getLoginId());
     }
 
-    @Transactional
     public void reissuePassword(String loginId, String email) {
-        Member member = findMemberByEmail(email);
+        validateUSWEmail(email);
+        Member member = findByEmail(email);
 
         if (!StringUtils.equals(member.getLoginId(), loginId)) {
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+            throw new CustomException(ErrorCode.EMAIL_USER_NOT_MATCH);
         }
+    }
+    @Transactional
+    public void sendNewPassword(String email) {
+        Member member = findByEmail(email);
 
         String newPassword = RandomGenerator.getRandomPassword();
         // dirty checking
         member.updatePassword(passwordEncoder.encode(newPassword));
-        sendFindPasswordResult(email, newPassword);
-    }
-
-    @Transactional
-    public void sendFindPasswordResult(String email, String newPassword) {
-        mailService.sendMailByType(email, MailType.REISSUE_PASSWORD, newPassword);
+        mailService.sendNewPassword(email, newPassword);
     }
 
     @Transactional
     public void updatePassword(Long memberId, UpdatePasswordRequest updatePasswordRequest) {
         validatePassword(memberId, updatePasswordRequest.getCurrentPassword());
 
-        Member member = memberRepository.findById(memberId).get();
+        Member member = findById(memberId);
         if (passwordEncoder.matches(updatePasswordRequest.getNewPassword(), member.getPassword())) {
             throw new CustomException(ErrorCode.PASSWORD_IS_SAME);
         }
@@ -89,14 +84,26 @@ public class MemberService {
 
     private void validatePassword(Long memberId, String password) {
         // 비밀번호 검사는 로그인된 대상만 진행
-        Member member = memberRepository.findById(memberId).get();
+        Member member = findById(memberId);
 
         if (!passwordEncoder.matches(password, member.getPassword())) {
             throw new CustomException(ErrorCode.PASSWORD_NOT_MATCH);
         }
     }
 
-    private Member findMemberByEmail(String email) {
+    private void validateUSWEmail(String email) {
+        int separateIndex = StringUtils.indexOf(email, "@");
+        if (!StringUtils.equals(email.substring(separateIndex), "@suwon.ac.kr")) {
+            throw new CustomException(ErrorCode.NOT_USW_EMAIL);
+        }
+    }
+
+    private Member findById(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    private Member findByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
