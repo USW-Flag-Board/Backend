@@ -73,7 +73,7 @@ public class Member extends BaseEntity {
                 .bio(" ")
                 .phoneNumber(" ")
                 .profileImg("default")
-                .role(Role.getRole(authMember.getJoinType()))
+                .role(Role.from(authMember.getJoinType()))
                 .status(Status.GENERAL)
                 .build();
     }

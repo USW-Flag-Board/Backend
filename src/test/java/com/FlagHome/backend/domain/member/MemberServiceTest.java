@@ -1,22 +1,27 @@
 package com.FlagHome.backend.domain.member;
 
+import com.FlagHome.backend.domain.member.dto.UpdateProfileRequest;
+import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.domain.Status;
 import com.FlagHome.backend.domain.member.dto.UpdatePasswordRequest;
-import com.FlagHome.backend.domain.member.dto.UpdateProfileRequest;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
-import com.FlagHome.backend.global.exception.CustomException;
+import com.FlagHome.backend.global.exception.ErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.*;
+
+@Transactional
+@SpringBootTest
 public class MemberServiceTest {
     @Autowired
     private MemberRepository memberRepository;
@@ -71,7 +76,7 @@ public class MemberServiceTest {
 
             assertThatExceptionOfType(CustomException.class)
                     .isThrownBy(() -> memberService.withdraw(saveMember.getId(), wrongPassword))
-                    .withMessage("비밀번호가 일치하지 않습니다.");
+                    .withMessage(ErrorCode.PASSWORD_NOT_MATCH.getMessage());
         }
     }
 
@@ -125,7 +130,7 @@ public class MemberServiceTest {
 
             assertThatExceptionOfType(CustomException.class)
                     .isThrownBy(() -> memberService.updatePassword(savedMember.getId(), updatePasswordRequest))
-                    .withMessage("기존과 같은 비밀번호는 사용할 수 없습니다.");
+                    .withMessage(ErrorCode.PASSWORD_IS_SAME.getMessage());
         }
     }
 

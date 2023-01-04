@@ -1,0 +1,19 @@
+version: 0.0
+os: linux
+
+files:
+  - source:  /
+    destination: /home/ubuntu/flag
+    overwrite: yes # 덮어쓸 것인지
+
+permissions:
+  - object: /
+    pattern: "**"
+    owner: ubuntu
+    group: ubuntu
+
+hooks:
+  ApplicationStart:
+    - location: /deploy.sh
+      timeout: 60
+      runas: ubuntu
