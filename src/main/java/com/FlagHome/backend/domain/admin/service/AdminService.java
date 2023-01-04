@@ -27,10 +27,11 @@ public class AdminService {
 
     @Transactional
     public void approveAuthMember(Long authMemberId) {
-        AuthMember authMember = authRepository.findById(authMemberId)
+        Member member = authRepository.findById(authMemberId)
+                .map(authMember -> Member.of(authMember, passwordEncoder))
                 .orElseThrow(() -> new CustomException(ErrorCode.AUTH_TARGET_NOT_FOUND));
 
-        memberRepository.save(Member.of(authMember, passwordEncoder));
+        memberRepository.save(member);
         deleteAuthMember(authMemberId);
     }
 
