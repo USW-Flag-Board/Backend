@@ -24,9 +24,30 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
+    # gradle 캐싱
+    - name: Gradle Caching
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
+    ## application.yml 파일 추가
+    - name: make application.yml
+      run: |
+        cd ./src/main/resources
+        touch ./application-aws.yml
+        touch ./application-ses.yml
+        echo ">> put values"
+        echo "${{ secrets.AWS_S3 }}" >> ./application-aws.yml
+        echo "${{ secrets.AWS_SES }}" >> ./application-ses.yml
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+
 #     테스트를 포함한 build
 #    - name: Build with Gradle
 #      run: ./gradlew clean build
