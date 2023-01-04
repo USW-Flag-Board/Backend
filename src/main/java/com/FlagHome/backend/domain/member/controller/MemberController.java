@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.member.controller;
 
-import com.FlagHome.backend.global.util.SecurityUtils;
+import com.FlagHome.backend.global.utility.SecurityUtils;
 import com.FlagHome.backend.domain.member.dto.*;
 import com.FlagHome.backend.domain.member.service.MemberService;
 import io.swagger.annotations.ApiOperation;

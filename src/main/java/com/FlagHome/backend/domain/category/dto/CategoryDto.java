@@ -10,9 +10,8 @@ import lombok.Setter;
 import javax.persistence.Column;
 
 @Setter
-@NoArgsConstructor  //테스트용
-@AllArgsConstructor
 @Getter
+@AllArgsConstructor
 public class CategoryDto {
     private Long id;
     private Long parentId;
@@ -20,13 +19,4 @@ public class CategoryDto {
     private String englishName;
     private Long categoryDepth;
 
-    /*
-    public CategoryDto(Category category){
-        this.id = category.getId();
-        this.parentId = category.getParent().getId();
-        this.koreanName = category.getKoreanName();
-        this.categoryDepth = category.getCategoryDepth();
-    }
-
-     */
 }
