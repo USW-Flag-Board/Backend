@@ -21,3 +21,15 @@ spring:
 
 jwt:
   secret-Key: hejowfromflaghejowfromflaghejowfromflaghejowfromflaghejowfromflaghejowfromflaghejowfromflaghejowfromflag
+
+cloud:
+  aws:
+    credentials:
+      accessKey: abcd
+      secretKey: abcdefg
+    s3:
+      bucket: flag-s3
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
