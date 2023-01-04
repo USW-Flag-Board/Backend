@@ -4,13 +4,14 @@ import com.FlagHome.backend.domain.auth.dto.*;
 import com.FlagHome.backend.domain.auth.service.AuthService;
 import com.FlagHome.backend.domain.token.dto.TokenRequest;
 import com.FlagHome.backend.domain.token.dto.TokenResponse;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/api/auth")
@@ -18,40 +19,70 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class AuthController {
     private final AuthService authService;
 
-    @PostMapping("/check-id")
-    @ApiOperation(value = "아이디 중복 체크")
-    public ResponseEntity<Void> checkId(@RequestBody CheckIdRequest idCheckRequest) {
-        authService.validateDuplicateLoginId(idCheckRequest.getLoginId());
+    @Operation(summary = "아이디 중복 체크")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "사용 가능한 아이디입니다."),
+            @ApiResponse(responseCode = "409", description = "이미 사용 중인 아이디입니다.")
+    })
+    @PostMapping("/id")
+    public ResponseEntity<Void> checkId(@RequestBody
+                                            @Parameter(description = "아이디", required = true, example = "gmlwh124") String loginId) {
+        authService.validateDuplicateLoginId(loginId);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/check-email")
-    @ApiOperation(value = "이메일 중복 체크", notes = "이메일 하나만 하나의 계정만 생성 가능")
-    public ResponseEntity<Void> checkEmail(@RequestBody CheckEmailRequest emailCheckRequest) {
-        authService.validateEmail(emailCheckRequest.getEmail());
+    @Operation(summary = "이메일 중복 체크", description = "하나의 이메일에 하나의 계정만 생성 가능")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "사용 가능한 이메일입니다."),
+            @ApiResponse(responseCode = "409", description = "이미 사용 중인 이메일입니다."),
+            @ApiResponse(responseCode = "422", description = "수원대학교 웹 메일 주소가 아닙니다.")
+    })
+    @PostMapping("/email")
+    public ResponseEntity<Void> checkEmail(@RequestBody
+                                               @Parameter(description = "이메일", required = true, example = "gmlwh124@suwon.ac.kr") String email) {
+        authService.validateEmail(email);
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "회원 정보 입력", description = "회원가입 시 작성한 데이터 검사 및 인증정보 저장")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "회원가입 성공"),
+            @ApiResponse(responseCode = "400", description = "사용할 수 없는 비밀번호 입니다. (8~20자 이내 영문, 숫자, 특수문자를 모두 포함)"),
+    })
     @PostMapping("/join")
-    @ApiOperation(value = "회원 정보 입력", notes = "재학생 인증하기 전 정보 입력 단계")
-    public ResponseEntity<JoinResponse> join(@RequestBody JoinRequest joinRequest) {
-        return ResponseEntity.ok(authService.join(joinRequest));
+    public ResponseEntity<Void> join(@RequestBody JoinRequest joinRequest) {
+        authService.join(joinRequest);
+        return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/signup")
-    @ApiOperation(value = "회원가입", notes = "메일 인증 완료 시 회원가입 처리, 가입 구분에 따라 다름")
+    @Operation(summary = "이메일 전송", description = "재학생 인증 이메일 전송")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "메일 전송 완료"),
+            @ApiResponse(responseCode = "500", description = "AWS 서버 에러")
+    })
+    @PostMapping("/mail")
+    public ResponseEntity<JoinResponse> sendCertification(@RequestBody String email) {
+        return ResponseEntity.ok(authService.sendCertification(email));
+    }
+
+    @Operation(summary = "회원가입", description = "인증 완료 시 회원가입, 동아리원은 관리자 인증 필요")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "회원가입 성공"),
+            @ApiResponse(responseCode = "400", description = "인증번호 오류")
+    })
+    @PostMapping("/sign-up")
     public ResponseEntity<SignUpResponse> signup(@RequestBody SignUpRequest signUpRequest) {
         return ResponseEntity.ok(authService.signUp(signUpRequest));
     }
 
+    @Operation(summary = "로그인")
     @PostMapping("/login")
-    @ApiOperation(value = "로그인")
     public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest loginRequest) {
         return ResponseEntity.ok(authService.login(loginRequest));
     }
 
+    @Operation(summary = "JWT 재발급")
     @PostMapping("/reissue")
-    @ApiOperation(value = "JWT 재발급")
     public ResponseEntity<TokenResponse> reissue(@RequestBody TokenRequest tokenRequest) {
         return ResponseEntity.ok(authService.reissueToken(tokenRequest));
     }
