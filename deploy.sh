@@ -2,7 +2,7 @@
 
 # 기본 변수
 PROJECT_ROOT="/home/ubuntu/flag"
-JAR_FILE="$PROJECT_ROOT/flag-application.jar"
+JAR_FILE="$PROJECT_ROOT/build/libs/*.jar"
 TIME_NOW=$(date +%c)
 
 # 로그 변수
