@@ -36,8 +36,8 @@ public enum ErrorCode {
     EMAIL_EXISTS(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다."),
 
     /** 422 - UNPROCESSABLE, 타입과 문법은 일치하지만 validation 실패 시 */
-    NOT_USW_EMAIL(HttpStatus.BAD_REQUEST, "수원대학교 웹 메일 주소가 아닙니다."),
-    INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "사용할 수 없는 비밀번호 입니다. (8~20자 이내 영문, 숫자, 특수문자를 모두 포함)"),
+    NOT_USW_EMAIL(HttpStatus.UNPROCESSABLE_ENTITY, "수원대학교 웹 메일 주소가 아닙니다."),
+    INVALID_PASSWORD(HttpStatus.UNPROCESSABLE_ENTITY, "사용할 수 없는 비밀번호 입니다. (8~20자 이내 영문, 숫자, 특수문자를 모두 포함)"),
 
     /** 500 - INTERNAL_SERVER_ERROR */
     FILE_CONVERT_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "파일 변환에 실패했습니다.")
