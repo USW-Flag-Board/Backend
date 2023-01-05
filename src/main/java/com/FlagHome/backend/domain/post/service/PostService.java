@@ -21,8 +21,9 @@ public class PostService {
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
     private final CategoryRepository categoryRepository;
+
     @Transactional
-    public void createPost(PostDto postDto) {
+    public PostDto createPost(PostDto postDto) {
         Member memberEntity = memberRepository.findById(postDto.getUserId()).orElse(null);
         if(memberEntity == null)
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
@@ -31,7 +32,7 @@ public class PostService {
         if(categoryEntity == null)
             throw new CustomException(ErrorCode.CATEGORY_NOT_EXISTS);
 
-        postRepository.save(Post.builder()
+        Post post = postRepository.save(Post.builder()
                 .member(memberEntity)
                 .title(postDto.getTitle())
                 .content(postDto.getContent())
@@ -40,6 +41,9 @@ public class PostService {
                 .replyList(new ArrayList<>())
                 .viewCount(0L)
                 .build());
+
+        postDto.setId(post.getId());
+        return postDto;
     }
 
     @Transactional
