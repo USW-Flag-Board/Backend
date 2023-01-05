@@ -2,6 +2,11 @@
 
 * 수원대학교 학생 및 Flag 동아리 회원을 위한 게시판 프로젝트 입니다.
 
+---
+
+## Architecture 
+<img width="2026" alt="FLAG Architecture" src="https://user-images.githubusercontent.com/48430781/210846116-bf33949a-adbf-4a1b-8012-8d6adc8735d6.png">
+
 
 ---
 
