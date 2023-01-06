@@ -3,14 +3,15 @@ package com.FlagHome.backend.domain.activity.entity;
 import com.FlagHome.backend.domain.activity.Status;
 import com.FlagHome.backend.domain.member.entity.Member;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
