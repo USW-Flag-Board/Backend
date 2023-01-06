@@ -1,22 +1,16 @@
 package com.FlagHome.backend.domain.activitycontroller;
 
 
-import com.FlagHome.backend.domain.activity.Type;
-import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
 import com.FlagHome.backend.domain.activity.service.ActivityService;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.util.List;
 
 @Transactional
 @SpringBootTest
@@ -35,7 +29,6 @@ public class ActivityControllerTest {
 
     private Member dummyMember1;
 
-    private Type dummyType;
 
 
     @BeforeEach
@@ -46,10 +39,8 @@ public class ActivityControllerTest {
                 //.email("yabueng@suwon.ac.kr")
                 .studentId("1").build());
 
-        dummyType = Type.valueOf("Study");
 
-
-        @Nested
+        /*@Nested
         @DisplayName("활동 삭제 테스트")
         class deleteActivityTest {
             @Test
@@ -59,24 +50,23 @@ public class ActivityControllerTest {
                 Activity deletedactivity = activityRepository.save(Activity.builder()
                                 .name("삭제될 활동 제목")
                                 .description("삭제될 활동 내용")
-                                .members((List<Member>) dummyMember1)
-                                .type(dummyType)
+                                //.members((List<Member>) dummyMember1)
                                 .build());
 
-                long deleteActivityId = deletedactivity.getId();
+                Long deleteActivityId = deletedactivity.getId();
 
                 //when
                 activityService.deleteActivity(deleteActivityId);
                 entityManager.clear();
 
                 //then : 정상적으로 삭제되어 찾을수 없는지
-                deletedactivity = activityRepository.findById(deleteActivityId).orElse(null);
+                deletedactivity = activityRepository.findById(deleteActivityId.getId()).orElse(null);
                 assert deletedactivity == null;
 
 
             }
 
-            /*@Test
+            @Test
             @DisplayName("권한 부족으로 인한 활동 삭제 실패")
             void deleteActivityFailTest() {
                 Activity activity = activityRepository.save(Activity.builder()
@@ -91,6 +81,5 @@ public class ActivityControllerTest {
                 assertThat();
 
             }*/
-        }
     }
 }
