@@ -1,14 +1,13 @@
 package com.FlagHome.backend.domain.member.service;
 
+import com.FlagHome.backend.domain.mail.service.MailService;
+import com.FlagHome.backend.domain.member.dto.UpdatePasswordRequest;
 import com.FlagHome.backend.domain.member.dto.UpdateProfileRequest;
+import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.utility.RandomGenerator;
-import com.FlagHome.backend.domain.Status;
-import com.FlagHome.backend.domain.member.dto.UpdatePasswordRequest;
-import com.FlagHome.backend.domain.member.entity.Member;
-import com.FlagHome.backend.domain.mail.service.MailService;
-import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,9 +27,7 @@ public class MemberService {
     public void withdraw(Long memberId, String password) {
         validatePassword(memberId, password);
 
-        Member member = findById(memberId);
-        // dirty checking
-        member.updateStatus(Status.WITHDRAW);
+        memberRepository.deleteById(memberId);
     }
 
     public void findLoginId(String email) {
