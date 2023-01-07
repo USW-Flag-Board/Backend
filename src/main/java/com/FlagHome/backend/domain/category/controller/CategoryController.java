@@ -4,10 +4,9 @@ import com.FlagHome.backend.domain.category.dto.CategoryDto;
 import com.FlagHome.backend.domain.category.entity.Category;
 import com.FlagHome.backend.domain.category.mapper.CategoryMapper;
 import com.FlagHome.backend.domain.category.service.CategoryService;
-import com.FlagHome.backend.global.util.UriCreator;
+import com.FlagHome.backend.global.utility.UriCreator;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -45,7 +45,7 @@ jobs:
       run: chmod +x gradlew
 
     - name: Test with Gradle
-      run: SPRING_PROFILES_ACTIVE=[test] ./gradlew test
+      run: ./gradlew test
 
     - name: Build with Gradle (except TEST)
       uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
