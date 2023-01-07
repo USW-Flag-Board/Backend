@@ -1,10 +1,13 @@
 package com.FlagHome.backend.domain.member.repository;
 
 import com.FlagHome.backend.domain.member.dto.UpdateProfileRequest;
+import com.FlagHome.backend.domain.member.entity.Member;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static com.FlagHome.backend.domain.member.entity.QMember.member;
 
@@ -27,5 +30,13 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
                 .set(member.studentId, updateProfileRequest.getStudentId())
                 .where(member.id.eq(memberId))
                 .execute();
+    }
+
+    @Override
+    public List<Member> getAllSleepMembers() {
+        return queryFactory
+                .selectFrom(member)
+                .where()
+                .fetch();
     }
 }
