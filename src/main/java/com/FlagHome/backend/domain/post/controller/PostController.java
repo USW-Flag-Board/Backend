@@ -2,21 +2,26 @@ package com.FlagHome.backend.domain.post.controller;
 
 import com.FlagHome.backend.domain.post.dto.PostDto;
 import com.FlagHome.backend.domain.post.service.PostService;
+import com.FlagHome.backend.global.utility.UriCreator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/api/post")
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
+    private final static String BASE_URL = "/api/post";
 
     @PostMapping
-    public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto) {
-        postService.createPost(postDto);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Void> createPost(@RequestBody PostDto postDto) {
+        PostDto createdPostDto = postService.createPost(postDto);
+        URI uri = UriCreator.createUri(BASE_URL, createdPostDto.getId());
+        return ResponseEntity.created(uri).build();
     }
 
     @GetMapping
