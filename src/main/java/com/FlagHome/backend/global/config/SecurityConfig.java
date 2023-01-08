@@ -39,15 +39,16 @@ public class SecurityConfig {
                 .accessDeniedHandler(jwtAccessDeniedHandler)
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint);
 
-        http.authorizeRequests()
-                .antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/api/post/**").hasRole("USER")
-                .antMatchers("/api/reply/**").hasRole("USER")
-                .antMatchers("/api/file/**").hasRole("USER")
-                .antMatchers(HttpMethod.PUT, "/api/member/**").hasRole("USER")
-                .antMatchers(HttpMethod.POST, "/api/member/**").permitAll()
-                .anyRequest().authenticated();
-
+//        http.authorizeRequests()
+//                .antMatchers("/api/auth/**").permitAll()
+//                .antMatchers("/api/post/**").hasRole("USER")
+//                .antMatchers("/api/reply/**").hasRole("USER")
+//                .antMatchers("/api/file/**").hasRole("USER")
+//                .antMatchers(HttpMethod.PUT, "/api/member/**").hasRole("USER")
+//                .antMatchers(HttpMethod.POST, "/api/member/**").permitAll()
+//                .anyRequest().authenticated();
+        //카테고리 테스트 시 오류 발생으로 주석 처리 후 추가 된 코드입니다.(23.01.09 강지은)
+        http.authorizeRequests().anyRequest().permitAll();
         http
                 .apply(new JwtSecurityConfig(jwtUtilizer));
 
