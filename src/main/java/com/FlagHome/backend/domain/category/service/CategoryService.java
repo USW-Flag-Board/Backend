@@ -4,6 +4,7 @@ import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.domain.category.entity.Category;
 import com.FlagHome.backend.domain.category.repository.CategoryRepository;
+import com.FlagHome.backend.global.util.CustomBeanUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CategoryService {
     private final CategoryRepository categoryRepository;
+    private final CustomBeanUtils beanUtil;
     @Transactional
     public Category createCategory(Category category){
 
@@ -27,29 +29,22 @@ public class CategoryService {
 
         return category;
     }
+
     @Transactional
     public Category updateCategory (Category category) {
 
         Category findCategory = findVerifiedCategory(category.getId());
 
-        Optional.ofNullable(category.getKoreanName())
-                .ifPresent(koreanName -> findCategory.setKoreanName(koreanName));
-        Optional.ofNullable(category.getEnglishName())
-                .ifPresent(englishName -> findCategory.setEnglishName(englishName));
-        Optional.ofNullable(category.getCategoryDepth())
-                .ifPresent(depth -> findCategory.setCategoryDepth(depth));
-        Optional.ofNullable(category.getParent())
-                .ifPresent(parent -> findCategory.setParent(
-                        findVerifiedCategory(category.getParent().getId())
-                ));
+        Category updateCategory = (Category) beanUtil.copyNotNullProperties(category, findCategory);
 
-        return categoryRepository.save(findCategory);
+        return categoryRepository.save(updateCategory);
 
     }
 
     @Transactional
     public List<Category> getCategories () {
-        return categoryRepository.findAll();
+        List<Category> allCategoryList =categoryRepository.findAll();
+        return allCategoryList;
     }
 
     @Transactional
@@ -57,7 +52,6 @@ public class CategoryService {
         Category category = findVerifiedCategory(categoryId);
         categoryRepository.delete(category);
     }
-
     public Category findVerifiedCategory(long categoryId) {
         Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
         Category findCategory = optionalCategory.orElseThrow(()-> new CustomException(ErrorCode.CATEGORY_NOT_EXISTS));
