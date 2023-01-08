@@ -10,8 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor
-//@NoArgsConstructor(access = AccessLevel.PROTECTED) //헷갈려서 일단 주석처리 해놨습니다(22.12.31 강지은)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Category {
     @Id
@@ -43,7 +42,7 @@ public class Category {
     @OneToMany(mappedBy = "category")
     private List<Post> postList;
 
-    @Builder //PostControllerTest에 빌더 사용한게 남아있어서 남겼습니다. (22.12.31 강지은)
+    @Builder
     public Category(String koreanName, String englishName, Long categoryDepth, Category parent, List<Post> postList) {
         this.koreanName = koreanName;
         this.englishName = englishName;

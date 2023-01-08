@@ -12,10 +12,8 @@ import java.util.stream.Collectors;
 @Getter
 @AllArgsConstructor
 public class CategoryResultDto {
-    private Long id;
     private String koreanName;
     private String englishName;
     private Long categoryDepth;
     private List<CategoryResultDto> children;
-
 }
