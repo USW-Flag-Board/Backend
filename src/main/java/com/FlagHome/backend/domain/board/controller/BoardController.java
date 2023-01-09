@@ -6,7 +6,7 @@ import com.FlagHome.backend.domain.board.dto.BoardResultDto;
 import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.board.mapper.BoardMapper;
 import com.FlagHome.backend.domain.board.service.BoardService;
-import com.FlagHome.backend.global.util.UriCreator;
+import com.FlagHome.backend.global.utility.UriCreator;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;

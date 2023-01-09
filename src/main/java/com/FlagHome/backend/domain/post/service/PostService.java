@@ -1,7 +1,8 @@
 package com.FlagHome.backend.domain.post.service;
 
-import com.FlagHome.backend.domain.category.entity.Category;
-import com.FlagHome.backend.domain.category.repository.CategoryRepository;
+
+import com.FlagHome.backend.domain.board.entity.Board;
+import com.FlagHome.backend.domain.board.repository.BoardRepository;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.domain.member.entity.Member;
