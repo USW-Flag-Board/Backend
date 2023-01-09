@@ -27,11 +27,11 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    // 권장하지 않는 방식 -> 추가방안 고려해보기
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
-                .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**")
-                .antMatchers("/h2-console/**");
+                .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**");
     }
 
     @Bean

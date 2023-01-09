@@ -152,7 +152,7 @@ public class MemberServiceTest {
             // when
             memberService.withdraw(savedMember.getId(), password);
 
-            // then : 정상적으로 상태가 변경되었고 동일한 엔티티인지
+             // then : 정상적으로 상태가 변경되었고 동일한 엔티티인지
             Member member = memberRepository.findById(savedMember.getId()).get();
             assertThat(member.getId()).isEqualTo(savedMember.getId());
             assertThat(member.getLoginId()).isEqualTo(loginId);
