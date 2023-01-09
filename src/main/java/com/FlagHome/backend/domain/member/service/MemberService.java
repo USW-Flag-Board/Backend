@@ -60,15 +60,15 @@ public class MemberService {
     @Transactional
     public void sendNewPassword(String email) {
         Member member = findByEmail(email);
-
         String newPassword = RandomGenerator.getRandomPassword();
+
         // dirty checking
         member.updatePassword(passwordEncoder.encode(newPassword));
         mailService.sendNewPassword(email, newPassword);
     }
 
     @Transactional
-    public void updatePassword(Long memberId, UpdatePasswordRequest updatePasswordRequest) {
+    public long updatePassword(Long memberId, UpdatePasswordRequest updatePasswordRequest) {
         validatePassword(memberId, updatePasswordRequest.getCurrentPassword());
 
         Member member = findById(memberId);
@@ -78,11 +78,16 @@ public class MemberService {
 
         // dirty checking
         member.updatePassword(passwordEncoder.encode(updatePasswordRequest.getNewPassword()));
+        return member.getId();
     }
 
     @Transactional
-    public void updateProfile(Long id, UpdateProfileRequest updateProfileRequest) {
-        memberRepository.updateProfile(id, updateProfileRequest);
+    public long updateProfile(Long memberId, UpdateProfileRequest updateProfileRequest) {
+        Member member = findById(memberId);
+
+        // dirty checking
+        member.updateProfile(updateProfileRequest);
+        return member.getId();
     }
 
     @Transactional
@@ -90,8 +95,7 @@ public class MemberService {
     public void changeAllToSleepMember(){
         List<Member> sleepingList = memberRepository.getAllSleepMembers();
 
-        sleepingList
-                .forEach(member -> withdrawalRepository.save(Withdrawal.of(member,passwordEncoder)));
+        sleepingList.forEach(member -> withdrawalRepository.save(Withdrawal.of(member,passwordEncoder)));
     }
 
     private void validatePassword(Long memberId, String password) {

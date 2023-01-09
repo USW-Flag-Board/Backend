@@ -5,6 +5,7 @@ import com.FlagHome.backend.domain.Status;
 import com.FlagHome.backend.domain.auth.entity.AuthMember;
 import com.FlagHome.backend.domain.member.Major;
 import com.FlagHome.backend.domain.member.Role;
+import com.FlagHome.backend.domain.member.dto.UpdateProfileRequest;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -61,6 +62,13 @@ public class Member extends BaseEntity {
     }
 
     public void updatePassword(String password) { this.password = password; }
+
+    public void updateProfile(UpdateProfileRequest updateProfileRequest) {
+        this.major = updateProfileRequest.getMajor();
+        this.bio = updateProfileRequest.getBio();
+        this.phoneNumber = updateProfileRequest.getPhoneNumber();
+        this.studentId = updateProfileRequest.getStudentId();
+    }
 
     public static Member of(AuthMember authMember, PasswordEncoder passwordEncoder) {
         return Member.builder()
