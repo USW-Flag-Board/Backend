@@ -36,7 +36,7 @@ public class PostDto {
         this.userId = postEntity.getMember().getId();
         this.title = postEntity.getTitle();
         this.content = postEntity.getContent();
-        this.categoryId = postEntity.getCategory().getId();
+        this.categoryId = postEntity.getBoard().getId();
         this.status = postEntity.getStatus();
         this.viewCount = postEntity.getViewCount();
 

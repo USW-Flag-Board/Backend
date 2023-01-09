@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.search;
 
-import com.FlagHome.backend.domain.category.entity.Category;
-import com.FlagHome.backend.domain.category.repository.CategoryRepository;
+import com.FlagHome.backend.domain.board.entity.Board;
+import com.FlagHome.backend.domain.board.repository.BoardRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.dto.PostDto;
@@ -33,7 +33,7 @@ public class BoardSearchTest {
     @Autowired
     private PostRepository postRepository;
     @Autowired
-    private CategoryRepository categoryRepository;
+    private BoardRepository boardRepository;
     @Autowired
     private MemberRepository memberRepository;
     @Autowired
@@ -45,23 +45,23 @@ public class BoardSearchTest {
     @DisplayName("전체 게시판 조회 테스트")
     public void allBoardSearchTest() {
         // given
-        searchService = new BoardSearchService(postRepository, categoryRepository);
+        searchService = new BoardSearchService(postRepository, boardRepository);
 
         Member member = memberRepository.save(Member.builder().email("gildong@naver.com").name("홍길동").loginId("gildong12").password("123123").build());
 
         String firstTitle = "첫번째 제목";
         String secondTitle = "두번째 제목";
 
-        Category category = categoryRepository.save(Category.builder().englishName("free").koreanName("자유").postList(new ArrayList<>()).build());
-        Post post = postRepository.save(Post.builder().member(member).category(category).title(firstTitle).content("라라라").replyList(new ArrayList<>()).build());
-        category.getPostList().add(post);
+        Board board = boardRepository.save(Board.builder().englishName("free").koreanName("자유").postList(new ArrayList<>()).build());
+        Post post = postRepository.save(Post.builder().member(member).board(board).title(firstTitle).content("라라라").replyList(new ArrayList<>()).build());
+        board.getPostList().add(post);
 
-        Category category2 = categoryRepository.save(Category.builder().englishName("notice").koreanName("공지").postList(new ArrayList<>()).build());
-        Post post2 = postRepository.save(Post.builder().member(member).category(category2).title(secondTitle).content("두두두").replyList(new ArrayList<>()).build());
-        category2.getPostList().add(post2);
+        Board board2 = boardRepository.save(Board.builder().englishName("notice").koreanName("공지").postList(new ArrayList<>()).build());
+        Post post2 = postRepository.save(Post.builder().member(member).board(board2).title(secondTitle).content("두두두").replyList(new ArrayList<>()).build());
+        board2.getPostList().add(post2);
 
-        long firstCategoryId = category.getId();
-        long secondCategoryId = category2.getId();
+        long firstCategoryId = board.getId();
+        long secondCategoryId = board2.getId();
 
         // when
         List<PostDto> result = null;
@@ -82,20 +82,20 @@ public class BoardSearchTest {
     @DisplayName("카테고리를 이용한 게시판 조회 테스트")
     public void boardSearchWithCategoryTest() throws Exception {
         // given
-        searchService = new BoardSearchService(postRepository, categoryRepository);
+        searchService = new BoardSearchService(postRepository, boardRepository);
 
         Member member = memberRepository.save(Member.builder().email("gildong@naver.com").name("홍길동").loginId("gildong12").password("123123").build());
 
         String firstTitle = "첫번째 제목";
         String secondTitle = "두번째 제목";
 
-        Category category = categoryRepository.save(Category.builder().englishName("free").koreanName("자유").postList(new ArrayList<>()).build());
-        Post post = postRepository.save(Post.builder().member(member).category(category).title(firstTitle).content("라라라").replyList(new ArrayList<>()).build());
-        category.getPostList().add(post);
+        Board board = boardRepository.save(Board.builder().englishName("free").koreanName("자유").postList(new ArrayList<>()).build());
+        Post post = postRepository.save(Post.builder().member(member).board(board).title(firstTitle).content("라라라").replyList(new ArrayList<>()).build());
+        board.getPostList().add(post);
 
-        Category category2 = categoryRepository.save(Category.builder().englishName("notice").koreanName("공지").postList(new ArrayList<>()).build());
-        Post post2 = postRepository.save(Post.builder().member(member).category(category2).title(secondTitle).content("두두두").replyList(new ArrayList<>()).build());
-        category2.getPostList().add(post2);
+        Board board2 = boardRepository.save(Board.builder().englishName("notice").koreanName("공지").postList(new ArrayList<>()).build());
+        Post post2 = postRepository.save(Post.builder().member(member).board(board2).title(secondTitle).content("두두두").replyList(new ArrayList<>()).build());
+        board2.getPostList().add(post2);
 
         // when
         List<PostDto> result = searchService.getWithCategory("free");

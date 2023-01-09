@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain.category.dto;
+package com.FlagHome.backend.domain.board.dto;
 
 
 import lombok.*;
@@ -7,10 +7,10 @@ import lombok.*;
 @Getter
 @Builder
 @AllArgsConstructor
-public class CategoryPostDto {
+public class BoardPostDto {
     private Long parentId;
     private String koreanName;
     private String englishName;
-    private Long categoryDepth;
+    private Long boardDepth;
 
 }
