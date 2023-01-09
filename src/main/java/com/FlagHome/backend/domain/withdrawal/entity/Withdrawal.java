@@ -69,7 +69,6 @@ public class Withdrawal {
                 .profileImg(passwordEncoder.encode(member.getProfileImg()))
                 .phoneNumber(passwordEncoder.encode(member.getPhoneNumber()))
                 .role(passwordEncoder.encode(member.getRole().toString()))
-
                 .expiredAt(LocalDateTime.now().plusDays(90))
                 .build();
     }

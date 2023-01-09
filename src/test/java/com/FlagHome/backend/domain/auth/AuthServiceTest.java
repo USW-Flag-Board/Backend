@@ -221,14 +221,13 @@ public class AuthServiceTest {
             String loginId = "gmlwh124";
             String password = "qwer1234!";
             String email = "gmlwh124@suwon.ac.kr";
-            JoinType joinType = JoinType.CLUB;
             String certification = RandomGenerator.getRandomNumber();
 
             JoinRequest joinRequest = JoinRequest.builder()
                     .loginId(loginId)
                     .password(password)
                     .email(email)
-                    .joinType(joinType)
+                    .joinType(JoinType.CREW)
                     .build();
 
             AuthMember authMember = AuthMember.of(joinRequest, certification);

@@ -4,9 +4,8 @@ import com.FlagHome.backend.domain.category.dto.CategoryDto;
 import com.FlagHome.backend.domain.category.entity.Category;
 import com.FlagHome.backend.domain.category.mapper.CategoryMapper;
 import com.FlagHome.backend.domain.category.service.CategoryService;
-import com.FlagHome.backend.global.utility.URICreator;
+import com.FlagHome.backend.global.utility.UriCreator;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +23,7 @@ public class CategoryController {
     @PostMapping
     public ResponseEntity createCategory(@RequestBody CategoryDto categoryDto) {
         Category resultCategory = categoryService.createCategory(mapper.CategoryDtoToCategory(categoryDto,categoryService));
-        URI location = URICreator.createUri(CATEGORY_DEFAULT_URL, resultCategory.getId());
+        URI location = UriCreator.createUri(CATEGORY_DEFAULT_URL, resultCategory.getId());
 
         return ResponseEntity.created(location).build();
     }

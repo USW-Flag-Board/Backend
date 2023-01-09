@@ -8,9 +8,6 @@ import java.util.List;
 
 @Repository
 public interface MemberRepositoryCustom {
-
-    void updateProfile(Long memberId, UpdateProfileRequest updateProfileRequest);
-
     List<Member> getAllSleepMembers();
 
 }

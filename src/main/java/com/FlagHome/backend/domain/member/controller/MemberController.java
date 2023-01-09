@@ -75,13 +75,25 @@ public class MemberController {
     @Tag(name = "member")
     @Operation(summary = "비밀번호 수정", description = "로그인한 유저가 직접 변경하는 경우")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "비밀번호 수정 성공<br>유저 URI 리턴"),
+            @ApiResponse(responseCode = "201", description = "비밀번호 수정 성공, 유저 URI 리턴"),
             @ApiResponse(responseCode = "400", description = "비밀번호가 일치하지 않습니다."),
             @ApiResponse(responseCode = "409", description = "기존과 같은 비밀번호는 사용할 수 없습니다.")
     })
     @PatchMapping("/password")
     public ResponseEntity<Void> updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest) {
         long memberId = memberService.updatePassword(SecurityUtils.getMemberId(), updatePasswordRequest);
+        URI location = UriCreator.createUri(MEMBER_DEFAULT_URL, memberId);
+        return ResponseEntity.created(location).build();
+    }
+
+    @Tag(name = "member")
+    @Operation(summary = "프로필 업데이트")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "비밀번호 수정 성공, 유저 URI 리턴"),
+    })
+    @PatchMapping("/profile")
+    public ResponseEntity<Void> updateProfile(@RequestBody UpdateProfileRequest updateProfileRequest) {
+        long memberId = memberService.updateProfile(SecurityUtils.getMemberId(), updateProfileRequest);
         URI location = UriCreator.createUri(MEMBER_DEFAULT_URL, memberId);
         return ResponseEntity.created(location).build();
     }
@@ -95,15 +107,6 @@ public class MemberController {
     @DeleteMapping()
     public ResponseEntity<Void> withdraw(@RequestBody WithdrawRequest withdrawRequest) {
         memberService.withdraw(SecurityUtils.getMemberId(), withdrawRequest.getPassword());
-        return ResponseEntity.ok().build();
-    }
-
-    @Tag(name = "member")
-    @Operation(summary = "프로필 업데이트")
-    @ApiResponse(responseCode = "200", description = "프로필 업데이트 성공")
-    @PutMapping("/profile")
-    public ResponseEntity<Void> updateProfile(@RequestBody UpdateProfileRequest updateProfileRequest) {
-        memberService.updateProfile(SecurityUtils.getMemberId(), updateProfileRequest);
         return ResponseEntity.ok().build();
     }
 }
