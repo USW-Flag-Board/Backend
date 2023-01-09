@@ -15,6 +15,7 @@ echo "$TIME_NOW > $JAR_FILE 파일 복사" >> $DEPLOY_LOG
 cp $PROJECT_ROOT/build/libs/*.jar $JAR_FILE
 
 # 현재 구동 중인 애플리케이션 pid 확인
+echo "> 현재 실행중인 애플리케이션 pid 확인" >> $DEPLOY_LOG
 CURRENT_PID=$(pgrep -f $JAR_FILE)
 
 # 프로세스가 켜져 있으면 종료
@@ -23,6 +24,8 @@ if [ -z $CURRENT_PID ]; then
 else
   echo "$TIME_NOW > 실행중인 $CURRENT_PID 애플리케이션 종료하고 재시작합니다. " >> $DEPLOY_LOG
   kill -15 $CURRENT_PID
+  # 종료될 때까지 대기
+  sleep 5
 fi
 
 # jar 파일 실행

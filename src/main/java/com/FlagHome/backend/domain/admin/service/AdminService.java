@@ -22,7 +22,7 @@ public class AdminService {
     private final PasswordEncoder passwordEncoder;
 
     public List<AuthMember> getAllAuthorizedAuthMember() {
-        return authRepository.getAllAuthorizedAuthMember();
+        return authRepository.getAllAuthorizedAuthMembers();
     }
 
     @Transactional

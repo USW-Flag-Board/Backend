@@ -21,10 +21,10 @@ public class AuthMemberService {
     @Transactional
     public void deleteNotProceedAuthMember() {
         List<AuthMember> unAuthMemberList = findAllNotProceedAuthMember();
-        authRepository.deleteAllNotProceedAuthMember(unAuthMemberList);
+        authRepository.deleteAllNotProceedAuthMembers(unAuthMemberList);
     }
 
     private List<AuthMember> findAllNotProceedAuthMember() {
-        return authRepository.getAllNotProceedAuthMember();
+        return authRepository.getAllNotProceedAuthMembers();
     }
 }

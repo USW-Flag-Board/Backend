@@ -16,21 +16,7 @@ import static com.FlagHome.backend.domain.member.entity.QMember.member;
 @Transactional
 @RequiredArgsConstructor
 public class MemberRepositoryImpl implements MemberRepositoryCustom {
-
-
     private final JPAQueryFactory queryFactory;
-
-    @Override
-    public void updateProfile(Long memberId, UpdateProfileRequest updateProfileRequest) {
-        queryFactory
-                .update(member)
-                .set(member.major, updateProfileRequest.getMajor())
-                .set(member.bio, updateProfileRequest.getBio())
-                .set(member.phoneNumber, updateProfileRequest.getPhoneNumber())
-                .set(member.studentId, updateProfileRequest.getStudentId())
-                .where(member.id.eq(memberId))
-                .execute();
-    }
 
     @Override
     public List<Member> getAllSleepMembers() {
