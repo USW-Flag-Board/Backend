@@ -72,7 +72,7 @@ public class AuthController {
     @Operation(summary = "회원가입", description = "재학생 인증 완료 시 회원가입, 동아리원은 추가 관리자 인증 필요")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "회원가입 성공"),
-            @ApiResponse(responseCode = "404", description = "가입 대상이 존재하지 않습니다."),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 가입정보입니다."),
             @ApiResponse(responseCode = "409", description = "인증번호가 일치하지 않습니다."),
     })
     @PostMapping("/sign-up")
@@ -84,7 +84,7 @@ public class AuthController {
     @Operation(summary = "로그인")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "로그인 성공, JWT 토큰 발급"),
-            @ApiResponse(responseCode = "404", description = "사용자가 존재하지 않습니다.")
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
     })
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest loginRequest) {
