@@ -1,14 +1,13 @@
 package com.FlagHome.backend.domain.member;
 
-import com.FlagHome.backend.domain.member.dto.UpdateProfileRequest;
-import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.domain.Status;
 import com.FlagHome.backend.domain.member.dto.UpdatePasswordRequest;
+import com.FlagHome.backend.domain.member.dto.UpdateProfileRequest;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
+import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @Transactional
 @SpringBootTest
@@ -146,17 +146,15 @@ public class MemberServiceTest {
             Member savedMember = memberRepository.saveAndFlush(Member.builder()
                             .loginId(loginId)
                             .password(passwordEncoder.encode(password))
-                            .status(Status.GENERAL)
                             .build());
 
             // when
             memberService.withdraw(savedMember.getId(), password);
+            entityManager.flush();
 
-            // then : 정상적으로 상태가 변경되었고 동일한 엔티티인지
-            Member member = memberRepository.findById(savedMember.getId()).get();
-            assertThat(member.getId()).isEqualTo(savedMember.getId());
-            assertThat(member.getLoginId()).isEqualTo(loginId);
-            assertThat(member.getStatus()).isEqualTo(Status.WITHDRAW);
+            // then : 정상적으로 탈퇴되어 멤버 정보가 레포에 없는지
+            assertThatExceptionOfType(CustomException.class)
+                    .isThrownBy(() -> memberRepository.findById(savedMember.getId()).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND)));
         }
 
         @Test
