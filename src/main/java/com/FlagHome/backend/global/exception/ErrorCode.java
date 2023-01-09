@@ -12,7 +12,6 @@ public enum ErrorCode {
     NONE_AUTHORIZATION_TOKEN(HttpStatus.BAD_REQUEST, "권한 정보가 없는 토큰입니다."),
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않는 토큰입니다."),
     TOKEN_NOT_MATCH(HttpStatus.BAD_REQUEST, "토큰의 정보가 일치하지 않습니다."),
-    PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
     CERTIFICATION_NOT_MATCH(HttpStatus.BAD_REQUEST, "인증번호가 일치하지 않습니다."),
     EMAIL_USER_NOT_MATCH(HttpStatus.BAD_REQUEST, "이메일과 아이디가 일치하지 않습니다."),
 
@@ -27,17 +26,18 @@ public enum ErrorCode {
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 게시물입니다."),
     REPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다."),
     AUTH_TARGET_NOT_FOUND(HttpStatus.NOT_FOUND, "가입 대상이 존재하지 않습니다."),
-    CATEGORY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "존재하지 않는 카테고리입니다."),
-    SEARCH_CODE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "존재하지 않는 검색 타입입니다."),
+    CATEGORY_NOT_EXISTS(HttpStatus.NOT_FOUND, "존재하지 않는 카테고리입니다."),
+    SEARCH_CODE_NOT_EXISTS(HttpStatus.NOT_FOUND, "존재하지 않는 검색 타입입니다."),
 
     /** 409 - REQUEST_CONFLICT, 기존 자원과 충돌하는 경우 */
     PASSWORD_IS_SAME(HttpStatus.CONFLICT, "기존과 같은 비밀번호는 사용할 수 없습니다."),
     LOGIN_ID_EXISTS(HttpStatus.CONFLICT, "이미 사용 중인 아이디입니다."),
     EMAIL_EXISTS(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다."),
+    PASSWORD_NOT_MATCH(HttpStatus.CONFLICT, "비밀번호가 일치하지 않습니다."),
 
     /** 422 - UNPROCESSABLE, 타입과 문법은 일치하지만 validation 실패 시 */
-    NOT_USW_EMAIL(HttpStatus.BAD_REQUEST, "수원대학교 웹 메일 주소가 아닙니다."),
-    INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "사용할 수 없는 비밀번호 입니다. (8~20자 이내 영문, 숫자, 특수문자를 모두 포함)"),
+    NOT_USW_EMAIL(HttpStatus.UNPROCESSABLE_ENTITY, "수원대학교 웹 메일 주소가 아닙니다."),
+    INVALID_PASSWORD(HttpStatus.UNPROCESSABLE_ENTITY, "사용할 수 없는 비밀번호 입니다. (8~20자 이내 영문, 숫자, 특수문자를 모두 포함)"),
 
     /** 500 - INTERNAL_SERVER_ERROR */
     FILE_CONVERT_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "파일 변환에 실패했습니다.")

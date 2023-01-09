@@ -3,6 +3,7 @@ package com.FlagHome.backend.domain.activity.service;
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +26,9 @@ public class ProjectService implements ActivityService {
     }
 
     @Override
-    public void deleteActivity() {
-
+    @Transactional
+    public void deleteActivity(long activityId) {
+        activityRepository.deleteById(activityId);
     }
+
 }
