@@ -16,9 +16,9 @@ cp $PROJECT_ROOT/build/libs/*.jar $JAR_FILE
 
 # 현재 구동 중인 애플리케이션 pid 확인
 echo "> 현재 실행중인 애플리케이션 pid 확인" >> $DEPLOY_LOG
-CURRENT_PID=$(pgrep -f $JAR_FILE)
+CURRENT_PID=$(lsof -i :8080)
 
-# 프로세스가 켜져 있으면 종료
+# 프로세스가 켜져 있으면 재시작
 if [ -z $CURRENT_PID ]; then
   echo "$TIME_NOW > 현재 실행중인 애플리케이션이 없습니다." >> $DEPLOY_LOG
 else
