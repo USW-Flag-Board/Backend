@@ -48,11 +48,13 @@ public class SecurityConfig {
 
         http.authorizeRequests()
                 .antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/api/post/**").hasRole("USER")
-                .antMatchers("/api/reply/**").hasRole("USER")
-                .antMatchers("/api/file/**").hasRole("USER")
-                .antMatchers(HttpMethod.PUT, "/api/member/**").hasRole("USER")
+                .antMatchers(HttpMethod.GET, "/api/member/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/member/**").permitAll()
+                .antMatchers("/api/post/**").hasAnyRole("USER", "CREW")
+                .antMatchers("/api/reply/**").hasAnyRole("USER", "CREW")
+                .antMatchers("/api/file/**").hasAnyRole("USER", "CREW")
+                .antMatchers("/api/member/**").hasAnyRole("USER", "CREW")
+                .antMatchers("/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated();
 
         http
