@@ -39,8 +39,8 @@ public class ActivityControllerTest {
                 //.email("yabueng@suwon.ac.kr")
                 .studentId("1").build());
 
-
-        /*@Nested
+/*
+        @Nested
         @DisplayName("활동 삭제 테스트")
         class deleteActivityTest {
             @Test
@@ -50,7 +50,7 @@ public class ActivityControllerTest {
                 Activity deletedactivity = activityRepository.save(Activity.builder()
                                 .name("삭제될 활동 제목")
                                 .description("삭제될 활동 내용")
-                                //.members((List<Member>) dummyMember1)
+                                .leader(dummyMember1)
                                 .build());
 
                 Long deleteActivityId = deletedactivity.getId();
@@ -60,25 +60,25 @@ public class ActivityControllerTest {
                 entityManager.clear();
 
                 //then : 정상적으로 삭제되어 찾을수 없는지
-                deletedactivity = activityRepository.findById(deleteActivityId.getId()).orElse(null);
+                deletedactivity = activityRepository.findById(deleteActivityId).orElse(null);
                 assert deletedactivity == null;
 
 
             }
 
             @Test
-            @DisplayName("권한 부족으로 인한 활동 삭제 실패")
+            @DisplayName("해당 활동의 리더가 아닌 사람이 활동 삭제시 실패")
             void deleteActivityFailTest() {
                 Activity activity = activityRepository.save(Activity.builder()
                         .name("삭제될 활동 제목")
                         .description("삭제될 활동 내용")
-                        .members((List<Member>) dummyMember1)
-                        .type(dummyType)
+                        .leader(dummyMember1)
                         .build());
 
-                long deleteActivityId = activity.getId();
+                long deleteActivityId = activity.getId()
 
-                assertThat();
+
+                assertThat(member.getId()).isEqualTo(dummyMember1.getId());
 
             }*/
     }

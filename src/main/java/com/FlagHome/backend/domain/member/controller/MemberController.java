@@ -86,7 +86,7 @@ public class MemberController {
     @DeleteMapping()
     public ResponseEntity<Void> withdraw(@RequestBody WithdrawRequest withdrawRequest) {
         memberService.withdraw(SecurityUtils.getMemberId(), withdrawRequest.getPassword());
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "프로필 업데이트")
