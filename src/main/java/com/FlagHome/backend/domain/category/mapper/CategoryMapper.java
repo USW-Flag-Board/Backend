@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.category.mapper;
 
-import com.FlagHome.backend.domain.category.dto.CategoryDto;
+import  com.FlagHome.backend.domain.category.dto.CategoryDto;
 import com.FlagHome.backend.domain.category.dto.CategoryResultDto;
 import com.FlagHome.backend.domain.category.entity.Category;
 import com.FlagHome.backend.domain.category.service.CategoryService;

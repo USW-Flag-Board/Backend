@@ -65,7 +65,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void updatePassword(Long memberId, UpdatePasswordRequest updatePasswordRequest) {
+    public long updatePassword(Long memberId, UpdatePasswordRequest updatePasswordRequest) {
         validatePassword(memberId, updatePasswordRequest.getCurrentPassword());
 
         Member member = findById(memberId);
@@ -75,6 +75,7 @@ public class MemberService {
 
         // dirty checking
         member.updatePassword(passwordEncoder.encode(updatePasswordRequest.getNewPassword()));
+        return member.getId();
     }
 
     @Transactional

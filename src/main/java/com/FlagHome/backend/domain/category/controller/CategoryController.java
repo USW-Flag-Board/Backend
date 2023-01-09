@@ -4,7 +4,7 @@ import com.FlagHome.backend.domain.category.dto.CategoryDto;
 import com.FlagHome.backend.domain.category.entity.Category;
 import com.FlagHome.backend.domain.category.mapper.CategoryMapper;
 import com.FlagHome.backend.domain.category.service.CategoryService;
-import com.FlagHome.backend.global.utility.UriCreator;
+import com.FlagHome.backend.global.utility.URICreator;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
@@ -24,7 +24,7 @@ public class CategoryController {
     @PostMapping
     public ResponseEntity createCategory(@RequestBody CategoryDto categoryDto) {
         Category resultCategory = categoryService.createCategory(mapper.CategoryDtoToCategory(categoryDto,categoryService));
-        URI location = UriCreator.createUri(CATEGORY_DEFAULT_URL, resultCategory.getId());
+        URI location = URICreator.createUri(CATEGORY_DEFAULT_URL, resultCategory.getId());
 
         return ResponseEntity.created(location).build();
     }
@@ -44,7 +44,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{category-id}")
-    public ResponseEntity deleteCatgory(@PathVariable("category-id") long categoryId) {
+    public ResponseEntity deleteCategory(@PathVariable("category-id") long categoryId) {
         categoryService.deleteCategory(categoryId);
         return ResponseEntity.noContent().build();
     }

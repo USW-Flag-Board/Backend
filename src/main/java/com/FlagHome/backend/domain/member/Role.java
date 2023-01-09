@@ -16,7 +16,7 @@ public enum Role {
      * @return 유저 권한
      */
     public static Role from(JoinType joinType) {
-        if (joinType == JoinType.CLUB) {
+        if (joinType == JoinType.CREW) {
             return ROLE_CREW;
         }
         return ROLE_USER;
