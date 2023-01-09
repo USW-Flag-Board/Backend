@@ -154,7 +154,8 @@ public class MemberServiceTest {
 
             // then : 정상적으로 탈퇴되어 멤버 정보가 레포에 없는지
             assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> memberRepository.findById(savedMember.getId()).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND)));
+                    .isThrownBy(() -> memberRepository.findById(savedMember.getId())
+                            .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND)));
         }
 
         @Test
