@@ -3,7 +3,7 @@ package com.FlagHome.backend.domain.member.controller;
 import com.FlagHome.backend.domain.member.dto.*;
 import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.global.utility.SecurityUtils;
-import com.FlagHome.backend.global.utility.URICreator;
+import com.FlagHome.backend.global.utility.UriCreator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -82,17 +82,17 @@ public class MemberController {
     @PatchMapping("/password")
     public ResponseEntity<Void> updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest) {
         long memberId = memberService.updatePassword(SecurityUtils.getMemberId(), updatePasswordRequest);
-        URI location = URICreator.createUri(MEMBER_DEFAULT_URL, memberId);
+        URI location = UriCreator.createUri(MEMBER_DEFAULT_URL, memberId);
         return ResponseEntity.created(location).build();
     }
 
     @Tag(name = "member")
-    @Operation(summary = "회원 탈퇴", description = "회원 탈퇴 시 탈퇴 상태로만 변경")
+    @Operation(summary = "회원 탈퇴")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "회원 탈퇴 성공"),
-            @ApiResponse(responseCode = "400", description = "비밀번호가 일치하지 않습니다."),
+            @ApiResponse(responseCode = "409", description = "비밀번호가 일치하지 않습니다."),
     })
-    @PutMapping("/withdraw")
+    @DeleteMapping()
     public ResponseEntity<Void> withdraw(@RequestBody WithdrawRequest withdrawRequest) {
         memberService.withdraw(SecurityUtils.getMemberId(), withdrawRequest.getPassword());
         return ResponseEntity.ok().build();

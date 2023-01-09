@@ -1,19 +1,22 @@
 package com.FlagHome.backend.domain.member.service;
 
+import com.FlagHome.backend.domain.mail.service.MailService;
+import com.FlagHome.backend.domain.member.dto.UpdatePasswordRequest;
 import com.FlagHome.backend.domain.member.dto.UpdateProfileRequest;
+import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.member.repository.MemberRepository;
+import com.FlagHome.backend.domain.withdrawal.entity.Withdrawal;
+import com.FlagHome.backend.domain.withdrawal.repository.WithdrawalRepository;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.utility.RandomGenerator;
-import com.FlagHome.backend.domain.Status;
-import com.FlagHome.backend.domain.member.dto.UpdatePasswordRequest;
-import com.FlagHome.backend.domain.member.entity.Member;
-import com.FlagHome.backend.domain.mail.service.MailService;
-import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,13 +27,13 @@ public class MemberService {
 
     private final MailService mailService;
 
+    private final WithdrawalRepository withdrawalRepository;
+
     @Transactional
     public void withdraw(Long memberId, String password) {
         validatePassword(memberId, password);
 
-        Member member = findById(memberId);
-        // dirty checking
-        member.updateStatus(Status.WITHDRAW);
+        memberRepository.deleteById(memberId);
     }
 
     public void findLoginId(String email) {
@@ -81,6 +84,15 @@ public class MemberService {
     @Transactional
     public void updateProfile(Long id, UpdateProfileRequest updateProfileRequest) {
         memberRepository.updateProfile(id, updateProfileRequest);
+    }
+
+    @Transactional
+    //@Scheduled(cron = "000000")  이후에 설정하기
+    public void changeAllToSleepMember(){
+        List<Member> sleepingList = memberRepository.getAllSleepMembers();
+
+        sleepingList
+                .forEach(member -> withdrawalRepository.save(Withdrawal.of(member,passwordEncoder)));
     }
 
     private void validatePassword(Long memberId, String password) {

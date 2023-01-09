@@ -1,6 +1,5 @@
 package com.FlagHome.backend.domain.activity.controller;
 
-import com.FlagHome.backend.domain.activity.service.ActivityService;
 import com.FlagHome.backend.domain.activity.service.MentoringService;
 import com.FlagHome.backend.domain.activity.service.ProjectService;
 import com.FlagHome.backend.domain.activity.service.StudyService;
@@ -15,4 +14,11 @@ public class ActivityController {
     private final MentoringService mentoringService;
     private final ProjectService projectService;
     private final StudyService studyService;
+/*
+    @DeleteMapping("/{activity_Id}")
+    @ApiModelProperty(value = "활동 삭제")
+    public ResponseEntity<Void> deleteActivity(@PathVariable(name = "activity_Id") long activityId) {
+        MentoringService.deleteActivity(activityId);
+        return ResponseEntity.noContent().build();
+    }*/
 }
