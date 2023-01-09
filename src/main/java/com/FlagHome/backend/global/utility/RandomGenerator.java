@@ -1,9 +1,11 @@
-package com.FlagHome.backend.global.util;
+package com.FlagHome.backend.global.utility;
 
 import java.security.SecureRandom;
 
 public class RandomGenerator {
     private static final SecureRandom RANDOM = new SecureRandom();
+
+    private RandomGenerator() { }
 
     /**
      * 이메일 인증에 필요한 6자리 숫자(난수) 생성

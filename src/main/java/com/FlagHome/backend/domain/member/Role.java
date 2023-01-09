@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum Role {
-    ROLE_USER, ROLE_CLUB, ROLE_ADMIN
+    ROLE_USER, ROLE_CREW, ROLE_ADMIN
     ;
 
     /**
@@ -16,8 +16,8 @@ public enum Role {
      * @return 유저 권한
      */
     public static Role from(JoinType joinType) {
-        if (joinType == JoinType.CLUB) {
-            return ROLE_CLUB;
+        if (joinType == JoinType.CREW) {
+            return ROLE_CREW;
         }
         return ROLE_USER;
     }

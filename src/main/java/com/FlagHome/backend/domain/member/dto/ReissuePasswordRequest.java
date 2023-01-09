@@ -1,6 +1,7 @@
 package com.FlagHome.backend.domain.member.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,9 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReissuePasswordRequest {
-    @ApiModelProperty(value = "로그인 아이디")
+    @Schema(description = "아이디", required = true, example = "gmlwh124")
     private String loginId;
 
-    @ApiModelProperty(value = "이메일")
+    @Schema(description = "이메일", required = true, example = "gmlwh124@suwon.ac.kr")
     private String email;
 }

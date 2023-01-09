@@ -29,7 +29,7 @@ public class MailRequest {
                         .withHtml(createContent(this.content)));
 
         return new SendEmailRequest()
-                .withSource("gmlwh124@naver.com")
+                .withSource("gmlwh124@naver.com") // 도메인 만들면 변경하기
                 .withDestination(destination)
                 .withMessage(message);
     }

@@ -5,7 +5,6 @@ import com.FlagHome.backend.domain.auth.dto.*;
 import com.FlagHome.backend.domain.auth.entity.AuthMember;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
-import com.FlagHome.backend.domain.mail.MailType;
 import com.FlagHome.backend.domain.mail.service.MailService;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.token.dto.TokenRequest;
@@ -14,7 +13,9 @@ import com.FlagHome.backend.domain.token.service.RefreshTokenService;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.jwt.JwtUtilizer;
-import com.FlagHome.backend.global.util.RandomGenerator;
+import com.FlagHome.backend.global.utility.RandomGenerator;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -53,27 +54,29 @@ public class AuthService {
     }
 
     @Transactional
-    public JoinResponse join(JoinRequest joinRequest) {
+    public void join(JoinRequest joinRequest) {
         validatePassword(joinRequest.getPassword());
 
         String certificationNumber = RandomGenerator.getRandomNumber();
         AuthMember authMember = AuthMember.of(joinRequest, certificationNumber);
-
-        mailService.sendMailByType(joinRequest.getEmail(), MailType.AUTH_EMAIL, certificationNumber);
         authRepository.save(authMember);
+    }
+
+    public JoinResponse sendCertification(String email) {
+        AuthMember authMember = findByEmail(email);
+        mailService.sendCertification(email, authMember.getCertification());
 
         return JoinResponse.from(authMember);
     }
 
     @Transactional
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
-        AuthMember authMember = authRepository.findByEmail(signUpRequest.getEmail())
-                .orElseThrow(() -> new CustomException(ErrorCode.AUTH_TARGET_NOT_FOUND));
+        AuthMember authMember = findByEmail(signUpRequest.getEmail());
 
         validateCertification(signUpRequest.getCertification(), authMember.getCertification());
 
         // 동아리원이면 인증 상태를 업데이트한다.
-        if (authMember.getJoinType() == JoinType.CLUB) {
+        if (authMember.getJoinType() == JoinType.CREW) {
             authMember.updateAuthorizedTrue();
             return SignUpResponse.from(authMember);
         }
@@ -126,5 +129,10 @@ public class AuthService {
         if (!matcher.find()) {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
+    }
+
+    private AuthMember findByEmail(String email) {
+        return authRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(ErrorCode.AUTH_TARGET_NOT_FOUND));
     }
 }

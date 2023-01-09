@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.post.service;
 
-import com.FlagHome.backend.domain.board.entity.Board;
-import com.FlagHome.backend.domain.board.repository.BoardRepository;
+import com.FlagHome.backend.domain.category.entity.Category;
+import com.FlagHome.backend.domain.category.repository.CategoryRepository;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.domain.member.entity.Member;
@@ -22,7 +22,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final BoardRepository boardRepository;
     @Transactional
-    public void createPost(PostDto postDto) {
+    public PostDto createPost(PostDto postDto) {
         Member memberEntity = memberRepository.findById(postDto.getUserId()).orElse(null);
         if(memberEntity == null)
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
@@ -31,7 +31,7 @@ public class PostService {
         if(boardEntity == null)
             throw new CustomException(ErrorCode.BOARD_NOT_EXISTS);
 
-        postRepository.save(Post.builder()
+        Post post = postRepository.save(Post.builder()
                 .member(memberEntity)
                 .title(postDto.getTitle())
                 .content(postDto.getContent())
@@ -40,6 +40,9 @@ public class PostService {
                 .replyList(new ArrayList<>())
                 .viewCount(0L)
                 .build());
+
+        postDto.setId(post.getId());
+        return postDto;
     }
 
     @Transactional

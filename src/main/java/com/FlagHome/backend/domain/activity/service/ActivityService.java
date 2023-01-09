@@ -1,18 +1,12 @@
 package com.FlagHome.backend.domain.activity.service;
 
+import org.springframework.transaction.annotation.Transactional;
 
-import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+public interface ActivityService {
+    void createActivity();
+    void getActivity();
+    void updateActivity();
 
-import java.time.LocalDateTime;
-
-@Service
-@RequiredArgsConstructor
-public class ActivityService {
-    private final ActivityRepository activityRepository;
-
-    private String calculatePeriod() {
-        return null;
-    }
+    @Transactional
+    void deleteActivity(long activityId);
 }

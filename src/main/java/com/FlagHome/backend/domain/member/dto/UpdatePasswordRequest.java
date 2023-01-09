@@ -1,6 +1,7 @@
 package com.FlagHome.backend.domain.member.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,9 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdatePasswordRequest {
-    @ApiModelProperty(value = "현재 비밀번호")
+    @Schema(description = "현재 비밀번호", required = true, example = "qwer1234!")
     private String currentPassword;
 
-    @ApiModelProperty(value = "새 비밀번호")
+    @Schema(description = "새 비밀번호", required = true, example = "qwer1234!")
     private String newPassword;
 }

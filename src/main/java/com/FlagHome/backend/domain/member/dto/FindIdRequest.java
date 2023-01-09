@@ -1,6 +1,7 @@
 package com.FlagHome.backend.domain.member.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,9 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FindIdRequest {
-    @ApiModelProperty(value = "이름")
-    private String name;
-    
-    @ApiModelProperty(value = "이메일")
+    @Schema(description = "이메일", required = true, example = "gmlwh124@suwon.ac.kr")
     private String email;
 }

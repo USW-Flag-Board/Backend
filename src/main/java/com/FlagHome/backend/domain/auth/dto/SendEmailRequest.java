@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CheckEmailRequest {
+public class SendEmailRequest {
     @Schema(description = "이메일", required = true, example = "gmlwh124@suwon.ac.kr")
     private String email;
 }

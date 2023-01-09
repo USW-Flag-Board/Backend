@@ -13,17 +13,33 @@ import org.springframework.stereotype.Service;
 public class MailService {
     private final AmazonSimpleEmailService emailService;
 
-    /**
-     * 파라미터로 받은 이메일에 MailType에 해당하는 결과를 보낸다.
-     * @param email
-     * @param mailType (AUTH_EMAIL, FIND_ID, REISSUE_PASSWORD)
-     * @param result (6자리 인증번호, 로그인 아이디, 재발급한 비밀번호)
-     */
-    public void sendMailByType(String email, MailType mailType, String result) {
+    public void sendCertification(String email, String result) {
         MailRequest mailRequest = MailRequest.builder()
                 .to(email)
-                .subject(mailType.getSubject())
-                .content(mailType.createMailForm(result))
+                .subject(MailType.AUTH_EMAIL.getSubject())
+                .content(MailType.AUTH_EMAIL.createMailForm(result))
+                .build();
+
+        emailService.sendEmail(mailRequest.toSendRequest());
+        log.info("Email sent : " + email);
+    }
+
+    public void sendFindIdResult(String email, String result) {
+        MailRequest mailRequest = MailRequest.builder()
+                .to(email)
+                .subject(MailType.FIND_ID.getSubject())
+                .content(MailType.FIND_ID.createMailForm(result))
+                .build();
+
+        emailService.sendEmail(mailRequest.toSendRequest());
+        log.info("Email sent : " + email);
+    }
+
+    public void sendNewPassword(String email, String result) {
+        MailRequest mailRequest = MailRequest.builder()
+                .to(email)
+                .subject(MailType.REISSUE_PASSWORD.getSubject())
+                .content(MailType.REISSUE_PASSWORD.createMailForm(result))
                 .build();
 
         emailService.sendEmail(mailRequest.toSendRequest());
