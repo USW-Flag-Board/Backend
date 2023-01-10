@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/board")
+@RequestMapping("/api/board/DeleteAPI") //테스트코드에서 충돌나서 변경해놨습니다 (23.01.10 강지은)
 @RequiredArgsConstructor
 public class BoardSearchController {
     private final BoardSearchService boardSearchService;

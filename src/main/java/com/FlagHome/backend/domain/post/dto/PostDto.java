@@ -25,7 +25,7 @@ public class PostDto {
     private String content;
     private String memberName;
     private List<ReplyDto> replyList;
-    private long categoryId;
+    private long boardId;
     private Status status;
     private long viewCount;
     private LocalDateTime createdAt;
@@ -36,7 +36,7 @@ public class PostDto {
         this.userId = postEntity.getMember().getId();
         this.title = postEntity.getTitle();
         this.content = postEntity.getContent();
-        this.categoryId = postEntity.getCategory().getId();
+        this.boardId = postEntity.getBoard().getId();
         this.status = postEntity.getStatus();
         this.viewCount = postEntity.getViewCount();
 
@@ -46,11 +46,11 @@ public class PostDto {
     }
 
     // Projection용 생성자
-    public PostDto(long id, String title, LocalDateTime createdAt, long categoryId, String memberName, long viewCount) {
+    public PostDto(long id, String title, LocalDateTime createdAt, long boardId, String memberName, long viewCount) {
         this.id = id;
         this.title = title;
         this.createdAt = createdAt;
-        this.categoryId = categoryId;
+        this.boardId = boardId;
         this.memberName = memberName;
         this.viewCount = viewCount;
     }
