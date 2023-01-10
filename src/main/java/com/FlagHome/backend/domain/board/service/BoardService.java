@@ -4,6 +4,7 @@ import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.board.repository.BoardRepository;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
+import com.FlagHome.backend.global.utility.CustomBeanUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
+    private final CustomBeanUtils beanUtil;
     @Transactional
     public Board createBoard(Board board){
 
@@ -31,18 +33,9 @@ public class BoardService {
 
         Board findBoard = findVerifiedBoard(board.getId());
 
-        Optional.ofNullable(board.getKoreanName())
-                .ifPresent(koreanName -> findBoard.setKoreanName(koreanName));
-        Optional.ofNullable(board.getEnglishName())
-                .ifPresent(englishName -> findBoard.setEnglishName(englishName));
-        Optional.ofNullable(board.getBoardDepth())
-                .ifPresent(depth -> findBoard.setBoardDepth(depth));
-        Optional.ofNullable(board.getParent())
-                .ifPresent(parent -> findBoard.setParent(
-                        findVerifiedBoard(board.getParent().getId())
-                ));
+        Board updateBoard = (Board) beanUtil.copyNotNullProperties(board, findBoard);
 
-        return boardRepository.save(findBoard);
+        return boardRepository.save(updateBoard);
 
     }
 
