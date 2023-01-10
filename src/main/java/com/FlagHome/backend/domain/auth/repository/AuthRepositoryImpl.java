@@ -16,7 +16,7 @@ public class AuthRepositoryImpl implements AuthRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<AuthMember> getAllNotProceedAuthMember() {
+    public List<AuthMember> getAllNotProceedAuthMembers() {
         return queryFactory
                 .selectFrom(authMember)
                 .where(authMember.createdAt.before(LocalDateTime.now().minusMinutes(10)),
@@ -25,7 +25,7 @@ public class AuthRepositoryImpl implements AuthRepositoryCustom {
     }
 
     @Override
-    public List<AuthMember> getAllAuthorizedAuthMember() {
+    public List<AuthMember> getAllAuthorizedAuthMembers() {
         return queryFactory
                 .selectFrom(authMember)
                 .where(authMember.isAuthorizedClubMember.eq(true))
@@ -33,7 +33,7 @@ public class AuthRepositoryImpl implements AuthRepositoryCustom {
     }
 
     @Override
-    public void deleteAllNotProceedAuthMember(List<AuthMember> authMemberList) {
+    public void deleteAllNotProceedAuthMembers(List<AuthMember> authMemberList) {
         for (AuthMember unAuthMember : authMemberList) {
             queryFactory
                     .delete(authMember)

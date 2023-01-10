@@ -14,6 +14,8 @@ import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.jwt.JwtUtilizer;
 import com.FlagHome.backend.global.utility.RandomGenerator;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -74,7 +76,7 @@ public class AuthService {
         validateCertification(signUpRequest.getCertification(), authMember.getCertification());
 
         // 동아리원이면 인증 상태를 업데이트한다.
-        if (authMember.getJoinType() == JoinType.CLUB) {
+        if (authMember.getJoinType() == JoinType.CREW) {
             authMember.updateAuthorizedTrue();
             return SignUpResponse.from(authMember);
         }

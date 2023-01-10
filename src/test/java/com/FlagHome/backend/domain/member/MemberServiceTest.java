@@ -1,6 +1,7 @@
 package com.FlagHome.backend.domain.member;
 
 import com.FlagHome.backend.domain.Status;
+import com.FlagHome.backend.domain.member.dto.ProfileResponse;
 import com.FlagHome.backend.domain.member.dto.UpdatePasswordRequest;
 import com.FlagHome.backend.domain.member.dto.UpdateProfileRequest;
 import com.FlagHome.backend.domain.member.entity.Member;
@@ -45,7 +46,7 @@ public class MemberServiceTest {
             String wrongEmail = "gmlwh124@naver.com";
 
             assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> memberService.findLoginId(wrongEmail))
+                    .isThrownBy(() -> memberService.checkMemberByEmail(wrongEmail))
                     .withMessage(ErrorCode.NOT_USW_EMAIL.getMessage());
         }
 
@@ -55,7 +56,7 @@ public class MemberServiceTest {
             String neverUsedEmail = "hejow124@suwon.ac.kr";
 
             assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> memberService.findLoginId(neverUsedEmail))
+                    .isThrownBy(() -> memberService.checkMemberByEmail(neverUsedEmail))
                     .withMessage(ErrorCode.USER_NOT_FOUND.getMessage());
         }
 
@@ -71,7 +72,7 @@ public class MemberServiceTest {
                     .build());
 
             assertThatNoException()
-                    .isThrownBy(() -> memberService.findLoginId(email));
+                    .isThrownBy(() -> memberService.checkMemberByEmail(email));
         }
     }
 
@@ -257,12 +258,48 @@ public class MemberServiceTest {
 
         // when
         memberService.updateProfile(memberEntity.getId(), updateProfileRequest);
-        entityManager.clear();
 
         // then 멤버정보가 제대로 수정되었는지 확인, 수정할 멤버랑 수정된 멤버가 같은 멤버인지 확인
         Member member = memberRepository.findById(memberEntity.getId()).get();
         assertThat(member.getId()).isEqualTo(memberEntity.getId());
-        assertThat(member.getBio()).isNotEqualTo(memberEntity.getBio());
-        assertThat(member.getPhoneNumber()).isNotEqualTo(memberEntity.getPhoneNumber());
+        assertThat(member.getBio()).isEqualTo(memberEntity.getBio());
+        assertThat(member.getPhoneNumber()).isEqualTo(memberEntity.getPhoneNumber());
+    }
+
+    @Nested
+    @DisplayName("프로필 가져오기 테스트")
+    class getProfileTest {
+        @Test
+        @DisplayName("유저 정보가 없어서 실패")
+        void getProfileFailTest() {
+            // given
+            String wrongLoginId = "hejow124";
+
+            assertThatExceptionOfType(CustomException.class)
+                    .isThrownBy(() -> memberService.getProfile(wrongLoginId))
+                    .withMessage(ErrorCode.USER_NOT_FOUND.getMessage());
+        }
+
+        @Test
+        @DisplayName("프로필 가져오기 성공")
+        void getProfileSuccessTest() {
+            // given
+            String loginId = "gmlwh124";
+            String bio = "안녕하세요";
+            String profileImg = "url";
+
+            Member member = memberRepository.saveAndFlush(Member.builder()
+                            .loginId(loginId)
+                            .bio(bio)
+                            .profileImg(profileImg)
+                            .build());
+
+            // when
+            ProfileResponse profileResponse = memberService.getProfile(loginId);
+
+            // then
+            assertThat(profileResponse.getBio()).isEqualTo(bio);
+            assertThat(profileResponse.getProfileImg()).isEqualTo(profileImg);
+        }
     }
 }

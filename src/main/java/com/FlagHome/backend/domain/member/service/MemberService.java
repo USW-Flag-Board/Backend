@@ -1,6 +1,7 @@
 package com.FlagHome.backend.domain.member.service;
 
 import com.FlagHome.backend.domain.mail.service.MailService;
+import com.FlagHome.backend.domain.member.dto.ProfileResponse;
 import com.FlagHome.backend.domain.member.dto.UpdatePasswordRequest;
 import com.FlagHome.backend.domain.member.dto.UpdateProfileRequest;
 import com.FlagHome.backend.domain.member.entity.Member;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URI;
 import java.util.List;
 
 @Service
@@ -36,7 +38,7 @@ public class MemberService {
         memberRepository.deleteById(memberId);
     }
 
-    public void findLoginId(String email) {
+    public void checkMemberByEmail(String email) {
         validateUSWEmail(email);
 
         if (!memberRepository.existsByEmail(email)) {
@@ -60,15 +62,14 @@ public class MemberService {
     @Transactional
     public void sendNewPassword(String email) {
         Member member = findByEmail(email);
-
         String newPassword = RandomGenerator.getRandomPassword();
-        // dirty checking
+
         member.updatePassword(passwordEncoder.encode(newPassword));
         mailService.sendNewPassword(email, newPassword);
     }
 
     @Transactional
-    public void updatePassword(Long memberId, UpdatePasswordRequest updatePasswordRequest) {
+    public String updatePassword(Long memberId, UpdatePasswordRequest updatePasswordRequest) {
         validatePassword(memberId, updatePasswordRequest.getCurrentPassword());
 
         Member member = findById(memberId);
@@ -76,13 +77,25 @@ public class MemberService {
             throw new CustomException(ErrorCode.PASSWORD_IS_SAME);
         }
 
-        // dirty checking
         member.updatePassword(passwordEncoder.encode(updatePasswordRequest.getNewPassword()));
+        return member.getLoginId();
     }
 
     @Transactional
-    public void updateProfile(Long id, UpdateProfileRequest updateProfileRequest) {
-        memberRepository.updateProfile(id, updateProfileRequest);
+    public ProfileResponse getProfile(String loginId) {
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // 파일 등 로직 추가
+        return ProfileResponse.of(member);
+    }
+
+    @Transactional
+    public String updateProfile(Long memberId, UpdateProfileRequest updateProfileRequest) {
+        Member member = findById(memberId);
+        member.updateProfile(updateProfileRequest);
+
+        return member.getLoginId();
     }
 
     @Transactional
@@ -90,8 +103,7 @@ public class MemberService {
     public void changeAllToSleepMember(){
         List<Member> sleepingList = memberRepository.getAllSleepMembers();
 
-        sleepingList
-                .forEach(member -> withdrawalRepository.save(Withdrawal.of(member,passwordEncoder)));
+        sleepingList.forEach(member -> withdrawalRepository.save(Withdrawal.of(member,passwordEncoder)));
     }
 
     private void validatePassword(Long memberId, String password) {
