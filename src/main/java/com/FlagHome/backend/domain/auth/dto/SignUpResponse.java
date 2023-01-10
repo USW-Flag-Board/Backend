@@ -1,8 +1,7 @@
 package com.FlagHome.backend.domain.auth.dto;
 
 import com.FlagHome.backend.domain.auth.JoinType;
-import com.FlagHome.backend.domain.auth.entity.AuthMember;
-import io.swagger.v3.oas.annotations.Parameter;
+import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +22,7 @@ public class SignUpResponse {
     @Schema(description = "가입 구분", required = true, example = "일반 / 동아리")
     private JoinType joinType;
 
-    public static SignUpResponse from(AuthMember authMember) {
-        return new SignUpResponse(authMember.getLoginId(), authMember.getEmail(), authMember.getJoinType());
+    public static SignUpResponse from(AuthInformation authInformation) {
+        return new SignUpResponse(authInformation.getLoginId(), authInformation.getEmail(), authInformation.getJoinType());
     }
 }

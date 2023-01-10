@@ -35,6 +35,7 @@ public class AuthController {
     @Operation(summary = "이메일 중복 체크", description = "하나의 이메일에 하나의 계정만 생성 가능")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "사용 가능한 이메일입니다."),
+            @ApiResponse(responseCode = "400", description = "이메일 형식이 아닙니다."),
             @ApiResponse(responseCode = "409", description = "이미 사용 중인 이메일입니다."),
             @ApiResponse(responseCode = "422", description = "수원대학교 웹 메일 주소가 아닙니다.")
     })

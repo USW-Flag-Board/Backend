@@ -6,5 +6,5 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum JoinType {
-    NORMAL, CREW
+    일반, 동아리
 }
