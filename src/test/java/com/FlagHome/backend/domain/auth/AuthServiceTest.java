@@ -4,7 +4,7 @@ import com.FlagHome.backend.domain.auth.dto.JoinRequest;
 import com.FlagHome.backend.domain.auth.dto.LoginRequest;
 import com.FlagHome.backend.domain.auth.dto.SignUpRequest;
 import com.FlagHome.backend.domain.auth.dto.SignUpResponse;
-import com.FlagHome.backend.domain.auth.entity.AuthMember;
+import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import com.FlagHome.backend.domain.auth.service.AuthService;
 import com.FlagHome.backend.domain.member.Role;
@@ -150,10 +150,10 @@ public class AuthServiceTest {
             authService.join(joinRequest);
 
             // then
-            AuthMember authMember = authRepository.findByEmail(email).get();
-            assertThat(authMember).isNotNull();
-            assertThat(authMember.getLoginId()).isEqualTo(loginId);
-            assertThat(authMember.getPassword()).isEqualTo(password);
+            AuthInformation authInformation = authRepository.findByEmail(email).get();
+            assertThat(authInformation).isNotNull();
+            assertThat(authInformation.getLoginId()).isEqualTo(loginId);
+            assertThat(authInformation.getPassword()).isEqualTo(password);
         }
 
         @Test
@@ -195,8 +195,8 @@ public class AuthServiceTest {
                     .joinType(joinType)
                     .build();
 
-            AuthMember authMember = AuthMember.of(joinRequest, certification);
-            authRepository.saveAndFlush(authMember);
+            AuthInformation authInformation = AuthInformation.of(joinRequest, certification);
+            authRepository.saveAndFlush(authInformation);
 
             SignUpRequest signUpRequest = SignUpRequest.builder()
                     .email(email)
@@ -230,8 +230,8 @@ public class AuthServiceTest {
                     .joinType(JoinType.CREW)
                     .build();
 
-            AuthMember authMember = AuthMember.of(joinRequest, certification);
-            authRepository.saveAndFlush(authMember);
+            AuthInformation authInformation = AuthInformation.of(joinRequest, certification);
+            authRepository.saveAndFlush(authInformation);
 
             SignUpRequest signUpRequest = SignUpRequest.builder()
                     .email(email)
@@ -244,8 +244,8 @@ public class AuthServiceTest {
             // then
             assertThat(signUpResponse.getEmail()).isEqualTo(email);
 
-            AuthMember signupAuthMember = authRepository.findByEmail(signUpResponse.getEmail()).get();
-            assertThat(signupAuthMember.isAuthorizedClubMember()).isTrue();
+            AuthInformation signupAuthInformation = authRepository.findByEmail(signUpResponse.getEmail()).get();
+            assertThat(signupAuthInformation.isAuthorizedCrew()).isTrue();
         }
 
         @Test
@@ -263,7 +263,7 @@ public class AuthServiceTest {
                     .email(email)
                     .build();
 
-            authRepository.saveAndFlush(AuthMember.of(joinRequest, certification));
+            authRepository.saveAndFlush(AuthInformation.of(joinRequest, certification));
 
             SignUpRequest signUpRequest = SignUpRequest.builder()
                     .email(email)
