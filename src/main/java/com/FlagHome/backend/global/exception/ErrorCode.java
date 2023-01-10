@@ -27,7 +27,7 @@ public enum ErrorCode {
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 게시물입니다."),
     REPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다."),
     AUTH_TARGET_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 가입정보입니다."),
-    CATEGORY_NOT_EXISTS(HttpStatus.NOT_FOUND, "존재하지 않는 카테고리입니다."),
+    BOARD_NOT_EXISTS(HttpStatus.NOT_FOUND, "존재하지 않는 게시판입니다."),
     SEARCH_CODE_NOT_EXISTS(HttpStatus.NOT_FOUND, "존재하지 않는 검색 타입입니다."),
 
     /**
