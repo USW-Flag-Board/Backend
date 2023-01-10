@@ -150,7 +150,7 @@ class PostControllerTest {
 
         String jsonBody = objectMapper.writeValueAsString(changedPostDto);
 
-        mockMvc.perform(put(baseUrl)
+        mockMvc.perform(patch(baseUrl)
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
