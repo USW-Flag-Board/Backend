@@ -235,7 +235,7 @@ public class MemberServiceTest {
     @DisplayName("멤버 정보 수정")
     void updateTest() {
         // given
-        String originalloginId = "gmlwh124";
+        String originalloginId = "gogun1234";
         String originalpassword = "1234";
         String originalbio = "안녕하세요?";
         String originalphonenumber = "01040380540";
