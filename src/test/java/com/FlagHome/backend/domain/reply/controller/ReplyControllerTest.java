@@ -209,7 +209,7 @@ class ReplyControllerTest {
         replyDto.setContent(modifiedContent);
         String jsonBody = objectMapper.writeValueAsString(replyDto);
 
-        mockMvc.perform(put(baseUrl)
+        mockMvc.perform(patch(baseUrl)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
                 .andExpect(status().isOk())
