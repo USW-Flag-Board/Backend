@@ -127,12 +127,14 @@ public class PostControllerTestAsSlice {
 
     @Test
     @DisplayName("게시글 삭제 테스트")
-    public void deletePostTest() {
+    public void deletePostTest() throws Exception {
         // given
         doNothing().when(postService).deletePost(dummyPost.getId());
 
         // when
-        postService.deletePost(dummyPost.getId());
+        mockMvc.perform(delete(baseURL + "/" + dummyPost.getId())
+                .with(csrf()))
+                .andExpect(status().isNoContent());
 
         // then
         verify(postService, times(1)).deletePost(dummyPost.getId());
