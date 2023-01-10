@@ -19,9 +19,6 @@ public class ActivityControllerTest {
     private ActivityRepository activityRepository;
 
     @Autowired
-    private ActivityService activityService;
-
-    @Autowired
     private MemberRepository memberRepository;
 
     @Autowired
