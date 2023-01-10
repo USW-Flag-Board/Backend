@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.post.controller;
 
-import com.FlagHome.backend.domain.category.entity.Category;
-import com.FlagHome.backend.domain.category.repository.CategoryRepository;
+import com.FlagHome.backend.domain.board.entity.Board;
+import com.FlagHome.backend.domain.board.repository.BoardRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.dto.PostDto;
@@ -43,7 +43,7 @@ class PostControllerTest {
     private PostRepository postRepository;
 
     @Autowired
-    private CategoryRepository categoryRepository;
+    private BoardRepository boardRepository;
 
     @Autowired
     private MockMvc mockMvc;
@@ -52,7 +52,7 @@ class PostControllerTest {
 
     private Member dummyMember;
 
-    private Category dummyCategory1, dummyCategory2;
+    private Board dummyBoard1, dummyBoard2;
 
 
     @BeforeEach
@@ -62,16 +62,16 @@ class PostControllerTest {
                 .password("123123")
                 .email("gildong@naver.com")
                 .studentId("2").build());
-        dummyCategory1 = categoryRepository.save(Category.builder()
+        dummyBoard1 = boardRepository.save(Board.builder()
                         .koreanName("일반게시판")
                         .englishName("board")
-                        .categoryDepth(0L)
+                        .boardDepth(0L)
                 .build());
-        dummyCategory2 = categoryRepository.save(Category.builder()
+        dummyBoard2 = boardRepository.save(Board.builder()
                 .koreanName("활동")
                 .englishName("activity")
-                .categoryDepth(1L)
-                .parent(dummyCategory1)
+                .boardDepth(1L)
+                .parent(dummyBoard1)
                 .build());
     }
 
@@ -85,7 +85,7 @@ class PostControllerTest {
         postDto.setTitle(title);
         postDto.setContent(content);
         postDto.setUserId(dummyMember.getId());
-        postDto.setCategoryId(dummyCategory1.getId());
+        postDto.setBoardId(dummyBoard1.getId());
 
         mockMvc.perform(post(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -112,7 +112,7 @@ class PostControllerTest {
                 .viewCount(0L)
                 .replyList(new ArrayList<>())
                 .member(dummyMember)
-                .category(dummyCategory2)
+                .board(dummyBoard2)
                 .build());
 
         mockMvc.perform(get(baseUrl + "?postId=" + postEntity.getId()))
@@ -127,12 +127,12 @@ class PostControllerTest {
     public void updatePostTest() throws Exception {
         String originalTitle = "원래제목";
         String originalContent = "원래내용";
-        Category originalCategory = dummyCategory1;
+        Board originalBoard = dummyBoard1;
 
         Post postEntity = postRepository.save(Post.builder()
                                         .title(originalTitle)
                                         .content(originalContent)
-                                        .category(originalCategory)
+                                        .board(originalBoard)
                                         .viewCount(0L)
                                         .replyList(new ArrayList<>())
                                         .member(dummyMember)
@@ -141,12 +141,12 @@ class PostControllerTest {
         String changedTitle = "바뀐제목";
         String changedContent = "바뀐내용";
 
-        Category changedCategory = dummyCategory2;
+        Board changedBoard = dummyBoard2;
 
         PostDto changedPostDto = new PostDto(postEntity);
         changedPostDto.setTitle(changedTitle);
         changedPostDto.setContent(changedContent);
-        changedPostDto.setCategoryId(changedCategory.getId());
+        changedPostDto.setBoardId(changedBoard.getId());
 
         String jsonBody = objectMapper.writeValueAsString(changedPostDto);
 
@@ -161,7 +161,7 @@ class PostControllerTest {
         assert changedPostEntity != null;
         assert changedPostEntity.getTitle().equals(changedTitle);
         assert changedPostEntity.getContent().equals(changedContent);
-        assert changedPostEntity.getCategory().equals(changedCategory);
+        assert changedPostEntity.getBoard().equals(changedBoard);
     }
 
     @Test
@@ -170,7 +170,7 @@ class PostControllerTest {
         Post postEntity = postRepository.save(Post.builder()
                         .title("삭제될 게시글 제목")
                         .content("삭제될 게시글 내용")
-                        .category(dummyCategory2)
+                        .board(dummyBoard2)
                         .member(dummyMember)
                         .build());
 

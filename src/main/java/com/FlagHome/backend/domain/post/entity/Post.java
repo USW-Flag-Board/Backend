@@ -2,7 +2,7 @@ package com.FlagHome.backend.domain.post.entity;
 
 import com.FlagHome.backend.domain.BaseEntity;
 import com.FlagHome.backend.domain.Status;
-import com.FlagHome.backend.domain.category.entity.Category;
+import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.reply.entity.Reply;
 import lombok.*;
@@ -35,8 +35,8 @@ public class Post extends BaseEntity {
     private List<Reply> replyList;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @JoinColumn(name = "board_id")
+    private Board board;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
