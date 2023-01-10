@@ -25,9 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
-//@SpringBootTest 대신 @InjectMocks, @Mock, @ExtendWith을 사용해서 IOC Container가 생성 x >> 스프링에 의존 x
-// 서비스만 객체로 생성되어 매우 빠른 테스트 제공 가능
-@ExtendWith(MockitoExtension.class)    //가짜객체 Mockito 사용을 알리기 위함.
+@ExtendWith(MockitoExtension.class)
 public class BoardServiceTest {
 
     @InjectMocks

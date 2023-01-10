@@ -94,7 +94,7 @@ public class PostControllerTestAsSlice {
                 .andExpect(jsonPath("userId").value(dummyMember.getId()))
                 .andExpect(jsonPath("title").value("제목이다"))
                 .andExpect(jsonPath("content").value("내용이다"))
-                .andExpect(jsonPath("categoryId").value(dummyBoard.getId()))
+                .andExpect(jsonPath("boardId").value(dummyBoard.getId()))
                 .andExpect(jsonPath("viewCount").value(dummyPost.getViewCount()));
     }
 
@@ -121,7 +121,7 @@ public class PostControllerTestAsSlice {
                 .andExpect(jsonPath("userId").value(dummyMember.getId()))
                 .andExpect(jsonPath("title").value("제목이다"))
                 .andExpect(jsonPath("content").value("내용이다"))
-                .andExpect(jsonPath("categoryId").value(dummyBoard.getId()))
+                .andExpect(jsonPath("boardId").value(dummyBoard.getId()))
                 .andExpect(jsonPath("viewCount").value(dummyPost.getViewCount()));
     }
 
