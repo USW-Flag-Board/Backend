@@ -47,12 +47,15 @@ public class SecurityConfig {
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint);
 
 //        http.authorizeRequests()
+//                .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll()
 //                .antMatchers("/api/auth/**").permitAll()
-//                .antMatchers("/api/post/**").hasRole("USER")
-//                .antMatchers("/api/reply/**").hasRole("USER")
-//                .antMatchers("/api/file/**").hasRole("USER")
-//                .antMatchers(HttpMethod.PUT, "/api/member/**").hasRole("USER")
+//                .antMatchers(HttpMethod.GET, "/api/member/**").permitAll()
 //                .antMatchers(HttpMethod.POST, "/api/member/**").permitAll()
+//                .antMatchers("/api/post/**").hasAnyRole("USER", "CREW")
+//                .antMatchers("/api/reply/**").hasAnyRole("USER", "CREW")
+//                .antMatchers("/api/file/**").hasAnyRole("USER", "CREW")
+//                .antMatchers("/api/member/**").hasAnyRole("USER", "CREW")
+//                .antMatchers("/api/admin/**").hasRole("ADMIN")
 //                .anyRequest().authenticated();
         //카테고리 테스트 시 오류 발생으로 주석 처리 후 추가 된 코드입니다.(23.01.09 강지은)
         http.authorizeRequests().anyRequest().permitAll();

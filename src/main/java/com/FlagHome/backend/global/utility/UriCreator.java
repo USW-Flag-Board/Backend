@@ -14,4 +14,12 @@ public class UriCreator {
                 .buildAndExpand(resourceId)
                 .toUri();
     }
+
+    public static URI createMemberUri(String defaultUrl, String loginId) {
+        return UriComponentsBuilder
+                .newInstance()
+                .path(defaultUrl + "/{login-id}")
+                .buildAndExpand(loginId)
+                .toUri();
+    }
 }
