@@ -122,9 +122,4 @@ public class ReplyService {
 
         return replyDto;
     }
-
-    @Transactional
-    public void isOkayAwsCredential() {
-
-    }
 }
