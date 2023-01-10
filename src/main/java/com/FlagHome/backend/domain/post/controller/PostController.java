@@ -53,9 +53,8 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "대상이 되는 게시글 또는 카테고리를 찾을수 없습니다.")
     })
     @PatchMapping
-    public ResponseEntity<Void> updatePost(@RequestBody PostDto postDto) {
-        postService.updatePost(postDto);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<PostDto> updatePost(@RequestBody PostDto postDto) {
+        return ResponseEntity.status(HttpStatus.OK).body(postService.updatePost(postDto));
     }
 
     @Tag(name = "post")
