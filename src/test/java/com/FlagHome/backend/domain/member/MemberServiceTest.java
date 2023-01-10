@@ -86,7 +86,7 @@ public class MemberServiceTest {
             String wrongEmail = "gmlwh124@naver.com";
 
             assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> memberService.reissuePassword(loginId, wrongEmail))
+                    .isThrownBy(() -> memberService.resetPassword(loginId, wrongEmail))
                     .withMessage(ErrorCode.NOT_USW_EMAIL.getMessage());
         }
 
@@ -97,7 +97,7 @@ public class MemberServiceTest {
             String neverUsedEmail = "hejow124@suwon.ac.kr";
 
             assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> memberService.reissuePassword(loginId, neverUsedEmail))
+                    .isThrownBy(() -> memberService.resetPassword(loginId, neverUsedEmail))
                     .withMessage(ErrorCode.USER_NOT_FOUND.getMessage());
         }
 
@@ -114,7 +114,7 @@ public class MemberServiceTest {
                             .build());
 
             assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> memberService.reissuePassword(wrongLoginId, email))
+                    .isThrownBy(() -> memberService.resetPassword(wrongLoginId, email))
                     .withMessage(ErrorCode.EMAIL_USER_NOT_MATCH.getMessage());
         }
         
@@ -130,7 +130,7 @@ public class MemberServiceTest {
                     .build());
 
             assertThatNoException()
-                    .isThrownBy(() -> memberService.reissuePassword(loginId, email));
+                    .isThrownBy(() -> memberService.resetPassword(loginId, email));
         }
     }
     

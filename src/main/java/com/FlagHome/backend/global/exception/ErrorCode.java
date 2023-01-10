@@ -14,6 +14,7 @@ public enum ErrorCode {
     TOKEN_NOT_MATCH(HttpStatus.BAD_REQUEST, "토큰의 정보가 일치하지 않습니다."),
     EMAIL_USER_NOT_MATCH(HttpStatus.BAD_REQUEST, "이메일과 아이디가 일치하지 않습니다."),
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
+    NOT_EMAIL(HttpStatus.BAD_REQUEST, "이메일 형식이 아닙니다."),
 
     /** 401 - UNAUTHORIZED  */
     UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, "로그인이 필요한 기능입니다."),

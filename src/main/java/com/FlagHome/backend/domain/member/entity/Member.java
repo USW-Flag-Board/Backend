@@ -2,7 +2,7 @@ package com.FlagHome.backend.domain.member.entity;
 
 import com.FlagHome.backend.domain.BaseEntity;
 import com.FlagHome.backend.domain.Status;
-import com.FlagHome.backend.domain.auth.entity.AuthMember;
+import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.member.Major;
 import com.FlagHome.backend.domain.member.Role;
 import com.FlagHome.backend.domain.member.dto.UpdateProfileRequest;
@@ -57,10 +57,6 @@ public class Member extends BaseEntity {
     @Column(name = "status")
     private Status status;
 
-    public void updateStatus(Status status) {
-        this.status = status;
-    }
-
     public void updatePassword(String password) { this.password = password; }
 
     public void updateProfile(UpdateProfileRequest updateProfileRequest) {
@@ -70,18 +66,18 @@ public class Member extends BaseEntity {
         this.studentId = updateProfileRequest.getStudentId();
     }
 
-    public static Member of(AuthMember authMember, PasswordEncoder passwordEncoder) {
+    public static Member of(AuthInformation authInformation, PasswordEncoder passwordEncoder) {
         return Member.builder()
-                .loginId(authMember.getLoginId())
-                .password(passwordEncoder.encode(authMember.getPassword()))
-                .name(authMember.getName())
-                .email(authMember.getEmail())
-                .major(authMember.getMajor())
-                .studentId(authMember.getStudentId())
+                .loginId(authInformation.getLoginId())
+                .password(passwordEncoder.encode(authInformation.getPassword()))
+                .name(authInformation.getName())
+                .email(authInformation.getEmail())
+                .major(authInformation.getMajor())
+                .studentId(authInformation.getStudentId())
                 .bio(" ")
                 .phoneNumber(" ")
                 .profileImg("default")
-                .role(Role.from(authMember.getJoinType()))
+                .role(Role.from(authInformation.getJoinType()))
                 .status(Status.GENERAL)
                 .build();
     }
