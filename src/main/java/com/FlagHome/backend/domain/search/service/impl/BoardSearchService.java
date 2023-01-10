@@ -1,8 +1,7 @@
 package com.FlagHome.backend.domain.search.service.impl;
 
-import com.FlagHome.backend.domain.category.repository.CategoryRepository;
+import com.FlagHome.backend.domain.board.repository.BoardRepository;
 import com.FlagHome.backend.domain.post.dto.PostDto;
-import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
 import com.FlagHome.backend.domain.search.enums.SearchType;
 import com.FlagHome.backend.domain.search.service.SearchService;
@@ -19,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BoardSearchService implements SearchService {
     private final PostRepository postRepository;
-    private final CategoryRepository categoryRepository;
+    private final BoardRepository boardRepository;
 
     @Override
     @Transactional
@@ -30,9 +29,9 @@ public class BoardSearchService implements SearchService {
     @Override
     @Transactional
     public List<PostDto> getWithCategory(String categoryName) {
-        HashSet<String> categoriesNameSet = categoryRepository.findHashSetOfCategoriesName();
+        HashSet<String> categoriesNameSet = boardRepository.findHashSetOfCategoriesName();
         if(!categoriesNameSet.contains(categoryName))
-            throw new CustomException(ErrorCode.CATEGORY_NOT_EXISTS);
+            throw new CustomException(ErrorCode.BOARD_NOT_EXISTS);
 
         return postRepository.findBoardWithCondition(categoryName, null, null);
     }
