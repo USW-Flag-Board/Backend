@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.post.service;
 
-import com.FlagHome.backend.domain.category.entity.Category;
-import com.FlagHome.backend.domain.category.repository.CategoryRepository;
+import com.FlagHome.backend.domain.board.entity.Board;
+import com.FlagHome.backend.domain.board.repository.BoardRepository;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.domain.member.entity.Member;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 public class PostService {
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
-    private final CategoryRepository categoryRepository;
+    private final BoardRepository boardRepository;
 
     @Transactional
     public PostDto createPost(PostDto postDto) {
@@ -28,15 +28,15 @@ public class PostService {
         if(memberEntity == null)
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
-        Category categoryEntity = categoryRepository.findById(postDto.getCategoryId()).orElse(null);
-        if(categoryEntity == null)
-            throw new CustomException(ErrorCode.CATEGORY_NOT_EXISTS);
+        Board boardEntity = boardRepository.findById(postDto.getBoardId()).orElse(null);
+        if(boardEntity == null)
+            throw new CustomException(ErrorCode.BOARD_NOT_EXISTS);
 
         Post post = postRepository.save(Post.builder()
                 .member(memberEntity)
                 .title(postDto.getTitle())
                 .content(postDto.getContent())
-                .category(categoryEntity)
+                .board(boardEntity)
                 .status(postDto.getStatus())
                 .replyList(new ArrayList<>())
                 .viewCount(0L)
@@ -56,18 +56,20 @@ public class PostService {
     }
 
     @Transactional
-    public void updatePost(PostDto postDto) {
+    public PostDto updatePost(PostDto postDto) {
         Post postEntity = postRepository.findById(postDto.getId()).orElse(null);
         if(postEntity == null)
             throw new CustomException(ErrorCode.POST_NOT_FOUND);
 
-        Category categoryEntity = categoryRepository.findById(postDto.getCategoryId()).orElse(null);
-        if(categoryEntity == null)
-            throw new CustomException(ErrorCode.CATEGORY_NOT_EXISTS);
+        Board boardEntity = boardRepository.findById(postDto.getBoardId()).orElse(null);
+        if(boardEntity == null)
+            throw new CustomException(ErrorCode.BOARD_NOT_EXISTS);
 
         postEntity.setTitle(postDto.getTitle());
         postEntity.setContent(postDto.getContent());
-        postEntity.setCategory(categoryEntity);
+        postEntity.setBoard(boardEntity);
+
+        return new PostDto(postEntity);
     }
 
     @Transactional
