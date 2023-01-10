@@ -47,7 +47,7 @@ public class MemberController {
     })
     @GetMapping("/id-email")
     public ResponseEntity<Void> findMemberByLoginIdAndEmail(@RequestBody ReissuePasswordRequest reissuePasswordRequest) {
-        memberService.reissuePassword(reissuePasswordRequest.getLoginId(), reissuePasswordRequest.getEmail());
+        memberService.resetPassword(reissuePasswordRequest.getLoginId(), reissuePasswordRequest.getEmail());
         return ResponseEntity.ok().build();
     }
 

@@ -17,24 +17,24 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.net.URI;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
-
-    private final PasswordEncoder passwordEncoder;
-
     private final MailService mailService;
-
     private final WithdrawalRepository withdrawalRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public void withdraw(Long memberId, String password) {
         validatePassword(memberId, password);
+        deleteMemberById(memberId);
+    }
 
+    @Transactional
+    public void deleteMemberById(long memberId) {
         memberRepository.deleteById(memberId);
     }
 
@@ -51,7 +51,7 @@ public class MemberService {
         mailService.sendFindIdResult(email, member.getLoginId());
     }
 
-    public void reissuePassword(String loginId, String email) {
+    public void resetPassword(String loginId, String email) {
         validateUSWEmail(email);
         Member member = findByEmail(email);
 
@@ -102,7 +102,6 @@ public class MemberService {
     //@Scheduled(cron = "000000")  이후에 설정하기
     public void changeAllToSleepMember(){
         List<Member> sleepingList = memberRepository.getAllSleepMembers();
-
         sleepingList.forEach(member -> withdrawalRepository.save(Withdrawal.of(member,passwordEncoder)));
     }
 

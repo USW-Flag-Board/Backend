@@ -1,11 +1,8 @@
 package com.FlagHome.backend.domain.auth.entity;
 
-import com.FlagHome.backend.domain.Status;
 import com.FlagHome.backend.domain.auth.JoinType;
 import com.FlagHome.backend.domain.auth.dto.JoinRequest;
 import com.FlagHome.backend.domain.member.Major;
-import com.FlagHome.backend.domain.member.Role;
-import com.FlagHome.backend.domain.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,7 +16,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthMember {
+public class AuthInformation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -48,7 +45,7 @@ public class AuthMember {
     private JoinType joinType;
 
     @Column
-    private boolean isAuthorizedClubMember;
+    private boolean isAuthorizedCrew;
 
     @Column
     private String certification;
@@ -56,8 +53,8 @@ public class AuthMember {
     @Column(name="created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    public static AuthMember of(JoinRequest joinRequest, String certification) {
-        return AuthMember.builder()
+    public static AuthInformation of(JoinRequest joinRequest, String certification) {
+        return AuthInformation.builder()
                 .loginId(joinRequest.getLoginId())
                 .password(joinRequest.getPassword())
                 .name(joinRequest.getName())
@@ -65,13 +62,13 @@ public class AuthMember {
                 .major(joinRequest.getMajor())
                 .studentId(joinRequest.getStudentId())
                 .joinType(joinRequest.getJoinType())
-                .isAuthorizedClubMember(false)
+                .isAuthorizedCrew(false)
                 .certification(certification)
                 .createdAt(LocalDateTime.now())
                 .build();
     }
 
     public void updateAuthorizedTrue() {
-        this.isAuthorizedClubMember = true;
+        this.isAuthorizedCrew = true;
     }
 }
