@@ -185,7 +185,7 @@ public class AuthServiceTest {
             String loginId = "gmlwh124";
             String password = "qwer1234!";
             String email = "gmlwh124@suwon.ac.kr";
-            JoinType joinType = JoinType.NORMAL;
+            JoinType joinType = JoinType.일반;
             String certification = RandomGenerator.getRandomNumber();
 
             JoinRequest joinRequest = JoinRequest.builder()
@@ -227,7 +227,7 @@ public class AuthServiceTest {
                     .loginId(loginId)
                     .password(password)
                     .email(email)
-                    .joinType(JoinType.CREW)
+                    .joinType(JoinType.동아리)
                     .build();
 
             AuthInformation authInformation = AuthInformation.of(joinRequest, certification);

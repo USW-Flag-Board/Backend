@@ -44,6 +44,10 @@ public class AuthService {
     }
 
     public void validateEmail(String email) {
+        if (!StringUtils.contains(email, "@")) {
+            throw new CustomException(ErrorCode.NOT_EMAIL);
+        }
+
         validateUSWEmail(email);
 
         if (memberRepository.existsByEmail(email)) {
@@ -74,7 +78,7 @@ public class AuthService {
         validateCertification(signUpRequest.getCertification(), authInformation.getCertification());
 
         // 동아리원이면 인증 상태를 업데이트한다.
-        if (authInformation.getJoinType() == JoinType.CREW) {
+        if (authInformation.getJoinType() == JoinType.동아리) {
             authInformation.updateAuthorizedTrue();
             return SignUpResponse.from(authInformation);
         }
