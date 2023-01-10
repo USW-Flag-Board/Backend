@@ -56,7 +56,7 @@ public class PostService {
     }
 
     @Transactional
-    public void updatePost(PostDto postDto) {
+    public PostDto updatePost(PostDto postDto) {
         Post postEntity = postRepository.findById(postDto.getId()).orElse(null);
         if(postEntity == null)
             throw new CustomException(ErrorCode.POST_NOT_FOUND);
@@ -68,6 +68,8 @@ public class PostService {
         postEntity.setTitle(postDto.getTitle());
         postEntity.setContent(postDto.getContent());
         postEntity.setCategory(categoryEntity);
+
+        return new PostDto(postEntity);
     }
 
     @Transactional
