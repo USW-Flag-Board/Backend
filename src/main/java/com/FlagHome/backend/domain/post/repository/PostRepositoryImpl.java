@@ -22,7 +22,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         post.id,
                         post.title,
                         post.createdAt,
-                        post.category.id,
+                        post.board.id,
                         post.member.name,
                         post.viewCount))
                 .from(post)
@@ -38,7 +38,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         if(categoryName == null)
             return null;
 
-        return post.category.englishName.eq(categoryName);
+        return post.board.englishName.eq(categoryName);
     }
 
     private BooleanExpression titleCondition(SearchType searchType, String searchWord) {

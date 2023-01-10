@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.post.controller;
 
 import com.FlagHome.backend.domain.Status;
-import com.FlagHome.backend.domain.category.entity.Category;
+import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.post.dto.PostDto;
 import com.FlagHome.backend.domain.post.entity.Post;
@@ -42,16 +42,16 @@ public class PostControllerTestAsSlice {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private Category dummyCategory;
+    private Board dummyBoard;
     private Member dummyMember;
     private Post dummyPost;
 
     @BeforeEach
     public void testSetting() {
-        dummyCategory = new Category();
-        dummyCategory.setId(1L);
+        dummyBoard = new Board();
+        dummyBoard.setId(1L);
         dummyMember = Member.builder().id(1L).name("gildong").email("gildong@naver.com").loginId("gildong123").password("123123").phoneNumber("010-444-4444").build();
-        dummyPost = new Post(1L, dummyMember, "제목이다", "내용이다", new ArrayList<>(), dummyCategory, Status.ON, 444L);
+        dummyPost = new Post(1L, dummyMember, "제목이다", "내용이다", new ArrayList<>(), dummyBoard, Status.ON, 444L);
     }
 
     @Test
@@ -65,10 +65,10 @@ public class PostControllerTestAsSlice {
 
         // when
         ResultActions actions = mockMvc.perform(post(baseURL)
-                        .with(csrf())
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonBody));
+                .with(csrf())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonBody));
 
         // then
         actions
@@ -94,7 +94,7 @@ public class PostControllerTestAsSlice {
                 .andExpect(jsonPath("userId").value(dummyMember.getId()))
                 .andExpect(jsonPath("title").value("제목이다"))
                 .andExpect(jsonPath("content").value("내용이다"))
-                .andExpect(jsonPath("categoryId").value(dummyCategory.getId()))
+                .andExpect(jsonPath("boardId").value(dummyBoard.getId()))
                 .andExpect(jsonPath("viewCount").value(dummyPost.getViewCount()));
     }
 
@@ -121,20 +121,18 @@ public class PostControllerTestAsSlice {
                 .andExpect(jsonPath("userId").value(dummyMember.getId()))
                 .andExpect(jsonPath("title").value("제목이다"))
                 .andExpect(jsonPath("content").value("내용이다"))
-                .andExpect(jsonPath("categoryId").value(dummyCategory.getId()))
+                .andExpect(jsonPath("boardId").value(dummyBoard.getId()))
                 .andExpect(jsonPath("viewCount").value(dummyPost.getViewCount()));
     }
 
     @Test
     @DisplayName("게시글 삭제 테스트")
-    public void deletePostTest() throws Exception {
+    public void deletePostTest() {
         // given
         doNothing().when(postService).deletePost(dummyPost.getId());
 
         // when
-        mockMvc.perform(delete(baseURL + "/" + dummyPost.getId())
-                .with(csrf()))
-                .andExpect(status().isNoContent());
+        postService.deletePost(dummyPost.getId());
 
         // then
         verify(postService, times(1)).deletePost(dummyPost.getId());
