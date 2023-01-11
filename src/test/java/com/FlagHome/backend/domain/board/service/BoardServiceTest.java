@@ -27,15 +27,12 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class BoardServiceTest {
-
     @InjectMocks
-    private BoardService boardService; //Mock객체가 주입될 클래스
+    private BoardService boardService; // Mock객체가 주입될 클래스
     @Mock
-    private BoardRepository boardRepository; //서비스에선 레포지토리가 필수이므로 가짜객체 Mock 생성
-
+    private BoardRepository boardRepository; // 서비스에선 레포지토리가 필수이므로 가짜객체 Mock 생성
     @Mock
-    private CustomBeanUtils beanUtil;
-
+    private CustomBeanUtils<Board> beanUtil;
 
     @Test
     @DisplayName("[서비스] BOARD 추가 테스트")
@@ -89,7 +86,7 @@ public class BoardServiceTest {
         result.setId(0L);
 
         //mocking
-        given(boardRepository.findById(Mockito.any(Long.class))).willReturn(Optional.ofNullable(originalBoard));
+        given(boardRepository.findById(Mockito.any(Long.class))).willReturn(Optional.of(originalBoard));
         given(boardRepository.save(Mockito.any(Board.class))).willReturn(result);
         given(beanUtil.copyNotNullProperties(Mockito.any(Board.class),Mockito.any(Board.class))).willReturn(result);
 
@@ -149,7 +146,7 @@ public class BoardServiceTest {
         Board deleteBoard = Board.builder().build();
         deleteBoard.setId(boardId);
 
-        Mockito.when(boardRepository.findById(boardId)).thenReturn(Optional.ofNullable(deleteBoard)).thenReturn(null);
+        Mockito.when(boardRepository.findById(boardId)).thenReturn(Optional.of(deleteBoard)).thenReturn(null);
 
         //when  //then
         boardService.deleteBoard(boardId);

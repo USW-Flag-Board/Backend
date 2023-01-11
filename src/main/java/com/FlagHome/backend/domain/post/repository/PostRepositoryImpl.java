@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.post.repository;
 
-import com.FlagHome.backend.domain.search.enums.SearchType;
+import com.FlagHome.backend.domain.board.enums.SearchType;
 import com.FlagHome.backend.domain.post.dto.PostDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -16,7 +16,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<PostDto> findBoardWithCondition(String categoryName, SearchType searchType, String searchWord) {
+    public List<PostDto> findBoardWithCondition(String boardName, SearchType searchType, String searchWord) {
         return jpaQueryFactory
                 .select(Projections.constructor(PostDto.class,
                         post.id,
@@ -26,7 +26,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         post.member.name,
                         post.viewCount))
                 .from(post)
-                .where(categoryCondition(categoryName),
+                .where(boardNameCondition(boardName),
                         titleCondition(searchType, searchWord),
                         contentCondition(searchType, searchWord),
                         titleAndContentCondition(searchType, searchWord),
@@ -34,11 +34,11 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .fetch();
     }
 
-    private BooleanExpression categoryCondition(String categoryName) {
-        if(categoryName == null)
+    private BooleanExpression boardNameCondition(String boardName) {
+        if(boardName == null)
             return null;
 
-        return post.board.englishName.eq(categoryName);
+        return post.board.englishName.eq(boardName);
     }
 
     private BooleanExpression titleCondition(SearchType searchType, String searchWord) {
