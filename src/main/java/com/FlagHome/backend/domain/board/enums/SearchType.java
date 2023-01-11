@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain.search.enums;
+package com.FlagHome.backend.domain.board.enums;
 
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;

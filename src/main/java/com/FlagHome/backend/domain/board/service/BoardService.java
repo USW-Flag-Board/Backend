@@ -1,24 +1,28 @@
 package com.FlagHome.backend.domain.board.service;
 
 import com.FlagHome.backend.domain.board.entity.Board;
+import com.FlagHome.backend.domain.board.enums.SearchType;
 import com.FlagHome.backend.domain.board.repository.BoardRepository;
+import com.FlagHome.backend.domain.post.dto.PostDto;
+import com.FlagHome.backend.domain.post.repository.PostRepository;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.utility.CustomBeanUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
-    private final CustomBeanUtils beanUtil;
+    private final PostRepository postRepository;
+    private final CustomBeanUtils<Board> beanUtil;
+
     @Transactional
-    public Board createBoard(Board board){
+    public Board createBoard(Board board) {
 
         boardRepository.save(board);
         Board parentBoard = board.getParent();
@@ -28,20 +32,40 @@ public class BoardService {
 
         return board;
     }
+
     @Transactional
-    public Board updateBoard(Board board) {
+    public List<PostDto> getPostListUsingBoardName(String boardName) {
+        HashSet<String> boardsNameSet = boardRepository.findHashSetOfBoardsName();
+        if(!boardsNameSet.contains(boardName))
+            throw new CustomException(ErrorCode.BOARD_NOT_EXISTS);
 
-        Board findBoard = findVerifiedBoard(board.getId());
+        return postRepository.findBoardWithCondition(boardName, null, null);
+    }
 
-        Board updateBoard = (Board) beanUtil.copyNotNullProperties(board, findBoard);
+    @Transactional
+    public List<PostDto> getPostListUsingSearch(String searchCode, String searchWord) {
+        return postRepository.findBoardWithCondition(null, SearchType.of(searchCode), searchWord);
+    }
 
-        return boardRepository.save(updateBoard);
-
+    @Transactional
+    public List<PostDto> getPostListUsingBoardNameAndSearch(String boardName, String searchCode, String searchWord) {
+        return postRepository.findBoardWithCondition(boardName, SearchType.of(searchCode), searchWord);
     }
 
     @Transactional
     public List<Board> getAllBoardList() {
         return boardRepository.findAll();
+    }
+
+    @Transactional
+    public Board updateBoard(Board board) {
+
+        Board findBoard = findVerifiedBoard(board.getId());
+
+        Board updateBoard = beanUtil.copyNotNullProperties(board, findBoard);
+
+        return boardRepository.save(updateBoard);
+
     }
 
     @Transactional

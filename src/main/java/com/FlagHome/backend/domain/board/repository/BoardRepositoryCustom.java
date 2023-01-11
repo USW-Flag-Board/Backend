@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface BoardRepositoryCustom {
     List<Board> findAll();
-    HashSet<String> findHashSetOfCategoriesName();
+    HashSet<String> findHashSetOfBoardsName();
 }

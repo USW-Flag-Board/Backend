@@ -1,6 +1,5 @@
 package com.FlagHome.backend.domain.board.entity;
 
-import com.FlagHome.backend.domain.post.entity.Post;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,15 +42,11 @@ public class Board {
     @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER)
     private final List<Board> children = new ArrayList<>();
 
-    @OneToMany(mappedBy = "board")
-    private List<Post> postList;
-
     @Builder //PostControllerTest에 빌더 사용한게 남아있어서 남겼습니다. (22.12.31 강지은)
-    public Board(String koreanName, String englishName, Long boardDepth, Board parent, List<Post> postList) {
+    public Board(String koreanName, String englishName, Long boardDepth, Board parent) {
         this.koreanName = koreanName;
         this.englishName = englishName;
         this.boardDepth = boardDepth;
-        this.postList = postList;
         this.parent = parent;
     }
 }

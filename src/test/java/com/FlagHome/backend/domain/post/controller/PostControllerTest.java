@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -93,11 +94,11 @@ class PostControllerTest {
                 .andDo(print());
 
         List<Post> postList = postRepository.findAll();
-        assert postList.size() == 1;
+        assertThat(postList.size()).isEqualTo(1);
 
         Post createdPost = postList.get(0);
-        assert createdPost.getTitle().equals(title);
-        assert createdPost.getContent().equals(content);
+        assertThat(createdPost.getTitle()).isEqualTo(title);
+        assertThat(createdPost.getContent()).isEqualTo(content);
     }
 
     @Test
