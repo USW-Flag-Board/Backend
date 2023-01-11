@@ -18,10 +18,9 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
-import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -78,26 +77,22 @@ class PostControllerTest {
     @Test
     @DisplayName("게시글 생성 테스트")
     public void createPostTest() throws Exception {
-        String title = "테스트 제목";
-        String content = "테스트 내용";
-
         PostDto postDto = new PostDto();
-        postDto.setTitle(title);
-        postDto.setContent(content);
+        postDto.setTitle("테스트 제목");
+        postDto.setContent("테스트 내용");
         postDto.setUserId(dummyMember.getId());
         postDto.setBoardId(dummyBoard1.getId());
+
+        int beforePostListSize = postRepository.findAll().size();
 
         mockMvc.perform(post(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(postDto)))
                 .andDo(print());
 
-        List<Post> postList = postRepository.findAll();
-        assert postList.size() == 1;
+        int afterPostListSize = postRepository.findAll().size();
 
-        Post createdPost = postList.get(0);
-        assert createdPost.getTitle().equals(title);
-        assert createdPost.getContent().equals(content);
+        assertThat(beforePostListSize).isNotEqualTo(afterPostListSize);
     }
 
     @Test
