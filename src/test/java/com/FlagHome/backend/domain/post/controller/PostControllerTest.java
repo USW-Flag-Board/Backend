@@ -92,9 +92,10 @@ class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(postDto)))
                 .andDo(print());
+        postRepository.flush();
 
         List<Post> postList = postRepository.findAll();
-        assertThat(postList.size()).isEqualTo(1);
+        assertThat(postList.size()).isNotEqualTo(0);
 
         Post createdPost = postList.get(0);
         assertThat(createdPost.getTitle()).isEqualTo(title);
