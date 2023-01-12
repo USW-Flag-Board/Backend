@@ -36,14 +36,18 @@ public class PostController {
     }
 
     @Tag(name = "post")
-    @Operation(summary = "게시글 가져오기")
+    @Operation(summary = "게시글 가져오기",
+            description = "현재 board를 통해 게시글 리스트를 가져오면 게시글의 content와 replyList를 제외한 요소들이 가져와 집니다.\n" +
+                    "그러므로 게시글을 진입할때 content와 replyList가 필요한데 그럴때는 get query parameter에 viaBoard = true를 주면\n" +
+                    "content와 replyList를 리턴해줍니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "게시글 가져오기에 성공 하였습니다."),
             @ApiResponse(responseCode = "404", description = "요청하신 postId에 일치하는 Post가 존재하지 않습니다.")
     })
     @GetMapping
-    public ResponseEntity<PostDto> getPost(@RequestParam(value = "postId") long postId) {
-        return ResponseEntity.status(HttpStatus.OK).body(postService.getPost(postId));
+    public ResponseEntity<PostDto> getPost(@RequestParam(value = "postId") long postId,
+                                           @RequestParam(value = "viaBoard", required = false) Boolean viaBoard) {
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getPost(postId, viaBoard));
     }
 
     @Tag(name = "post")
