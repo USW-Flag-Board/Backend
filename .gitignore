@@ -6,6 +6,7 @@ build/
 !**/src/test/**/build/
 /src/main/resources/application-aws.yml
 /src/main/resources/application-ses.yml
+/src/main/resources/application-db.yml
 
 ### STS ###
 .apt_generated

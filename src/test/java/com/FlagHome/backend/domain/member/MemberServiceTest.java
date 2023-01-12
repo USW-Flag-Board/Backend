@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.member;
 
 import com.FlagHome.backend.domain.Status;
-import com.FlagHome.backend.domain.member.dto.ProfileResponse;
+import com.FlagHome.backend.domain.member.dto.MyPageResponse;
 import com.FlagHome.backend.domain.member.dto.UpdatePasswordRequest;
 import com.FlagHome.backend.domain.member.dto.UpdateProfileRequest;
 import com.FlagHome.backend.domain.member.entity.Member;
@@ -276,7 +276,7 @@ public class MemberServiceTest {
             String wrongLoginId = "hejow124";
 
             assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> memberService.getProfile(wrongLoginId))
+                    .isThrownBy(() -> memberService.getMyPage(wrongLoginId))
                     .withMessage(ErrorCode.USER_NOT_FOUND.getMessage());
         }
 
@@ -295,7 +295,7 @@ public class MemberServiceTest {
                             .build());
 
             // when
-            ProfileResponse profileResponse = memberService.getProfile(loginId);
+            MyPageResponse profileResponse = memberService.getMyPage(loginId);
 
             // then
             assertThat(profileResponse.getBio()).isEqualTo(bio);
