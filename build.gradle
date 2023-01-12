@@ -84,12 +84,6 @@ dependencies {
     testImplementation "org.assertj:assertj-core:3.23.1"
     testImplementation 'com.google.code.gson:gson'
 
-    // JUnit 5
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
-    testCompileOnly 'junit:junit:4.13.2'
-    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.9.0'
-
     // Swagger
     implementation("io.springfox:springfox-boot-starter:3.0.0")
     implementation("io.springfox:springfox-swagger-ui:3.0.0")
