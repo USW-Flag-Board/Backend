@@ -7,6 +7,8 @@ import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.dto.PostDto;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
+import com.FlagHome.backend.domain.reply.entity.Reply;
+import com.FlagHome.backend.domain.reply.repository.ReplyRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -40,6 +42,8 @@ class PostControllerTest {
     private MemberRepository memberRepository;
     @Autowired
     private PostRepository postRepository;
+    @Autowired
+    private ReplyRepository replyRepository;
 
     @Autowired
     private BoardRepository boardRepository;
@@ -110,9 +114,37 @@ class PostControllerTest {
                 .board(dummyBoard2)
                 .build());
 
-        mockMvc.perform(get(baseUrl + "?postId=" + postEntity.getId()))
+        mockMvc.perform(get(baseUrl)
+                        .param("postId", Long.toString(postEntity.getId())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("title", is(title)))
+                .andExpect(jsonPath("content", is(content)))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("게시판을 통하여 게시글 가져오기 테스트")
+    public void getPostTestViaBorad() throws Exception {
+        String title = "게시판 통해서 가져오기 제목";
+        String content = "게시판 통해서 가져오기 내용";
+
+        Post postEntity = postRepository.save(Post.builder()
+                .title(title)
+                .content(content)
+                .viewCount(0L)
+                .replyList(new ArrayList<>())
+                .member(dummyMember)
+                .board(dummyBoard2)
+                .build());
+
+        Reply replyEntity = replyRepository.save(Reply.builder().member(dummyMember).post(postEntity).replyDepth(1L).replyGroup(2L).replyOrder(1L).content("댓글이다").build());
+        postEntity.getReplyList().add(replyEntity);
+        replyRepository.flush();
+
+        mockMvc.perform(get(baseUrl)
+                        .param("postId", Long.toString(postEntity.getId()))
+                        .param("viaBoard", "true"))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("content", is(content)))
                 .andDo(print());
     }
