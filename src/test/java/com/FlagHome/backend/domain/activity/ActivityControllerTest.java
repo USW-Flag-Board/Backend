@@ -1,8 +1,7 @@
-package com.FlagHome.backend.domain.activitycontroller;
+package com.FlagHome.backend.domain.activity;
 
 
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
-import com.FlagHome.backend.domain.activity.service.ActivityService;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;

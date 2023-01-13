@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.member.service;
 
 import com.FlagHome.backend.domain.mail.service.MailService;
-import com.FlagHome.backend.domain.member.dto.ProfileResponse;
+import com.FlagHome.backend.domain.member.dto.MyPageResponse;
 import com.FlagHome.backend.domain.member.dto.UpdatePasswordRequest;
 import com.FlagHome.backend.domain.member.dto.UpdateProfileRequest;
 import com.FlagHome.backend.domain.member.entity.Member;
@@ -81,13 +81,14 @@ public class MemberService {
         return member.getLoginId();
     }
 
+    // 마이 페이지!
     @Transactional
-    public ProfileResponse getProfile(String loginId) {
+    public MyPageResponse getMyPage(String loginId) {
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         // 파일 등 로직 추가
-        return ProfileResponse.of(member);
+        return MyPageResponse.of(member);
     }
 
     @Transactional

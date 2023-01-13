@@ -1,21 +1,17 @@
 package com.FlagHome.backend.domain.member.dto;
 
-import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.member.entity.Member;
-import com.FlagHome.backend.domain.post.dto.PostDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProfileResponse {
+public class MyPageResponse {
     @Schema(description = "아이디", required = true, example = "gmlwh124")
     private String loginId;
 
@@ -32,8 +28,8 @@ public class ProfileResponse {
 //    @Schema(description = "작성한 게시글", required = true, example = "작성한 게시글 DTO")
 //    private List<PostDto> postList;
 
-    public static ProfileResponse of(Member member) {
-        return ProfileResponse.builder()
+    public static MyPageResponse of(Member member) {
+        return MyPageResponse.builder()
                 .loginId(member.getLoginId())
                 .profileImg(member.getProfileImg())
                 .bio(member.getBio())

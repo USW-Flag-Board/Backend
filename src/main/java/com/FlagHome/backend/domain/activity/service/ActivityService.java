@@ -1,12 +1,13 @@
 package com.FlagHome.backend.domain.activity.service;
 
+import com.FlagHome.backend.domain.activity.dto.CreateActivityRequest;
+import com.FlagHome.backend.domain.activity.entity.Activity;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Service
+@Transactional
 public interface ActivityService {
-    void createActivity();
-    void getActivity();
-    void updateActivity();
-
-    @Transactional
-    void deleteActivity(long activityId);
+    Activity create(long memberId, CreateActivityRequest createActivityRequest);
+    void delete(long activityId);
 }
