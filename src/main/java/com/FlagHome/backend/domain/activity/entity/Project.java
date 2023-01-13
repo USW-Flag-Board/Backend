@@ -1,26 +1,32 @@
 package com.FlagHome.backend.domain.activity.entity;
 
-import com.FlagHome.backend.domain.activity.ProceedType;
+import com.FlagHome.backend.domain.activity.Proceed;
 import com.FlagHome.backend.domain.activity.Status;
+import com.FlagHome.backend.domain.activity.dto.CreateActivityRequest;
 import com.FlagHome.backend.domain.member.entity.Member;
 import lombok.Builder;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 
 @Entity
-@Builder
-@Getter
 @NoArgsConstructor
 public class Project extends Activity {
-    @Column
-    private String githubLink;
 
     @Builder
-    public Project(Long id, String name, String description, Member leader, ProceedType proceedType, Status status, String githubLink) {
-        super(id, name, description, leader, proceedType, status);
-        this.githubLink = githubLink;
+    public Project(Long id, String name, String description, Member leader, Proceed proceed,
+                   String githubLink, Boolean isBookExist, String bookName, Status status) {
+        super(id, name, description, leader, proceed, githubLink, isBookExist, bookName, status);
+    }
+
+    public static Project of(Member member, CreateActivityRequest createProjectRequest) {
+        return Project.builder()
+                .leader(member)
+                .name(createProjectRequest.getName())
+                .description(createProjectRequest.getDescription())
+                .proceed(createProjectRequest.getProceed())
+                .githubLink(createProjectRequest.getGithubLink())
+                .status(Status.RECRUIT)
+                .build();
     }
 }
