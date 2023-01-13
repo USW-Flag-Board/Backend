@@ -1,19 +1,34 @@
 package com.FlagHome.backend.domain.activity.controller;
 
-import com.FlagHome.backend.domain.activity.service.MentoringService;
-import com.FlagHome.backend.domain.activity.service.ProjectService;
-import com.FlagHome.backend.domain.activity.service.StudyService;
+import com.FlagHome.backend.domain.activity.dto.CreateActivityRequest;
+import com.FlagHome.backend.domain.activity.service.ActivityService;
+import com.FlagHome.backend.global.utility.UriCreator;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
+
+@Tag(name = "activity", description = "활동 API")
 @RestController
 @RequestMapping("/api/activity")
 @RequiredArgsConstructor
 public class ActivityController {
-    private final MentoringService mentoringService;
-    private final ProjectService projectService;
-    private final StudyService studyService;
+    private static final String DEFAULT_URL = "/api/activity";
+//    private final ActivityService activityService;
+//
+//    @Tag(name = "activity")
+//    @PostMapping
+//    public ResponseEntity<Void> createActivity(@RequestBody CreateActivityRequest createActivityRequest) {
+//        long activityId = activityService.create();
+//        URI location = UriCreator.createUri(DEFAULT_URL, activityId);
+//        return ResponseEntity.created(location).build();
+//    }
+
 /*
     @DeleteMapping("/{activity_Id}")
     @ApiModelProperty(value = "활동 삭제")
