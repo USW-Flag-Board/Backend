@@ -2,7 +2,7 @@ package com.FlagHome.backend.domain.auth.service;
 
 import com.FlagHome.backend.domain.auth.JoinType;
 import com.FlagHome.backend.domain.auth.dto.*;
-import com.FlagHome.backend.domain.auth.entity.AuthMember;
+import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.mail.service.MailService;
@@ -29,13 +29,13 @@ import java.util.regex.Pattern;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private final JwtUtilizer jwtUtilizer;
-    private final PasswordEncoder passwordEncoder;
     private final RefreshTokenService refreshTokenService;
-    private final AuthRepository authRepository;
-    private final MemberRepository memberRepository;
     private final MailService mailService;
+    private final MemberRepository memberRepository;
+    private final AuthRepository authRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtilizer jwtUtilizer;
 
     public void validateDuplicateLoginId(String loginId) {
         if (memberRepository.existsByLoginId(loginId)) {
@@ -44,6 +44,10 @@ public class AuthService {
     }
 
     public void validateEmail(String email) {
+        if (!StringUtils.contains(email, "@")) {
+            throw new CustomException(ErrorCode.NOT_EMAIL);
+        }
+
         validateUSWEmail(email);
 
         if (memberRepository.existsByEmail(email)) {
@@ -56,31 +60,31 @@ public class AuthService {
         validatePassword(joinRequest.getPassword());
 
         String certificationNumber = RandomGenerator.getRandomNumber();
-        AuthMember authMember = AuthMember.of(joinRequest, certificationNumber);
-        authRepository.save(authMember);
+        AuthInformation authInformation = AuthInformation.of(joinRequest, certificationNumber);
+        authRepository.save(authInformation);
     }
 
     public JoinResponse sendCertification(String email) {
-        AuthMember authMember = findByEmail(email);
-        mailService.sendCertification(email, authMember.getCertification());
+        AuthInformation authInformation = findByEmail(email);
+        mailService.sendCertification(email, authInformation.getCertification());
 
-        return JoinResponse.from(authMember);
+        return JoinResponse.from(authInformation);
     }
 
     @Transactional
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
-        AuthMember authMember = findByEmail(signUpRequest.getEmail());
+        AuthInformation authInformation = findByEmail(signUpRequest.getEmail());
 
-        validateCertification(signUpRequest.getCertification(), authMember.getCertification());
+        validateCertification(signUpRequest.getCertification(), authInformation.getCertification());
 
         // 동아리원이면 인증 상태를 업데이트한다.
-        if (authMember.getJoinType() == JoinType.CLUB) {
-            authMember.updateAuthorizedTrue();
-            return SignUpResponse.from(authMember);
+        if (authInformation.getJoinType() == JoinType.동아리) {
+            authInformation.updateAuthorizedTrue();
+            return SignUpResponse.from(authInformation);
         }
 
-        memberRepository.save(Member.of(authMember, passwordEncoder));
-        return SignUpResponse.from(authMember);
+        memberRepository.save(Member.of(authInformation, passwordEncoder));
+        return SignUpResponse.from(authInformation);
     }
 
     @Transactional
@@ -129,7 +133,7 @@ public class AuthService {
         }
     }
 
-    private AuthMember findByEmail(String email) {
+    private AuthInformation findByEmail(String email) {
         return authRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.AUTH_TARGET_NOT_FOUND));
     }

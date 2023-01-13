@@ -28,13 +28,6 @@ public class SecurityConfig {
     }
 
     @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring()
-                .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**")
-                .antMatchers("/h2-console/**");
-    }
-
-    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .httpBasic().disable()
@@ -47,12 +40,15 @@ public class SecurityConfig {
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint);
 
         http.authorizeRequests()
-                .antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/api/post/**").hasRole("USER")
-                .antMatchers("/api/reply/**").hasRole("USER")
-                .antMatchers("/api/file/**").hasRole("USER")
-                .antMatchers(HttpMethod.PUT, "/api/member/**").hasRole("USER")
+                .antMatchers("/api/admin/**").hasRole("ADMIN")
+                .antMatchers("/api/post/**").hasAnyRole("USER", "CREW")
+                .antMatchers("/api/reply/**").hasAnyRole("USER", "CREW")
+                .antMatchers("/api/file/**").hasAnyRole("USER", "CREW")
+                .antMatchers("/api/member/**").hasAnyRole("USER", "CREW")
+                .antMatchers(HttpMethod.GET, "/api/member/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/member/**").permitAll()
+                .antMatchers("/api/auth/**").permitAll()
+                .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll()
                 .anyRequest().authenticated();
 
         http

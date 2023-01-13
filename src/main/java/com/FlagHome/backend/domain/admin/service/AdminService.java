@@ -1,10 +1,10 @@
 package com.FlagHome.backend.domain.admin.service;
 
-import com.FlagHome.backend.domain.Status;
-import com.FlagHome.backend.domain.auth.entity.AuthMember;
+import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
+import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -17,38 +17,33 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AdminService {
+    private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final AuthRepository authRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public List<AuthMember> getAllAuthorizedAuthMember() {
-        return authRepository.getAllAuthorizedAuthMember();
+    @Transactional(readOnly = true)
+    public List<AuthInformation> getAllAuthorizedAuthMember() {
+        return authRepository.getAllNeedApprovalAuthInformation();
     }
 
     @Transactional
-    public void approveAuthMember(Long authMemberId) {
-        Member member = authRepository.findById(authMemberId)
-                .map(authMember -> Member.of(authMember, passwordEncoder))
+    public void approveMember(Long authInformationId) {
+        Member member = authRepository.findById(authInformationId)
+                .map(authInformation -> Member.of(authInformation, passwordEncoder))
                 .orElseThrow(() -> new CustomException(ErrorCode.AUTH_TARGET_NOT_FOUND));
 
         memberRepository.save(member);
-        deleteAuthMember(authMemberId);
+        deleteAuthInformation(authInformationId);
     }
 
     @Transactional
-    public void deleteAuthMember(Long authMemberId) {
-        authRepository.deleteById(authMemberId);
+    public void deleteAuthInformation(Long authInformationId) {
+        authRepository.deleteById(authInformationId);
     }
 
     @Transactional
     public void withdrawMember(Long memberId) {
-        Member member = memberRepository.findById(memberId).get();
-        member.updateStatus(Status.WITHDRAW);
-    }
-
-    @Transactional
-    public void banMember(Long memberId) {
-        Member member = memberRepository.findById(memberId).get();
-        member.updateStatus(Status.BANNED);
+        memberService.deleteMemberById(memberId);
     }
 }

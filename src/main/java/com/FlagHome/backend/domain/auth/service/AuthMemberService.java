@@ -1,9 +1,8 @@
 package com.FlagHome.backend.domain.auth.service;
 
-import com.FlagHome.backend.domain.auth.entity.AuthMember;
+import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,14 +16,11 @@ public class AuthMemberService {
     /**
      * 매 정오에 재학생 인증 절차를 진행하지 않은 테이블들을 지운다.
      */
-    @Scheduled(cron = "0 0 0 * * *")
+    // 나중에 설정하기
+    // @Scheduled(cron = "0 0 0 * * *")
     @Transactional
-    public void deleteNotProceedAuthMember() {
-        List<AuthMember> unAuthMemberList = findAllNotProceedAuthMember();
-        authRepository.deleteAllNotProceedAuthMember(unAuthMemberList);
-    }
-
-    private List<AuthMember> findAllNotProceedAuthMember() {
-        return authRepository.getAllNotProceedAuthMember();
+    public void deleteAllNotProceedAuthInformation() {
+        List<AuthInformation> unAuthInformationList = authRepository.getAllNotProceedAuthInformation();
+        authRepository.deleteAllNotProceedAuthInformation(unAuthInformationList);
     }
 }

@@ -29,8 +29,7 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title("FLAG_BOARD API")
                 .version("0.0.1")
-                .description("FLAG 홈페이지 API Docs 입니다.\n" +
-                        "Github Repogitory : https://github.com/USW-Flag-Board/Backend")
+                .description("FLAG 홈페이지 API Docs 입니다.<br><br>Github Repogitory : https://github.com/USW-Flag-Board/Backend")
                 .build();
     }
 }

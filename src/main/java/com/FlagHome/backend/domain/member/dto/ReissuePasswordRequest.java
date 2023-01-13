@@ -1,6 +1,7 @@
 package com.FlagHome.backend.domain.member.dto;
 
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,9 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReissuePasswordRequest {
-    @Parameter(description = "아이디", required = true, example = "gmlwh124")
+    @Schema(description = "아이디", required = true, example = "gmlwh124")
     private String loginId;
 
-    @Parameter(description = "이메일", required = true, example = "gmlwh124@suwon.ac.kr")
+    @Schema(description = "이메일", required = true, example = "gmlwh124@suwon.ac.kr")
     private String email;
 }
