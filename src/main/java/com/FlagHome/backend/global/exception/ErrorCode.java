@@ -29,6 +29,7 @@ public enum ErrorCode {
     AUTH_TARGET_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 가입정보입니다."),
     BOARD_NOT_EXISTS(HttpStatus.NOT_FOUND, "존재하지 않는 게시판입니다."),
     SEARCH_CODE_NOT_EXISTS(HttpStatus.NOT_FOUND, "존재하지 않는 검색 타입입니다."),
+    APPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하는 신청 내역이 없습니다."),
 
     /**
      * 409 - REQUEST_CONFLICT

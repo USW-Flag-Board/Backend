@@ -58,8 +58,8 @@ public class MemberController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
     })
     @GetMapping("/{login_id}")
-    public ResponseEntity<ProfileResponse> getProfile(@PathVariable("login_id") String loginId) {
-        return ResponseEntity.ok(memberService.getProfile(loginId));
+    public ResponseEntity<MyPageResponse> getMemberPage(@PathVariable("login_id") String loginId) {
+        return ResponseEntity.ok(memberService.getMyPage(loginId));
     }
 
     @Tag(name = "member")
