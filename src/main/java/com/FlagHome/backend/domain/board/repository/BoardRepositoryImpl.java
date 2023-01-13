@@ -24,7 +24,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
     }
 
     @Override
-    public HashSet<String> findHashSetOfCategoriesName() {
+    public HashSet<String> findHashSetOfBoardsName() {
         HashSet<String> categoryNameSet = new HashSet<>();
         List<Board> fetchResult = queryFactory.selectFrom(board).fetch();
 
