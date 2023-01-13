@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.activity.entity;
 
 import com.FlagHome.backend.domain.BaseEntity;
-import com.FlagHome.backend.domain.activity.ProceedType;
+import com.FlagHome.backend.domain.activity.Proceed;
 import com.FlagHome.backend.domain.activity.Status;
 import com.FlagHome.backend.domain.member.entity.Member;
 import lombok.AllArgsConstructor;
@@ -34,7 +34,16 @@ public abstract class Activity extends BaseEntity {
 
     @Column
     @Enumerated(EnumType.STRING)
-    private ProceedType proceedType;
+    private Proceed proceed;
+
+    @Column
+    private String githubLink;
+
+    @Column
+    private Boolean isBookExist;
+
+    @Column
+    private String bookName;
 
     @Column
     @Enumerated(EnumType.STRING)
