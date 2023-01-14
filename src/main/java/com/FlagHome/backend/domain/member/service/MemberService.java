@@ -38,10 +38,9 @@ public class MemberService {
         memberRepository.deleteById(memberId);
     }
 
-    public void checkMemberByEmail(String email) {
+    public void isMemberExist(String loginId, String email) {
         validateUSWEmail(email);
-
-        if (!memberRepository.existsByEmail(email)) {
+        if (!memberRepository.isMemberExist(loginId, email)) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
     }
@@ -51,14 +50,6 @@ public class MemberService {
         mailService.sendFindIdResult(email, member.getLoginId());
     }
 
-    public void resetPassword(String loginId, String email) {
-        validateUSWEmail(email);
-        Member member = findByEmail(email);
-
-        if (!StringUtils.equals(member.getLoginId(), loginId)) {
-            throw new CustomException(ErrorCode.EMAIL_USER_NOT_MATCH);
-        }
-    }
     @Transactional
     public void sendNewPassword(String email) {
         Member member = findByEmail(email);
