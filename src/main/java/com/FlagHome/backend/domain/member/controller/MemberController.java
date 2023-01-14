@@ -23,31 +23,17 @@ public class MemberController {
     private final MemberService memberService;
 
     @Tag(name = "member")
-    @Operation(summary = "아이디 찾기 전용 유저 확인", description = "아이디 찾기 시 이메일로 존재하는 유저인지 검증한다." +
-                                                                "<br>존재하는 아이디라면 메일 발송하기")
+    @Operation(summary = "유저 확인", description = "아이디/비밀번호 찾기 전 유저 확인\n parameter에 따라 다르게 동작한다. (")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "존재하는 사용자 입니다."),
+            @ApiResponse(responseCode = "400", description = "이메일을 입력하지 않은 경우 400 Error 발생"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
             @ApiResponse(responseCode = "422", description = "수원대학교 웹 메일 주소가 아닙니다.")
     })
-    @GetMapping("/email")
-    public ResponseEntity<Void> findMemberByEmail(@RequestBody FindIdRequest findIdRequest) {
-        memberService.checkMemberByEmail(findIdRequest.getEmail());
-        return ResponseEntity.ok().build();
-    }
-
-    @Tag(name = "member")
-    @Operation(summary = "비밀번호 재발급 전용 유저 확인", description = "비밀번호 재발급 시 로그인 아이디와 이메일로 존재하는 유저인지 검증한다." +
-                                                                    "<br>존재하는 아이디라면 메일 발송하기")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "존재하는 사용자 입니다."),
-            @ApiResponse(responseCode = "400", description = "이메일과 아이디가 일치하지 않습니다."),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
-            @ApiResponse(responseCode = "422", description = "수원대학교 웹 메일 주소가 아닙니다.")
-    })
-    @GetMapping("/id-email")
-    public ResponseEntity<Void> findMemberByLoginIdAndEmail(@RequestBody ReissuePasswordRequest reissuePasswordRequest) {
-        memberService.resetPassword(reissuePasswordRequest.getLoginId(), reissuePasswordRequest.getEmail());
+    @GetMapping()
+    public ResponseEntity<Void> findMember(@RequestParam(value = "id", required = false) String loginId,
+                                           @RequestParam String email) {
+        memberService.isMemberExist(loginId, email);
         return ResponseEntity.ok().build();
     }
 
@@ -58,7 +44,7 @@ public class MemberController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
     })
     @GetMapping("/{login_id}")
-    public ResponseEntity<MyPageResponse> getMemberPage(@PathVariable("login_id") String loginId) {
+    public ResponseEntity<MyPageResponse> getMemberPage(@PathVariable String loginId) {
         return ResponseEntity.ok(memberService.getMyPage(loginId));
     }
 

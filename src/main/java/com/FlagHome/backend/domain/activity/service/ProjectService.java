@@ -33,6 +33,13 @@ public class ProjectService implements ActivityService {
     }
 
     @Override
+    public void update(long activityId) {
+
+    }
+
+    public void test() {}
+
+    @Override
     public void delete(long activityId) {
         activityApplyService.deleteAllApplies(activityId);
         activityRepository.deleteById(activityId);
