@@ -9,5 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface ActivityService {
     Activity create(long memberId, CreateActivityRequest createActivityRequest);
+    void update(long activityId);
     void delete(long activityId);
 }

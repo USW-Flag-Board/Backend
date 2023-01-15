@@ -25,9 +25,9 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "사용 가능한 아이디입니다."),
             @ApiResponse(responseCode = "409", description = "이미 사용 중인 아이디입니다.")
     })
-    @GetMapping("/id")
-    public ResponseEntity<Void> checkId(@RequestBody CheckLoginIdRequest checkLoginIdRequest) {
-        authService.validateDuplicateLoginId(checkLoginIdRequest.getLoginId());
+    @GetMapping
+    public ResponseEntity<Void> checkId(@RequestParam("id") String loginId) {
+        authService.validateDuplicateLoginId(loginId);
         return ResponseEntity.ok().build();
     }
 
@@ -39,9 +39,9 @@ public class AuthController {
             @ApiResponse(responseCode = "409", description = "이미 사용 중인 이메일입니다."),
             @ApiResponse(responseCode = "422", description = "수원대학교 웹 메일 주소가 아닙니다.")
     })
-    @GetMapping("/email")
-    public ResponseEntity<Void> checkEmail(@RequestBody CheckEmailRequest checkEmailRequest) {
-        authService.validateEmail(checkEmailRequest.getEmail());
+    @GetMapping("/{email:.+}")
+    public ResponseEntity<Void> checkEmail(@PathVariable String email) {
+        authService.validateEmail(email);
         return ResponseEntity.ok().build();
     }
 

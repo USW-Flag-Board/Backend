@@ -38,8 +38,10 @@ jobs:
       run: |
         cd ./src/main/resources
         touch ./application-aws.yml
-        echo ">> application-aws.yml 값 입력"
+        touch ./application-db.yml
+        echo ">> application-aws.yml, application-db.yml 값 입력"
         echo "${{ secrets.AWS }}" >> ./application-aws.yml
+        echo "${{ secrets.DB }}" >> ./application-db.yml
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
