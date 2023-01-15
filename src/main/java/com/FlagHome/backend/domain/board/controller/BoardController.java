@@ -47,7 +47,7 @@ public class BoardController {
                             "1. 특정 게시판의 게시글 리스트 가져오기 (query를 name만 사용하세요.)\n" +
                             "2. 특정 게시판에서 검색키워드 적용하여 게시글 리스트 가져오기 (query를 name, search-code, search-word를 사용하세요.)\n" +
                             "3. 게시판 상관없이 검색키워드만 적용하여 게시글 리스트 가져오기 (query를 search-code, search-word만 사용하세요.\n" +
-                            "\n[ 현재 지원하는 search-code는 title, content, title-and-content, writer 입니다. ]")
+                            "\n[ 현재 지원하는 search-code는 title, content, title-and-content, user-name 입니다. ]")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "게시글 리스트 가져오기에 성공하였습니다."),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 게시판이거나, 올바른 검색키워드가 아닙니다.")

@@ -1,11 +1,14 @@
 package com.FlagHome.backend.domain.member.service;
 
+import com.FlagHome.backend.domain.board.enums.SearchType;
 import com.FlagHome.backend.domain.mail.service.MailService;
 import com.FlagHome.backend.domain.member.dto.MyPageResponse;
 import com.FlagHome.backend.domain.member.dto.UpdatePasswordRequest;
 import com.FlagHome.backend.domain.member.dto.UpdateProfileRequest;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
+import com.FlagHome.backend.domain.post.dto.PostDto;
+import com.FlagHome.backend.domain.post.repository.PostRepository;
 import com.FlagHome.backend.domain.withdrawal.entity.Withdrawal;
 import com.FlagHome.backend.domain.withdrawal.repository.WithdrawalRepository;
 import com.FlagHome.backend.global.exception.CustomException;
@@ -23,6 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final PostRepository postRepository;
     private final MailService mailService;
     private final WithdrawalRepository withdrawalRepository;
     private final PasswordEncoder passwordEncoder;
@@ -95,6 +99,10 @@ public class MemberService {
     public void changeAllToSleepMember(){
         List<Member> sleepingList = memberRepository.getAllSleepMembers();
         sleepingList.forEach(member -> withdrawalRepository.save(Withdrawal.of(member,passwordEncoder)));
+    }
+
+    public List<PostDto> getPostListByUserId(String userId) {
+        return postRepository.findBoardWithCondition(null, SearchType.USER_ID, userId);
     }
 
     private void validatePassword(Long memberId, String password) {
