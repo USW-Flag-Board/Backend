@@ -31,7 +31,7 @@ public class AdminService {
     public void approveMember(Long authInformationId) {
         Member member = authRepository.findById(authInformationId)
                 .map(authInformation -> Member.of(authInformation, passwordEncoder))
-                .orElseThrow(() -> new CustomException(ErrorCode.AUTH_TARGET_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.AUTH_INFORMATION_NOT_FOUND));
 
         memberRepository.save(member);
         deleteAuthInformation(authInformationId);

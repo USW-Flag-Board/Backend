@@ -23,7 +23,8 @@ public class MemberController {
     private final MemberService memberService;
 
     @Tag(name = "member")
-    @Operation(summary = "유저 확인", description = "아이디/비밀번호 찾기 전 유저 확인\n parameter에 따라 다르게 동작한다. (")
+    @Operation(summary = "유저 확인", description = "아이디/비밀번호 찾기 전 유저 확인, parameter에 따라 다르게 동작한다.\n" +
+                                                    "아이디 찾기 : 이메일 입력 / 비밀번호 재발급 : 이메일, 아이디 입력")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "존재하는 사용자 입니다."),
             @ApiResponse(responseCode = "400", description = "이메일을 입력하지 않은 경우 400 Error 발생"),
@@ -44,7 +45,7 @@ public class MemberController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
     })
     @GetMapping("/{login_id}")
-    public ResponseEntity<MyPageResponse> getMemberPage(@PathVariable String loginId) {
+    public ResponseEntity<MyPageResponse> getMemberPage(@PathVariable("id") String loginId) {
         return ResponseEntity.ok(memberService.getMyPage(loginId));
     }
 

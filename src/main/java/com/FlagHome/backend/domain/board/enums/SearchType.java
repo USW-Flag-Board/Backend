@@ -3,6 +3,8 @@ package com.FlagHome.backend.domain.board.enums;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 
+import java.util.Arrays;
+
 public enum SearchType {
     TITLE("title", "제목"),
     CONTENT("content", "내용"),
@@ -18,11 +20,9 @@ public enum SearchType {
     }
 
     public static SearchType of(String searchCode) {
-        for(SearchType searchType : SearchType.values()) {
-            if(searchCode.equals(searchType.searchCode))
-                return searchType;
-        }
-
-        throw new CustomException(ErrorCode.SEARCH_CODE_NOT_EXISTS);
+        return Arrays.stream(SearchType.values())
+                .filter(value -> value.searchCode.equals(searchCode))
+                .findFirst()
+                .orElseThrow(() -> new CustomException(ErrorCode.SEARCH_CODE_NOT_EXISTS));
     }
 }

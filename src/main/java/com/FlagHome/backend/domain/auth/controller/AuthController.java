@@ -41,7 +41,7 @@ public class AuthController {
     })
     @GetMapping("/{email:.+}")
     public ResponseEntity<Void> checkEmail(@PathVariable String email) {
-        authService.validateEmail(email);
+        authService.validateDuplicateEmail(email);
         return ResponseEntity.ok().build();
     }
 

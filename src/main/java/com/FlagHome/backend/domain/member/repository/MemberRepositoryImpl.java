@@ -37,6 +37,9 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
     }
 
     private BooleanExpression isLoginIdExist(String loginId) {
-        return loginId == null ? null : member.loginId.eq(loginId);
+        if (loginId == null) {
+            return null;
+        }
+        return member.loginId.eq(loginId);
     }
 }
