@@ -30,7 +30,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         titleCondition(searchType, searchWord),
                         contentCondition(searchType, searchWord),
                         titleAndContentCondition(searchType, searchWord),
-                        writerCondition(searchType, searchWord))
+                        userNameCondition(searchType, searchWord),
+                        userIdCondition(searchType, searchWord))
                 .fetch();
     }
 
@@ -68,12 +69,21 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         return titleCondition(searchType, searchWord).and(contentCondition(searchType, searchWord));
     }
 
-    private BooleanExpression writerCondition(SearchType searchType, String searchWord) {
+    private BooleanExpression userNameCondition(SearchType searchType, String searchWord) {
         if(searchType == null || searchWord == null)
             return null;
-        if(searchType != SearchType.WRITER)
+        if(searchType != SearchType.USER_NAME)
             return null;
 
         return post.member.name.eq(searchWord);
+    }
+
+    private BooleanExpression userIdCondition(SearchType searchType, String searchWord) {
+        if(searchType == null || searchWord == null)
+            return null;
+        if(searchType != SearchType.USER_ID)
+            return null;
+
+        return post.member.loginId.eq(searchWord);
     }
 }

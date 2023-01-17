@@ -9,7 +9,8 @@ public enum SearchType {
     TITLE("title", "제목"),
     CONTENT("content", "내용"),
     TITLE_AND_CONTENT("title-and-content", "제목+내용"),
-    WRITER("writer", "작성자");
+    USER_NAME("user-name", "작성자 이름"),
+    USER_ID("user-id", "작성자 아이디");
 
     private final String searchCode;
     private final String explanation;

@@ -46,6 +46,7 @@ public class MemberController {
     })
     @GetMapping("/{login_id}")
     public ResponseEntity<MyPageResponse> getMemberPage(@PathVariable("id") String loginId) {
+        // 유저가 작성한 postList가 필요하다면 memberService.getPostListByUserId(loginId) 를 사용하세요. (2023.01.15 윤희승)
         return ResponseEntity.ok(memberService.getMyPage(loginId));
     }
 
