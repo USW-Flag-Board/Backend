@@ -1,5 +1,6 @@
 package com.FlagHome.backend.domain.activity.dto;
 
+import com.FlagHome.backend.domain.activity.ActivityType;
 import com.FlagHome.backend.domain.activity.BookUsage;
 import com.FlagHome.backend.domain.activity.Proceed;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -12,8 +13,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateActivityRequest {
-    @Schema(name = "프로젝트 이름", description = "한 문장으로 나타낼 이름", required = true)
+public class ActivityRequest {
+
+    @Schema(name = "활동 이름", description = "한 문장으로 나타낼 이름", required = true)
     private String name;
 
     @Schema(name = "간단한 설명", description = "어떤 프로젝트인지 나타낼 설명", required = true)
@@ -21,6 +23,9 @@ public class CreateActivityRequest {
 
     @Schema(name = "진행 방식", description = "대면 / 비대면", required = true)
     private Proceed proceed;
+
+    @Schema(name = "활동 타입", description = "프로젝트/스터디/멘토링", required = true)
+    private ActivityType activityType;
 
     @Schema(name = "Github Organization URL", description = "보여줄 Github Organization 주소, 수정 가능")
     private String githubLink;

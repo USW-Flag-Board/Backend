@@ -75,8 +75,7 @@ public class BoardService {
     }
 
     public Board findVerifiedBoard(long boardId) {
-        Optional<Board> optionalCategory = boardRepository.findById(boardId);
-        Board findBoard = optionalCategory.orElseThrow(()-> new CustomException(ErrorCode.BOARD_NOT_EXISTS));
-        return findBoard;
+        return boardRepository.findById(boardId)
+                .orElseThrow(()-> new CustomException(ErrorCode.BOARD_NOT_EXISTS));
     }
 }

@@ -1,7 +1,9 @@
 package com.FlagHome.backend.domain.activity.controller;
 
-import com.FlagHome.backend.domain.activity.dto.CreateActivityRequest;
+import com.FlagHome.backend.domain.activity.dto.ActivityRequest;
 import com.FlagHome.backend.domain.activity.entity.Activity;
+import com.FlagHome.backend.domain.activity.mapper.ActivityMapper;
+import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
 import com.FlagHome.backend.domain.activity.service.ActivityService;
 import com.FlagHome.backend.global.utility.SecurityUtils;
 import com.FlagHome.backend.global.utility.UriCreator;
@@ -20,22 +22,17 @@ import java.net.URI;
 @RequestMapping("/api/activity")
 @RequiredArgsConstructor
 public class ActivityController {
-    private static final String DEFAULT_URL = "/api/activity";
-    private final ActivityService activityService;
-
-    @Tag(name = "activity")
-    @PostMapping
-    public ResponseEntity<Void> createActivity(@RequestBody CreateActivityRequest createActivityRequest) {
-        Activity activity = activityService.create(SecurityUtils.getMemberId(), createActivityRequest);
-        URI location = UriCreator.createUri(DEFAULT_URL, activity.getId());
-        return ResponseEntity.created(location).build();
-    }
-
-/*
-    @DeleteMapping("/{activity_Id}")
-    @ApiModelProperty(value = "활동 삭제")
-    public ResponseEntity<Void> deleteActivity(@PathVariable(name = "activity_Id") long activityId) {
-        MentoringService.deleteActivity(activityId);
-        return ResponseEntity.noContent().build();
-    }*/
+//    private static final String DEFAULT_URL = "/api/activity";
+//    private final ActivityService activityService;
+//    private final ActivityRepository activityRepository; // 임시
+//    private final ActivityMapper mapper;
+//
+//    @Tag(name = "activity")
+//    @PostMapping
+//    public ResponseEntity<Void> createActivity(@RequestBody ActivityRequest activityRequest) {
+//        Activity activity = activityService
+//                .create(mapper.createDTOtoEntity(SecurityUtils.getMemberId(), activityRequest), activityRepository);
+//        URI location = UriCreator.createUri(DEFAULT_URL, activity.getId());
+//        return ResponseEntity.created(location).build();
+//    }
 }

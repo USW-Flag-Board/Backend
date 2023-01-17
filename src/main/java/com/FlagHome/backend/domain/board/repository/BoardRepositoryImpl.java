@@ -17,8 +17,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
     @Override
     public List<Board> findAll(){
         return queryFactory
-                .select(board)
-                .from(board)
+                .selectFrom(board)
                 .where(board.parent.isNull())
                 .fetch();
     }
