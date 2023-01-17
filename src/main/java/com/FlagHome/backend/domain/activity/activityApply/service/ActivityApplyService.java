@@ -4,6 +4,7 @@ import com.FlagHome.backend.domain.activity.activityApply.dto.ActivityApplyRespo
 import com.FlagHome.backend.domain.activity.activityApply.entity.ActivityApply;
 import com.FlagHome.backend.domain.activity.activityApply.repository.ActivityApplyRepository;
 import com.FlagHome.backend.domain.activity.entity.Activity;
+import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
@@ -46,9 +47,6 @@ public class ActivityApplyService {
 
     @Transactional
     public void deleteAllApplies(long activityId) {
-        ActivityApply activityApply = activityApplyRepository.findByActivityId(activityId)
-                .orElseThrow(() -> new CustomException(ErrorCode.APPLY_NOT_FOUND));
-
         activityApplyRepository.deleteAllApplies(activityId);
     }
 }
