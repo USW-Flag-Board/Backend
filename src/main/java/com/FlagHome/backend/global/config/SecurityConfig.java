@@ -40,15 +40,15 @@ public class SecurityConfig {
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint);
 
         http.authorizeRequests()
-                .antMatchers("/api/admin/**").hasRole("ADMIN")
+                .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll()
+                .antMatchers("/api/auth/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/member/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/member/**").permitAll()
+                .antMatchers("/api/member/**").hasAnyRole("USER", "CREW")
                 .antMatchers("/api/post/**").hasAnyRole("USER", "CREW")
                 .antMatchers("/api/reply/**").hasAnyRole("USER", "CREW")
                 .antMatchers("/api/file/**").hasAnyRole("USER", "CREW")
-                .antMatchers("/api/member/**").hasAnyRole("USER", "CREW")
-                .antMatchers(HttpMethod.GET, "/api/member/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/member/**").permitAll()
-                .antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll()
+                .antMatchers("/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated();
 
         http

@@ -43,11 +43,7 @@ public class AuthService {
         }
     }
 
-    public void validateEmail(String email) {
-        if (!StringUtils.contains(email, "@")) {
-            throw new CustomException(ErrorCode.NOT_EMAIL);
-        }
-
+    public void validateDuplicateEmail(String email) {
         validateUSWEmail(email);
 
         if (memberRepository.existsByEmail(email)) {
@@ -116,7 +112,13 @@ public class AuthService {
     }
 
     private void validateUSWEmail(String email) {
+        // @가 포함되는 형식이 아니라면 -1 리턴
         int separateIndex = StringUtils.indexOf(email, "@");
+
+        if (separateIndex == -1) {
+            throw new CustomException(ErrorCode.NOT_EMAIL);
+        }
+
         if (!StringUtils.equals(email.substring(separateIndex), "@suwon.ac.kr")) {
             throw new CustomException(ErrorCode.NOT_USW_EMAIL);
         }
@@ -135,6 +137,6 @@ public class AuthService {
 
     private AuthInformation findByEmail(String email) {
         return authRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(ErrorCode.AUTH_TARGET_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.AUTH_INFORMATION_NOT_FOUND));
     }
 }

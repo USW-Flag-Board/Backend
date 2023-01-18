@@ -19,5 +19,5 @@ echo "$TIME_NOW > $JAR_FILE 파일 실행" >> $DEPLOY_LOG
 nohup java -jar $JAR_FILE > $APP_LOG 2> $ERROR_LOG &
 
 # 실행한 애플리케이션 pid 출력
-CURRENT_PID=$(lsof -i :8080)
+CURRENT_PID=$(pgrep -f $JAR_FILE)
 echo "$TIME_NOW > 실행된 프로세스 pid는 $CURRENT_PID 입니다." >> $DEPLOY_LOG
