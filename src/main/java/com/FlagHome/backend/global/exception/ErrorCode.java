@@ -32,6 +32,8 @@ public enum ErrorCode {
     APPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하는 신청 내역이 없습니다."),
     ACTIVITY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 활동입니다."),
 
+    REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "신고이력이 존재하지 않습니다."),
+
     /**
      * 409 - REQUEST_CONFLICT
      * 저장된 데이터와 일치하는 경우 (technically 따지면 기존 자원과 충돌하는 경우)
