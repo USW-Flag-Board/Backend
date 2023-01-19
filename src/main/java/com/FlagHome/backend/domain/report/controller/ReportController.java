@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/report")
 public class ReportController {
-
+    private static final String DEFAULT_URL = "/api/report";
     private final ReportService reportService;
 
     @DeleteMapping("/{id}")
@@ -24,4 +24,13 @@ public class ReportController {
         return ResponseEntity.ok().build();
     }
 
+
+/*
+    @PostMapping
+    public ResponseEntity<URI> create(@RequestBody ReportRequest reportRequest) {
+        long id = reportService.create(SecurityUtils.getMemberId(), ReportRequest.valueOf(reportRequest));
+        URI location = UriCreator.createUri(DEFAULT_URL, id);
+
+        return ResponseEntity.created(location).build();
+    }*/
 }

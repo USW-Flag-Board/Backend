@@ -1,34 +1,47 @@
 package com.FlagHome.backend.domain.report.dto;
 
+
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.report.ReportType;
 import com.FlagHome.backend.domain.report.entity.Report;
-import lombok.AllArgsConstructor;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class ReportRequest {
-
-    private long id;
+    @Schema(name = "신고자", required = true, example = "문희조")
     private Member reporter;
-    private Member reported;
-    private String reportedURL;
-    private ReportType reportType;
-    private String detailReason;
-    private LocalDateTime createdAt;
 
-    public ReportRequest(Report reportEntity){
-        this.id = reportEntity.getId();
-        this.reporter = reportEntity.getReporter();
-        this.reported = reportEntity.getReported();
-        this.reportedURL = reportEntity.getReportedURL();
-        this.reportType = reportEntity.getReportType();
-        this.detailReason = reportEntity.getDetailReason();
-        this.createdAt = reportEntity.getCreatedAt();
+    @Schema(name = "피신고자", required = true, example = "고건")
+    private Member reported;
+
+    @Schema(name = "신고사유", required = true, example = "욕설")
+    private ReportType reportType;
+
+    @Schema(name = "세부내용", required = true, example = "테트리스 졌다고 욕함")
+    private String detailReason;
+
+    @Schema(name = "신고경로", required = true)
+    private String url;
+
+
+    @Builder
+    public ReportRequest(Member reporter, Member reported, ReportType reportType, String detailReason, String url) {
+        this.reporter = reporter;
+        this.reported = reported;
+        this.reportType = reportType;
+        this.detailReason = detailReason;
+        this.url = url;
+    }
+
+    public static Report valueOf(ReportRequest reportRequest) {
+        return Report.builder()
+                .reportType(reportRequest.getReportType())
+                .reportedURL(reportRequest.getUrl())
+                .detailReason(reportRequest.getDetailReason())
+                .build();
     }
 }

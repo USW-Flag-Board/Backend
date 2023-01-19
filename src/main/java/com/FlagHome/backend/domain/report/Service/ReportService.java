@@ -28,4 +28,20 @@ public class ReportService {
     public void deleteAllReports() {
         reportRepository.deleteAllInBatch();
     }
+
+    /*
+    @Transactional
+    public long create(Long memberId, Report report) {
+        validateDuplicateReport(memberId, report.getReportedURL());
+
+        return reportRepository.save(report).getId();
+    }*/
+
+
+/*
+    private void validateDuplicateReport(Long memberId,String url) {
+        if (reportRepository.existsByMemberIdAndUrl(memberId, url)) {
+            throw new CustomException(ErrorCode.ALREADY_REPORTED);
+        }
+    }*/
 }
