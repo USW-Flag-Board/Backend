@@ -4,7 +4,8 @@ import com.FlagHome.backend.domain.BaseEntity;
 import com.FlagHome.backend.domain.activity.ActivityType;
 import com.FlagHome.backend.domain.activity.Proceed;
 import com.FlagHome.backend.domain.activity.Status;
-import com.FlagHome.backend.domain.activity.dto.ActivityRequest;
+import com.FlagHome.backend.domain.activity.dto.CreateActivityRequest;
+import com.FlagHome.backend.domain.activity.dto.UpdateActivityRequest;
 import com.FlagHome.backend.domain.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -45,13 +46,16 @@ public abstract class Activity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    public void setLeader(Member member) {     // 권한 위임 만들기
+    public void setLeader(Member member) {
         this.leader = member;
     }
 
-    public void update(ActivityRequest activityRequest) {
-        this.name = activityRequest.getName();
-        this.description = activityRequest.getDescription();
-        this.proceed = activityRequest.getProceed();
+    public void closeRecruitment() {
+        this.status = Status.ON;
+    }
+    public void update(UpdateActivityRequest updateActivityRequest) {
+        this.name = updateActivityRequest.getName();
+        this.description = updateActivityRequest.getDescription();
+        this.proceed = updateActivityRequest.getProceed();
     }
 }

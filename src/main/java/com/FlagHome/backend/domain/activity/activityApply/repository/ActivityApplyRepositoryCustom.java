@@ -10,4 +10,6 @@ public interface ActivityApplyRepositoryCustom {
     List<ActivityApplyResponse> getAllApplies(long activityId);
 
     void deleteAllApplies(long activityId);
+
+    boolean checkApply(long memberId, long activityId);
 }

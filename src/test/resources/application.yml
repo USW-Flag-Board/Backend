@@ -15,10 +15,6 @@ spring:
         show_sql: true
         default_batch_fetch_size: 1000
 
-logging:
-  level:
-    org.hibernate.SQL: debug
-
 jwt:
   secret-Key: thisisfortestthisisfortestthisisfortestthisisfortestthisisfortestthisisfortestthisisfortest
 

@@ -2,6 +2,7 @@ package com.FlagHome.backend.domain.activity.repository;
 
 import com.FlagHome.backend.domain.activity.dto.ActivityResponse;
 import com.FlagHome.backend.domain.activity.dto.QActivityResponse;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -13,7 +14,6 @@ import static com.FlagHome.backend.domain.activity.entity.QActivity.activity;
 import static com.FlagHome.backend.domain.member.entity.QMember.member;
 
 @Repository
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ActivityRepositoryImpl implements ActivityRepositoryCustom {
     private final JPAQueryFactory queryFactory;
@@ -22,13 +22,13 @@ public class ActivityRepositoryImpl implements ActivityRepositoryCustom {
     public ActivityResponse getActivity(long activityId) {
         return queryFactory
                 .select(new QActivityResponse(
-                        activity.id,
+                        Expressions.asNumber(activityId),
                         activity.name,
                         member.name,
                         activity.activityType,
                         activity.status))
-                .fetchJoin()
                 .from(activity)
+                .innerJoin(activity.leader, member)
                 .where(activity.id.eq(activityId))
                 .fetchOne();
     }
@@ -42,8 +42,8 @@ public class ActivityRepositoryImpl implements ActivityRepositoryCustom {
                         member.name,
                         activity.activityType,
                         activity.status))
-                .fetchJoin()
                 .from(activity)
+                .innerJoin(activity.leader, member)
                 .fetch();
     }
 }

@@ -1,6 +1,6 @@
-package com.FlagHome.backend.domain.memberActivity.service;
+package com.FlagHome.backend.domain.activity.memberactivity.service;
 
-import com.FlagHome.backend.domain.memberActivity.repository.MemberActivityRepository;
+import com.FlagHome.backend.domain.activity.memberactivity.repository.MemberActivityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

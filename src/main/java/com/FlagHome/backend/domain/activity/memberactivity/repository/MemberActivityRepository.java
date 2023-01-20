@@ -1,6 +1,6 @@
-package com.FlagHome.backend.domain.memberActivity.repository;
+package com.FlagHome.backend.domain.activity.memberactivity.repository;
 
-import com.FlagHome.backend.domain.memberActivity.entity.MemberActivity;
+import com.FlagHome.backend.domain.activity.memberactivity.entity.MemberActivity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -41,5 +41,4 @@ public class Report {
 
     @Column
     private LocalDateTime createdAt;
-
 }
