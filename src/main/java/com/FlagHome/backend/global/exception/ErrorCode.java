@@ -33,6 +33,8 @@ public enum ErrorCode {
     APPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하는 신청 내역이 없습니다."),
     ACTIVITY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 활동입니다."),
 
+    REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "신고이력이 존재하지 않습니다."),
+
     /**
      * 409 - REQUEST_CONFLICT
      * 저장된 데이터와 일치하는 경우 (technically 따지면 기존 자원과 충돌하는 경우)
@@ -41,6 +43,7 @@ public enum ErrorCode {
     LOGIN_ID_EXISTS(HttpStatus.CONFLICT, "이미 사용 중인 아이디입니다."),
     EMAIL_EXISTS(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다."),
     CERTIFICATION_NOT_MATCH(HttpStatus.CONFLICT, "인증번호가 일치하지 않습니다."),
+    ALREADY_REPORTED(HttpStatus.CONFLICT,"이미 신고한 게시물입니다"),
 
     /**
      * 422 - UNPROCESSABLE_ENTITY

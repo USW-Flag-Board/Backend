@@ -28,7 +28,6 @@ public class Report {
     @OneToOne
     @JoinColumn(name = "reported_id")
     private Member reported;
-
     @Column
     private String reportedURL;
 
