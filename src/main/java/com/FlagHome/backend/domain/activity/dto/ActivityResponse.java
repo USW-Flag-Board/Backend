@@ -17,7 +17,7 @@ public class ActivityResponse {
     private Status status;
 
     @Builder
-    @QueryProjection // 고민하기
+    @QueryProjection
     public ActivityResponse(long id, String name, String leader, ActivityType activityType, Status status) {
         this.id = id;
         this.name = name;

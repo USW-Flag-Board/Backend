@@ -20,6 +20,7 @@ public class ActivityApplyRepositoryImpl implements ActivityApplyRepositoryCusto
     public List<ActivityApplyResponse> getAllApplies(long activityId) {
         return queryFactory
                 .select(new QActivityApplyResponse(
+                        member.id,
                         member.loginId,
                         member.name,
                         member.major))
@@ -35,5 +36,15 @@ public class ActivityApplyRepositoryImpl implements ActivityApplyRepositoryCusto
                 .delete(activityApply)
                 .where(activityApply.activity.id.eq(activityId))
                 .execute();
+    }
+
+    @Override
+    public boolean checkApply(long memberId, long activityId) {
+        return queryFactory
+                .selectFrom(activityApply)
+                .innerJoin(activityApply.member)
+                .where(activityApply.member.id.eq(memberId),
+                        activityApply.activity.id.eq(activityId))
+                .fetchFirst() != null;
     }
 }

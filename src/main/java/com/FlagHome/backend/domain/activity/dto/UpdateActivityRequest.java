@@ -13,7 +13,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ActivityRequest {
+public class UpdateActivityRequest {
+    @Schema(name = "활동 고유번호", required = true)
+    private long id;
 
     @Schema(name = "활동 이름", description = "한 문장으로 나타낼 이름", required = true)
     private String name;
@@ -24,7 +26,7 @@ public class ActivityRequest {
     @Schema(name = "진행 방식", description = "대면 / 비대면", required = true)
     private Proceed proceed;
 
-    @Schema(name = "활동 타입", description = "프로젝트/스터디/멘토링", required = true)
+    @Schema(name = "활동 타입", description = "프로젝트 / 스터디 / 멘토링 중 하나", required = true, example = "PROJECT, STUDY, MENTORING")
     private ActivityType activityType;
 
     @Schema(name = "Github Organization URL", description = "보여줄 Github Organization 주소, 수정 가능")

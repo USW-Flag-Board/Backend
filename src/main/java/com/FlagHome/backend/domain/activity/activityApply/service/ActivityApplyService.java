@@ -4,7 +4,6 @@ import com.FlagHome.backend.domain.activity.activityApply.dto.ActivityApplyRespo
 import com.FlagHome.backend.domain.activity.activityApply.entity.ActivityApply;
 import com.FlagHome.backend.domain.activity.activityApply.repository.ActivityApplyRepository;
 import com.FlagHome.backend.domain.activity.entity.Activity;
-import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
@@ -20,11 +19,14 @@ import java.util.List;
 public class ActivityApplyService {
     private final ActivityApplyRepository activityApplyRepository;
 
-    // 권한 처리는 activityService 쪽에서
+    public boolean checkApply(long memberId, long activityId) {
+        return activityApplyRepository.checkApply(memberId, activityId);
+    }
+
     @Transactional
-    public void apply(Member member, Activity activity) {
+    public void apply(long memberId, Activity activity) {
         ActivityApply activityApply = ActivityApply.builder()
-                .member(member)
+                .member(Member.builder().id(memberId).build())
                 .activity(activity)
                 .applyTime(LocalDateTime.now())
                 .build();
@@ -38,7 +40,7 @@ public class ActivityApplyService {
     }
 
     @Transactional
-    public void delete(long memberId) {
+    public void cancleApply(long memberId) {
         ActivityApply activityApply = activityApplyRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.APPLY_NOT_FOUND));
 

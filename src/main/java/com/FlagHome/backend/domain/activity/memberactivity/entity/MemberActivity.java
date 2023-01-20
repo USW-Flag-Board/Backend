@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain.memberActivity.entity;
+package com.FlagHome.backend.domain.activity.memberactivity.entity;
 
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.member.entity.Member;

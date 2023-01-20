@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.activity.mapper;
 
 import com.FlagHome.backend.domain.activity.ActivityType;
-import com.FlagHome.backend.domain.activity.dto.ActivityRequest;
+import com.FlagHome.backend.domain.activity.dto.CreateActivityRequest;
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
@@ -16,17 +16,16 @@ import java.util.Arrays;
 @Component
 @RequiredArgsConstructor
 public class ActivityMapper {
-    // 책임 : DTO를 맞는 타입으로 변환해준다.
     private final MemberRepository memberRepository;
 
-    public Activity createDTOtoEntity(long memberId, ActivityRequest activityRequest) {
+    public Activity dtoToEntity(long memberId, CreateActivityRequest createActivityRequest) {
         Member member =  memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         Activity activity = Arrays.stream(ActivityType.values())
-                .filter(type -> StringUtils.equals(type.getType(), activityRequest.getActivityType().toString()))
+                .filter(type -> StringUtils.equals(type.getType(), createActivityRequest.getActivityType().toString()))
                 .findFirst()
-                .map(type -> type.toEntity(activityRequest))
+                .map(type -> type.toEntity(createActivityRequest))
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_SUPPORT_ACTIVITY));
 
         activity.setLeader(member);

@@ -1,13 +1,7 @@
 package com.FlagHome.backend.domain.activity;
 
-import com.FlagHome.backend.domain.activity.dto.ActivityRequest;
-import com.FlagHome.backend.domain.activity.entity.Activity;
-import com.FlagHome.backend.domain.activity.entity.Project;
 import com.FlagHome.backend.domain.activity.service.ActivityService;
-import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;

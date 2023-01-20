@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Transactional
 @Repository
-public interface ActivityRepository extends JpaRepository<Activity, Long> {
+public interface ActivityRepository extends JpaRepository<Activity, Long>, ActivityRepositoryCustom {
     Optional<Activity> findById(Long activityId);
     boolean existsById(Long activityId);
     void deleteById(Activity activityId);
