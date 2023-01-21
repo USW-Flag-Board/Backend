@@ -4,8 +4,7 @@ import com.FlagHome.backend.domain.activity.ActivityType;
 import com.FlagHome.backend.domain.activity.BookUsage;
 import com.FlagHome.backend.domain.activity.Proceed;
 import com.FlagHome.backend.domain.activity.Status;
-import com.FlagHome.backend.domain.activity.dto.CreateActivityRequest;
-import com.FlagHome.backend.domain.activity.dto.UpdateActivityRequest;
+import com.FlagHome.backend.domain.activity.dto.ActivityRequest;
 import com.FlagHome.backend.domain.member.entity.Member;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -30,19 +29,19 @@ public class Mentoring extends Activity {
         this.bookName = bookName;
     }
 
-    public void updateMentoring(UpdateActivityRequest updateActivityRequest) {
-        super.update(updateActivityRequest);
-        this.bookUsage = updateActivityRequest.getBookUsage();
-        this.bookName = updateActivityRequest.getBookName();
+    public void updateMentoring(ActivityRequest activityRequest) {
+        super.update(activityRequest);
+        this.bookUsage = activityRequest.getBookUsage();
+        this.bookName = activityRequest.getBookName();
     }
 
-    public static Mentoring from(CreateActivityRequest createActivityRequest) {
+    public static Mentoring from(ActivityRequest activityRequest) {
         return Mentoring.builder()
-                .name(createActivityRequest.getName())
-                .description(createActivityRequest.getDescription())
-                .proceed(createActivityRequest.getProceed())
-                .bookUsage(createActivityRequest.getBookUsage())
-                .bookName(createActivityRequest.getBookName())
+                .name(activityRequest.getName())
+                .description(activityRequest.getDescription())
+                .proceed(activityRequest.getProceed())
+                .bookUsage(activityRequest.getBookUsage())
+                .bookName(activityRequest.getBookName())
                 .activityType(ActivityType.MENTORING)
                 .status(Status.RECRUIT)
                 .build();

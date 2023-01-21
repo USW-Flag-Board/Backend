@@ -13,10 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateActivityRequest {
-    @Schema(name = "활동 고유번호", required = true)
-    private long id;
-
+public class ActivityRequest {
     @Schema(name = "활동 이름", description = "한 문장으로 나타낼 이름", required = true)
     private String name;
 

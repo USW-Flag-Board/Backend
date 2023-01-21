@@ -6,11 +6,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class ChangeLeaderRequest {
-    @Schema(name = "아이디", description = "로그인 시에 사용되는 아이디", required = true)
-    private String loginId;
+@NoArgsConstructor
+public class CloseRecruitRequest {
+    @Schema(name = "멤버 리스트", description = "모집 마감할 때 같이 활동할 유저 리스트")
+    private List<String> memberList;
 }

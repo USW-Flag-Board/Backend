@@ -44,6 +44,7 @@ public enum ErrorCode {
     EMAIL_EXISTS(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다."),
     CERTIFICATION_NOT_MATCH(HttpStatus.CONFLICT, "인증번호가 일치하지 않습니다."),
     ALREADY_REPORTED(HttpStatus.CONFLICT,"이미 신고한 게시물입니다"),
+    ALREADY_APPLIED(HttpStatus.CONFLICT,"이미 신청한 활동입니다"),
 
     /**
      * 422 - UNPROCESSABLE_ENTITY
