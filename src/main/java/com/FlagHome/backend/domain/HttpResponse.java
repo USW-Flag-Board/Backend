@@ -21,16 +21,4 @@ public class HttpResponse<T> {
 
     @Schema(name = "API 결과", description = "API를 호출한 결과")
     private Map<String, String> result;
-
-    public static HttpResponse ok(Class<?> payload) {
-        Map<String, String> result = new HashMap<>() {{
-            put("Status", HttpStatus.OK.toString());
-            put("message", "정상적으로 처리되었습니다.");
-        }};
-
-        return HttpResponse.builder()
-                .payload(payload)
-                .result(result)
-                .build();
-    }
 }

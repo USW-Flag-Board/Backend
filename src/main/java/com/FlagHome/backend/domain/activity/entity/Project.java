@@ -3,8 +3,7 @@ package com.FlagHome.backend.domain.activity.entity;
 import com.FlagHome.backend.domain.activity.ActivityType;
 import com.FlagHome.backend.domain.activity.Proceed;
 import com.FlagHome.backend.domain.activity.Status;
-import com.FlagHome.backend.domain.activity.dto.CreateActivityRequest;
-import com.FlagHome.backend.domain.activity.dto.UpdateActivityRequest;
+import com.FlagHome.backend.domain.activity.dto.ActivityRequest;
 import com.FlagHome.backend.domain.member.entity.Member;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -25,17 +24,17 @@ public class Project extends Activity {
         this.githubLink = githubLink;
     }
 
-    public void updateProject(UpdateActivityRequest updateActivityRequest) {
-        super.update(updateActivityRequest);
-        this.githubLink = updateActivityRequest.getGithubLink();
+    public void updateProject(ActivityRequest activityRequest) {
+        super.update(activityRequest);
+        this.githubLink = activityRequest.getGithubLink();
     }
 
-    public static Project from(CreateActivityRequest createActivityRequest) {
+    public static Project from(ActivityRequest activityRequest) {
         return Project.builder()
-                .name(createActivityRequest.getName())
-                .description(createActivityRequest.getDescription())
-                .proceed(createActivityRequest.getProceed())
-                .githubLink(createActivityRequest.getGithubLink())
+                .name(activityRequest.getName())
+                .description(activityRequest.getDescription())
+                .proceed(activityRequest.getProceed())
+                .githubLink(activityRequest.getGithubLink())
                 .activityType(ActivityType.PROJECT)
                 .status(Status.RECRUIT)
                 .build();

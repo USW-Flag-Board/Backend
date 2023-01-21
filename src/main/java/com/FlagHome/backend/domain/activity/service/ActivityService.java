@@ -2,9 +2,7 @@ package com.FlagHome.backend.domain.activity.service;
 
 import com.FlagHome.backend.domain.activity.activityApply.service.ActivityApplyService;
 import com.FlagHome.backend.domain.activity.dto.ActivityResponse;
-import com.FlagHome.backend.domain.activity.dto.ChangeLeaderRequest;
-import com.FlagHome.backend.domain.activity.dto.CloseActivityRequest;
-import com.FlagHome.backend.domain.activity.dto.UpdateActivityRequest;
+import com.FlagHome.backend.domain.activity.dto.ActivityRequest;
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.Mentoring;
 import com.FlagHome.backend.domain.activity.entity.Project;
@@ -47,6 +45,9 @@ public class ActivityService {
     }
     @Transactional
     public void applyActivity(long memberId, long activityId) {
+        if (checkApply(memberId, activityId)) {
+            throw new CustomException(ErrorCode.ALREADY_APPLIED);
+        }
         Activity activity = findById(activityId);
         activityApplyService.apply(memberId, activity);
     }
@@ -58,38 +59,41 @@ public class ActivityService {
     }
 
     @Transactional
-    public void updateMentoring(long memberId, UpdateActivityRequest updateActivityRequest) {
-        Mentoring mentoring = (Mentoring) validateLeaderAndReturn(memberId, updateActivityRequest.getId());
-        mentoring.updateMentoring(updateActivityRequest);
+    public void updateMentoring(long memberId, long activityId, ActivityRequest activityRequest) {
+        Mentoring mentoring = (Mentoring) validateLeaderAndReturn(memberId, activityId);
+        mentoring.updateMentoring(activityRequest);
     }
 
     @Transactional
-    public void updateProject(long memberId, UpdateActivityRequest updateActivityRequest) {
-        Project project = (Project) validateLeaderAndReturn(memberId, updateActivityRequest.getId());
-        project.updateProject(updateActivityRequest);
+    public void updateProject(long memberId, long activityId, ActivityRequest activityRequest) {
+        Project project = (Project) validateLeaderAndReturn(memberId, activityId);
+        project.updateProject(activityRequest);
     }
 
     @Transactional
-    public void updateStudy(long memberId, UpdateActivityRequest updateActivityRequest) {
-        Study study = (Study) validateLeaderAndReturn(memberId, updateActivityRequest.getId());
-        study.updateStudy(updateActivityRequest);
+    public void updateStudy(long memberId, long activityId, ActivityRequest activityRequest) {
+        Study study = (Study) validateLeaderAndReturn(memberId, activityId);
+        study.updateStudy(activityRequest);
     }
 
     @Transactional
-    public void changeLeader(long memberId, ChangeLeaderRequest changeLeaderRequest) {
-        Activity activity = validateLeaderAndReturn(memberId, changeLeaderRequest.getId());
+    public void changeLeader(long memberId, long activityId, String loginId) {
+        Activity activity = validateLeaderAndReturn(memberId, activityId);
 
-        Member newLeader = memberRepository.findByLoginId(changeLeaderRequest.getLoginId())
+        Member newLeader = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         activity.setLeader(newLeader);
     }
 
     @Transactional
-    public void closeRecruitment(long memberId, CloseActivityRequest closeActivityRequest) {
-        Activity activity = validateLeaderAndReturn(memberId, closeActivityRequest.getId());
+    public void closeRecruitment(long memberId, long activityId, List<String> memberList) {
+        Activity activity = validateLeaderAndReturn(memberId, activityId);
 
-        activityApplyService.deleteAllApplies(closeActivityRequest.getId());
+        // 받은 신청 모두 삭제
+        activityApplyService.deleteAllApplies(activityId);
+        
+        // 멤버 등록 추가하기
         activity.closeRecruitment();
     }
 

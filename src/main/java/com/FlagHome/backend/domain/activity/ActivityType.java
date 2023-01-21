@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.activity;
 
-import com.FlagHome.backend.domain.activity.dto.CreateActivityRequest;
+import com.FlagHome.backend.domain.activity.dto.ActivityRequest;
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.Mentoring;
 import com.FlagHome.backend.domain.activity.entity.Project;
@@ -19,16 +19,16 @@ public enum ActivityType {
     STUDY("스터디", createActivityRequest -> Study.from(createActivityRequest)),
     MENTORING("멘토링", createActivityRequest -> Mentoring.from(createActivityRequest));
 
-    ActivityType(String type, Function<CreateActivityRequest, Activity> expression) {
+    ActivityType(String type, Function<ActivityRequest, Activity> expression) {
         this.type = type;
         this.expression = expression;
     }
 
     private String type;
-    private Function<CreateActivityRequest, Activity> expression;
+    private Function<ActivityRequest, Activity> expression;
 
-    public Activity toEntity(CreateActivityRequest createActivityRequest) {
-        return expression.apply(createActivityRequest);
+    public Activity toEntity(ActivityRequest activityRequest) {
+        return expression.apply(activityRequest);
     }
 
     public static ActivityType getType(String activityType) {
