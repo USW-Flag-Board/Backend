@@ -10,7 +10,7 @@ public enum SearchType {
     CONTENT("content", "내용"),
     TITLE_AND_CONTENT("title-and-content", "제목+내용"),
     USER_NAME("user-name", "작성자 이름"),
-    USER_ID("user-id", "작성자 아이디");
+    LOGIN_ID("login-id", "작성자 아이디");
 
     private final String searchCode;
     private final String explanation;

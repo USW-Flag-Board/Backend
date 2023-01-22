@@ -81,7 +81,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     private BooleanExpression userIdCondition(SearchType searchType, String searchWord) {
         if(searchType == null || searchWord == null)
             return null;
-        if(searchType != SearchType.USER_ID)
+        if(searchType != SearchType.LOGIN_ID)
             return null;
 
         return post.member.loginId.eq(searchWord);

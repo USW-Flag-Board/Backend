@@ -76,14 +76,12 @@ public class MemberService {
         return member.getLoginId();
     }
 
-    // 마이 페이지!
     @Transactional
     public MyPageResponse getMyPage(String loginId) {
-        Member member = memberRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        Member member = findByLoginId(loginId);
+        List<PostDto> postList = getMemberPostByLoginId(loginId);
 
-        // 파일 등 로직 추가
-        return MyPageResponse.of(member);
+        return MyPageResponse.of(member, postList);
     }
 
     @Transactional
@@ -96,13 +94,18 @@ public class MemberService {
 
     @Transactional
     //@Scheduled(cron = "000000")  이후에 설정하기
-    public void changeAllToSleepMember(){
+    public void changeAllToSleepMember() {
         List<Member> sleepingList = memberRepository.getAllSleepMembers();
         sleepingList.forEach(member -> withdrawalRepository.save(Withdrawal.of(member,passwordEncoder)));
     }
 
-    public List<PostDto> getPostListByUserId(String userId) {
-        return postRepository.findBoardWithCondition(null, SearchType.USER_ID, userId);
+    public List<PostDto> getMemberPostByLoginId(String loginId) {
+        return postRepository.findBoardWithCondition(null, SearchType.LOGIN_ID, loginId);
+    }
+
+    public Member findByLoginId(String loginId) {
+        return memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
     private void validatePassword(Long memberId, String password) {
