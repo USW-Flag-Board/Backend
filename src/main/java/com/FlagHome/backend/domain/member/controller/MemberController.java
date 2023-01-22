@@ -39,14 +39,13 @@ public class MemberController {
     }
 
     @Tag(name = "member")
-    @Operation(summary = "멤버 프로필 가져오기")
+    @Operation(summary = "멤버 프로필 가져오기", description = "아직 미완성")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "멤버 정보 조회 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
     })
-    @GetMapping("/{login_id}")
+    @GetMapping("/{id}")
     public ResponseEntity<MyPageResponse> getMemberPage(@PathVariable("id") String loginId) {
-        // 유저가 작성한 postList가 필요하다면 memberService.getPostListByUserId(loginId) 를 사용하세요. (2023.01.15 윤희승)
         return ResponseEntity.ok(memberService.getMyPage(loginId));
     }
 

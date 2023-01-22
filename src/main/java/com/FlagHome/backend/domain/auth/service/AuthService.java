@@ -80,6 +80,7 @@ public class AuthService {
         }
 
         memberRepository.save(Member.of(authInformation, passwordEncoder));
+        authRepository.delete(authInformation);
         return SignUpResponse.from(authInformation);
     }
 

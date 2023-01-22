@@ -1,15 +1,15 @@
 package com.FlagHome.backend.domain.activity.service;
 
 import com.FlagHome.backend.domain.activity.activityApply.service.ActivityApplyService;
-import com.FlagHome.backend.domain.activity.dto.ActivityResponse;
 import com.FlagHome.backend.domain.activity.dto.ActivityRequest;
+import com.FlagHome.backend.domain.activity.dto.ActivityResponse;
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.Mentoring;
 import com.FlagHome.backend.domain.activity.entity.Project;
 import com.FlagHome.backend.domain.activity.entity.Study;
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
-import com.FlagHome.backend.domain.member.repository.MemberRepository;
+import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ import java.util.List;
 public class ActivityService {
     private final ActivityRepository activityRepository;
     private final ActivityApplyService activityApplyService;
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     public ActivityResponse getActivity(long activityId) {
         if (!activityRepository.existsById(activityId)) {
@@ -79,9 +79,7 @@ public class ActivityService {
     @Transactional
     public void changeLeader(long memberId, long activityId, String loginId) {
         Activity activity = validateLeaderAndReturn(memberId, activityId);
-
-        Member newLeader = memberRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        Member newLeader = memberService.findByLoginId(loginId);
 
         activity.setLeader(newLeader);
     }

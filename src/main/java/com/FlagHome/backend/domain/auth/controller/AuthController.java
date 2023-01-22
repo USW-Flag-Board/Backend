@@ -25,9 +25,9 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "사용 가능한 아이디입니다."),
             @ApiResponse(responseCode = "409", description = "이미 사용 중인 아이디입니다.")
     })
-    @GetMapping
-    public ResponseEntity<Void> checkId(@RequestParam("id") String loginId) {
-        authService.validateDuplicateLoginId(loginId);
+    @PostMapping("/check/id")
+    public ResponseEntity<Void> checkId(@RequestBody CheckLoginIdRequest checkLoginIdRequest) {
+        authService.validateDuplicateLoginId(checkLoginIdRequest.getLoginId());
         return ResponseEntity.ok().build();
     }
 
@@ -39,9 +39,9 @@ public class AuthController {
             @ApiResponse(responseCode = "409", description = "이미 사용 중인 이메일입니다."),
             @ApiResponse(responseCode = "422", description = "수원대학교 웹 메일 주소가 아닙니다.")
     })
-    @GetMapping("/{email:.+}")
-    public ResponseEntity<Void> checkEmail(@PathVariable String email) {
-        authService.validateDuplicateEmail(email);
+    @PostMapping("/check/email")
+    public ResponseEntity<Void> checkEmail(@RequestBody CheckAndSendEmailRequest checkAndSendEmailRequest) {
+        authService.validateDuplicateEmail(checkAndSendEmailRequest.getEmail());
         return ResponseEntity.ok().build();
     }
 
@@ -65,8 +65,8 @@ public class AuthController {
             @ApiResponse(responseCode = "500", description = "서버 에러입니다. 관리자에게 문의해주세요.")
     })
     @PostMapping("/email")
-    public ResponseEntity<JoinResponse> sendCertificationMail(@RequestBody SendEmailRequest sendEmailRequest) {
-        return ResponseEntity.ok(authService.sendCertification(sendEmailRequest.getEmail()));
+    public ResponseEntity<JoinResponse> sendCertificationMail(@RequestBody CheckAndSendEmailRequest checkAndSendEmailRequest) {
+        return ResponseEntity.ok(authService.sendCertification(checkAndSendEmailRequest.getEmail()));
     }
 
     @Tag(name = "auth")
