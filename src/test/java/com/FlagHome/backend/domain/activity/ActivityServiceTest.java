@@ -1,46 +1,72 @@
 package com.FlagHome.backend.domain.activity;
 
+import com.FlagHome.backend.domain.activity.activityApply.entity.ActivityApply;
+import com.FlagHome.backend.domain.activity.activityApply.repository.ActivityApplyRepository;
+import com.FlagHome.backend.domain.activity.activityApply.service.ActivityApplyService;
+import com.FlagHome.backend.domain.activity.entity.Activity;
+import com.FlagHome.backend.domain.activity.entity.Mentoring;
+import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
 import com.FlagHome.backend.domain.activity.service.ActivityService;
+import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import java.util.Optional;
 
-@SpringBootTest
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+
+@ExtendWith(MockitoExtension.class)
 @Transactional
 public class ActivityServiceTest {
-    @Autowired
+    @InjectMocks
     private ActivityService activityService;
-    @Autowired
+
+    @Mock
+    private ActivityApplyService activityApplyService;
+
+    @Mock
+    private ActivityApplyRepository activityApplyRepository;
+
+    @Mock
+    private ActivityRepository activityRepository;
+
+    @Mock
     private MemberRepository memberRepository;
 
-//    @Test
-//    @DisplayName("프로젝트 생성 테스트")
-//    void createProjectTest() {
-//        // given
-//        Member member = memberRepository.save(Member.builder().build());
+    @Nested
+    @DisplayName("활동 신청 테스트")
+    class activityApplyTest {
+        @Test
+        @DisplayName("활동 신청하기 테스트")
+        void applyActivityTest() {
+//            // given
+//            Member member = Member.builder().id(1L).build();
+//            Activity activity = Mentoring.builder().id(1L).leader(member).build();
+//            ActivityApply activityApply = ActivityApply.builder().member(member).activity(activity).build();
 //
-//        String name = "테스트 활동";
-//        String description = "테스트 설명";
-//        String githubLink = "github.com";
+//            given(activityApplyRepository.checkApply(any(), any())).willReturn(false);
+//            given(activityApplyRepository.findById(any())).willReturn(Optional.ofNullable(activityApply));
+//            given(activityRepository.findById(any())).willReturn(Optional.ofNullable(activity));
 //
-//        ActivityRequest createProjectRequest = ActivityRequest.builder()
-//                .name(name)
-//                .description(description)
-//                .githubLink(githubLink)
-//                .build();
+//            // when
+//            activityService.applyActivity(member.getId(), activity.getId());
 //
-//        // when
-//        Activity project = activityService.create(member.getId(), createProjectRequest);
-//
-//        // then
-//        assertThat(project.getLeader().getId()).isEqualTo(member.getId());
-//        assertThat(project.getName()).isEqualTo(name);
-//        assertThat(project.getDescription()).isEqualTo(description);
-//        assertThat(project.getGithubLink()).isEqualTo(githubLink);
-//        assertThat(project.getBookUsage()).isNull();
-//        assertThat(project.getClass()).isAssignableFrom(Project.class);
-//    }
+//            // then
+        }
+    }
+
+    @Test
+    @DisplayName("활동 만들기 테스트")
+    void createActivityTest() {
+
+    }
 }
