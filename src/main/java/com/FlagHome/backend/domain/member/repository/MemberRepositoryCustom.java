@@ -10,6 +10,7 @@ import java.util.List;
 public interface MemberRepositoryCustom {
     List<Member> getAllSleepMembers();
 
-    boolean isMemberExist(String loginId, String email);
+    List<Member> getMembersByLoginId(List<String> loginIdList);
 
+    boolean isMemberExist(String loginId, String email);
 }

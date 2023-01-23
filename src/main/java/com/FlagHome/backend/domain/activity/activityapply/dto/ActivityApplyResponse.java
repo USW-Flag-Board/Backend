@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain.activity.activityApply.dto;
+package com.FlagHome.backend.domain.activity.activityapply.dto;
 
 import com.FlagHome.backend.domain.member.Major;
 import com.querydsl.core.annotations.QueryProjection;

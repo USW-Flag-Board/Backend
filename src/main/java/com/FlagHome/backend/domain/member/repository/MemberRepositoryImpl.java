@@ -36,6 +36,14 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
                 .fetchFirst() != null;
     }
 
+    @Override
+    public List<Member> getMembersByLoginId(List<String> loginIdList) {
+        return queryFactory
+                .selectFrom(member)
+                .where(member.loginId.in(loginIdList))
+                .fetch();
+    }
+
     private BooleanExpression isLoginIdExist(String loginId) {
         if (loginId == null) {
             return null;

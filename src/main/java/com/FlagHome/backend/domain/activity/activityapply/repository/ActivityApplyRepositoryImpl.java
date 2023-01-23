@@ -1,15 +1,15 @@
-package com.FlagHome.backend.domain.activity.activityApply.repository;
+package com.FlagHome.backend.domain.activity.activityapply.repository;
 
-import com.FlagHome.backend.domain.activity.activityApply.dto.ActivityApplyResponse;
-import com.FlagHome.backend.domain.activity.activityApply.dto.QActivityApplyResponse;
-import com.FlagHome.backend.domain.activity.activityApply.entity.ActivityApply;
+import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyResponse;
+import com.FlagHome.backend.domain.activity.activityapply.dto.QActivityApplyResponse;
+import com.FlagHome.backend.domain.activity.activityapply.entity.ActivityApply;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.FlagHome.backend.domain.activity.activityApply.entity.QActivityApply.activityApply;
+import static com.FlagHome.backend.domain.activity.activityapply.entity.QActivityApply.activityApply;
 import static com.FlagHome.backend.domain.member.entity.QMember.member;
 
 @Repository

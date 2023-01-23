@@ -13,6 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CloseRecruitRequest {
-    @Schema(name = "멤버 리스트", description = "모집 마감할 때 같이 활동할 유저 리스트")
-    private List<String> memberList;
+    @Schema(name = "멤버 아이디 리스트", description = "모집 마감할 때 같이 활동할 유저 리스트")
+    private List<String> loginIdList;
 }
