@@ -2,6 +2,7 @@ package com.FlagHome.backend.domain.activity.activityApply.repository;
 
 import com.FlagHome.backend.domain.activity.activityApply.dto.ActivityApplyResponse;
 import com.FlagHome.backend.domain.activity.activityApply.dto.QActivityApplyResponse;
+import com.FlagHome.backend.domain.activity.activityApply.entity.ActivityApply;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -26,6 +27,7 @@ public class ActivityApplyRepositoryImpl implements ActivityApplyRepositoryCusto
                         member.major))
                 .from(activityApply)
                 .where(activityApply.activity.id.eq(activityId))
+                .innerJoin(activityApply.member, member)
                 .orderBy(activityApply.applyTime.asc())
                 .fetch();
     }
@@ -46,5 +48,14 @@ public class ActivityApplyRepositoryImpl implements ActivityApplyRepositoryCusto
                 .where(activityApply.member.id.eq(memberId),
                         activityApply.activity.id.eq(activityId))
                 .fetchFirst() != null;
+    }
+
+    @Override
+    public ActivityApply findByMemberIdAndActivityId(long memberId, long activityId) {
+        return queryFactory
+                .selectFrom(activityApply)
+                .where(activityApply.member.id.eq(memberId),
+                        activityApply.activity.id.eq(activityId))
+                .fetchOne();
     }
 }

@@ -2,6 +2,7 @@ package com.FlagHome.backend.domain.report.entity;
 
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.report.ReportType;
+import com.FlagHome.backend.domain.report.dto.ReportRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,6 +29,7 @@ public class Report {
     @OneToOne
     @JoinColumn(name = "reported_id")
     private Member reported;
+
     @Column
     private String reportedURL;
 
@@ -40,4 +42,12 @@ public class Report {
 
     @Column
     private LocalDateTime createdAt;
+
+    public static Report from(ReportRequest reportRequest) {
+        return Report.builder()
+                .reportType(reportRequest.getReportType())
+                .reportedURL(reportRequest.getUrl())
+                .detailReason(reportRequest.getDetailReason())
+                .build();
+    }
 }

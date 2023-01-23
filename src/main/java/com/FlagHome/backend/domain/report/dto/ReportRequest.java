@@ -3,7 +3,6 @@ package com.FlagHome.backend.domain.report.dto;
 
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.report.ReportType;
-import com.FlagHome.backend.domain.report.entity.Report;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,7 +26,6 @@ public class ReportRequest {
     @Schema(name = "신고경로", required = true)
     private String url;
 
-
     @Builder
     public ReportRequest(Member reporter, Member reported, ReportType reportType, String detailReason, String url) {
         this.reporter = reporter;
@@ -35,13 +33,5 @@ public class ReportRequest {
         this.reportType = reportType;
         this.detailReason = detailReason;
         this.url = url;
-    }
-
-    public static Report valueOf(ReportRequest reportRequest) {
-        return Report.builder()
-                .reportType(reportRequest.getReportType())
-                .reportedURL(reportRequest.getUrl())
-                .detailReason(reportRequest.getDetailReason())
-                .build();
     }
 }

@@ -17,6 +17,13 @@ public class ReportService {
     private final ReportRepository reportRepository;
 
     @Transactional
+    public long create(Long memberId, Report report) {
+        validateDuplicateReport(memberId, report.getReportedURL());
+        Report createdReport = reportRepository.save(report);
+        return createdReport.getId();
+    }
+
+    @Transactional
     public void deleteReport(long reportId) {
         Report report = reportRepository.findById(reportId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REPORT_NOT_FOUND));
@@ -29,19 +36,9 @@ public class ReportService {
         reportRepository.deleteAllInBatch();
     }
 
-    /*
-    @Transactional
-    public long create(Long memberId, Report report) {
-        validateDuplicateReport(memberId, report.getReportedURL());
-
-        return reportRepository.save(report).getId();
-    }*/
-
-
-/*
     private void validateDuplicateReport(Long memberId,String url) {
         if (reportRepository.existsByMemberIdAndUrl(memberId, url)) {
             throw new CustomException(ErrorCode.ALREADY_REPORTED);
         }
-    }*/
+    }
 }

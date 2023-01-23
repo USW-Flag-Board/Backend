@@ -8,6 +8,4 @@ import java.util.Optional;
 
 @Repository
 public interface ActivityApplyRepository extends JpaRepository<ActivityApply, Long>, ActivityApplyRepositoryCustom {
-    Optional<ActivityApply> findByMemberId(long memberId);
-    Optional<ActivityApply> findByActivityId(long activityId);
 }

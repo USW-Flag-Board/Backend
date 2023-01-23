@@ -8,8 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Repository
-public interface ReportRepository extends JpaRepository<Report, Long> {
+public interface ReportRepository extends JpaRepository<Report, Long>, ReportRepositoryCustom {
     Optional<Report> findById(Long reportId);
-/*
-    boolean existsByMemberIdAndUrl(Long memberId, String url);*/
 }

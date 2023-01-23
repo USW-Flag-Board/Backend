@@ -60,6 +60,8 @@ public class AuthService {
         authRepository.save(authInformation);
     }
 
+    
+    // 메일 재인증 시에 인증번호 초기화 오류 -> 로직 합치기
     public JoinResponse sendCertification(String email) {
         AuthInformation authInformation = findByEmail(email);
         mailService.sendCertification(email, authInformation.getCertification());
