@@ -1,5 +1,6 @@
 package com.FlagHome.backend.domain.member.controller;
 
+import com.FlagHome.backend.domain.HttpResponse;
 import com.FlagHome.backend.domain.member.dto.*;
 import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.global.utility.SecurityUtils;
@@ -13,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+
+import static org.springframework.http.HttpStatus.OK;
 
 @Tag(name = "member", description = "멤버 API")
 @RestController
@@ -56,9 +59,10 @@ public class MemberController {
             @ApiResponse(responseCode = "500", description = "서버 에러입니다. 관리자에게 문의해주세요.")
     })
     @PostMapping("/mail/id")
-    public ResponseEntity<Void> sendFindIdResult(@RequestBody SendEmailRequest sendEmailRequest) {
-        memberService.sendFindIdResult(sendEmailRequest.getEmail());
-        return ResponseEntity.ok().build();
+    public ResponseEntity<HttpResponse> sendFindIdResult(@RequestBody SendEmailRequest sendEmailRequest) {
+        HttpResponse response = HttpResponse
+                .ok(memberService.sendFindIdResult(sendEmailRequest.getEmail()), OK, "아이디 찾기 결과 메일 발송 성공");
+        return ResponseEntity.ok(response);
     }
 
     @Tag(name = "member")
@@ -68,9 +72,10 @@ public class MemberController {
             @ApiResponse(responseCode = "500", description = "서버 에러입니다. 관리자에게 문의해주세요.")
     })
     @PostMapping("/mail/password")
-    public ResponseEntity<Void> sendNewPassword(@RequestBody SendEmailRequest sendEmailRequest) {
-        memberService.sendNewPassword(sendEmailRequest.getEmail());
-        return ResponseEntity.ok().build();
+    public ResponseEntity<HttpResponse> sendNewPassword(@RequestBody SendEmailRequest sendEmailRequest) {
+        HttpResponse response = HttpResponse
+                .ok(memberService.sendNewPassword(sendEmailRequest.getEmail()), OK, "새 비밀번호 메일 발송 성공");
+        return ResponseEntity.ok(response);
     }
 
     @Tag(name = "member")

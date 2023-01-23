@@ -49,18 +49,19 @@ public class MemberService {
         }
     }
 
-    public void sendFindIdResult(String email) {
+    public String sendFindIdResult(String email) {
         Member member = findByEmail(email);
         mailService.sendFindIdResult(email, member.getLoginId());
+        return email;
     }
 
     @Transactional
-    public void sendNewPassword(String email) {
+    public String sendNewPassword(String email) {
         Member member = findByEmail(email);
         String newPassword = RandomGenerator.getRandomPassword();
 
         member.updatePassword(passwordEncoder.encode(newPassword));
-        mailService.sendNewPassword(email, newPassword);
+        return mailService.sendNewPassword(email, newPassword);
     }
 
     @Transactional

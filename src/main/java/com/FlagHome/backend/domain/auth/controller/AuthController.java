@@ -1,5 +1,6 @@
 package com.FlagHome.backend.domain.auth.controller;
 
+import com.FlagHome.backend.domain.HttpResponse;
 import com.FlagHome.backend.domain.auth.dto.*;
 import com.FlagHome.backend.domain.auth.service.AuthService;
 import com.FlagHome.backend.domain.token.dto.TokenRequest;
@@ -11,6 +12,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import static org.springframework.http.HttpStatus.OK;
 
 @Tag(name = "auth", description = "인증 API")
 @RestController
@@ -40,33 +43,23 @@ public class AuthController {
             @ApiResponse(responseCode = "422", description = "수원대학교 웹 메일 주소가 아닙니다.")
     })
     @PostMapping("/check/email")
-    public ResponseEntity<Void> checkEmail(@RequestBody CheckAndSendEmailRequest checkAndSendEmailRequest) {
-        authService.validateDuplicateEmail(checkAndSendEmailRequest.getEmail());
+    public ResponseEntity<Void> checkEmail(@RequestBody CheckEmailRequest checkEmailRequest) {
+        authService.validateDuplicateEmail(checkEmailRequest.getEmail());
         return ResponseEntity.ok().build();
     }
 
     @Tag(name = "auth")
-    @Operation(summary = "회원 정보 입력", description = "회원가입 시 작성한 데이터 검사 및 인증정보 저장" +
+    @Operation(summary = "회원 정보 입력 및 메일 전송", description = "작성한 데이터 검사 후 인증정보 저장 및 메일 전송" +
             "\n저장한 정보는 관리자만 볼 수 있어서 URI 리턴 없음.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "회원가입 성공"),
+            @ApiResponse(responseCode = "200", description = "회원정보 입력 성공 및 메일 발송 완료"),
             @ApiResponse(responseCode = "422", description = "사용할 수 없는 비밀번호 입니다. (8~20자 이내 영문, 숫자, 특수문자를 모두 포함)"),
-    })
-    @PostMapping("/join")
-    public ResponseEntity<Void> join(@RequestBody JoinRequest joinRequest) {
-        authService.join(joinRequest);
-        return ResponseEntity.ok().build();
-    }
-
-    @Tag(name = "auth")
-    @Operation(summary = "재학생 인증 이메일 전송")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "재학생 인증 메일 전송 완료"),
             @ApiResponse(responseCode = "500", description = "서버 에러입니다. 관리자에게 문의해주세요.")
     })
-    @PostMapping("/email")
-    public ResponseEntity<JoinResponse> sendCertificationMail(@RequestBody CheckAndSendEmailRequest checkAndSendEmailRequest) {
-        return ResponseEntity.ok(authService.sendCertification(checkAndSendEmailRequest.getEmail()));
+    @PostMapping("/join")
+    public ResponseEntity<HttpResponse> join(@RequestBody JoinRequest joinRequest) {
+        HttpResponse response = HttpResponse.ok(authService.join(joinRequest), OK, "회원정보 입력 성공 및 메일 발송 완료");
+        return ResponseEntity.ok(response);
     }
 
     @Tag(name = "auth")
