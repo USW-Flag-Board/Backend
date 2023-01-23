@@ -1,6 +1,7 @@
 package com.FlagHome.backend.domain.report.Service;
 
 import com.FlagHome.backend.domain.report.dto.ReportRequest;
+import com.FlagHome.backend.domain.report.dto.ReportResponse;
 import com.FlagHome.backend.domain.report.entity.Report;
 import com.FlagHome.backend.domain.report.repository.ReportRepository;
 import com.FlagHome.backend.global.exception.CustomException;
@@ -21,6 +22,12 @@ public class ReportService {
         validateDuplicateReport(memberId, report.getReportedURL());
         Report createdReport = reportRepository.save(report);
         return createdReport.getId();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReportResponse> getAllReport() {
+        List<ReportResponse> reportResponseList = reportRepository.getAllReports();
+        return reportResponseList;
     }
 
     @Transactional
