@@ -1,6 +1,5 @@
 package com.FlagHome.backend.domain.report.Service;
 
-import com.FlagHome.backend.domain.report.dto.ReportRequest;
 import com.FlagHome.backend.domain.report.dto.ReportResponse;
 import com.FlagHome.backend.domain.report.entity.Report;
 import com.FlagHome.backend.domain.report.repository.ReportRepository;
@@ -25,9 +24,8 @@ public class ReportService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReportResponse> getAllReport() {
-        List<ReportResponse> reportResponseList = reportRepository.getAllReports();
-        return reportResponseList;
+    public List<ReportResponse> getAllReports() {
+        return reportRepository.getAllReports();
     }
 
     @Transactional

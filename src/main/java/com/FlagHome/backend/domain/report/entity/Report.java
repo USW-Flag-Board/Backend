@@ -48,6 +48,7 @@ public class Report {
                 .reportType(reportRequest.getReportType())
                 .reportedURL(reportRequest.getReportedUrl())
                 .detailReason(reportRequest.getDetailReason())
+                .createdAt(LocalDateTime.now())
                 .build();
     }
 }
