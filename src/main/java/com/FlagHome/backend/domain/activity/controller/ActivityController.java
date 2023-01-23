@@ -1,10 +1,9 @@
 package com.FlagHome.backend.domain.activity.controller;
 
 import com.FlagHome.backend.domain.HttpResponse;
-import com.FlagHome.backend.domain.activity.dto.ActivityResponse;
+import com.FlagHome.backend.domain.activity.dto.ActivityRequest;
 import com.FlagHome.backend.domain.activity.dto.ChangeLeaderRequest;
 import com.FlagHome.backend.domain.activity.dto.CloseRecruitRequest;
-import com.FlagHome.backend.domain.activity.dto.ActivityRequest;
 import com.FlagHome.backend.domain.activity.mapper.ActivityMapper;
 import com.FlagHome.backend.domain.activity.service.ActivityService;
 import com.FlagHome.backend.global.utility.SecurityUtils;
@@ -14,15 +13,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 
-import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
 @Tag(name = "activity", description = "활동 API")
 @RestController

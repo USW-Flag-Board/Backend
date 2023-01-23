@@ -40,10 +40,8 @@ public class ActivityApplyService {
     }
 
     @Transactional
-    public void cancleApply(long memberId) {
-        ActivityApply activityApply = activityApplyRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new CustomException(ErrorCode.APPLY_NOT_FOUND));
-
+    public void cancleApply(long memberId, long activityId) {
+        ActivityApply activityApply = activityApplyRepository.findByMemberIdAndActivityId(memberId, activityId);
         activityApplyRepository.delete(activityApply);
     }
 
