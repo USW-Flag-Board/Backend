@@ -42,6 +42,17 @@ public class ReportController {
     }
 
     @Tag(name = "report")
+    @Operation(summary = "모든 신고 가져오기", description = "모든 신고 내역을 가져온다는 의미")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "모든 신고 가져오기 성공"),
+    })
+    @GetMapping
+    public ResponseEntity<HttpResponse> getAllReports() {
+        HttpResponse response = HttpResponse.ok(reportService.getAllReport(), OK, "모든 신고 정보 가져오기 성공");
+        return ResponseEntity.ok(response);
+    }
+
+    @Tag(name = "report")
     @Operation(summary = "신고 삭제하기", description = "관리자 전용 기능, 신고 삭제는 관리자가 신고 건에 대해서 확인했다는 의미")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "신고가 삭제되었습니다."),
