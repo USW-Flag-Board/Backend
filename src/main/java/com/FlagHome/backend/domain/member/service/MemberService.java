@@ -100,8 +100,14 @@ public class MemberService {
         sleepingList.forEach(member -> withdrawalRepository.save(Withdrawal.of(member,passwordEncoder)));
     }
 
+    @Transactional(readOnly = true)
     public List<PostDto> getMemberPostByLoginId(String loginId) {
         return postRepository.findBoardWithCondition(null, SearchType.LOGIN_ID, loginId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Member> getMembersByLoginId(List<String> loginIdList) {
+        return memberRepository.getMembersByLoginId(loginIdList);
     }
 
     public Member findByLoginId(String loginId) {

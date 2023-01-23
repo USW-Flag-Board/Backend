@@ -1,7 +1,7 @@
-package com.FlagHome.backend.domain.activity.activityApply.repository;
+package com.FlagHome.backend.domain.activity.activityapply.repository;
 
-import com.FlagHome.backend.domain.activity.activityApply.dto.ActivityApplyResponse;
-import com.FlagHome.backend.domain.activity.activityApply.entity.ActivityApply;
+import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyResponse;
+import com.FlagHome.backend.domain.activity.activityapply.entity.ActivityApply;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

@@ -1,12 +1,14 @@
 package com.FlagHome.backend.domain.activity.service;
 
-import com.FlagHome.backend.domain.activity.activityApply.service.ActivityApplyService;
+import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyResponse;
+import com.FlagHome.backend.domain.activity.activityapply.service.ActivityApplyService;
 import com.FlagHome.backend.domain.activity.dto.ActivityRequest;
 import com.FlagHome.backend.domain.activity.dto.ActivityResponse;
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.Mentoring;
 import com.FlagHome.backend.domain.activity.entity.Project;
 import com.FlagHome.backend.domain.activity.entity.Study;
+import com.FlagHome.backend.domain.activity.memberactivity.service.MemberActivityService;
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.service.MemberService;
@@ -23,6 +25,7 @@ import java.util.List;
 public class ActivityService {
     private final ActivityRepository activityRepository;
     private final ActivityApplyService activityApplyService;
+    private final MemberActivityService memberActivityService;
     private final MemberService memberService;
 
     public ActivityResponse getActivity(long activityId) {
@@ -40,9 +43,16 @@ public class ActivityService {
         return activityResponseList;
     }
 
+    @Transactional(readOnly = true)
+    public List<ActivityApplyResponse> getAllActivityApplies(long memberId, long activityId) {
+        Activity activity = validateLeaderAndReturn(memberId, activityId);
+        return activityApplyService.getAllApplies(activity.getId());
+    }
+
     public boolean checkApply(long memberId, long activityId) {
         return activityApplyService.checkApply(memberId, activityId);
     }
+
     @Transactional
     public void applyActivity(long memberId, long activityId) {
         if (checkApply(memberId, activityId)) {
@@ -85,13 +95,12 @@ public class ActivityService {
     }
 
     @Transactional
-    public void closeRecruitment(long memberId, long activityId, List<String> memberList) {
+    public void closeRecruitment(long memberId, long activityId, List<String> loginIdList) {
         Activity activity = validateLeaderAndReturn(memberId, activityId);
+        List<Member> memberList = memberService.getMembersByLoginId(loginIdList);
 
-        // 받은 신청 모두 삭제
+        memberActivityService.registerMembers(activity, memberList);
         activityApplyService.deleteAllApplies(activityId);
-        
-        // 멤버 등록 추가하기
         activity.closeRecruitment();
     }
 
@@ -99,8 +108,16 @@ public class ActivityService {
     public void delete(long memberId, long activityId) {
         Activity activity = validateLeaderAndReturn(memberId, activityId);
 
-        activityApplyService.deleteAllApplies(activity.getId());
+        activityApplyService.deleteAllApplies(activityId);
         activityRepository.delete(activity);
+    }
+
+    @Transactional
+    public void cancelApply(long memberId, long activityId) {
+        if (!checkApply(memberId, activityId)) {
+            throw new CustomException(ErrorCode.APPLY_NOT_FOUND);
+        }
+        activityApplyService.cancelApply(memberId, activityId);
     }
 
     private Activity validateLeaderAndReturn(long memberId, long activityId) {

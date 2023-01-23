@@ -1,8 +1,8 @@
 package com.FlagHome.backend.domain.activity;
 
-import com.FlagHome.backend.domain.activity.activityApply.dto.ActivityApplyResponse;
-import com.FlagHome.backend.domain.activity.activityApply.entity.ActivityApply;
-import com.FlagHome.backend.domain.activity.activityApply.repository.ActivityApplyRepository;
+import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyResponse;
+import com.FlagHome.backend.domain.activity.activityapply.entity.ActivityApply;
+import com.FlagHome.backend.domain.activity.activityapply.repository.ActivityApplyRepository;
 import com.FlagHome.backend.domain.activity.dto.ActivityResponse;
 import com.FlagHome.backend.domain.activity.entity.*;
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
@@ -101,7 +101,7 @@ public class ActivityRepositoryTest {
     public class activityApplyTest {
         @Test
         @DisplayName("모든 활동 신청 가져오기 테스트")
-        public void getAllAplliesTest() {
+        public void getAllAppliesTest() {
             // given
             Major major = Major.컴퓨터SW;
 
