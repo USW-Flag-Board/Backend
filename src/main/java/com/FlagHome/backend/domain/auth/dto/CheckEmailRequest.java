@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CheckAndSendEmailRequest {
+public class CheckEmailRequest {
     @Schema(description = "이메일", required = true, example = "gmlwh124@suwon.ac.kr")
     private String email;
 }

@@ -39,13 +39,13 @@ public class ActivityRepositoryTest {
 
     @Test
     @DisplayName("활동 가져오기 테스트")
-    void getActivityTest() {
+    public void getActivityTest() {
         // given
         String memberName = "Hejow";
         String activityName = "이름";
         Member member = memberRepository.saveAndFlush(Member.builder()
-                        .name(memberName)
-                        .build());
+                .name(memberName)
+                .build());
         ActivityType activityType = ActivityType.PROJECT;
 
         Project project = Project.builder()
@@ -68,7 +68,7 @@ public class ActivityRepositoryTest {
 
     @Test
     @DisplayName("모든 활동 가져오기 테스트")
-    void getAllActivitiesTest() {
+    public void getAllActivitiesTest() {
         // given
         Member member = memberRepository.save(Member.builder().build());
 
@@ -98,10 +98,10 @@ public class ActivityRepositoryTest {
 
     @Nested
     @DisplayName("활동 신청 테스트")
-    class activityApplyTest {
+    public class activityApplyTest {
         @Test
         @DisplayName("모든 활동 신청 가져오기 테스트")
-        void getAllAplliesTest() {
+        public void getAllAplliesTest() {
             // given
             Major major = Major.컴퓨터SW;
 
@@ -124,10 +124,10 @@ public class ActivityRepositoryTest {
             assertThat(responses.get(0).getId()).isNotEqualTo(responses.get(1).getId());
             assertThat(responses.get(0).getMajor()).isEqualTo(major);
         }
-        
+
         @Test
         @DisplayName("모든 신청 삭제하기 테스트")
-        void deleteAllAppliesTest() {
+        public void deleteAllAppliesTest() {
             // given
             Major major = Major.컴퓨터SW;
 
@@ -152,7 +152,7 @@ public class ActivityRepositoryTest {
 
         @Test
         @DisplayName("신청 체크 테스트")
-        void checkApplyTest() {
+        public void checkApplyTest() {
             // given
             Member member1 = memberRepository.save(Member.builder().build());
             Member member2 = memberRepository.save(Member.builder().build());
@@ -160,9 +160,9 @@ public class ActivityRepositoryTest {
             Activity activity = activityRepository.save(Study.builder().leader(member1).build());
 
             activityApplyRepository.save(ActivityApply.builder()
-                            .member(member2)
-                            .activity(activity)
-                            .build());
+                    .member(member2)
+                    .activity(activity)
+                    .build());
 
             // when
             boolean check1 = activityApplyRepository.checkApply(member1.getId(), activity.getId());
@@ -175,7 +175,7 @@ public class ActivityRepositoryTest {
 
         @Test
         @DisplayName("활동 신청 정보 가져오기 테스트")
-        void findApplyByMemberAndActivityTest() {
+        public void findApplyByMemberAndActivityTest() {
             // given
             Member member = memberRepository.save(Member.builder().build());
             Activity activity = activityRepository.save(Mentoring.builder().leader(member).build());
@@ -192,7 +192,6 @@ public class ActivityRepositoryTest {
             assertThat(apply.getId()).isEqualTo(findApply.getId());
             assertThat(apply.getMember()).isEqualTo(findApply.getMember());
             assertThat(apply.getActivity()).isEqualTo(findApply.getActivity());
-
         }
     }
 }

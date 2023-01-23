@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 public class MailService {
     private final AmazonSimpleEmailService emailService;
 
-    public void sendCertification(String email, String result) {
+    public String sendCertification(String email, String result) {
         MailRequest mailRequest = MailRequest.builder()
                 .to(email)
                 .subject(MailType.AUTH_EMAIL.getSubject())
@@ -22,9 +22,10 @@ public class MailService {
 
         emailService.sendEmail(mailRequest.toSendRequest());
         log.info("Email sent : " + email);
+        return email;
     }
 
-    public void sendFindIdResult(String email, String result) {
+    public String sendFindIdResult(String email, String result) {
         MailRequest mailRequest = MailRequest.builder()
                 .to(email)
                 .subject(MailType.FIND_ID.getSubject())
@@ -33,9 +34,10 @@ public class MailService {
 
         emailService.sendEmail(mailRequest.toSendRequest());
         log.info("Email sent : " + email);
+        return email;
     }
 
-    public void sendNewPassword(String email, String result) {
+    public String sendNewPassword(String email, String result) {
         MailRequest mailRequest = MailRequest.builder()
                 .to(email)
                 .subject(MailType.REISSUE_PASSWORD.getSubject())
@@ -44,5 +46,6 @@ public class MailService {
 
         emailService.sendEmail(mailRequest.toSendRequest());
         log.info("Email sent : " + email);
+        return email;
     }
 }

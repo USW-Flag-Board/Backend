@@ -22,11 +22,11 @@ public class Report {
     @Column(name = "report_id")
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reporter_id")
     private Member reporter;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reported_id")
     private Member reported;
 
