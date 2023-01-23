@@ -24,14 +24,14 @@ public class ReportRequest {
     private String detailReason;
 
     @Schema(name = "신고경로", required = true)
-    private String url;
+    private String reportedUrl;
 
     @Builder
-    public ReportRequest(Member reporter, Member reported, ReportType reportType, String detailReason, String url) {
+    public ReportRequest(Member reporter, Member reported, ReportType reportType, String detailReason, String reportedUrl) {
         this.reporter = reporter;
         this.reported = reported;
         this.reportType = reportType;
         this.detailReason = detailReason;
-        this.url = url;
+        this.reportedUrl = reportedUrl;
     }
 }

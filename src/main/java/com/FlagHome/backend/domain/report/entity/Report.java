@@ -46,7 +46,7 @@ public class Report {
     public static Report from(ReportRequest reportRequest) {
         return Report.builder()
                 .reportType(reportRequest.getReportType())
-                .reportedURL(reportRequest.getUrl())
+                .reportedURL(reportRequest.getReportedUrl())
                 .detailReason(reportRequest.getDetailReason())
                 .build();
     }
