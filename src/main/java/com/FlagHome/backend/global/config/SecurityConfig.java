@@ -43,6 +43,7 @@ public class SecurityConfig {
                 .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll()
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/activities/**").permitAll()
+                .antMatchers("api/reports/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/member/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/member/**").permitAll()
                 .antMatchers("/api/member/**").hasAnyRole("USER", "CREW")
