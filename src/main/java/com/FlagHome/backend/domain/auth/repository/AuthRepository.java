@@ -13,4 +13,6 @@ public interface AuthRepository extends JpaRepository<AuthInformation, Long>, Au
     Optional<AuthInformation> findById(Long authMemberId);
 
     void deleteById(Long authMemberId);
+
+    Optional<AuthInformation> findFirstByEmailOrderByCreatedAtDesc(String email);
 }

@@ -52,30 +52,23 @@ public class AuthService {
     }
 
     @Transactional
-    public void join(JoinRequest joinRequest) {
+    public JoinResponse join(JoinRequest joinRequest) {
         validatePassword(joinRequest.getPassword());
-
         String certificationNumber = RandomGenerator.getRandomNumber();
-        AuthInformation authInformation = AuthInformation.of(joinRequest, certificationNumber);
-        authRepository.save(authInformation);
+
+        authRepository.save(AuthInformation.of(joinRequest, certificationNumber));
+        mailService.sendCertification(joinRequest.getEmail(), certificationNumber);
+
+        return JoinResponse.from(joinRequest.getEmail());
     }
-
-    
-    // 메일 재인증 시에 인증번호 초기화 오류 -> 로직 합치기
-    public JoinResponse sendCertification(String email) {
-        AuthInformation authInformation = findByEmail(email);
-        mailService.sendCertification(email, authInformation.getCertification());
-
-        return JoinResponse.from(authInformation);
-    }
-
     @Transactional
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
-        AuthInformation authInformation = findByEmail(signUpRequest.getEmail());
+        AuthInformation authInformation = authRepository.findFirstByEmailOrderByCreatedAtDesc(signUpRequest.getEmail())
+                .orElseThrow(() -> new CustomException(ErrorCode.AUTH_INFORMATION_NOT_FOUND));;
 
         validateCertification(signUpRequest.getCertification(), authInformation.getCertification());
 
-        // 동아리원이면 인증 상태를 업데이트한다.
+        // 동아리원이면 인증 상태를 업데이트하고 이후 관리자의 확인을 받는다.
         if (authInformation.getJoinType() == JoinType.동아리) {
             authInformation.updateAuthorizedTrue();
             return SignUpResponse.from(authInformation);
@@ -136,10 +129,5 @@ public class AuthService {
         if (!matcher.find()) {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
-    }
-
-    private AuthInformation findByEmail(String email) {
-        return authRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(ErrorCode.AUTH_INFORMATION_NOT_FOUND));
     }
 }
