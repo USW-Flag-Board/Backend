@@ -15,7 +15,7 @@ import java.util.List;
 
 @Tag(name = "reply", description = "댓글 API")
 @RestController
-@RequestMapping("/api/reply")
+@RequestMapping("/api/replies")
 @RequiredArgsConstructor
 public class ReplyController {
     private final ReplyService replyService;

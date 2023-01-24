@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WithMockUser
 class PostControllerTest {
 
-    private final String baseUrl = "/api/post";
+    private final String baseUrl = "/api/posts";
 
     @Autowired
     private MemberRepository memberRepository;

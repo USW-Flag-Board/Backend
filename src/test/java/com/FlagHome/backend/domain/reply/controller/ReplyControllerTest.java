@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @WithMockUser
 class ReplyControllerTest {
-    private final String baseUrl = "/api/reply";
+    private final String baseUrl = "/api/replies";
 
     @Autowired
     private PostRepository postRepository;

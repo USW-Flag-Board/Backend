@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @MockBean(JpaMetamodelMappingContext.class)
 @WithMockUser
 public class PostControllerTestAsSlice {
-    private static final String baseURL = "/api/post";
+    private static final String baseURL = "/api/posts";
 
     @Autowired
     private MockMvc mockMvc;
