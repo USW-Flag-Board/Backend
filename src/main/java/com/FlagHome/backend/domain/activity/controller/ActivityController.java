@@ -44,7 +44,8 @@ public class ActivityController {
     }
 
     @Tag(name = "activity")
-    @Operation(summary = "모든 활동 가져오기", description = "현재 일부만 구현됨. 추후 변경될 예정")
+    @Operation(summary = "모든 활동 가져오기", description = "동아리 소개에 사용될 API\n" +
+                                                          "연도 별로 활동 종류에 따라서 고유번호, 이름, 상태, 시즌을 리턴한다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "모든 활동들을 가져왔습니다."),
     })
@@ -189,11 +190,37 @@ public class ActivityController {
             @ApiResponse(responseCode = "200", description = "모집이 마감되었습니다."),
             @ApiResponse(responseCode = "401", description = "활동장이 아닙니다.")
     })
-    @PostMapping("/{id}/close")
+    @PatchMapping("/{id}/close")
     public ResponseEntity<HttpResponse> closeRecruitment(@PathVariable("id") long activityId,
                                                  @RequestBody CloseRecruitRequest closeRecruitRequest) {
         activityService.closeRecruitment(SecurityUtils.getMemberId(), activityId, closeRecruitRequest.getLoginIdList());
         HttpResponse response = HttpResponse.ok(null, OK, "모집이 마감되었습니다.");
+        return ResponseEntity.ok(response);
+    }
+
+    @Tag(name = "activity")
+    @Operation(summary = "활동 모집 다시 열기", description = "추가적인 활동원을 받기 위해서 상태를 모집중으로 변경한다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "다시 모집을 시작합니다."),
+            @ApiResponse(responseCode = "401", description = "활동장이 아닙니다.")
+    })
+    @PostMapping("/{id}/reopen")
+    public ResponseEntity<HttpResponse> reopenRecruitment(@PathVariable("id") long activityId) {
+        activityService.reopenRecruitment(SecurityUtils.getMemberId(), activityId);
+        HttpResponse response = HttpResponse.ok(null, OK, "다시 모집을 시작합니다.");
+        return ResponseEntity.ok(response);
+    }
+
+    @Tag(name = "activity")
+    @Operation(summary = "활동 마무리하기", description = "소기의 목적을 달성하고 활동을 끝낸다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "활동이 종료되었습니다."),
+            @ApiResponse(responseCode = "401", description = "활동장이 아닙니다.")
+    })
+    @PatchMapping("/{id}/finish")
+    public ResponseEntity<HttpResponse> finishActivity(@PathVariable("id") long activityId) {
+        activityService.finishActivity(SecurityUtils.getMemberId(), activityId);
+        HttpResponse response = HttpResponse.ok(null, OK, "활동이 종료되었습니다.");
         return ResponseEntity.ok(response);
     }
 
