@@ -4,7 +4,12 @@ import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyRespo
 import com.FlagHome.backend.domain.activity.activityapply.entity.ActivityApply;
 import com.FlagHome.backend.domain.activity.activityapply.repository.ActivityApplyRepository;
 import com.FlagHome.backend.domain.activity.dto.ActivityResponse;
-import com.FlagHome.backend.domain.activity.entity.*;
+import com.FlagHome.backend.domain.activity.entity.Activity;
+import com.FlagHome.backend.domain.activity.entity.Mentoring;
+import com.FlagHome.backend.domain.activity.entity.Project;
+import com.FlagHome.backend.domain.activity.entity.Study;
+import com.FlagHome.backend.domain.activity.memberactivity.entity.MemberActivity;
+import com.FlagHome.backend.domain.activity.memberactivity.repository.MemberActivityRepository;
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
 import com.FlagHome.backend.domain.member.Major;
 import com.FlagHome.backend.domain.member.entity.Member;
@@ -19,10 +24,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.persistence.EntityManager;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -35,65 +43,75 @@ public class ActivityRepositoryTest {
     private ActivityApplyRepository activityApplyRepository;
 
     @Autowired
+    private MemberActivityRepository memberActivityRepository;
+
+    @Autowired
     private MemberRepository memberRepository;
 
-    @Test
-    @DisplayName("활동 가져오기 테스트")
-    public void getActivityTest() {
-        // given
-        String memberName = "Hejow";
-        String activityName = "이름";
-        Member member = memberRepository.saveAndFlush(Member.builder()
-                .name(memberName)
-                .build());
-        ActivityType activityType = ActivityType.PROJECT;
+    @Autowired
+    private EntityManager entityManager;
 
-        Project project = Project.builder()
-                .name(activityName)
-                .leader(member)
-                .activityType(activityType)
-                .build();
+    @Nested
+    @DisplayName("활동 테스트")
+    class activityTest {
+        @Test
+        @DisplayName("활동 가져오기 테스트")
+        public void getActivityTest() {
+            // given
+            String memberName = "Hejow";
+            String activityName = "이름";
+            Member member = memberRepository.saveAndFlush(Member.builder()
+                    .name(memberName)
+                    .build());
+            ActivityType activityType = ActivityType.PROJECT;
 
-        Activity activity = activityRepository.saveAndFlush(project);
+            Project project = Project.builder()
+                    .name(activityName)
+                    .leader(member)
+                    .activityType(activityType)
+                    .build();
 
-        // when
-        ActivityResponse activityResponse = activityRepository.getActivity(activity.getId());
+            Activity activity = activityRepository.saveAndFlush(project);
 
-        // then
-        assertThat(activity.getId()).isEqualTo(activityResponse.getId());
-        assertThat(activity.getName()).isEqualTo(activityResponse.getName());
-        assertThat(activity.getLeader().getName()).isEqualTo(activityResponse.getLeader());
-        assertThat(activityResponse.getActivityType()).isEqualTo(activityType);
-    }
+            // when
+            ActivityResponse activityResponse = activityRepository.getActivity(activity.getId());
 
-    @Test
-    @DisplayName("모든 활동 가져오기 테스트")
-    public void getAllActivitiesTest() {
-        // given
-        Member member = memberRepository.save(Member.builder().build());
+            // then
+            assertThat(activity.getId()).isEqualTo(activityResponse.getId());
+            assertThat(activity.getName()).isEqualTo(activityResponse.getName());
+            assertThat(activity.getLeader().getName()).isEqualTo(activityResponse.getLeader());
+            assertThat(activityResponse.getActivityType()).isEqualTo(activityType);
+        }
 
-        Project project = Project.builder()
-                .leader(member)
-                .activityType(ActivityType.PROJECT)
-                .build();
+        @Test
+        @DisplayName("모든 활동 가져오기 테스트")
+        public void getAllActivitiesTest() {
+            // given
+            Member member = memberRepository.save(Member.builder().build());
 
-        Study study = Study.builder()
-                .leader(member)
-                .activityType(ActivityType.STUDY)
-                .build();
+            Project project = Project.builder()
+                    .leader(member)
+                    .activityType(ActivityType.PROJECT)
+                    .build();
 
-        Mentoring mentoring = Mentoring.builder()
-                .leader(member)
-                .activityType(ActivityType.MENTORING)
-                .build();
+            Study study = Study.builder()
+                    .leader(member)
+                    .activityType(ActivityType.STUDY)
+                    .build();
 
-        activityRepository.saveAll(Arrays.asList(project, study, mentoring));
+            Mentoring mentoring = Mentoring.builder()
+                    .leader(member)
+                    .activityType(ActivityType.MENTORING)
+                    .build();
 
-        // when
-        List<ActivityResponse> activityResponseList = activityRepository.getAllActivities();
+            activityRepository.saveAll(Arrays.asList(project, study, mentoring));
 
-        // then
-        assertThat(activityResponseList.size()).isEqualTo(3);
+            // when
+            List<ActivityResponse> activityResponseList = activityRepository.getAllActivities();
+
+            // then
+            assertThat(activityResponseList.size()).isEqualTo(3);
+        }
     }
 
     @Nested
@@ -192,6 +210,30 @@ public class ActivityRepositoryTest {
             assertThat(apply.getId()).isEqualTo(findApply.getId());
             assertThat(apply.getMember()).isEqualTo(findApply.getMember());
             assertThat(apply.getActivity()).isEqualTo(findApply.getActivity());
+        }
+    }
+
+    @Nested
+    @DisplayName("멤버활동 테스트")
+    class memberActivityTest {
+        @Test
+        @DisplayName("활동으로 지우기 테스트")
+        void deleteAllByActivityTest() {
+            // given
+            Activity activity = activityRepository.save(Project.builder().build());
+
+            MemberActivity memberActivity1 = MemberActivity.builder().activity(activity).build();
+            MemberActivity memberActivity2 = MemberActivity.builder().activity(activity).build();
+
+            memberActivityRepository.saveAll(Arrays.asList(memberActivity1, memberActivity2));
+
+            // when
+            memberActivityRepository.deleteAllByActivityId(activity.getId());
+            entityManager.clear();
+
+            // then
+            assertThatExceptionOfType(NoSuchElementException.class)
+                    .isThrownBy(() -> memberActivityRepository.findById(activity.getId()).get());
         }
     }
 }

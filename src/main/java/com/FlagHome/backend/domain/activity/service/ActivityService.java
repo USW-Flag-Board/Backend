@@ -1,9 +1,12 @@
 package com.FlagHome.backend.domain.activity.service;
 
+import com.FlagHome.backend.domain.activity.ActivityType;
+import com.FlagHome.backend.domain.activity.Status;
 import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyResponse;
 import com.FlagHome.backend.domain.activity.activityapply.service.ActivityApplyService;
 import com.FlagHome.backend.domain.activity.dto.ActivityRequest;
 import com.FlagHome.backend.domain.activity.dto.ActivityResponse;
+import com.FlagHome.backend.domain.activity.dto.GetAllActivitiesResponse;
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.Mentoring;
 import com.FlagHome.backend.domain.activity.entity.Project;
@@ -18,7 +21,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.*;
 
 @Service
 @RequiredArgsConstructor
@@ -33,14 +40,26 @@ public class ActivityService {
             throw new CustomException(ErrorCode.ACTIVITY_NOT_FOUND);
         }
 
-        ActivityResponse activityResponse = activityRepository.getActivity(activityId);
-        return activityResponse;
+        return activityRepository.getActivity(activityId);
     }
 
     @Transactional(readOnly = true)
-    public List<ActivityResponse> getAllActivities() {
+    public GetAllActivitiesResponse getAllActivities() {
         List<ActivityResponse> activityResponseList = activityRepository.getAllActivities();
-        return activityResponseList;
+
+        Map<String, Map<ActivityType, List<Map<String, String>>>> allActivities = activityResponseList.stream()
+                .collect(groupingBy(ActivityResponse::getYear,
+                        groupingBy(ActivityResponse::getActivityType,
+                                mapping(response -> {
+                                    Map<String, String> innerMap = new HashMap<>();
+                                    innerMap.put("id",  String.valueOf(response.getId()));
+                                    innerMap.put("name", response.getName());
+                                    innerMap.put("status", String.valueOf(response.getStatus()));
+                                    innerMap.put("season", response.getSeason());
+                                    return innerMap;
+                                }, toList()))));
+
+        return GetAllActivitiesResponse.from(allActivities);
     }
 
     @Transactional(readOnly = true)
@@ -100,8 +119,21 @@ public class ActivityService {
         List<Member> memberList = memberService.getMembersByLoginId(loginIdList);
 
         memberActivityService.registerMembers(activity, memberList);
-        activityApplyService.deleteAllApplies(activityId);
-        activity.closeRecruitment();
+        activity.updateStatus(Status.ON); // 다시 모집할 수 있으므로 신청내역은 남겨둔다.
+    }
+
+    @Transactional
+    public void reopenRecruitment(long memberId, long activityId) {
+        Activity activity = validateLeaderAndReturn(memberId, activityId);
+
+        memberActivityService.deleteAllByActivity(activity.getId());
+        activity.updateStatus(Status.RECRUIT);
+    }
+
+    @Transactional
+    public void finishActivity(long memberId, long activityId) {
+        Activity activity = validateLeaderAndReturn(memberId, activityId);
+        activity.updateStatus(Status.OFF);
     }
 
     @Transactional

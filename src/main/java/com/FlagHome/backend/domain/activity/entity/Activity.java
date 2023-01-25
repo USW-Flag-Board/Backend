@@ -49,8 +49,8 @@ public abstract class Activity extends BaseEntity {
         this.leader = member;
     }
 
-    public void closeRecruitment() {
-        this.status = Status.ON;
+    public void updateStatus(Status status) {
+        this.status = status;
     }
     public void update(ActivityRequest activityRequest) {
         this.name = activityRequest.getName();

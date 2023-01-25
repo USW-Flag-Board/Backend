@@ -81,16 +81,17 @@ public class MemberController {
     @Tag(name = "member")
     @Operation(summary = "비밀번호 수정", description = "로그인한 유저가 직접 변경하는 경우")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "비밀번호 수정 성공, 유저 URI 리턴"),
+            @ApiResponse(responseCode = "200", description = "비밀번호 수정 성공, 유저 URI 리턴"),
             @ApiResponse(responseCode = "400", description = "비밀번호가 일치하지 않습니다."),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
             @ApiResponse(responseCode = "409", description = "기존과 같은 비밀번호는 사용할 수 없습니다.")
     })
     @PatchMapping("/password")
-    public ResponseEntity<Void> updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest) {
+    public ResponseEntity<HttpResponse> updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest) {
         String loginId = memberService.updatePassword(SecurityUtils.getMemberId(), updatePasswordRequest);
         URI location = UriCreator.createMemberUri(MEMBER_DEFAULT_URL, loginId);
-        return ResponseEntity.created(location).build();
+        HttpResponse response = HttpResponse.ok(location, OK, "비밀번호 변경에 성공했습니다.");
+        return ResponseEntity.ok(response);
     }
 
     @Tag(name = "member")
@@ -100,10 +101,11 @@ public class MemberController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
     })
     @PatchMapping("/profile")
-    public ResponseEntity<Void> updateProfile(@RequestBody UpdateProfileRequest updateProfileRequest) {
+    public ResponseEntity<HttpResponse> updateProfile(@RequestBody UpdateProfileRequest updateProfileRequest) {
         String loginId = memberService.updateProfile(SecurityUtils.getMemberId(), updateProfileRequest);
         URI location = UriCreator.createMemberUri(MEMBER_DEFAULT_URL, loginId);
-        return ResponseEntity.created(location).build();
+        HttpResponse response = HttpResponse.ok(location, OK, "비밀번호 변경에 성공했습니다.");
+        return ResponseEntity.ok(response);
     }
 
     @Tag(name = "member")
