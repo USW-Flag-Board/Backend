@@ -25,7 +25,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @WithMockUser
 public class BoardControllerTest {
-    private final static String BASE_URI = "/api/board";
+    private final static String BASE_URI = "/api/boards";
 
     @Autowired
     private BoardService boardService;
