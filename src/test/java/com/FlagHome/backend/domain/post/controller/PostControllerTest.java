@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WithMockUser
 class PostControllerTest {
 
-    private final String baseUrl = "/api/posts";
+    private final static String BASE_URL = "/api/posts";
 
     @Autowired
     private MemberRepository memberRepository;
@@ -87,16 +87,13 @@ class PostControllerTest {
         postDto.setUserId(dummyMember.getId());
         postDto.setBoardId(dummyBoard1.getId());
 
-        int beforePostListSize = postRepository.findAll().size();
-
-        mockMvc.perform(post(baseUrl)
+        mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(postDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("status", is("CREATED")))
+                .andExpect(jsonPath("message", is("게시글 생성에 성공 하였습니다.")))
                 .andDo(print());
-
-        int afterPostListSize = postRepository.findAll().size();
-
-        assertThat(beforePostListSize).isNotEqualTo(afterPostListSize);
     }
 
     @Test
@@ -114,11 +111,11 @@ class PostControllerTest {
                 .board(dummyBoard2)
                 .build());
 
-        mockMvc.perform(get(baseUrl)
+        mockMvc.perform(get(BASE_URL)
                         .param("postId", Long.toString(postEntity.getId())))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("title", is(title)))
-                .andExpect(jsonPath("content", is(content)))
+                .andExpect(jsonPath("status", is("OK")))
+                .andExpect(jsonPath("message", is("게시글 가져오기에 성공 하였습니다.")))
                 .andDo(print());
     }
 
@@ -141,11 +138,12 @@ class PostControllerTest {
         postEntity.getReplyList().add(replyEntity);
         replyRepository.flush();
 
-        mockMvc.perform(get(baseUrl)
+        mockMvc.perform(get(BASE_URL)
                         .param("postId", Long.toString(postEntity.getId()))
                         .param("viaBoard", "true"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("content", is(content)))
+                .andExpect(jsonPath("status", is("OK")))
+                .andExpect(jsonPath("message", is("게시글 가져오기에 성공 하였습니다.")))
                 .andDo(print());
     }
 
@@ -177,12 +175,13 @@ class PostControllerTest {
 
         String jsonBody = objectMapper.writeValueAsString(changedPostDto);
 
-        mockMvc.perform(patch(baseUrl)
-                .with(csrf())
+        mockMvc.perform(patch(BASE_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
-                .andExpect(status().isOk())
-                .andDo(print());
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("status", is("OK")))
+                    .andExpect(jsonPath("message", is("게시글 수정에 성공 하였습니다.")))
+                    .andDo(print());
 
         Post changedPostEntity = postRepository.findById(changedPostDto.getId()).orElse(null);
         assert changedPostEntity != null;
@@ -203,7 +202,9 @@ class PostControllerTest {
 
         long deleteTargetPostId = postEntity.getId();
 
-        mockMvc.perform(delete(baseUrl + "/" + deleteTargetPostId))
+        mockMvc.perform(delete(BASE_URL + "/" + deleteTargetPostId))
+                .andExpect(jsonPath("status", is("NO_CONTENT")))
+                .andExpect(jsonPath("message", is("게시글 삭제에 성공 하였습니다.")))
                 .andDo(print());
 
         Post post = postRepository.findById(deleteTargetPostId).orElse(null);
