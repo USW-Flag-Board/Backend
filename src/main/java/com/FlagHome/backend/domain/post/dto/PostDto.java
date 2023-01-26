@@ -28,6 +28,7 @@ public class PostDto {
     private long boardId;
     private Status status;
     private long viewCount;
+    private long likeCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -39,6 +40,7 @@ public class PostDto {
         this.boardId = postEntity.getBoard().getId();
         this.status = postEntity.getStatus();
         this.viewCount = postEntity.getViewCount();
+        this.likeCount = postEntity.getLikeCount();
 
         replyList = new ArrayList<>();
         for(Reply reply : postEntity.getReplyList())

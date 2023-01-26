@@ -2,6 +2,7 @@ package com.FlagHome.backend.domain.post.controller;
 
 import com.FlagHome.backend.domain.Status;
 import com.FlagHome.backend.domain.board.entity.Board;
+import com.FlagHome.backend.domain.like.service.LikeService;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.post.dto.PostDto;
 import com.FlagHome.backend.domain.post.entity.Post;
@@ -42,6 +43,9 @@ public class PostControllerTestAsSlice {
     @MockBean
     private PostService postService;
 
+    @MockBean
+    private LikeService likeService;
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -57,7 +61,7 @@ public class PostControllerTestAsSlice {
 
         dummyMember = Member.builder().id(1L).name("gildong").email("gildong@naver.com").loginId("gildong123").password("123123").phoneNumber("010-444-4444").build();
 
-        dummyPost = new Post(1L, dummyMember, "제목이다", "내용이다", new ArrayList<>(), dummyBoard, Status.NORMAL, 444L);
+        dummyPost = new Post(1L, dummyMember, "제목이다", "내용이다", new ArrayList<>(), dummyBoard, Status.NORMAL, 444L, 0L);
 
         dummyReply = new Reply(1L, dummyMember, dummyPost, "댓글내용", 1L, 1L, 1L, Status.NORMAL);
         dummyPost.getReplyList().add(dummyReply);
