@@ -7,6 +7,7 @@ import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.mail.service.MailService;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
+import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.domain.token.dto.TokenRequest;
 import com.FlagHome.backend.domain.token.dto.TokenResponse;
 import com.FlagHome.backend.domain.token.service.RefreshTokenService;
@@ -23,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,6 +34,7 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
     private final MailService mailService;
     private final MemberRepository memberRepository;
+    private final MemberService memberService;
     private final AuthRepository authRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final PasswordEncoder passwordEncoder;
@@ -89,6 +92,10 @@ public class AuthService {
 
         // 인증 정보를 기반으로 JWT 토큰 생성
         TokenResponse tokenResponse = jwtUtilizer.generateTokenDto(authentication);
+
+        // 마지막 로그인 시간 갱신
+        Member member = memberService.findByLoginId(loginRequest.getLoginId());
+        member.updateLastLoginTime(LocalDateTime.now());
 
         // RefreshToken 저장
         refreshTokenService.issueToken(authentication.getName(), tokenResponse.getRefreshToken());

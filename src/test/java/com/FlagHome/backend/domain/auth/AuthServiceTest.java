@@ -32,6 +32,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.*;
@@ -57,11 +58,8 @@ public class AuthServiceTest {
     @Autowired
     private JwtUtilizer jwtUtilizer;
 
-    @Mock
-    private MailService mailService;
-
-    @Mock
-    private AmazonSimpleEmailService amazonSimpleEmailService;
+    @Autowired
+    private EntityManager entityManager;
 
     @Nested
     @DisplayName("아이디 유효성 테스트")
@@ -303,7 +301,7 @@ public class AuthServiceTest {
         String loginId = "gmlwh124";
         String password = "1234";
 
-        memberRepository.saveAndFlush(Member.builder()
+        Member savedMember = memberRepository.saveAndFlush(Member.builder()
                         .loginId(loginId)
                         .password(passwordEncoder.encode(password))
                         .role(Role.ROLE_USER)
@@ -316,6 +314,7 @@ public class AuthServiceTest {
 
         // when
         TokenResponse tokenResponse = authService.login(logInRequest);
+        entityManager.clear();
 
         // then : 정상적으로 발급되는 지, 유효한 지, 데이터가 일치하는 지
         assertThat(tokenResponse.getAccessToken()).isNotNull();
@@ -330,6 +329,7 @@ public class AuthServiceTest {
         Authentication authentication = jwtUtilizer.getAuthentication(accessToken);
         long memberId = Long.parseLong(authentication.getName());
         Member member = memberRepository.findByLoginId(loginId).get();
+        assertThat(savedMember.getLastLoginTime()).isNotEqualTo(member.getLastLoginTime());
         assertThat(member.getId()).isEqualTo(memberId);
     }
 

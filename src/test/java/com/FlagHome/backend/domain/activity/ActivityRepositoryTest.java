@@ -56,7 +56,7 @@ public class ActivityRepositoryTest {
     class activityTest {
         @Test
         @DisplayName("활동 가져오기 테스트")
-        public void getActivityTest() {
+        void getActivityTest() {
             // given
             String memberName = "Hejow";
             String activityName = "이름";
@@ -85,7 +85,7 @@ public class ActivityRepositoryTest {
 
         @Test
         @DisplayName("모든 활동 가져오기 테스트")
-        public void getAllActivitiesTest() {
+        void getAllActivitiesTest() {
             // given
             Member member = memberRepository.save(Member.builder().build());
 
@@ -119,7 +119,7 @@ public class ActivityRepositoryTest {
     public class activityApplyTest {
         @Test
         @DisplayName("모든 활동 신청 가져오기 테스트")
-        public void getAllAppliesTest() {
+        void getAllAppliesTest() {
             // given
             Major major = Major.컴퓨터SW;
 
@@ -145,7 +145,7 @@ public class ActivityRepositoryTest {
 
         @Test
         @DisplayName("모든 신청 삭제하기 테스트")
-        public void deleteAllAppliesTest() {
+        void deleteAllAppliesTest() {
             // given
             Major major = Major.컴퓨터SW;
 
@@ -170,7 +170,7 @@ public class ActivityRepositoryTest {
 
         @Test
         @DisplayName("신청 체크 테스트")
-        public void checkApplyTest() {
+        void checkApplyTest() {
             // given
             Member member1 = memberRepository.save(Member.builder().build());
             Member member2 = memberRepository.save(Member.builder().build());
@@ -193,7 +193,7 @@ public class ActivityRepositoryTest {
 
         @Test
         @DisplayName("활동 신청 정보 가져오기 테스트")
-        public void findApplyByMemberAndActivityTest() {
+        void findApplyByMemberAndActivityTest() {
             // given
             Member member = memberRepository.save(Member.builder().build());
             Activity activity = activityRepository.save(Mentoring.builder().leader(member).build());

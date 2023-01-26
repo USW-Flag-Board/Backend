@@ -7,12 +7,15 @@ import com.FlagHome.backend.domain.activity.Status;
 import com.FlagHome.backend.domain.activity.dto.ActivityRequest;
 import com.FlagHome.backend.domain.member.entity.Member;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import java.time.LocalDateTime;
 
 @Entity
+@Getter
 @NoArgsConstructor
 public class Mentoring extends Activity {
     @Column

@@ -23,7 +23,7 @@ public class ActivityMapper {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         Activity activity = Arrays.stream(ActivityType.values())
-                .filter(type -> StringUtils.equals(type.getType(), activityRequest.getActivityType().toString()))
+                .filter(type -> StringUtils.equals(type.getType(), activityRequest.getActivityType().getType()))
                 .findFirst()
                 .map(type -> type.toEntity(activityRequest))
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_SUPPORT_ACTIVITY));

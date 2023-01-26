@@ -39,7 +39,7 @@ public class ActivityController {
     @GetMapping("/{id}")
     public ResponseEntity<HttpResponse> getActivity(@PathVariable("id") long activityId) {
         HttpResponse response = HttpResponse
-                .ok(activityService.getActivity(activityId), OK, "활동 상세보기가 정상적으로 처리되었습니다.");
+                .ok(activityService.getActivity(activityId), OK, "활동 데이터를 가져왔습니다..");
         return ResponseEntity.ok(response);
     }
 
@@ -65,7 +65,7 @@ public class ActivityController {
     @GetMapping("/{id}/apply")
     public ResponseEntity<HttpResponse> getAllActivityApplies(@PathVariable("id") long activityId) {
         HttpResponse response = HttpResponse
-                .ok(activityService.getAllActivityApplies(SecurityUtils.getMemberId(), activityId), OK, "모든 신청리스트를 성공적으로 가져왔습니다.");
+                .ok(activityService.getAllActivityApplies(SecurityUtils.getMemberId(), activityId), OK, "모든 신청을 가져왔습니다.");
         return ResponseEntity.ok(response);
     }
 
@@ -78,7 +78,7 @@ public class ActivityController {
     @PostMapping("/{id}/check")
     public ResponseEntity<HttpResponse> checkApply(@PathVariable("id") long activityId) {
         boolean check = activityService.checkApply(SecurityUtils.getMemberId(), activityId);
-        HttpResponse response = HttpResponse.ok(check, OK, "신청여부 조회에 성공하였습니다.");
+        HttpResponse response = HttpResponse.ok(check, OK, "신청여부 조회하였습니다.");
         return ResponseEntity.ok(response);
     }
 
@@ -93,7 +93,7 @@ public class ActivityController {
     @PostMapping("/{id}/apply")
     public ResponseEntity<HttpResponse> applyActivity(@PathVariable("id") long activityId) {
         activityService.applyActivity(SecurityUtils.getMemberId(), activityId);
-        HttpResponse response = HttpResponse.ok(null, CREATED, "신청에 성공하였습니다.");
+        HttpResponse response = HttpResponse.ok(null, CREATED, "신청에 성공했습니다.");
         return ResponseEntity.ok(response);
     }
 
