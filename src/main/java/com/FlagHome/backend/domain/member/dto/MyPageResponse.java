@@ -34,8 +34,6 @@ public class MyPageResponse {
     public static MyPageResponse of(Member member, List<PostDto> postList) {
         return MyPageResponse.builder()
                 .loginId(member.getLoginId())
-                .profileImg(member.getProfileImg())
-                .bio(member.getBio())
                 .postList(postList)
                 .build();
     }

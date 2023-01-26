@@ -10,6 +10,4 @@ public interface AuthRepositoryCustom {
     List<AuthInformation> getAllNotProceedAuthInformation();
 
     List<AuthInformation> getAllNeedApprovalAuthInformation();
-
-    void deleteAllNotProceedAuthInformation(List<AuthInformation> authInformationList);
 }

@@ -38,15 +38,9 @@ public class Member extends BaseEntity {
     @Column(name = "student_id")
     private String studentId;
 
-    @Column
-    private String bio;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "major")
     private Major major;
-
-    @Column(name = "profile_img")
-    private String profileImg;
 
     @Column(name = "phone_number")
     private String phoneNumber;
@@ -64,13 +58,6 @@ public class Member extends BaseEntity {
 
     public void updatePassword(String password) { this.password = password; }
 
-    public void updateProfile(UpdateProfileRequest updateProfileRequest) {
-        this.major = updateProfileRequest.getMajor();
-        this.bio = updateProfileRequest.getBio();
-        this.phoneNumber = updateProfileRequest.getPhoneNumber();
-        this.studentId = updateProfileRequest.getStudentId();
-    }
-
     public void updateLastLoginTime(LocalDateTime loginTime) {
         this.lastLoginTime = loginTime;
     }
@@ -83,11 +70,10 @@ public class Member extends BaseEntity {
                 .email(authInformation.getEmail())
                 .major(authInformation.getMajor())
                 .studentId(authInformation.getStudentId())
-                .bio(" ")
-                .phoneNumber(" ")
-                .profileImg("default")
+                .phoneNumber(authInformation.getPhoneNumber())
                 .role(Role.from(authInformation.getJoinType()))
                 .status(Status.GENERAL)
+                .lastLoginTime(null)
                 .build();
     }
 }

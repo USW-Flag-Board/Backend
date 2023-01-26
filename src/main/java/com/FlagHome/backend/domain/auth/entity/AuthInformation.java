@@ -33,6 +33,9 @@ public class AuthInformation {
     @Column
     private String email;
 
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
     @Column(name = "student_id")
     private String studentId;
 
@@ -61,6 +64,7 @@ public class AuthInformation {
                 .email(joinRequest.getEmail())
                 .major(joinRequest.getMajor())
                 .studentId(joinRequest.getStudentId())
+                .phoneNumber(joinRequest.getPhoneNumber())
                 .joinType(joinRequest.getJoinType())
                 .isAuthorizedCrew(false)
                 .certification(certification)

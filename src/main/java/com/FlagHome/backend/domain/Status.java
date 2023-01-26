@@ -11,7 +11,8 @@ public enum Status {
     // Post, Reply, File
     NORMAL("정상"), REPORTED("신고"), BANNED("제재"),
     // User
-    GENERAL("일반"), SUSPENDED("활동 정지"), WITHDRAW("탈퇴"), WATCHING("감시");
+    GENERAL("일반"), SUSPENDED("활동 정지"), WATCHING("감시"), SLEEPING("휴면계정")
+    ;
 
     private String status;
 }

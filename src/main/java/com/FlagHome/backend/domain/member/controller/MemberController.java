@@ -94,19 +94,19 @@ public class MemberController {
         return ResponseEntity.ok(response);
     }
 
-    @Tag(name = "member")
-    @Operation(summary = "프로필 업데이트")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "비밀번호 업데이트 성공, 유저 URI 리턴"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
-    })
-    @PatchMapping("/profile")
-    public ResponseEntity<HttpResponse> updateProfile(@RequestBody UpdateProfileRequest updateProfileRequest) {
-        String loginId = memberService.updateProfile(SecurityUtils.getMemberId(), updateProfileRequest);
-        URI location = UriCreator.createMemberUri(MEMBER_DEFAULT_URL, loginId);
-        HttpResponse response = HttpResponse.ok(location, OK, "비밀번호 변경에 성공했습니다.");
-        return ResponseEntity.ok(response);
-    }
+//    @Tag(name = "member")
+//    @Operation(summary = "프로필 업데이트")
+//    @ApiResponses({
+//            @ApiResponse(responseCode = "201", description = "비밀번호 업데이트 성공, 유저 URI 리턴"),
+//            @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
+//    })
+//    @PatchMapping("/profile")
+//    public ResponseEntity<HttpResponse> updateProfile(@RequestBody UpdateProfileRequest updateProfileRequest) {
+//        String loginId = memberService.updateProfile(SecurityUtils.getMemberId(), updateProfileRequest);
+//        URI location = UriCreator.createMemberUri(MEMBER_DEFAULT_URL, loginId);
+//        HttpResponse response = HttpResponse.ok(location, OK, "비밀번호 변경에 성공했습니다.");
+//        return ResponseEntity.ok(response);
+//    }
 
     @Tag(name = "member")
     @Operation(summary = "회원 탈퇴")

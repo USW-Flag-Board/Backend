@@ -32,6 +32,9 @@ public class JoinRequest {
     @Schema(description = "학번", required = true, example = "19017041")
     private String studentId;
 
+    @Schema(name = "핸드폰 번호", required = true, example = "01040380540")
+    private String phoneNumber;
+
     @Schema(description = "가입 구분", required = true, example = "일반 / 동아리")
     private JoinType joinType;
 }

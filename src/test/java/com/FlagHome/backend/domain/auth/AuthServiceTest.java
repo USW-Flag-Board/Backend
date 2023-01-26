@@ -7,7 +7,6 @@ import com.FlagHome.backend.domain.auth.dto.SignUpResponse;
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import com.FlagHome.backend.domain.auth.service.AuthService;
-import com.FlagHome.backend.domain.mail.service.MailService;
 import com.FlagHome.backend.domain.member.Role;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
@@ -17,14 +16,11 @@ import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.jwt.JwtUtilizer;
 import com.FlagHome.backend.global.utility.RandomGenerator;
-import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
-import com.amazonaws.services.simpleemail.model.SendEmailResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,11 +29,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest

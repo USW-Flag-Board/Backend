@@ -9,7 +9,7 @@ import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.dto.PostDto;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
-import com.FlagHome.backend.domain.withdrawal.entity.Withdrawal;
+import com.FlagHome.backend.domain.withdrawal.entity.Sleeping;
 import com.FlagHome.backend.domain.withdrawal.repository.WithdrawalRepository;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
@@ -85,19 +85,19 @@ public class MemberService {
         return MyPageResponse.of(member, postList);
     }
 
-    @Transactional
-    public String updateProfile(Long memberId, UpdateProfileRequest updateProfileRequest) {
-        Member member = findById(memberId);
-        member.updateProfile(updateProfileRequest);
-
-        return member.getLoginId();
-    }
+//    @Transactional
+//    public String updateProfile(Long memberId, UpdateProfileRequest updateProfileRequest) {
+//        Member member = findById(memberId);
+//        member.updateProfile(updateProfileRequest);
+//
+//        return member.getLoginId();
+//    }
 
     @Transactional
     //@Scheduled(cron = "000000")  이후에 설정하기
     public void changeAllToSleepMember() {
         List<Member> sleepingList = memberRepository.getAllSleepMembers();
-        sleepingList.forEach(member -> withdrawalRepository.save(Withdrawal.of(member,passwordEncoder)));
+        sleepingList.forEach(member -> withdrawalRepository.save(Sleeping.of(member,passwordEncoder)));
     }
 
     @Transactional(readOnly = true)
