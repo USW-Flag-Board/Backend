@@ -1,6 +1,8 @@
 package com.FlagHome.backend.domain.post.controller;
 
 import com.FlagHome.backend.domain.HttpResponse;
+import com.FlagHome.backend.domain.like.entity.LikeDto;
+import com.FlagHome.backend.domain.like.service.LikeService;
 import com.FlagHome.backend.domain.post.dto.PostDto;
 import com.FlagHome.backend.domain.post.service.PostService;
 import com.FlagHome.backend.global.utility.UriCreator;
@@ -21,6 +23,7 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
+    private final LikeService likeService;
     private final static String BASE_URL = "/api/posts";
 
     @Tag(name = "post")
@@ -72,5 +75,20 @@ public class PostController {
     public ResponseEntity<HttpResponse> deletePost(@PathVariable(name = "post_id") long postId) {
         postService.deletePost(postId);
         return ResponseEntity.ok(HttpResponse.ok(true, HttpStatus.NO_CONTENT, "게시글 삭제에 성공 하였습니다."));
+    }
+
+
+    @PostMapping("/like")
+    public ResponseEntity<HttpResponse> likePost(@RequestBody LikeDto likeDto) {
+        likeService.likeOrUnlike(likeDto.getUserId(), likeDto.getTargetId(), likeDto.getTargetType(), true);
+        return ResponseEntity.ok(HttpResponse.ok(true, HttpStatus.OK, "게시글 좋아요를 하였습니다."));
+    }
+
+    @DeleteMapping("/like")
+    public ResponseEntity<HttpResponse> unlikePost( @RequestParam(value = "userId") long userId,
+                                                    @RequestParam(value = "targetId") long targetId,
+                                                    @RequestParam(value = "targetType") String targetType ) {
+        likeService.likeOrUnlike(userId, targetId, targetType, false);
+        return ResponseEntity.ok(HttpResponse.ok(true, HttpStatus.NO_CONTENT, "게시글 좋아요를 취소 하였습니다."));
     }
 }
