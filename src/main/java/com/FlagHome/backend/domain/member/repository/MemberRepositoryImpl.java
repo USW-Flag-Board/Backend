@@ -14,7 +14,6 @@ import static com.FlagHome.backend.domain.member.entity.QMember.member;
 
 
 @Repository
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MemberRepositoryImpl implements MemberRepositoryCustom {
     private final JPAQueryFactory queryFactory;

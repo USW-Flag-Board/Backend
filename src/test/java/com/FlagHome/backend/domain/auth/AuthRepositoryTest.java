@@ -12,7 +12,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,7 +29,7 @@ public class AuthRepositoryTest {
 
     @Test
     @DisplayName("인증 정보 가져오기 테스트")
-    public void findFirstByEmailOrderByCreatedAtTest() {
+    void findFirstByEmailOrderByCreatedAtTest() {
         String email = "gmlwh124@suwon.ac.kr";
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime afterFive = now.plusMinutes(5);

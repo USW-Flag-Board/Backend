@@ -67,7 +67,7 @@ public class AuthService {
     @Transactional
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
         AuthInformation authInformation = authRepository.findFirstByEmailOrderByCreatedAtDesc(signUpRequest.getEmail())
-                .orElseThrow(() -> new CustomException(ErrorCode.AUTH_INFORMATION_NOT_FOUND));;
+                .orElseThrow(() -> new CustomException(ErrorCode.AUTH_INFORMATION_NOT_FOUND));
 
         validateCertification(signUpRequest.getCertification(), authInformation.getCertification());
 

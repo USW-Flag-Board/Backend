@@ -25,11 +25,11 @@ public class MailService {
         return email;
     }
 
-    public String sendFindIdResult(String email, String result) {
+    public String sendFindIdResult(String email, String loginId) {
         MailRequest mailRequest = MailRequest.builder()
                 .to(email)
                 .subject(MailType.FIND_ID.getSubject())
-                .content(MailType.FIND_ID.createMailForm(result))
+                .content(MailType.FIND_ID.createMailForm(loginId))
                 .build();
 
         emailService.sendEmail(mailRequest.toSendRequest());
@@ -37,11 +37,11 @@ public class MailService {
         return email;
     }
 
-    public String sendNewPassword(String email, String result) {
+    public String sendNewPassword(String email, String newPassword) {
         MailRequest mailRequest = MailRequest.builder()
                 .to(email)
                 .subject(MailType.REISSUE_PASSWORD.getSubject())
-                .content(MailType.REISSUE_PASSWORD.createMailForm(result))
+                .content(MailType.REISSUE_PASSWORD.createMailForm(newPassword))
                 .build();
 
         emailService.sendEmail(mailRequest.toSendRequest());
