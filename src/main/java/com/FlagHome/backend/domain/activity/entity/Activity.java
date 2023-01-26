@@ -49,7 +49,7 @@ public abstract class Activity extends BaseEntity {
     private String season;
 
     public Activity(Long id, String name, String description, Member leader,
-                    ActivityType activityType, Proceed proceed, Status status, LocalDateTime season) {
+                    ActivityType activityType, Proceed proceed, Status status) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -57,7 +57,7 @@ public abstract class Activity extends BaseEntity {
         this.activityType = activityType;
         this.proceed = proceed;
         this.status = status;
-        this.season = getSeason(season);
+        this.season = getSeason();
     }
 
     public void setLeader(Member member) {
@@ -73,8 +73,8 @@ public abstract class Activity extends BaseEntity {
         this.proceed = activityRequest.getProceed();
     }
 
-    protected String getSeason(LocalDateTime season) { // 꼭 개선하기
-        final int month = season.getMonthValue();
+    protected String getSeason() { // 꼭 개선하기
+        final int month = LocalDateTime.now().getMonthValue();
 
         if (3 <= month && month < 6) {
             return "1학기";

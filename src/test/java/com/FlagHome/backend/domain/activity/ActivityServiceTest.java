@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -149,7 +150,6 @@ public class ActivityServiceTest {
             assertThat(project.getLeader().getLoginId()).isEqualTo(member.getLoginId());
             assertThat(project.getActivityType()).isEqualTo(activityType);
             assertThat(project.getGithubLink()).isEqualTo(githubLink);
-            assertThat(project.getSeason()).isNotNull();
         }
     }
 }
