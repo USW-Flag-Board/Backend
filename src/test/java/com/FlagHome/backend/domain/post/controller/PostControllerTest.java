@@ -2,6 +2,10 @@ package com.FlagHome.backend.domain.post.controller;
 
 import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.board.repository.BoardRepository;
+import com.FlagHome.backend.domain.like.entity.Like;
+import com.FlagHome.backend.domain.like.entity.LikeDto;
+import com.FlagHome.backend.domain.like.enums.LikeType;
+import com.FlagHome.backend.domain.like.repository.LikeRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.dto.PostDto;
@@ -21,10 +25,10 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -44,6 +48,8 @@ class PostControllerTest {
     private PostRepository postRepository;
     @Autowired
     private ReplyRepository replyRepository;
+    @Autowired
+    private LikeRepository likeRepository;
 
     @Autowired
     private BoardRepository boardRepository;
@@ -106,6 +112,7 @@ class PostControllerTest {
                 .title(title)
                 .content(content)
                 .viewCount(0L)
+                .likeCount(0L)
                 .replyList(new ArrayList<>())
                 .member(dummyMember)
                 .board(dummyBoard2)
@@ -159,6 +166,7 @@ class PostControllerTest {
                                         .content(originalContent)
                                         .board(originalBoard)
                                         .viewCount(0L)
+                                        .likeCount(0L)
                                         .replyList(new ArrayList<>())
                                         .member(dummyMember)
                                         .build());
@@ -209,5 +217,65 @@ class PostControllerTest {
 
         Post post = postRepository.findById(deleteTargetPostId).orElse(null);
         assert post == null;
+    }
+
+    @Test
+    @DisplayName("게시글 좋아요 테스트")
+    public void likePostTest() throws Exception {
+        // given
+        Post postEntity = postRepository.save(Post.builder()
+                .title("게시글 제목")
+                .content("게시글 내용")
+                .board(dummyBoard2)
+                .member(dummyMember)
+                .viewCount(0L)
+                .likeCount(0L)
+                .build());
+
+        long postId = postEntity.getId();
+        LikeDto likeDto = new LikeDto(dummyMember.getId(), postId, "POST");
+        String jsonBody = objectMapper.writeValueAsString(likeDto);
+
+        // when
+        mockMvc.perform(post(BASE_URL + "/like")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonBody))
+                .andDo(print());
+
+        // then
+        postRepository.findById(postId).ifPresent(resultPost -> assertThat(resultPost.getLikeCount()).isEqualTo(1L));
+        List<Like> likeList = likeRepository.findLikeByUserId(dummyMember.getId());
+        assertThat(likeList.size()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("게시글 좋아요 취소 테스트")
+    public void unlikePostTest() throws Exception {
+        // given
+        Post postEntity = postRepository.save(Post.builder()
+                .title("게시글 제목")
+                .content("게시글 내용")
+                .board(dummyBoard2)
+                .member(dummyMember)
+                .viewCount(0L)
+                .likeCount(1L)
+                .build());
+        long postId = postEntity.getId();
+
+        Like like = likeRepository.save(Like.builder().userId(dummyMember.getId()).targetId(postId).targetType(LikeType.POST).build());
+        long likeId = like.getId();
+
+        // when
+        mockMvc.perform(delete(BASE_URL + "/like")
+                .param("userId", Long.toString(dummyMember.getId()))
+                .param("targetId", Long.toString(postId))
+                .param("targetType", "POST"))
+                    .andDo(print());
+
+        // then
+        postRepository.findById(postId).ifPresent(resultPost -> assertThat(resultPost.getLikeCount()).isEqualTo(0L));
+        Like shouldBeNullLike = likeRepository.findById(likeId).orElse(null);
+        assertThat(shouldBeNullLike).isNull();
     }
 }

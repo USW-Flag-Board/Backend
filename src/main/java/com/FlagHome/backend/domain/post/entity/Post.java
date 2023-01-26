@@ -44,4 +44,7 @@ public class Post extends BaseEntity {
 
     @Column
     private Long viewCount;
+
+    @Column
+    private Long likeCount;
 }
