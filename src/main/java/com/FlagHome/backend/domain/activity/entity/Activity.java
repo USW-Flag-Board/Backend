@@ -11,11 +11,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class Activity extends BaseEntity {
     @Id
@@ -45,6 +45,21 @@ public abstract class Activity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Column
+    private String season;
+
+    public Activity(Long id, String name, String description, Member leader,
+                    ActivityType activityType, Proceed proceed, Status status, LocalDateTime season) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.leader = leader;
+        this.activityType = activityType;
+        this.proceed = proceed;
+        this.status = status;
+        this.season = getSeason(season);
+    }
+
     public void setLeader(Member member) {
         this.leader = member;
     }
@@ -56,5 +71,19 @@ public abstract class Activity extends BaseEntity {
         this.name = activityRequest.getName();
         this.description = activityRequest.getDescription();
         this.proceed = activityRequest.getProceed();
+    }
+
+    protected String getSeason(LocalDateTime season) { // 꼭 개선하기
+        final int month = season.getMonthValue();
+
+        if (3 <= month && month < 6) {
+            return "1학기";
+        } else if (6 <= month && month < 9) {
+            return "여름방학";
+        } else if (9 <= month && month < 12) {
+            return "2학기";
+        } else {
+            return "겨울방학";
+        }
     }
 }

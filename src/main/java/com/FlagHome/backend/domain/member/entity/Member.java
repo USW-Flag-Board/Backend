@@ -10,6 +10,7 @@ import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -58,6 +59,9 @@ public class Member extends BaseEntity {
     @Column(name = "status")
     private Status status;
 
+    @Column(name = "last_login_time")
+    private LocalDateTime lastLoginTime;
+
     public void updatePassword(String password) { this.password = password; }
 
     public void updateProfile(UpdateProfileRequest updateProfileRequest) {
@@ -65,6 +69,10 @@ public class Member extends BaseEntity {
         this.bio = updateProfileRequest.getBio();
         this.phoneNumber = updateProfileRequest.getPhoneNumber();
         this.studentId = updateProfileRequest.getStudentId();
+    }
+
+    public void updateLastLoginTime(LocalDateTime loginTime) {
+        this.lastLoginTime = loginTime;
     }
 
     public static Member of(AuthInformation authInformation, PasswordEncoder passwordEncoder) {
