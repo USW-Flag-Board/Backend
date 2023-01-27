@@ -39,6 +39,9 @@ public class Reply extends BaseEntity {
     @Column(name = "reply_depth")
     private Long replyDepth;
 
+    @Column
+    private Long likeCount;
+
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private Status status;
