@@ -24,7 +24,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         post.createdAt,
                         post.board.id,
                         post.member.name,
-                        post.viewCount))
+                        post.viewCount,
+                        post.likeCount))
                 .from(post)
                 .where(boardNameCondition(boardName),
                         titleCondition(searchType, searchWord),
@@ -32,6 +33,26 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         titleAndContentCondition(searchType, searchWord),
                         userNameCondition(searchType, searchWord),
                         userIdCondition(searchType, searchWord))
+                .fetch();
+    }
+
+    @Override
+    public List<PostDto> findTop3PostListByDateAndLike() {
+        return jpaQueryFactory
+                .select(Projections.constructor(PostDto.class,
+                        post.id,
+                        post.title,
+                        post.createdAt,
+                        post.board.id,
+                        post.member.name,
+                        post.viewCount,
+                        post.likeCount))
+                .from(post)
+                .orderBy(
+                        post.createdAt.desc(),
+                        post.likeCount.desc()
+                )
+                .limit(3)
                 .fetch();
     }
 
