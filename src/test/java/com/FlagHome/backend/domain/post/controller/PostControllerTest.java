@@ -333,7 +333,8 @@ class PostControllerTest {
                 .build());
 
         // when
-        ResultActions actions = mockMvc.perform(get(BASE_URL + "/top3"))
+        ResultActions actions = mockMvc.perform(get(BASE_URL + "/top")
+                        .param("postCount", Integer.toString(3)))
                 .andExpect(status().isOk());
 
         // then
