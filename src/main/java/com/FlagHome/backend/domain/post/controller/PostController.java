@@ -110,10 +110,10 @@ public class PostController {
     }
 
     @Tag(name = "post")
-    @Operation(summary = "최신날짜 + 좋아요갯수 를 기준으로 상위 3개의 게시글을 줍니다.")
-    @ApiResponse(responseCode = "200", description = "TOP3 게시글을 가져왔습니다.")
-    @GetMapping("/top3")
-    public ResponseEntity<HttpResponse> getTop3PostListByDateAndLike() {
-        return ResponseEntity.ok(HttpResponse.ok(postService.getTop3PostListByDateAndLike(), HttpStatus.OK, "TOP3 게시글을 가져왔습니다."));
+    @Operation(summary = "최신날짜 + 좋아요갯수 를 기준으로 상위 N개의 게시글을 줍니다.")
+    @ApiResponse(responseCode = "200", description = "상위 N개의 게시글을 가져왔습니다.")
+    @GetMapping("/top")
+    public ResponseEntity<HttpResponse> getTopNPostListByDateAndLike(@RequestParam(value = "postCount") int postCount) {
+        return ResponseEntity.ok(HttpResponse.ok(postService.getTopNPostListByDateAndLike(postCount), HttpStatus.OK, "상위 N개의 게시글을 가져왔습니다."));
     }
 }

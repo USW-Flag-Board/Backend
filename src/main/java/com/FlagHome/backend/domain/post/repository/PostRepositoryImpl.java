@@ -37,7 +37,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     }
 
     @Override
-    public List<PostDto> findTop3PostListByDateAndLike() {
+    public List<PostDto> findTopNPostListByDateAndLike(int postCount) {
         return jpaQueryFactory
                 .select(Projections.constructor(PostDto.class,
                         post.id,
@@ -52,7 +52,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         post.createdAt.desc(),
                         post.likeCount.desc()
                 )
-                .limit(3)
+                .limit(postCount)
                 .fetch();
     }
 

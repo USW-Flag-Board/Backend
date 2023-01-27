@@ -90,7 +90,7 @@ public class PostService {
     }
 
     @Transactional
-    public List<PostDto> getTop3PostListByDateAndLike() {
-        return postRepository.findTop3PostListByDateAndLike();
+    public List<PostDto> getTopNPostListByDateAndLike(int postCount) {
+        return postRepository.findTopNPostListByDateAndLike(postCount);
     }
 }
