@@ -141,7 +141,7 @@ class PostControllerTest {
                 .board(dummyBoard2)
                 .build());
 
-        Reply replyEntity = replyRepository.save(Reply.builder().member(dummyMember).post(postEntity).replyDepth(1L).replyGroup(2L).replyOrder(1L).content("댓글이다").build());
+        Reply replyEntity = replyRepository.save(Reply.builder().member(dummyMember).post(postEntity).replyDepth(1L).replyGroup(2L).replyOrder(1L).likeCount(0L).content("댓글이다").build());
         postEntity.getReplyList().add(replyEntity);
         replyRepository.flush();
 

@@ -63,7 +63,7 @@ public class PostControllerTestAsSlice {
 
         dummyPost = new Post(1L, dummyMember, "제목이다", "내용이다", new ArrayList<>(), dummyBoard, Status.NORMAL, 444L, 0L);
 
-        dummyReply = new Reply(1L, dummyMember, dummyPost, "댓글내용", 1L, 1L, 1L, Status.NORMAL);
+        dummyReply = new Reply(1L, dummyMember, dummyPost, "댓글내용", 1L, 1L, 1L, 0L, Status.NORMAL);
         dummyPost.getReplyList().add(dummyReply);
     }
 
