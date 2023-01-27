@@ -48,12 +48,13 @@ public class PostDto {
     }
 
     // Projection용 생성자
-    public PostDto(long id, String title, LocalDateTime createdAt, long boardId, String memberName, long viewCount) {
+    public PostDto(long id, String title, LocalDateTime createdAt, long boardId, String memberName, long viewCount, long likeCount) {
         this.id = id;
         this.title = title;
         this.createdAt = createdAt;
         this.boardId = boardId;
         this.memberName = memberName;
         this.viewCount = viewCount;
+        this.likeCount = likeCount;
     }
 }
