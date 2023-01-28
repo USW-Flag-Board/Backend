@@ -30,11 +30,4 @@ public enum ActivityType {
     public Activity toEntity(ActivityRequest activityRequest) {
         return expression.apply(activityRequest);
     }
-
-    public static ActivityType getType(String activityType) {
-        return Arrays.stream(ActivityType.values())
-                .filter(type -> StringUtils.equals(type.getType(), activityType))
-                .findFirst()
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_SUPPORT_ACTIVITY));
-    }
 }

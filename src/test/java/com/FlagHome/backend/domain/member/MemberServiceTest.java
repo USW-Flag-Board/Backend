@@ -1,9 +1,7 @@
 package com.FlagHome.backend.domain.member;
 
 import com.FlagHome.backend.domain.Status;
-import com.FlagHome.backend.domain.member.dto.MyPageResponse;
 import com.FlagHome.backend.domain.member.dto.UpdatePasswordRequest;
-import com.FlagHome.backend.domain.member.dto.UpdateProfileRequest;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
@@ -19,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @Transactional
@@ -36,74 +34,6 @@ public class MemberServiceTest {
 
     @Autowired
     private EntityManager entityManager;
-
-    @Nested
-    @DisplayName("아이디/비밀번호 찾기 인증 테스트")
-    class isMemberExistTest {
-        @Test
-        @DisplayName("수원대 이메일이 아니라서 실패")
-        void validateUSWEmailFailTest() {
-            // given
-            String loginId = "gmlwh124";
-            String wrongEmail = "gmlwh124@naver.com";
-
-            assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> memberService.isMemberExist(loginId, wrongEmail))
-                    .withMessage(ErrorCode.NOT_USW_EMAIL.getMessage());
-        }
-
-        @Test
-        @DisplayName("존재하는 유저가 아니라서 실패 (아이디 찾기 - 이메일만 입력)")
-        void userNotFoundWithEmailTest() {
-            // given
-            String loginId = null;
-            String email = "gmlwh124@suwon.ac.kr";
-
-            assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> memberService.isMemberExist(loginId, email))
-                    .withMessage(ErrorCode.USER_NOT_FOUND.getMessage());
-        }
-
-        @Test
-        @DisplayName("존재하는 유저가 아니라서 실패 (비밀번호 찾기 - 이메일, 아이디 입력)")
-        void userNotFoundWithEmailAndLoginIdTest() {
-            // given
-            String loginId = "gmlwh124";
-            String email = "gmlwh124@suwon.ac.kr";
-
-            assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> memberService.isMemberExist(loginId, email))
-                    .withMessage(ErrorCode.USER_NOT_FOUND.getMessage());
-        }
-
-        @Test
-        @DisplayName("유저 확인 성공 (아이디 찾기 - 이메일만 입력)")
-        void userExistWithEmail() {
-            // given
-            String loginId = null;
-            String email = "gmlwh124@suwon.ac.kr";
-
-            Member member = Member.builder().email(email).build();
-            memberRepository.save(member);
-
-            assertThatNoException()
-                    .isThrownBy(() -> memberService.isMemberExist(loginId, email));
-        }
-
-        @Test
-        @DisplayName("유저 확인 성공 (비밀번호 찾기 - 이메일, 아이디 입력)")
-        void userExistWithEmailAndLoginId() {
-            // given
-            String loginId = "gmlwh124";
-            String email = "gmlwh124@suwon.ac.kr";
-
-            Member member = Member.builder().loginId(loginId).email(email).build();
-            memberRepository.save(member);
-
-            assertThatNoException()
-                    .isThrownBy(() -> memberService.isMemberExist(loginId, email));
-        }
-    }
     
     @Nested
     @DisplayName("유저 탈퇴 테스트")
@@ -150,15 +80,48 @@ public class MemberServiceTest {
     }
 
     @Nested
-    @DisplayName("비밀번호 변경 테스트")
+    @DisplayName("비밀번호 변경 테스트 - 잊어서 바꾸는 경우")
+    class changePasswordTest {
+        @Test
+        @DisplayName("비밀번호 변경 성공")
+        void changePasswordSuccessTest() {
+            // given
+            String email = "gmlwh124@suwon.ac.kr";
+            String newPassword = "qwer1234!";
+
+            Member member = memberRepository.save(Member.builder().email(email).build());
+
+            // when
+            memberService.changePassword(email, newPassword);
+
+            // then
+            boolean check = passwordEncoder.matches(newPassword, member.getPassword());
+            assertThat(check).isTrue();
+        }
+
+        @Test
+        @DisplayName("비밀번호 유효성 검사 실패로 변경 실패")
+        void changeFailByValidateFailTest() {
+            String email = "gmlwh124@suwon.ac.kr";
+            String wrongPassword = "123456";
+
+            assertThatExceptionOfType(CustomException.class)
+                    .isThrownBy(() -> memberService.changePassword(email, wrongPassword))
+                    .withMessage(ErrorCode.INVALID_PASSWORD.getMessage());
+        }
+    }
+
+
+    @Nested
+    @DisplayName("비밀번호 변경 테스트 - 유저가 바꾸는 경우")
     class updatePasswordTest {
         @Test
         @DisplayName("비밀번호 변경 성공")
         void updatePasswordSuccessTest() {
             // given
             String loginId = "gmlwh124";
-            String password = "1234";
-            String newPassword = "2345";
+            String password = "qwer1234!";
+            String newPassword = "wert2345@";
 
             Member savedMember = memberRepository.save(Member.builder()
                             .loginId(loginId)
@@ -185,7 +148,7 @@ public class MemberServiceTest {
         @DisplayName("비밀번호 변경 중 같은 비밀번호로 실패")
         void updatePasswordFailTeset() {
             String loginId = "gmlwh124";
-            String password = "1234";
+            String password = "qwer1234!";
 
             Member savedMember = memberRepository.save(Member.builder()
                     .loginId(loginId)
@@ -247,7 +210,7 @@ public class MemberServiceTest {
             String wrongLoginId = "hejow124";
 
             assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> memberService.getMyPage(wrongLoginId))
+                    .isThrownBy(() -> memberService.getMemberProfile(wrongLoginId))
                     .withMessage(ErrorCode.USER_NOT_FOUND.getMessage());
         }
 

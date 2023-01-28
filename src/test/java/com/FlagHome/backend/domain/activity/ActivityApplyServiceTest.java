@@ -13,12 +13,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doNothing;
@@ -37,13 +37,13 @@ public class ActivityApplyServiceTest {
     void checkApplyTest() {
         // given
         long testId = 1L;
-        given(activityApplyRepository.checkApply(eq(testId), eq(testId))).willReturn(true);
+        given(activityApplyRepository.checkApply(any(Long.class), any(Long.class))).willReturn(true);
 
         // when
         boolean check = activityApplyService.checkApply(testId, testId);
 
         // then
-        then(activityApplyRepository).should(times(1)).checkApply(testId, testId);
+        then(activityApplyRepository).should(times(1)).checkApply(any(Long.class), any(Long.class));
         assertThat(check).isTrue();
     }
 
@@ -51,8 +51,8 @@ public class ActivityApplyServiceTest {
     @DisplayName("활동 신청하기 테스트")
     void applyActivityTest() {
         // given
-        Long testId = 1L;
-        Activity activity = Study.builder().build();
+        long testId = 1L;
+        Activity activity = Study.builder().season(LocalDateTime.now()).build();
         ActivityApply apply = ActivityApply.builder().build();
 
         given(activityApplyRepository.save(any())).willReturn(apply);
@@ -70,13 +70,13 @@ public class ActivityApplyServiceTest {
         // given
         long testId = 1L;
         List<ActivityApplyResponse> activityApplyResponses = new ArrayList<>();
-        given(activityApplyRepository.getAllApplies(eq(testId))).willReturn(activityApplyResponses);
+        given(activityApplyRepository.getAllApplies(any(long.class))).willReturn(activityApplyResponses);
 
         // when
         activityApplyService.getAllApplies(testId);
 
         // then
-        then(activityApplyRepository).should(times(1)).getAllApplies(testId);
+        then(activityApplyRepository).should(times(1)).getAllApplies(any(long.class));
     }
 
     @Test
@@ -99,14 +99,14 @@ public class ActivityApplyServiceTest {
         // given
         long testId = 1L;
         ActivityApply apply = ActivityApply.builder().build();
-        given(activityApplyRepository.findByMemberIdAndActivityId(eq(testId), eq(testId))).willReturn(apply);
+        given(activityApplyRepository.findByMemberIdAndActivityId(anyLong(), anyLong())).willReturn(apply);
         doNothing().when(activityApplyRepository).delete(any());
 
         // when
         activityApplyService.cancelApply(testId, testId);
 
         // then
-        then(activityApplyRepository).should(times(1)).findByMemberIdAndActivityId(testId, testId);
+        then(activityApplyRepository).should(times(1)).findByMemberIdAndActivityId(anyLong(), anyLong());
         then(activityApplyRepository).should(times(1)).delete(any());
     }
 }

@@ -8,12 +8,12 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class FindIdRequest {
-    @Schema(name = "이름", required = true)
-    private String name;
-
+@AllArgsConstructor
+public class AuthenticationRequest {
     @Schema(name = "이메일", required = true, example = "gmlwh124@suwon.ac.kr")
     private String email;
+
+    @Schema(name = "인증 번호", required = true)
+    private String certification;
 }

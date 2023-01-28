@@ -22,21 +22,4 @@ public class RandomGenerator {
                         StringBuilder::append)
                 .toString();
     }
-
-    /**
-     * 비밀번호 재발급에 사용되는 10자리 숫자 + 알파벳(대소문자) 생성
-     * @return (String) 10자리 비밀번호
-     */
-    public static String getRandomPassword() {
-        int length = 10;
-        int randomNumberStart = 48;
-        int randomNumberEnd = 122;
-
-        return RANDOM.ints(randomNumberStart, randomNumberEnd + 1)
-                    .filter(i -> Character.isAlphabetic(i) || Character.isDigit(i))
-                    .limit(length)
-                    .collect(StringBuilder::new, StringBuilder::appendCodePoint,
-                            StringBuilder::append)
-                    .toString();
-    }
 }

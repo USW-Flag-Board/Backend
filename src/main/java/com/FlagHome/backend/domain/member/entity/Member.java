@@ -5,8 +5,10 @@ import com.FlagHome.backend.domain.Status;
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.member.Major;
 import com.FlagHome.backend.domain.member.Role;
-import com.FlagHome.backend.domain.member.dto.UpdateProfileRequest;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;

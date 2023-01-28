@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.token.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,15 +11,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TokenResponse {
-    @ApiModelProperty(example = "Bearer")
+    @Schema(name = "허가 유형", example = "Bearer")
     private String grantType;
 
-    @ApiModelProperty(value = "Access Token")
+    @Schema(name = "Access Token")
     private String accessToken;
 
-    @ApiModelProperty(value = "Refresh Token")
+    @Schema(name = "Refresh Token")
     private String refreshToken;
 
-    @ApiModelProperty(example = "1659476381416")
+    @Schema(name = "만료시간", example = "1659476381416")
     private Long accessTokenExpiresIn;
 }

@@ -16,9 +16,9 @@ import java.util.Map;
 @AllArgsConstructor
 public class GetAllActivitiesResponse {
     @Schema(name = "모든 활동 정보")
-    private Map<String, Map<ActivityType, List<Map<String, String>>>> allActivities;
+    private Map<String, Map<ActivityType, List<ActivityResponse>>> allActivities;
 
-    public static GetAllActivitiesResponse from(Map<String, Map<ActivityType, List<Map<String, String>>>> allActivities) {
+    public static GetAllActivitiesResponse from(Map<String, Map<ActivityType, List<ActivityResponse>>> allActivities) {
         return GetAllActivitiesResponse.builder()
                 .allActivities(allActivities)
                 .build();

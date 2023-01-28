@@ -105,7 +105,7 @@ public class AuthServiceTest {
                     .build());
 
             assertThatNoException()
-                    .isThrownBy(() -> authService.validateDuplicateEmail("hejow124@suwon.ac.kr"));
+                    .isThrownBy(() -> authService.validateEmail("hejow124@suwon.ac.kr"));
         }
 
         @Test
@@ -114,7 +114,7 @@ public class AuthServiceTest {
             String email = "gmlwh124@naver.com";
 
             assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> authService.validateDuplicateEmail(email))
+                    .isThrownBy(() -> authService.validateEmail(email))
                     .withMessage(ErrorCode.NOT_USW_EMAIL.getMessage());
         }
 
@@ -132,7 +132,7 @@ public class AuthServiceTest {
                     .build());
 
             assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> authService.validateDuplicateEmail(email))
+                    .isThrownBy(() -> authService.validateEmail(email))
                     .withMessage(ErrorCode.EMAIL_EXISTS.getMessage());
         }
     }
