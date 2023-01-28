@@ -108,4 +108,12 @@ public class PostController {
         likeService.likeOrUnlike(userId, targetId, targetType, false);
         return ResponseEntity.ok(ApplicationResponse.of(true, HttpStatus.NO_CONTENT, "게시글 좋아요를 취소 하였습니다."));
     }
+
+    @Tag(name = "post")
+    @Operation(summary = "최신날짜 + 좋아요갯수 를 기준으로 상위 N개의 게시글을 줍니다.")
+    @ApiResponse(responseCode = "200", description = "상위 N개의 게시글을 가져왔습니다.")
+    @GetMapping("/top")
+    public ResponseEntity<HttpResponse> getTopNPostListByDateAndLike(@RequestParam(value = "postCount") int postCount) {
+        return ResponseEntity.ok(HttpResponse.ok(postService.getTopNPostListByDateAndLike(postCount), HttpStatus.OK, "상위 N개의 게시글을 가져왔습니다."));
+    }
 }

@@ -1,5 +1,6 @@
 package com.FlagHome.backend.domain.post.controller;
 
+import com.FlagHome.backend.domain.HttpResponse;
 import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.board.repository.BoardRepository;
 import com.FlagHome.backend.domain.like.entity.Like;
@@ -13,6 +14,7 @@ import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
 import com.FlagHome.backend.domain.reply.entity.Reply;
 import com.FlagHome.backend.domain.reply.repository.ReplyRepository;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +25,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.CharacterEncodingFilter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,6 +65,8 @@ class PostControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private WebApplicationContext webApplicationContext;
 
     private Member dummyMember;
 
@@ -66,6 +75,10 @@ class PostControllerTest {
 
     @BeforeEach
     public void testSetting() {
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+                .addFilter(new CharacterEncodingFilter("UTF-8", true))
+                .build();
+
         dummyMember = memberRepository.save(Member.builder()
                 .loginId("gildong11")
                 .password("123123")
@@ -277,5 +290,63 @@ class PostControllerTest {
         postRepository.findById(postId).ifPresent(resultPost -> assertThat(resultPost.getLikeCount()).isEqualTo(0L));
         Like shouldBeNullLike = likeRepository.findById(likeId).orElse(null);
         assertThat(shouldBeNullLike).isNull();
+    }
+
+    @Test
+    @DisplayName("최신날짜+좋아요 상위 Top3 게시글 가져오기 테스트")
+    public void getTop3PostListByDateAndLikeTest() throws Exception {
+        // given
+        postRepository.save(Post.builder()
+                .member(dummyMember)
+                .title("첫째 게시물 제목")
+                .content("첫째 게시물 내용")
+                .board(dummyBoard1)
+                .viewCount(0L)
+                .likeCount(44444L)
+                .build());
+
+        postRepository.save(Post.builder()
+                .member(dummyMember)
+                .title("둘째 게시물 제목")
+                .content("둘째 게시물 내용")
+                .board(dummyBoard2)
+                .viewCount(0L)
+                .likeCount(77777L)
+                .build());
+
+        postRepository.save(Post.builder()
+                .member(dummyMember)
+                .title("셋째 게시물 제목")
+                .content("셋째 게시물 내용")
+                .board(dummyBoard1)
+                .viewCount(0L)
+                .likeCount(33L)
+                .build());
+
+        postRepository.save(Post.builder()
+                .member(dummyMember)
+                .title("네번째 게시물 제목")
+                .content("네번째 게시물 내용")
+                .board(dummyBoard2)
+                .viewCount(0L)
+                .likeCount(572L)
+                .build());
+
+        // when
+        ResultActions actions = mockMvc.perform(get(BASE_URL + "/top")
+                        .param("postCount", Integer.toString(3)))
+                .andExpect(status().isOk());
+
+        // then
+        HttpResponse httpResponse = objectMapper.readValue(actions.andReturn().getResponse().getContentAsString(), new TypeReference<>() {});
+        String payloadString = httpResponse.getPayload().toString();
+
+        int leftBraceCount = 0;
+        for(int i = 0; i < payloadString.length(); ++i) {
+            if(payloadString.charAt(i) == '{')
+                ++leftBraceCount;
+        }
+
+        assertThat(leftBraceCount).isEqualTo(3);
     }
 }
