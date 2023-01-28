@@ -23,6 +23,9 @@ public class JoinRequest {
     @Schema(description = "이름", required = true, example = "문희조")
     private String name;
 
+    @Schema(name = "닉네임", required = true, example = "john")
+    private String nickName;
+
     @Schema(description = "이메일", required = true, example = "gmlwh124@suwon.ac.kr")
     private String email;
 

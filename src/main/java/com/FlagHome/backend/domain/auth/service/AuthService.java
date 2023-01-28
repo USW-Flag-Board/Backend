@@ -4,6 +4,7 @@ import com.FlagHome.backend.domain.auth.JoinType;
 import com.FlagHome.backend.domain.auth.dto.*;
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
+import com.FlagHome.backend.domain.member.avatar.service.AvatarService;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.mail.service.MailService;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
@@ -41,6 +42,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtilizer jwtUtilizer;
     private final InputValidator inputValidator;
+    private final AvatarService avatarService;
 
     public void validateDuplicateLoginId(String loginId) {
         if (memberRepository.existsByLoginId(loginId)) {
@@ -79,7 +81,8 @@ public class AuthService {
             return SignUpResponse.from(authInformation);
         }
 
-        memberRepository.save(Member.of(authInformation, passwordEncoder));
+        Member member = memberRepository.save(Member.of(authInformation, passwordEncoder));
+        avatarService.initAvatar(member, authInformation.getNickName());
         authRepository.delete(authInformation);
         return SignUpResponse.from(authInformation);
     }
