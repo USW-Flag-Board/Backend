@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.report.controller;
 
-import com.FlagHome.backend.domain.HttpResponse;
+import com.FlagHome.backend.domain.ApplicationResponse;
 import com.FlagHome.backend.domain.report.Service.ReportService;
 import com.FlagHome.backend.domain.report.dto.ReportRequest;
 import com.FlagHome.backend.domain.report.entity.Report;
@@ -34,10 +34,10 @@ public class ReportController {
             @ApiResponse(responseCode = "409", description = "이미 신고한 대상입니다")
     })
     @PostMapping
-    public ResponseEntity<HttpResponse> report(@RequestBody ReportRequest reportRequest) {
+    public ResponseEntity<ApplicationResponse> report(@RequestBody ReportRequest reportRequest) {
         long id = reportService.create(SecurityUtils.getMemberId(), Report.from(reportRequest));
         URI location = UriCreator.createUri(DEFAULT_URL, id);
-        HttpResponse response = HttpResponse.ok(location, OK, "신고가 접수되었습니다");
+        ApplicationResponse response = ApplicationResponse.of(location, OK, "신고가 접수되었습니다");
         return ResponseEntity.ok(response);
     }
 
@@ -47,8 +47,8 @@ public class ReportController {
             @ApiResponse(responseCode = "200", description = "모든 신고 가져오기 성공"),
     })
     @GetMapping
-    public ResponseEntity<HttpResponse> getAllReports() {
-        HttpResponse response = HttpResponse.ok(reportService.getAllReports(), OK, "모든 신고 정보 가져오기 성공");
+    public ResponseEntity<ApplicationResponse> getAllReports() {
+        ApplicationResponse response = ApplicationResponse.of(reportService.getAllReports(), OK, "모든 신고 정보 가져오기 성공");
         return ResponseEntity.ok(response);
     }
 
@@ -59,9 +59,9 @@ public class ReportController {
             @ApiResponse(responseCode = "404", description = "신고이력이 존재하지 않습니다.")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpResponse> deleteReport(@PathVariable("id") long reportId){
+    public ResponseEntity<ApplicationResponse> deleteReport(@PathVariable("id") long reportId){
         reportService.deleteReport(reportId);
-        HttpResponse response = HttpResponse.ok(null, OK, "신고가 삭제되었습니다.");
+        ApplicationResponse response = ApplicationResponse.of(null, OK, "신고가 삭제되었습니다.");
         return ResponseEntity.ok(response);
     }
 
@@ -71,9 +71,9 @@ public class ReportController {
             @ApiResponse(responseCode = "200", description = "모든 신고가 삭제되었습니다."),
     })
     @DeleteMapping
-    public ResponseEntity<HttpResponse> deleteAllReports() {
+    public ResponseEntity<ApplicationResponse> deleteAllReports() {
         reportService.deleteAllReports();
-        HttpResponse response = HttpResponse.ok(null, OK, "모든 신고가 삭제되었습니다.");
+        ApplicationResponse response = ApplicationResponse.of(null, OK, "모든 신고가 삭제되었습니다.");
         return ResponseEntity.ok(response);
     }
 }

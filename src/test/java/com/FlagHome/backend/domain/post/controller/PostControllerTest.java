@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.post.controller;
 
-import com.FlagHome.backend.domain.HttpResponse;
+import com.FlagHome.backend.domain.ApplicationResponse;
 import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.board.repository.BoardRepository;
 import com.FlagHome.backend.domain.like.entity.Like;
@@ -338,7 +338,7 @@ class PostControllerTest {
                 .andExpect(status().isOk());
 
         // then
-        HttpResponse httpResponse = objectMapper.readValue(actions.andReturn().getResponse().getContentAsString(), new TypeReference<>() {});
+        ApplicationResponse httpResponse = objectMapper.readValue(actions.andReturn().getResponse().getContentAsString(), new TypeReference<>() {});
         String payloadString = httpResponse.getPayload().toString();
 
         int leftBraceCount = 0;

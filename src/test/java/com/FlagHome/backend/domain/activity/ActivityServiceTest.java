@@ -7,7 +7,6 @@ import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.Mentoring;
 import com.FlagHome.backend.domain.activity.entity.Project;
 import com.FlagHome.backend.domain.activity.entity.Study;
-import com.FlagHome.backend.domain.activity.mapper.ActivityMapper;
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
 import com.FlagHome.backend.domain.activity.service.ActivityService;
 import com.FlagHome.backend.domain.member.entity.Member;
@@ -21,8 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -38,9 +35,6 @@ public class ActivityServiceTest {
 
     @Autowired
     private ActivityRepository activityRepository;
-
-    @Autowired
-    private ActivityMapper mapper;
 
     @Autowired
     private MemberRepository memberRepository;
@@ -59,7 +53,9 @@ public class ActivityServiceTest {
             Activity activity = activityRepository.saveAndFlush(Project.builder()
                     .leader(member)
                     .activityType(project)
-                    .status(status).build());
+                    .status(status)
+                    .season(LocalDateTime.now())
+                    .build());
 
             // when
             ActivityResponse activityResponse = activityService.getActivity(activity.getId());
@@ -92,16 +88,19 @@ public class ActivityServiceTest {
         Activity project = Project.builder()
                 .leader(member)
                 .activityType(ActivityType.PROJECT)
+                .season(LocalDateTime.now())
                 .build();
 
         Activity study = Study.builder()
                 .leader(member)
                 .activityType(ActivityType.STUDY)
+                .season(LocalDateTime.now())
                 .build();
 
         Activity mentoring = Mentoring.builder()
                 .leader(member)
                 .activityType(ActivityType.STUDY)
+                .season(LocalDateTime.now())
                 .build();
 
         activityRepository.saveAll(Arrays.asList(project, study, mentoring));
@@ -141,15 +140,64 @@ public class ActivityServiceTest {
                     .githubLink(githubLink)
                     .build();
 
-            Project project = (Project) mapper.dtoToEntity(member.getId(), activityRequest);
-
             // when
-            activityService.create(project);
+            Project project = (Project) activityService.create(member.getId(), activityRequest);
 
             // then
-            assertThat(project.getLeader().getLoginId()).isEqualTo(member.getLoginId());
+            assertThat(project.getId()).isNotNull();
+            assertThat(project.getSeason()).isNotNull();
             assertThat(project.getActivityType()).isEqualTo(activityType);
             assertThat(project.getGithubLink()).isEqualTo(githubLink);
+        }
+
+        @Test
+        @DisplayName("멘토링 만들기 테스트")
+        void createMentoringTest() {
+            // given
+            ActivityType activityType = ActivityType.MENTORING;
+            BookUsage bookUsage = BookUsage.사용;
+            String bookName = "토비의 스프링";
+
+            ActivityRequest activityRequest = ActivityRequest.builder()
+                    .activityType(activityType)
+                    .bookUsage(bookUsage)
+                    .bookName(bookName)
+                    .build();
+
+            // when
+            Mentoring mentoring = (Mentoring) activityService.create(member.getId(), activityRequest);
+
+            // then
+            assertThat(mentoring.getId()).isNotNull();
+            assertThat(mentoring.getSeason()).isNotNull();
+            assertThat(mentoring.getActivityType()).isEqualTo(activityType);
+            assertThat(mentoring.getBookUsage()).isEqualTo(bookUsage);
+            assertThat(mentoring.getBookName()).isEqualTo(bookName);
+        }
+
+        @Test
+        @DisplayName("스터디 만들기 테스트")
+        void createStudyTest() {
+            // given
+            ActivityType activityType = ActivityType.STUDY;
+            BookUsage bookUsage = BookUsage.미사용;
+            String bookName = "";
+
+            ActivityRequest activityRequest = ActivityRequest.builder()
+                    .activityType(activityType)
+                    .bookUsage(bookUsage)
+                    .bookName(bookName)
+                    .build();
+
+            // when
+            Study study = (Study) activityService.create(member.getId(), activityRequest);
+
+            // then
+            assertThat(study.getId()).isNotNull();
+            assertThat(study.getSeason()).isNotNull();
+            assertThat(study.getActivityType()).isEqualTo(activityType);
+            assertThat(study.getBookUsage()).isEqualTo(bookUsage);
+            assertThat(study.getBookName()).isEqualTo(bookName);
         }
     }
 }

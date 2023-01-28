@@ -14,7 +14,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MyPageResponse {
+public class MemberProfileResponse {
     @Schema(description = "아이디", required = true, example = "gmlwh124")
     private String loginId;
 
@@ -31,8 +31,8 @@ public class MyPageResponse {
     @Schema(description = "작성한 게시글", required = true, example = "작성한 게시글 DTO")
     private List<PostDto> postList;
 
-    public static MyPageResponse of(Member member, List<PostDto> postList) {
-        return MyPageResponse.builder()
+    public static MemberProfileResponse of(Member member, List<PostDto> postList) {
+        return MemberProfileResponse.builder()
                 .loginId(member.getLoginId())
                 .postList(postList)
                 .build();
