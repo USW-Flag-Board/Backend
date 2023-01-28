@@ -1,7 +1,13 @@
 package com.FlagHome.backend.domain.member.service;
 
+import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
+import com.FlagHome.backend.domain.activity.memberactivity.service.MemberActivityService;
+import com.FlagHome.backend.domain.activity.service.ActivityService;
 import com.FlagHome.backend.domain.board.enums.SearchType;
 import com.FlagHome.backend.domain.mail.service.MailService;
+import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
+import com.FlagHome.backend.domain.member.avatar.dto.MyProfileResponse;
+import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
 import com.FlagHome.backend.domain.member.avatar.service.AvatarService;
 import com.FlagHome.backend.domain.member.dto.FindResponse;
 import com.FlagHome.backend.domain.member.dto.MemberProfileResponse;
@@ -37,11 +43,13 @@ public class MemberService {
     private final FindRequestTokenService findRequestTokenService;
     private final WithdrawalRepository withdrawalRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MemberActivityService memberActivityService;
     private final InputValidator inputValidator;
 
     @Transactional
     public void withdraw(Long memberId, String password) {
         validateMemberPassword(memberId, password);
+        avatarService.deleteAvatar(memberId);
         deleteMemberById(memberId);
     }
 
@@ -98,12 +106,21 @@ public class MemberService {
         return member.getLoginId();
     }
 
-    @Transactional
     public MemberProfileResponse getMemberProfile(String loginId) {
-        Member member = findByLoginId(loginId);
+        AvatarResponse avatarResponse = avatarService.getAvatar(loginId);
+        List<ParticipateResponse> participateResponseList = memberActivityService.getAllActivitiesOfMember(loginId);
         List<PostDto> postList = getMemberPostByLoginId(loginId);
 
-        return MemberProfileResponse.of(member, postList);
+        return MemberProfileResponse.of(avatarResponse, participateResponseList, postList);
+    }
+
+    public MyProfileResponse getMyProfile(long memberId) {
+        return avatarService.getMyProfile(memberId);
+    }
+
+    @Transactional
+    public void updateAvatar(long memberId, UpdateAvatarRequest updateAvatarRequest) {
+        avatarService.updateAvatar(memberId, updateAvatarRequest);
     }
 
     @Transactional

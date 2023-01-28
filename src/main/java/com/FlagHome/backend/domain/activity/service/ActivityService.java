@@ -11,6 +11,7 @@ import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.Mentoring;
 import com.FlagHome.backend.domain.activity.entity.Project;
 import com.FlagHome.backend.domain.activity.entity.Study;
+import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.service.MemberActivityService;
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
 import com.FlagHome.backend.domain.member.entity.Member;

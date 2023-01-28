@@ -55,7 +55,7 @@ public class ActivityController {
     }
 
     @Tag(name = "activity")
-    @Operation(summary = "모든 신청리스트 가져오기", description = "활동장 전용 기능, 신청받은 리스트를 가져온다.")
+    @Operation(summary = "모든 신청리스트 가져오기", description = "[토큰필요] 활동장 전용 기능, 신청받은 리스트를 가져온다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "모든 신청리스트를 성공적으로 가져왔습니다."),
             @ApiResponse(responseCode = "401", description = "활동장이 아닙니다."),
@@ -69,7 +69,7 @@ public class ActivityController {
     }
 
     @Tag(name = "activity")
-    @Operation(summary = "활동 신청여부 확인하기", description = "한 멤버가 한 활동에 한번만 신청할 수 있다, 덜 구현")
+    @Operation(summary = "활동 신청여부 확인하기", description = "[토큰필요] 한 멤버가 한 활동에 한번만 신청할 수 있다")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "신청여부 조회에 성공하였습니다."),
             @ApiResponse(responseCode = "500", description = "서버 에러입니다. 관리자에게 문의해주세요.")
@@ -82,7 +82,7 @@ public class ActivityController {
     }
 
     @Tag(name = "activity")
-    @Operation(summary = "활동 신청하기", description = "한 멤버당 한 활동에 한번만 신청할 수 있다.")
+    @Operation(summary = "활동 신청하기", description = "[토큰필요] 한 멤버당 한 활동에 한번만 신청할 수 있다.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "신청에 성공하였습니다."),
             @ApiResponse(responseCode = "401", description = "일반 유저가 신청하려고한 경우"),
@@ -97,7 +97,7 @@ public class ActivityController {
     }
 
     @Tag(name = "activity")
-    @Operation(summary = "활동 만들기", description = "활동 만들기는 동아리원만 가능하다.")
+    @Operation(summary = "활동 만들기", description = "[토큰필요] 활동 만들기는 동아리원만 가능하다.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "스터디 내용이 성공적으로 수정되었습니다."),
             @ApiResponse(responseCode = "401", description = "일반 유저가 만들려고한 경우")
@@ -124,7 +124,7 @@ public class ActivityController {
 //    }
 
     @Tag(name = "activity")
-    @Operation(summary = "프로젝트 내용 수정하기", description = "활동장만 수정할 수 있다.\n" +
+    @Operation(summary = "프로젝트 내용 수정하기", description = "[토큰필요] 활동장만 수정할 수 있다.\n" +
                                                                "프로젝트는 책 사용여부와 책 이름을 적지 않아도 된다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "프로젝트 내용이 성공적으로 수정되었습니다."),
@@ -139,7 +139,7 @@ public class ActivityController {
     }
 
     @Tag(name = "activity")
-    @Operation(summary = "멘토링 내용 수정하기", description = "활동장만 수정할 수 있다.\n" +
+    @Operation(summary = "멘토링 내용 수정하기", description = "[토큰필요] 활동장만 수정할 수 있다.\n" +
                                                              "멘토링은 깃허브 주소를 적지 않아도 된다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "멘토링 내용이 성공적으로 수정되었습니다."),
@@ -154,7 +154,7 @@ public class ActivityController {
     }
 
     @Tag(name = "activity")
-    @Operation(summary = "스터디 내용 수정하기", description = "활동장만 수정할 수 있다.\n" +
+    @Operation(summary = "스터디 내용 수정하기", description = "[토큰필요] 활동장만 수정할 수 있다.\n" +
                                                               "스터디는 깃허브 주소를 적지 않아도 된다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "스터디 내용이 성공적으로 수정되었습니다."),
@@ -169,7 +169,7 @@ public class ActivityController {
     }
 
     @Tag(name = "activity")
-    @Operation(summary = "활동장 권한 넘기기", description = "새로운 활동장의 아이디를 받아 권한을 넘긴다.")
+    @Operation(summary = "활동장 권한 넘기기", description = "[토큰필요] 새로운 활동장의 아이디를 받아 권한을 넘긴다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "권한을 성공적으로 넘겼습니다."),
             @ApiResponse(responseCode = "401", description = "활동장이 아닙니다."),
@@ -184,7 +184,7 @@ public class ActivityController {
     }
 
     @Tag(name = "activity")
-    @Operation(summary = "활동 모집 마감하기", description = "활동 모집 마감 시 활동장이 같이 활동할 멤버를 정한다. 덜 구현")
+    @Operation(summary = "활동 모집 마감하기", description = "[토큰필요] 활동 모집 마감 시 활동장이 같이 활동할 멤버를 정한다. 덜 구현")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "모집이 마감되었습니다."),
             @ApiResponse(responseCode = "401", description = "활동장이 아닙니다.")
@@ -198,7 +198,7 @@ public class ActivityController {
     }
 
     @Tag(name = "activity")
-    @Operation(summary = "활동 모집 다시 열기", description = "추가적인 활동원을 받기 위해서 상태를 모집중으로 변경한다.")
+    @Operation(summary = "활동 모집 다시 열기", description = "[토큰필요] 추가적인 활동원을 받기 위해서 상태를 모집중으로 변경한다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "다시 모집을 시작합니다."),
             @ApiResponse(responseCode = "401", description = "활동장이 아닙니다.")
@@ -211,7 +211,7 @@ public class ActivityController {
     }
 
     @Tag(name = "activity")
-    @Operation(summary = "활동 마무리하기", description = "소기의 목적을 달성하고 활동을 끝낸다.")
+    @Operation(summary = "활동 마무리하기", description = "[토큰필요] 소기의 목적을 달성하고 활동을 끝낸다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "활동이 종료되었습니다."),
             @ApiResponse(responseCode = "401", description = "활동장이 아닙니다.")
@@ -224,7 +224,7 @@ public class ActivityController {
     }
 
     @Tag(name = "activity")
-    @Operation(summary = "활동 삭제하기", description = "활동장만 모집 중인 활동을 삭제할 수 있다.")
+    @Operation(summary = "활동 삭제하기", description = "[토큰필요] 활동장만 모집 중인 활동을 삭제할 수 있다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "활동이 삭제되었습니다."),
             @ApiResponse(responseCode = "401", description = "활동장이 아닙니다.")
@@ -237,13 +237,13 @@ public class ActivityController {
     }
 
     @Tag(name = "activity")
-    @Operation(summary = "활동 신청 취소하기", description = "신청한 활동 취소하기")
+    @Operation(summary = "활동 신청 취소하기", description = "[토큰필요] 신청한 활동 취소하기")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "신청이 취소되었습니다."),
             @ApiResponse(responseCode = "404", description = "존재하는 신청 내역이 없습니다.")
     })
     @DeleteMapping("/{id}/apply")
-    public ResponseEntity<ApplicationResponse> cancleApply(@PathVariable("id") long activityId) {
+    public ResponseEntity<ApplicationResponse> cancelApply(@PathVariable("id") long activityId) {
         activityService.cancelApply(SecurityUtils.getMemberId(), activityId);
         ApplicationResponse response = ApplicationResponse.of(null, OK, "신청이 취소되었습니다.");
         return ResponseEntity.ok(response);

@@ -1,6 +1,7 @@
 package com.FlagHome.backend.domain.member.controller;
 
 import com.FlagHome.backend.domain.ApplicationResponse;
+import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
 import com.FlagHome.backend.domain.member.dto.*;
 import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.global.utility.SecurityUtils;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
-import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 @Tag(name = "member", description = "멤버 API")
@@ -27,18 +27,29 @@ public class MemberController {
     private final MemberService memberService;
 
     @Tag(name = "member")
-    @Operation(summary = "멤버 프로필 가져오기", description = "아직 미완성")
+    @Operation(summary = "멤버 프로필 가져오기", description = "프로필, 작성한 게시글, 참여한 활동들을 가져온다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "멤버 정보 조회 성공"),
+            @ApiResponse(responseCode = "200", description = "멤버 정보를 가져왔습니다."),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
     })
-    @GetMapping("/{id}")
-    public ResponseEntity<MemberProfileResponse> getMemberPage(@PathVariable("id") String loginId) {
-        return ResponseEntity.ok(memberService.getMemberProfile(loginId));
+    @GetMapping("/{loginId}")
+    public ResponseEntity<ApplicationResponse> getMemberPage(@PathVariable("loginId") String loginId) {
+        return ResponseEntity.ok(ApplicationResponse.of(memberService.getMemberProfile(loginId), OK, "멤버의 정보를 가져왔습니다."));
     }
 
     @Tag(name = "member")
-    @Operation(summary = "아이디 찾기", description = "존재하는 멤버라면 인증 이메일 발송\n" +
+    @Operation(summary = "내 상세정보 보기", description = "[토큰 필요] 내 상세정보 보기. 프로필 정보(개인정보X)와 개인 정보를 가져온다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "내 정보를 가져왔습니다."),
+            @ApiResponse(responseCode = "401", description = "토큰을 넣지 않으면 401 발생")
+    })
+    @GetMapping
+    public ResponseEntity<ApplicationResponse> getMyProfile() {
+        return ResponseEntity.ok(ApplicationResponse.of(memberService.getMyProfile(SecurityUtils.getMemberId()), OK, "내 정보를 가져왔습니다."));
+    }
+
+    @Tag(name = "member")
+    @Operation(summary = "아이디 찾기", description = "존재하는 멤버라면 인증 이메일 발송.\n" +
                                                     "201이 뜬다면 인증 진행하기")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "조회에 성공해 메일을 발송합니다."),
@@ -49,11 +60,11 @@ public class MemberController {
     @PostMapping("/find/id")
     public ResponseEntity<ApplicationResponse> findId(@RequestBody FindIdRequest findIdRequest) {
         return ResponseEntity.ok(ApplicationResponse
-                .of(memberService.findId(findIdRequest.getEmail()), CREATED, "멤버 조회에 성공해 메일을 발송합니다."));
+                .of(memberService.findId(findIdRequest.getEmail()), OK, "멤버 조회에 성공해 메일을 발송합니다."));
     }
 
     @Tag(name = "member")
-    @Operation(summary = "비밀번호 찾기(바꾸기)", description = "존재하는 멤버라면 인증 이메일 발송\n" +
+    @Operation(summary = "비밀번호 찾기(바꾸기)", description = "존재하는 멤버라면 인증 이메일 발송.\n" +
                                                             "201이 뜬다면 인증 진행하기")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "조회에 성공해 메일을 발송합니다."),
@@ -64,7 +75,7 @@ public class MemberController {
     @PostMapping("/find/password")
     public ResponseEntity<ApplicationResponse> findPassword(@RequestBody FindPasswordRequest findPasswordRequest) {
         return ResponseEntity.ok(ApplicationResponse
-                .of(memberService.findPassword(findPasswordRequest.getLoginId(), findPasswordRequest.getEmail()), CREATED, "멤버 조회에 성공해 메일을 발송합니다."));
+                .of(memberService.findPassword(findPasswordRequest.getLoginId(), findPasswordRequest.getEmail()), OK, "멤버 조회에 성공해 메일을 발송합니다."));
     }
 
     @Tag(name = "member")
@@ -95,11 +106,12 @@ public class MemberController {
     }
 
     @Tag(name = "member")
-    @Operation(summary = "비밀번호 수정", description = "로그인한 유저가 직접 비밀번호를 변경하는 경우\n" +
+    @Operation(summary = "비밀번호 수정", description = "[토큰 필요] 로그인한 유저가 직접 비밀번호를 변경하는 경우\n" +
                                                       "유저 프로필로 이동한다. (URI 리턴)")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "비밀번호 수정 성공, 유저 URI 리턴"),
             @ApiResponse(responseCode = "400", description = "비밀번호가 일치하지 않습니다."),
+            @ApiResponse(responseCode = "401", description = "토큰을 넣지 않으면 401 발생"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
             @ApiResponse(responseCode = "409", description = "기존과 같은 비밀번호는 사용할 수 없습니다."),
             @ApiResponse(responseCode = "422", description = "사용할 수 없는 비밀번호 입니다. (8~20자 이내 영문, 숫자, 특수문자를 모두 포함)")
@@ -112,9 +124,23 @@ public class MemberController {
     }
 
     @Tag(name = "member")
-    @Operation(summary = "회원 탈퇴")
+    @Operation(summary = "아바타 수정하기", description = "[토큰 필요] 개인 프로필 수정한다.\n" +
+                                                       " 프로필은 개인 정보를 담지 않고 있다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "프로필 수정을 완료하였습니다."),
+            @ApiResponse(responseCode = "401", description = "토큰을 넣지 않으면 401 발생")
+    })
+    @PutMapping("/avatar")
+    public ResponseEntity<ApplicationResponse> updateAvatar(@RequestBody UpdateAvatarRequest updateAvatarRequest) {
+        memberService.updateAvatar(SecurityUtils.getMemberId(), updateAvatarRequest);
+        return ResponseEntity.ok(ApplicationResponse.of(null, OK, "프로필 수정을 완료하였습니다."));
+    }
+
+    @Tag(name = "member")
+    @Operation(summary = "회원 탈퇴", description = "[토큰 필요]")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "회원 탈퇴에 성공하였습니다."),
+            @ApiResponse(responseCode = "401", description = "토큰을 넣지 않으면 401 발생"),
             @ApiResponse(responseCode = "400", description = "비밀번호가 일치하지 않습니다."),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다.")
     })

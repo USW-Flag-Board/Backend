@@ -1,17 +1,14 @@
 package com.FlagHome.backend.domain.member.avatar.dto;
 
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 public class AvatarResponse {
-    private Long id;
-
     private String loginId;
 
     private String nickName;
@@ -19,4 +16,13 @@ public class AvatarResponse {
     private String bio;
 
     private String profileImg;
+
+    @Builder
+    @QueryProjection
+    public AvatarResponse(String loginId, String nickName, String bio, String profileImg) {
+        this.loginId = loginId;
+        this.nickName = nickName;
+        this.bio = bio;
+        this.profileImg = profileImg;
+    }
 }
