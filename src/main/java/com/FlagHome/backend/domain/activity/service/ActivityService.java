@@ -3,6 +3,7 @@ package com.FlagHome.backend.domain.activity.service;
 import com.FlagHome.backend.domain.activity.ActivityType;
 import com.FlagHome.backend.domain.activity.Status;
 import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyResponse;
+import com.FlagHome.backend.domain.activity.activityapply.entity.ActivityApply;
 import com.FlagHome.backend.domain.activity.activityapply.service.ActivityApplyService;
 import com.FlagHome.backend.domain.activity.dto.ActivityRequest;
 import com.FlagHome.backend.domain.activity.dto.ActivityResponse;
@@ -68,12 +69,12 @@ public class ActivityService {
     }
 
     @Transactional
-    public void applyActivity(long memberId, long activityId) {
+    public ActivityApply applyActivity(long memberId, long activityId) {
         if (checkApply(memberId, activityId)) {
             throw new CustomException(ErrorCode.ALREADY_APPLIED);
         }
         Activity activity = findById(activityId);
-        activityApplyService.apply(memberId, activity);
+        return activityApplyService.apply(memberId, activity);
     }
 
     @Transactional
