@@ -8,6 +8,7 @@ import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.Mentoring;
 import com.FlagHome.backend.domain.activity.entity.Project;
 import com.FlagHome.backend.domain.activity.entity.Study;
+import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.entity.MemberActivity;
 import com.FlagHome.backend.domain.activity.memberactivity.repository.MemberActivityRepository;
@@ -296,6 +297,84 @@ public class ActivityRepositoryTest {
             assertThat(responseList.get(0).getYear()).isInstanceOf(Integer.class);
             assertThat(responseList.get(0).getSeason()).isNotNull();
             assertThat(responseList.get(0).getStatus()).isNotNull();
+        }
+
+        @Test
+        @DisplayName("활동원 가져오기 테스트")
+        void getAllParticipantsTest() {
+            // given
+            Member member = memberRepository.save(Member.builder().build());
+
+            Member participant1 = memberRepository.save(Member.builder()
+                            .name("문희조")
+                            .loginId("gmlwh124")
+                            .major(Major.컴퓨터SW)
+                            .build());
+
+            Member participant2 = memberRepository.save(Member.builder()
+                    .name("희조문")
+                    .loginId("hejow124")
+                    .major(Major.컴퓨터SW)
+                    .build());
+
+            Activity activity = activityRepository.save(Project.builder()
+                            .leader(member)
+                            .season(LocalDateTime.now())
+                            .build());
+
+            MemberActivity memberActivity1 = MemberActivity.builder()
+                    .member(participant1)
+                    .activity(activity)
+                    .build();
+
+            MemberActivity memberActivity2 = MemberActivity.builder()
+                    .member(participant2)
+                    .activity(activity)
+                    .build();
+
+            memberActivityRepository.saveAll(Arrays.asList(memberActivity1, memberActivity2));
+
+            // when
+            List<ParticipantResponse> participantResponses = memberActivityRepository.getAllParticipantByActivityId(activity.getId());
+
+            // then
+            ParticipantResponse response1 = participantResponses.get(0);
+            ParticipantResponse response2 = participantResponses.get(1);
+
+            assertThat(participantResponses.size()).isEqualTo(2);
+            assertThat(response1.getName()).isNotNull();
+            assertThat(response1.getLoginId()).isNotNull();
+            assertThat(response1.getMajor()).isNotNull();
+            assertThat(response2.getName()).isNotNull();
+            assertThat(response2.getLoginId()).isNotNull();
+            assertThat(response2.getMajor()).isNotNull();
+        }
+
+        @Test
+        @DisplayName("활동 구성원 체크 테스트")
+        void existMemberOfActivity() {
+            // given
+            String loginId = "gmlwh124";
+
+            Member member = memberRepository.save(Member.builder()
+                            .loginId(loginId)
+                            .build());
+
+            Activity activity = activityRepository.save(Study.builder()
+                    .season(LocalDateTime.now())
+                    .build());
+
+            memberActivityRepository.save(MemberActivity.builder()
+                    .member(member)
+                    .activity(activity)
+                    .build());
+
+            // when
+            Member foundMember = memberActivityRepository.findMemberOfActivityByLoginId(activity.getId(), loginId);
+
+            // then
+            assertThat(foundMember).isNotNull();
+            assertThat(foundMember.getLoginId()).isEqualTo(loginId);
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.FlagHome.backend.domain.activity.memberactivity.service;
 
 import com.FlagHome.backend.domain.activity.entity.Activity;
+import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.entity.MemberActivity;
 import com.FlagHome.backend.domain.activity.memberactivity.repository.MemberActivityRepository;
@@ -17,6 +18,10 @@ import java.util.stream.Collectors;
 public class MemberActivityService {
     private final MemberActivityRepository memberActivityRepository;
 
+    public Member findMemberOfActivity(long activityId, String loginId) {
+        return memberActivityRepository.findMemberOfActivityByLoginId(activityId, loginId);
+    }
+
     @Transactional
     public void registerMembers(Activity activity, List<Member> memberList) {
         List<MemberActivity> memberActivityList = memberList.stream()
@@ -29,6 +34,11 @@ public class MemberActivityService {
     @Transactional(readOnly = true)
     public List<ParticipateResponse> getAllActivitiesOfMember(String loginId) {
         return memberActivityRepository.getAllActivitiesOfMember(loginId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ParticipantResponse> getAllParticipants(long activityId) {
+        return memberActivityRepository.getAllParticipantByActivityId(activityId);
     }
 
     @Transactional

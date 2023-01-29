@@ -12,7 +12,7 @@ import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.Mentoring;
 import com.FlagHome.backend.domain.activity.entity.Project;
 import com.FlagHome.backend.domain.activity.entity.Study;
-import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
+import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.service.MemberActivityService;
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
@@ -20,16 +20,15 @@ import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -58,10 +57,16 @@ public class ActivityService {
         return GetAllActivitiesResponse.from(allActivities);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<ActivityApplyResponse> getAllActivityApplies(long memberId, long activityId) {
         Activity activity = validateLeaderAndReturn(memberId, activityId);
         return activityApplyService.getAllApplies(activity.getId());
+    }
+
+    @Transactional
+    public List<ParticipantResponse> getAllParticipants(long memberId, long activityId) {
+        validateLeaderAndReturn(memberId, activityId);
+        return memberActivityService.getAllParticipants(activityId);
     }
 
     public boolean checkApply(long memberId, long activityId) {
@@ -112,7 +117,10 @@ public class ActivityService {
     @Transactional
     public void changeLeader(long memberId, long activityId, String loginId) {
         Activity activity = validateLeaderAndReturn(memberId, activityId);
-        Member newLeader = memberService.findByLoginId(loginId);
+        Member newLeader = memberActivityService.findMemberOfActivity(activityId, loginId);
+        if (newLeader == null) {
+            throw new CustomException(ErrorCode.NOT_ACTIVITY_MEMBER);
+        }
 
         activity.setLeader(newLeader);
     }
