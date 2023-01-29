@@ -43,9 +43,6 @@ public class MemberServiceSliceTest {
     @Mock
     private FindRequestTokenService findRequestTokenService;
 
-    @Mock
-    private Token token;
-
     @Test
     @DisplayName("아이디 찾기 테스트")
     void findIdTest() {

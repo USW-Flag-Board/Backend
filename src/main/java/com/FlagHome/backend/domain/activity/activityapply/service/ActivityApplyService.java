@@ -22,14 +22,14 @@ public class ActivityApplyService {
     }
 
     @Transactional
-    public void apply(long memberId, Activity activity) {
+    public ActivityApply apply(long memberId, Activity activity) {
         ActivityApply activityApply = ActivityApply.builder()
                 .member(Member.builder().id(memberId).build())
                 .activity(activity)
                 .applyTime(LocalDateTime.now())
                 .build();
 
-        activityApplyRepository.save(activityApply);
+        return activityApplyRepository.save(activityApply);
     }
 
     @Transactional(readOnly = true)
