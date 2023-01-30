@@ -5,6 +5,7 @@ import com.FlagHome.backend.domain.mail.service.MailService;
 import com.FlagHome.backend.domain.member.dto.MyPageResponse;
 import com.FlagHome.backend.domain.member.dto.UpdatePasswordRequest;
 import com.FlagHome.backend.domain.member.dto.UpdateProfileRequest;
+import com.FlagHome.backend.domain.member.dto.ViewLogResponse;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.dto.PostDto;
@@ -139,5 +140,10 @@ public class MemberService {
     private Member findByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    // 아이디를 통해서 멤버의 아이디, 이름, 로그인 시간을 가져온다.
+    public List<ViewLogResponse> viewLog() {
+        return memberRepository.getAllLogs();
     }
 }

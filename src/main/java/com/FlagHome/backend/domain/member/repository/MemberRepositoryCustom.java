@@ -1,6 +1,7 @@
 package com.FlagHome.backend.domain.member.repository;
 
 import com.FlagHome.backend.domain.member.dto.UpdateProfileRequest;
+import com.FlagHome.backend.domain.member.dto.ViewLogResponse;
 import com.FlagHome.backend.domain.member.entity.Member;
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +14,6 @@ public interface MemberRepositoryCustom {
     List<Member> getMembersByLoginId(List<String> loginIdList);
 
     boolean isMemberExist(String loginId, String email);
+
+    List<ViewLogResponse> getAllLogs();
 }
