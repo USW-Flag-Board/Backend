@@ -1,13 +1,18 @@
 package com.FlagHome.backend.domain.activity.service;
 
+import com.FlagHome.backend.domain.activity.ActivityType;
+import com.FlagHome.backend.domain.activity.Status;
 import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyResponse;
+import com.FlagHome.backend.domain.activity.activityapply.entity.ActivityApply;
 import com.FlagHome.backend.domain.activity.activityapply.service.ActivityApplyService;
 import com.FlagHome.backend.domain.activity.dto.ActivityRequest;
 import com.FlagHome.backend.domain.activity.dto.ActivityResponse;
+import com.FlagHome.backend.domain.activity.dto.GetAllActivitiesResponse;
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.Mentoring;
 import com.FlagHome.backend.domain.activity.entity.Project;
 import com.FlagHome.backend.domain.activity.entity.Study;
+import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.service.MemberActivityService;
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
@@ -15,10 +20,16 @@ import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.*;
 
 @Service
 @RequiredArgsConstructor
@@ -33,14 +44,18 @@ public class ActivityService {
             throw new CustomException(ErrorCode.ACTIVITY_NOT_FOUND);
         }
 
-        ActivityResponse activityResponse = activityRepository.getActivity(activityId);
-        return activityResponse;
+        return activityRepository.getActivity(activityId);
     }
 
     @Transactional(readOnly = true)
-    public List<ActivityResponse> getAllActivities() {
+    public GetAllActivitiesResponse getAllActivities() {
         List<ActivityResponse> activityResponseList = activityRepository.getAllActivities();
-        return activityResponseList;
+
+        Map<String, Map<ActivityType, List<ActivityResponse>>> allActivities = activityResponseList.stream()
+                .collect(groupingBy(ActivityResponse::getYear,
+                        groupingBy(ActivityResponse::getActivityType, toList())));
+
+        return GetAllActivitiesResponse.from(allActivities);
     }
 
     @Transactional(readOnly = true)
@@ -54,18 +69,26 @@ public class ActivityService {
     }
 
     @Transactional
-    public void applyActivity(long memberId, long activityId) {
+    public ActivityApply applyActivity(long memberId, long activityId) {
         if (checkApply(memberId, activityId)) {
             throw new CustomException(ErrorCode.ALREADY_APPLIED);
         }
         Activity activity = findById(activityId);
-        activityApplyService.apply(memberId, activity);
+        return activityApplyService.apply(memberId, activity);
     }
 
     @Transactional
-    public long create(Activity activity) {
-        Activity savedActivity = activityRepository.save(activity);
-        return savedActivity.getId();
+    public Activity create(long memberId, ActivityRequest activityRequest) {
+        Activity activity = Arrays.stream(ActivityType.values())
+                .filter(type -> type == activityRequest.getActivityType())
+                .findFirst()
+                .map(type -> type.toEntity(activityRequest))
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_SUPPORT_ACTIVITY));
+
+        Member member = Member.builder().id(memberId).build();
+        activity.setLeader(member);
+
+        return activityRepository.save(activity);
     }
 
     @Transactional
@@ -100,8 +123,21 @@ public class ActivityService {
         List<Member> memberList = memberService.getMembersByLoginId(loginIdList);
 
         memberActivityService.registerMembers(activity, memberList);
-        activityApplyService.deleteAllApplies(activityId);
-        activity.closeRecruitment();
+        activity.updateStatus(Status.ON); // 다시 모집할 수 있으므로 신청내역은 남겨둔다.
+    }
+
+    @Transactional
+    public void reopenRecruitment(long memberId, long activityId) {
+        Activity activity = validateLeaderAndReturn(memberId, activityId);
+
+        memberActivityService.deleteAllByActivity(activity.getId());
+        activity.updateStatus(Status.RECRUIT);
+    }
+
+    @Transactional
+    public void finishActivity(long memberId, long activityId) {
+        Activity activity = validateLeaderAndReturn(memberId, activityId);
+        activity.updateStatus(Status.OFF);
     }
 
     @Transactional

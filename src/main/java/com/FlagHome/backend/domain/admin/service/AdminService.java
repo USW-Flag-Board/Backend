@@ -2,6 +2,7 @@ package com.FlagHome.backend.domain.admin.service;
 
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
+import com.FlagHome.backend.domain.member.avatar.service.AvatarService;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
@@ -21,6 +22,7 @@ public class AdminService {
     private final MemberRepository memberRepository;
     private final AuthRepository authRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AvatarService avatarService;
 
     @Transactional(readOnly = true)
     public List<AuthInformation> getAllAuthorizedAuthMember() {
@@ -33,7 +35,7 @@ public class AdminService {
                 .map(authInformation -> Member.of(authInformation, passwordEncoder))
                 .orElseThrow(() -> new CustomException(ErrorCode.AUTH_INFORMATION_NOT_FOUND));
 
-        memberRepository.save(member);
+        Member savedMember = memberRepository.save(member);
         deleteAuthInformation(authInformationId);
     }
 

@@ -7,7 +7,6 @@ import com.FlagHome.backend.domain.auth.dto.SignUpResponse;
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import com.FlagHome.backend.domain.auth.service.AuthService;
-import com.FlagHome.backend.domain.mail.service.MailService;
 import com.FlagHome.backend.domain.member.Role;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
@@ -17,14 +16,11 @@ import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.jwt.JwtUtilizer;
 import com.FlagHome.backend.global.utility.RandomGenerator;
-import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
-import com.amazonaws.services.simpleemail.model.SendEmailResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,11 +28,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
@@ -57,11 +51,8 @@ public class AuthServiceTest {
     @Autowired
     private JwtUtilizer jwtUtilizer;
 
-    @Mock
-    private MailService mailService;
-
-    @Mock
-    private AmazonSimpleEmailService amazonSimpleEmailService;
+    @Autowired
+    private EntityManager entityManager;
 
     @Nested
     @DisplayName("아이디 유효성 테스트")
@@ -114,7 +105,7 @@ public class AuthServiceTest {
                     .build());
 
             assertThatNoException()
-                    .isThrownBy(() -> authService.validateDuplicateEmail("hejow124@suwon.ac.kr"));
+                    .isThrownBy(() -> authService.validateEmail("hejow124@suwon.ac.kr"));
         }
 
         @Test
@@ -123,7 +114,7 @@ public class AuthServiceTest {
             String email = "gmlwh124@naver.com";
 
             assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> authService.validateDuplicateEmail(email))
+                    .isThrownBy(() -> authService.validateEmail(email))
                     .withMessage(ErrorCode.NOT_USW_EMAIL.getMessage());
         }
 
@@ -141,7 +132,7 @@ public class AuthServiceTest {
                     .build());
 
             assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> authService.validateDuplicateEmail(email))
+                    .isThrownBy(() -> authService.validateEmail(email))
                     .withMessage(ErrorCode.EMAIL_EXISTS.getMessage());
         }
     }
@@ -303,7 +294,7 @@ public class AuthServiceTest {
         String loginId = "gmlwh124";
         String password = "1234";
 
-        memberRepository.saveAndFlush(Member.builder()
+        Member savedMember = memberRepository.saveAndFlush(Member.builder()
                         .loginId(loginId)
                         .password(passwordEncoder.encode(password))
                         .role(Role.ROLE_USER)
@@ -316,6 +307,7 @@ public class AuthServiceTest {
 
         // when
         TokenResponse tokenResponse = authService.login(logInRequest);
+        entityManager.clear();
 
         // then : 정상적으로 발급되는 지, 유효한 지, 데이터가 일치하는 지
         assertThat(tokenResponse.getAccessToken()).isNotNull();
@@ -330,6 +322,7 @@ public class AuthServiceTest {
         Authentication authentication = jwtUtilizer.getAuthentication(accessToken);
         long memberId = Long.parseLong(authentication.getName());
         Member member = memberRepository.findByLoginId(loginId).get();
+        assertThat(savedMember.getLastLoginTime()).isNotEqualTo(member.getLastLoginTime());
         assertThat(member.getId()).isEqualTo(memberId);
     }
 

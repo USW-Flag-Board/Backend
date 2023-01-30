@@ -7,12 +7,15 @@ import com.FlagHome.backend.domain.activity.Status;
 import com.FlagHome.backend.domain.activity.dto.ActivityRequest;
 import com.FlagHome.backend.domain.member.entity.Member;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import java.time.LocalDateTime;
 
 @Entity
+@Getter
 @NoArgsConstructor
 public class Study extends Activity {
     @Column
@@ -22,9 +25,9 @@ public class Study extends Activity {
     private String bookName;
 
     @Builder
-    public Study(Long id, String name, String description, Member leader, ActivityType activityType,
-                 Proceed proceed, Status status, BookUsage bookUsage, String bookName) {
-        super(id, name, description, leader, activityType, proceed, status);
+    public Study(String name, String description, Member leader, ActivityType activityType,
+                 Proceed proceed, Status status, LocalDateTime season, BookUsage bookUsage, String bookName) {
+        super(name, description, leader, activityType, proceed, status, season);
         this.bookUsage = bookUsage;
         this.bookName = bookName;
     }
@@ -44,6 +47,7 @@ public class Study extends Activity {
                 .bookName(activityRequest.getBookName())
                 .activityType(ActivityType.STUDY)
                 .status(Status.RECRUIT)
+                .season(LocalDateTime.now())
                 .build();
     }
 }

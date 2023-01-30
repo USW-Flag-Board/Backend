@@ -6,12 +6,12 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static com.FlagHome.backend.domain.activity.entity.QActivity.activity;
 import static com.FlagHome.backend.domain.member.entity.QMember.member;
+import static com.querydsl.core.types.dsl.Expressions.asNumber;
 
 @Repository
 @RequiredArgsConstructor
@@ -22,11 +22,13 @@ public class ActivityRepositoryImpl implements ActivityRepositoryCustom {
     public ActivityResponse getActivity(long activityId) {
         return queryFactory
                 .select(new QActivityResponse(
-                        Expressions.asNumber(activityId),
+                        asNumber(activityId).as(activity.id),
                         activity.name,
                         member.name,
                         activity.activityType,
-                        activity.status))
+                        activity.status,
+                        activity.season,
+                        activity.createdAt))
                 .from(activity)
                 .innerJoin(activity.leader, member)
                 .where(activity.id.eq(activityId))
@@ -41,7 +43,9 @@ public class ActivityRepositoryImpl implements ActivityRepositoryCustom {
                         activity.name,
                         member.name,
                         activity.activityType,
-                        activity.status))
+                        activity.status,
+                        activity.season,
+                        activity.createdAt))
                 .from(activity)
                 .innerJoin(activity.leader, member)
                 .fetch();

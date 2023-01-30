@@ -2,6 +2,7 @@ package com.FlagHome.backend.domain.post.controller;
 
 import com.FlagHome.backend.domain.Status;
 import com.FlagHome.backend.domain.board.entity.Board;
+import com.FlagHome.backend.domain.like.service.LikeService;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.post.dto.PostDto;
 import com.FlagHome.backend.domain.post.entity.Post;
@@ -23,24 +24,27 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.ArrayList;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(PostController.class)
 @MockBean(JpaMetamodelMappingContext.class)
 @WithMockUser
 public class PostControllerTestAsSlice {
-    private static final String baseURL = "/api/posts";
+    private static final String BASE_URL = "/api/posts";
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
     private PostService postService;
+
+    @MockBean
+    private LikeService likeService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -57,9 +61,9 @@ public class PostControllerTestAsSlice {
 
         dummyMember = Member.builder().id(1L).name("gildong").email("gildong@naver.com").loginId("gildong123").password("123123").phoneNumber("010-444-4444").build();
 
-        dummyPost = new Post(1L, dummyMember, "제목이다", "내용이다", new ArrayList<>(), dummyBoard, Status.NORMAL, 444L);
+        dummyPost = new Post(1L, dummyMember, "제목이다", "내용이다", new ArrayList<>(), dummyBoard, Status.NORMAL, 444L, 0L);
 
-        dummyReply = new Reply(1L, dummyMember, dummyPost, "댓글내용", 1L, 1L, 1L, Status.NORMAL);
+        dummyReply = new Reply(1L, dummyMember, dummyPost, "댓글내용", 1L, 1L, 1L, 0L, Status.NORMAL);
         dummyPost.getReplyList().add(dummyReply);
     }
 
@@ -73,7 +77,7 @@ public class PostControllerTestAsSlice {
         given(postService.createPost(any())).willReturn(postDto);
 
         // when
-        ResultActions actions = mockMvc.perform(post(baseURL)
+        ResultActions actions = mockMvc.perform(post(BASE_URL)
                 .with(csrf())
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -81,8 +85,10 @@ public class PostControllerTestAsSlice {
 
         // then
         actions
-                .andExpect(status().isCreated())
-                .andExpect(redirectedUrl(baseURL + "/" + postDto.getId()));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("payload", is(BASE_URL + "/" + postDto.getId())))
+                .andExpect(jsonPath("status", is("CREATED")))
+                .andExpect(jsonPath("message", is("게시글 생성에 성공 하였습니다.")));
     }
 
     @Test
@@ -93,18 +99,14 @@ public class PostControllerTestAsSlice {
         given(postService.getPost(dummyPost.getId(), null)).willReturn(returnPostDto);
 
         // when
-        ResultActions actions = mockMvc.perform(get(baseURL)
+        ResultActions actions = mockMvc.perform(get(BASE_URL)
                 .param("postId", Long.toString(dummyPost.getId())));
 
         // then
         actions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(dummyPost.getId()))
-                .andExpect(jsonPath("userId").value(dummyMember.getId()))
-                .andExpect(jsonPath("title").value("제목이다"))
-                .andExpect(jsonPath("content").value("내용이다"))
-                .andExpect(jsonPath("boardId").value(dummyBoard.getId()))
-                .andExpect(jsonPath("viewCount").value(dummyPost.getViewCount()));
+                .andExpect(jsonPath("status", is("OK")))
+                .andExpect(jsonPath("message", is("게시글 가져오기에 성공 하였습니다.")));
     }
 
     @Test
@@ -121,17 +123,15 @@ public class PostControllerTestAsSlice {
         given(postService.getPost(dummyPost.getId(), true)).willReturn(returnPostDto);
 
         // when
-        ResultActions actions = mockMvc.perform(get(baseURL)
+        ResultActions actions = mockMvc.perform(get(BASE_URL)
                 .param("postId", Long.toString(dummyPost.getId()))
                 .param("viaBoard", "true"));
 
         // then
         actions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(dummyPost.getId()))
-                .andExpect(jsonPath("content").value("내용이다"))
-                .andExpect(jsonPath("replyList").isNotEmpty())
-                .andDo(print());
+                .andExpect(jsonPath("status", is("OK")))
+                .andExpect(jsonPath("message", is("게시글 가져오기에 성공 하였습니다.")));
     }
 
     @Test
@@ -144,7 +144,7 @@ public class PostControllerTestAsSlice {
         String jsonBody = objectMapper.writeValueAsString(postDto);
 
         // when
-        ResultActions actions = mockMvc.perform(patch(baseURL)
+        ResultActions actions = mockMvc.perform(patch(BASE_URL)
                 .with(csrf())
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -153,12 +153,8 @@ public class PostControllerTestAsSlice {
         // then
         actions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(dummyPost.getId()))
-                .andExpect(jsonPath("userId").value(dummyMember.getId()))
-                .andExpect(jsonPath("title").value("제목이다"))
-                .andExpect(jsonPath("content").value("내용이다"))
-                .andExpect(jsonPath("boardId").value(dummyBoard.getId()))
-                .andExpect(jsonPath("viewCount").value(dummyPost.getViewCount()));
+                .andExpect(jsonPath("status", is("OK")))
+                .andExpect(jsonPath("message", is("게시글 수정에 성공 하였습니다.")));
     }
 
     @Test

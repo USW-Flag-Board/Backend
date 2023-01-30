@@ -12,5 +12,4 @@ import java.util.Optional;
 public interface ActivityRepository extends JpaRepository<Activity, Long>, ActivityRepositoryCustom {
     Optional<Activity> findById(Long activityId);
     boolean existsById(Long activityId);
-    void deleteById(Activity activityId);
 }

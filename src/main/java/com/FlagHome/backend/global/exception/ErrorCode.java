@@ -15,6 +15,10 @@ public enum ErrorCode {
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
     NOT_EMAIL(HttpStatus.BAD_REQUEST, "이메일 형식이 아닙니다."),
     NOT_SUPPORT_ACTIVITY(HttpStatus.BAD_REQUEST, "지원하는 활동이 아닙니다."),
+    NOT_SUPPORT_LIKE(HttpStatus.BAD_REQUEST, "지원하는 좋아요 형식이 아닙니다."),
+    ALREADY_EXISTS_LIKE(HttpStatus.BAD_REQUEST, "이미 좋아요를 눌렀습니다."),
+    NOT_EXISTS_LIKE(HttpStatus.BAD_REQUEST, "이미 좋아요 취소를 하였습니다."),
+    EMAIL_ID_NOT_MATCH(HttpStatus.BAD_REQUEST, "이메일과 아이디가 일치하지 않습니다."),
 
     /** 401 - UNAUTHORIZED  */
     UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, "로그인이 필요한 기능입니다."),
@@ -34,6 +38,7 @@ public enum ErrorCode {
     ACTIVITY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 활동입니다."),
     REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "신고이력이 존재하지 않습니다."),
     EMAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "휴면계정이 존재하지 않습니다."),
+    FIND_REQUEST_NONE(HttpStatus.NOT_FOUND, "아이디/비밀번호 찾기 요청이 존재하지 않습니다."),
 
     /**
      * 409 - REQUEST_CONFLICT

@@ -28,7 +28,7 @@ import java.util.List;
 public class BoardController {
     private final BoardService boardService;
     private final BoardMapper mapper;
-    private final static String BOARD_DEFAULT_URL = "/api/board";
+    private final static String BOARD_DEFAULT_URL = "/api/boards";
 
     @Tag(name = "board")
     @Operation(summary = "게시판 생성")

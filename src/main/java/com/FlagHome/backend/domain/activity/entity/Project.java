@@ -6,21 +6,24 @@ import com.FlagHome.backend.domain.activity.Status;
 import com.FlagHome.backend.domain.activity.dto.ActivityRequest;
 import com.FlagHome.backend.domain.member.entity.Member;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import java.time.LocalDateTime;
 
 @Entity
+@Getter
 @NoArgsConstructor
 public class Project extends Activity {
     @Column
     private String githubLink;
 
     @Builder
-    public Project(Long id, String name, String description, Member leader, ActivityType activityType,
-                   Proceed proceed, Status status, String githubLink) {
-        super(id, name, description, leader, activityType, proceed, status);
+    public Project(String name, String description, Member leader, ActivityType activityType,
+                   Proceed proceed, Status status, LocalDateTime season, String githubLink) {
+        super(name, description, leader, activityType, proceed, status, season);
         this.githubLink = githubLink;
     }
 
@@ -37,6 +40,7 @@ public class Project extends Activity {
                 .githubLink(activityRequest.getGithubLink())
                 .activityType(ActivityType.PROJECT)
                 .status(Status.RECRUIT)
+                .season(LocalDateTime.now())
                 .build();
     }
 }

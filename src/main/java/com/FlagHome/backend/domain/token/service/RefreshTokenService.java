@@ -1,12 +1,13 @@
 package com.FlagHome.backend.domain.token.service;
 
+import com.FlagHome.backend.domain.token.entity.Token;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.jwt.JwtUtilizer;
 import com.FlagHome.backend.domain.token.dto.TokenRequest;
 import com.FlagHome.backend.domain.token.dto.TokenResponse;
 import com.FlagHome.backend.domain.token.entity.RefreshToken;
-import com.FlagHome.backend.domain.token.repository.RefreshTokenRepository;
+import com.FlagHome.backend.domain.token.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.Authentication;
@@ -17,20 +18,21 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
-public class RefreshTokenService {
-    private final RefreshTokenRepository refreshTokenRepository;
+public class RefreshTokenService implements TokenService {
+    private final TokenRepository tokenRepository;
 
     private final JwtUtilizer jwtUtilizer;
 
+    @Override
     @Transactional
-    public void issueToken(String key, String value) {
-        RefreshToken refreshToken = RefreshToken.builder()
+    public Token issueToken(String key, String value) {
+        Token refreshToken = RefreshToken.builder()
                 .key(key)
                 .value(value)
                 .expiredAt(LocalDateTime.now().plusWeeks(1))
                 .build();
 
-        refreshTokenRepository.save(refreshToken);
+        return tokenRepository.save(refreshToken);
     }
 
     @Transactional
@@ -40,22 +42,21 @@ public class RefreshTokenService {
         }
 
         Authentication authentication = jwtUtilizer.getAuthentication(tokenRequest.getAccessToken());
-        RefreshToken refreshToken = findToken(authentication.getName());
+        Token refreshToken = findToken(authentication.getName());
 
         if (!StringUtils.equals(refreshToken.getValue(), tokenRequest.getRefreshToken())) {
             throw new CustomException(ErrorCode.TOKEN_NOT_MATCH);
         }
 
         TokenResponse tokenResponse = jwtUtilizer.generateTokenDto(authentication);
-
-        // dirty checking
-        refreshToken.resetValue(tokenResponse.getRefreshToken(), LocalDateTime.now().plusWeeks(1));
+        refreshToken.updateValue(tokenResponse.getRefreshToken(), LocalDateTime.now().plusWeeks(1));
 
         return tokenResponse;
     }
 
-    private RefreshToken findToken(String key) {
-        return refreshTokenRepository.findFirstByKeyOrderByIdDesc(key)
+    @Override
+    public Token findToken(String key) {
+        return tokenRepository.findFirstByKeyOrderByIdDesc(key)
                 .orElseThrow(() -> new CustomException(ErrorCode.UNAUTHORIZED_TOKEN));
     }
 }

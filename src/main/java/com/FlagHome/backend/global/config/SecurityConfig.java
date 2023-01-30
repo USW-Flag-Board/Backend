@@ -13,6 +13,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -28,11 +31,25 @@ public class SecurityConfig {
     }
 
     @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .httpBasic().disable()
                 .formLogin().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().cors();
 
         http
                 .exceptionHandling()
@@ -42,14 +59,33 @@ public class SecurityConfig {
         http.authorizeRequests()
                 .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll()
                 .antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/api/activities/**").permitAll()
-                .antMatchers("api/reports/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/member/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/member/**").permitAll()
-                .antMatchers("/api/member/**").hasAnyRole("USER", "CREW")
-                .antMatchers("/api/post/**").hasAnyRole("USER", "CREW")
-                .antMatchers("/api/reply/**").hasAnyRole("USER", "CREW")
-                .antMatchers("/api/file/**").hasAnyRole("USER", "CREW")
+
+                // 활동
+                .antMatchers(HttpMethod.GET, "/api/activities", "/api/activities/{id}").permitAll()
+                .antMatchers("/api/activities/**").hasAnyRole("CREW")
+
+                // 게시판
+                .antMatchers(HttpMethod.GET, "/api/boards/**").permitAll()
+                .antMatchers("api/boards/**").hasRole("ADMIN")
+
+                // 멤버
+                .antMatchers(HttpMethod.GET, "/api/members/{lgoinId}").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/members/**").permitAll()
+                .antMatchers("/api/members/**").hasAnyRole("USER", "CREW")
+
+                // 게시글
+                .antMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
+                .antMatchers("/api/posts/**").hasAnyRole("USER", "CREW")
+
+                // 댓글
+                .antMatchers(HttpMethod.GET, "/api/replies/**").permitAll()
+                .antMatchers("/api/replies/**").hasAnyRole("USER", "CREW")
+
+                // 신고
+                .antMatchers(HttpMethod.POST, "api/reports/**").hasAnyRole("USER", "CREW")
+                .antMatchers("api/reports/**").hasRole("ADMIN")
+
+                // 관리자
                 .antMatchers("/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated();
 

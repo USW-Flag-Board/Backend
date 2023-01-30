@@ -4,7 +4,13 @@ import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyRespo
 import com.FlagHome.backend.domain.activity.activityapply.entity.ActivityApply;
 import com.FlagHome.backend.domain.activity.activityapply.repository.ActivityApplyRepository;
 import com.FlagHome.backend.domain.activity.dto.ActivityResponse;
-import com.FlagHome.backend.domain.activity.entity.*;
+import com.FlagHome.backend.domain.activity.entity.Activity;
+import com.FlagHome.backend.domain.activity.entity.Mentoring;
+import com.FlagHome.backend.domain.activity.entity.Project;
+import com.FlagHome.backend.domain.activity.entity.Study;
+import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
+import com.FlagHome.backend.domain.activity.memberactivity.entity.MemberActivity;
+import com.FlagHome.backend.domain.activity.memberactivity.repository.MemberActivityRepository;
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
 import com.FlagHome.backend.domain.member.Major;
 import com.FlagHome.backend.domain.member.entity.Member;
@@ -19,10 +25,14 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.persistence.EntityManager;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -35,65 +45,79 @@ public class ActivityRepositoryTest {
     private ActivityApplyRepository activityApplyRepository;
 
     @Autowired
+    private MemberActivityRepository memberActivityRepository;
+
+    @Autowired
     private MemberRepository memberRepository;
 
-    @Test
-    @DisplayName("활동 가져오기 테스트")
-    public void getActivityTest() {
-        // given
-        String memberName = "Hejow";
-        String activityName = "이름";
-        Member member = memberRepository.saveAndFlush(Member.builder()
-                .name(memberName)
-                .build());
-        ActivityType activityType = ActivityType.PROJECT;
+    @Autowired
+    private EntityManager entityManager;
 
-        Project project = Project.builder()
-                .name(activityName)
-                .leader(member)
-                .activityType(activityType)
-                .build();
+    @Nested
+    @DisplayName("활동 테스트")
+    class activityTest {
+        @Test
+        @DisplayName("활동 가져오기 테스트")
+        void getActivityTest() {
+            // given
+            String memberName = "Hejow";
+            String activityName = "이름";
+            Member member = memberRepository.saveAndFlush(Member.builder()
+                    .name(memberName)
+                    .build());
+            ActivityType activityType = ActivityType.PROJECT;
 
-        Activity activity = activityRepository.saveAndFlush(project);
+            Project project = Project.builder()
+                    .name(activityName)
+                    .leader(member)
+                    .activityType(activityType)
+                    .season(LocalDateTime.now())
+                    .build();
 
-        // when
-        ActivityResponse activityResponse = activityRepository.getActivity(activity.getId());
+            Activity activity = activityRepository.saveAndFlush(project);
 
-        // then
-        assertThat(activity.getId()).isEqualTo(activityResponse.getId());
-        assertThat(activity.getName()).isEqualTo(activityResponse.getName());
-        assertThat(activity.getLeader().getName()).isEqualTo(activityResponse.getLeader());
-        assertThat(activityResponse.getActivityType()).isEqualTo(activityType);
-    }
+            // when
+            ActivityResponse activityResponse = activityRepository.getActivity(activity.getId());
 
-    @Test
-    @DisplayName("모든 활동 가져오기 테스트")
-    public void getAllActivitiesTest() {
-        // given
-        Member member = memberRepository.save(Member.builder().build());
+            // then
+            assertThat(activity.getId()).isEqualTo(activityResponse.getId());
+            assertThat(activity.getName()).isEqualTo(activityResponse.getName());
+            assertThat(activity.getLeader().getName()).isEqualTo(activityResponse.getLeader());
+            assertThat(activityResponse.getActivityType()).isEqualTo(activityType);
+        }
 
-        Project project = Project.builder()
-                .leader(member)
-                .activityType(ActivityType.PROJECT)
-                .build();
+        @Test
+        @DisplayName("모든 활동 가져오기 테스트")
+        void getAllActivitiesTest() {
+            // given
+            Member member = memberRepository.save(Member.builder().build());
 
-        Study study = Study.builder()
-                .leader(member)
-                .activityType(ActivityType.STUDY)
-                .build();
+            Project project = Project.builder()
+                    .leader(member)
+                    .activityType(ActivityType.PROJECT)
+                    .season(LocalDateTime.now())
+                    .build();
 
-        Mentoring mentoring = Mentoring.builder()
-                .leader(member)
-                .activityType(ActivityType.MENTORING)
-                .build();
+            Study study = Study.builder()
+                    .leader(member)
+                    .activityType(ActivityType.STUDY)
+                    .season(LocalDateTime.now())
+                    .build();
 
-        activityRepository.saveAll(Arrays.asList(project, study, mentoring));
+            Mentoring mentoring = Mentoring.builder()
+                    .leader(member)
+                    .activityType(ActivityType.MENTORING)
+                    .season(LocalDateTime.now())
+                    .build();
 
-        // when
-        List<ActivityResponse> activityResponseList = activityRepository.getAllActivities();
+            activityRepository.saveAll(Arrays.asList(project, study, mentoring));
 
-        // then
-        assertThat(activityResponseList.size()).isEqualTo(3);
+            // when
+            List<ActivityResponse> activityResponseList = activityRepository.getAllActivities();
+
+            // then
+            assertThat(activityResponseList.size()).isEqualTo(3);
+        }
     }
 
     @Nested
@@ -101,7 +125,7 @@ public class ActivityRepositoryTest {
     public class activityApplyTest {
         @Test
         @DisplayName("모든 활동 신청 가져오기 테스트")
-        public void getAllAppliesTest() {
+        void getAllAppliesTest() {
             // given
             Major major = Major.컴퓨터SW;
 
@@ -109,7 +133,7 @@ public class ActivityRepositoryTest {
             Member member2 = memberRepository.save(Member.builder().major(major).build());
             Member member3 = memberRepository.save(Member.builder().major(major).build());
 
-            Activity activity = activityRepository.saveAndFlush(Project.builder().leader(member1).build());
+            Activity activity = activityRepository.saveAndFlush(Project.builder().leader(member1).season(LocalDateTime.now()).build());
 
             ActivityApply activityApply1 = ActivityApply.builder().member(member2).activity(activity).build();
             ActivityApply activityApply2 = ActivityApply.builder().member(member3).activity(activity).build();
@@ -127,7 +151,7 @@ public class ActivityRepositoryTest {
 
         @Test
         @DisplayName("모든 신청 삭제하기 테스트")
-        public void deleteAllAppliesTest() {
+        void deleteAllAppliesTest() {
             // given
             Major major = Major.컴퓨터SW;
 
@@ -135,7 +159,7 @@ public class ActivityRepositoryTest {
             Member member2 = memberRepository.save(Member.builder().major(major).build());
             Member member3 = memberRepository.save(Member.builder().major(major).build());
 
-            Activity activity = activityRepository.saveAndFlush(Project.builder().leader(member1).build());
+            Activity activity = activityRepository.saveAndFlush(Project.builder().leader(member1).season(LocalDateTime.now()).build());
 
             ActivityApply activityApply1 = ActivityApply.builder().member(member2).activity(activity).build();
             ActivityApply activityApply2 = ActivityApply.builder().member(member3).activity(activity).build();
@@ -152,12 +176,12 @@ public class ActivityRepositoryTest {
 
         @Test
         @DisplayName("신청 체크 테스트")
-        public void checkApplyTest() {
+        void checkApplyTest() {
             // given
             Member member1 = memberRepository.save(Member.builder().build());
             Member member2 = memberRepository.save(Member.builder().build());
 
-            Activity activity = activityRepository.save(Study.builder().leader(member1).build());
+            Activity activity = activityRepository.save(Study.builder().leader(member1).season(LocalDateTime.now()).build());
 
             activityApplyRepository.save(ActivityApply.builder()
                     .member(member2)
@@ -175,10 +199,10 @@ public class ActivityRepositoryTest {
 
         @Test
         @DisplayName("활동 신청 정보 가져오기 테스트")
-        public void findApplyByMemberAndActivityTest() {
+        void findApplyByMemberAndActivityTest() {
             // given
             Member member = memberRepository.save(Member.builder().build());
-            Activity activity = activityRepository.save(Mentoring.builder().leader(member).build());
+            Activity activity = activityRepository.save(Mentoring.builder().leader(member).season(LocalDateTime.now()).build());
 
             ActivityApply apply = activityApplyRepository.save(ActivityApply.builder()
                     .member(member)
@@ -192,6 +216,86 @@ public class ActivityRepositoryTest {
             assertThat(apply.getId()).isEqualTo(findApply.getId());
             assertThat(apply.getMember()).isEqualTo(findApply.getMember());
             assertThat(apply.getActivity()).isEqualTo(findApply.getActivity());
+        }
+    }
+
+    @Nested
+    @DisplayName("멤버활동 테스트")
+    class memberActivityTest {
+        @Test
+        @DisplayName("활동으로 지우기 테스트")
+        void deleteAllByActivityTest() {
+            // given
+            Activity activity = activityRepository.save(Project.builder().season(LocalDateTime.now()).build());
+
+            MemberActivity memberActivity1 = MemberActivity.builder().activity(activity).build();
+            MemberActivity memberActivity2 = MemberActivity.builder().activity(activity).build();
+
+            memberActivityRepository.saveAll(Arrays.asList(memberActivity1, memberActivity2));
+
+            // when
+            memberActivityRepository.deleteAllByActivityId(activity.getId());
+            entityManager.clear();
+
+            // then
+            assertThatExceptionOfType(NoSuchElementException.class)
+                    .isThrownBy(() -> memberActivityRepository.findById(activity.getId()).get());
+        }
+
+        @Test
+        @DisplayName("멤버 참가활동 가져오기 테스트")
+        void getAllParticipateActivityTest() {
+            // given
+            String loginId = "gmlwh124";
+            Member member = memberRepository.save(Member.builder().loginId(loginId).build());
+
+            Activity project = Project.builder()
+                    .name("project")
+                    .season(LocalDateTime.now())
+                    .status(Status.ON)
+                    .build();
+
+            Activity mentoring = Mentoring.builder()
+                    .name("mentoring")
+                    .season(LocalDateTime.now())
+                    .status(Status.RECRUIT)
+                    .build();
+
+            Activity study = Study.builder()
+                    .name("study")
+                    .season(LocalDateTime.now())
+                    .status(Status.OFF)
+                    .build();
+
+            activityRepository.saveAll(Arrays.asList(project, mentoring, study));
+
+
+            MemberActivity memberActivity1 = MemberActivity.builder()
+                    .member(member)
+                    .activity(project)
+                    .build();
+
+            MemberActivity memberActivity2 = MemberActivity.builder()
+                    .member(member)
+                    .activity(mentoring)
+                    .build();
+
+            MemberActivity memberActivity3 = MemberActivity.builder()
+                    .member(member)
+                    .activity(study)
+                    .build();
+
+            memberActivityRepository.saveAll(Arrays.asList(memberActivity1, memberActivity2, memberActivity3));
+
+            // when
+            List<ParticipateResponse> responseList = memberActivityRepository.getAllActivitiesOfMember(loginId);
+
+            // then
+            assertThat(responseList.size()).isEqualTo(3);
+            assertThat(responseList.get(0).getId()).isNotNull();
+            assertThat(responseList.get(0).getYear()).isInstanceOf(Integer.class);
+            assertThat(responseList.get(0).getSeason()).isNotNull();
+            assertThat(responseList.get(0).getStatus()).isNotNull();
         }
     }
 }

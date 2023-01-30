@@ -1,18 +1,27 @@
 package com.FlagHome.backend.domain.member.service;
 
+import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
+import com.FlagHome.backend.domain.activity.memberactivity.service.MemberActivityService;
 import com.FlagHome.backend.domain.board.enums.SearchType;
 import com.FlagHome.backend.domain.mail.service.MailService;
-import com.FlagHome.backend.domain.member.dto.MyPageResponse;
+import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
+import com.FlagHome.backend.domain.member.avatar.dto.MyProfileResponse;
+import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
+import com.FlagHome.backend.domain.member.avatar.service.AvatarService;
+import com.FlagHome.backend.domain.member.dto.FindResponse;
+import com.FlagHome.backend.domain.member.dto.MemberProfileResponse;
 import com.FlagHome.backend.domain.member.dto.UpdatePasswordRequest;
-import com.FlagHome.backend.domain.member.dto.UpdateProfileRequest;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.dto.PostDto;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
 import com.FlagHome.backend.domain.sleeping.entity.Sleeping;
 import com.FlagHome.backend.domain.sleeping.repository.SleepingRepository;
+import com.FlagHome.backend.domain.token.entity.Token;
+import com.FlagHome.backend.domain.token.service.FindRequestTokenService;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
+import com.FlagHome.backend.global.utility.InputValidator;
 import com.FlagHome.backend.global.utility.RandomGenerator;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,11 +39,16 @@ public class MemberService {
     private final PostRepository postRepository;
     private final SleepingRepository sleepingRepository;
     private final MailService mailService;
+    private final AvatarService avatarService;
+    private final FindRequestTokenService findRequestTokenService;
     private final PasswordEncoder passwordEncoder;
+    private final MemberActivityService memberActivityService;
+    private final InputValidator inputValidator;
 
     @Transactional
     public void withdraw(Long memberId, String password) {
-        validatePassword(memberId, password);
+        validateMemberPassword(memberId, password);
+        avatarService.deleteAvatar(memberId);
         deleteMemberById(memberId);
     }
 
@@ -42,33 +57,46 @@ public class MemberService {
         memberRepository.deleteById(memberId);
     }
 
-    public void isMemberExist(String loginId, String email) {
-        validateUSWEmail(email);
-        if (!memberRepository.isMemberExist(loginId, email)) {
+    public FindResponse findId(String email) {
+        inputValidator.validateUSWEmail(email);
+
+        if (!memberRepository.existsByEmail(email)) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
+        FindResponse response = issueTokenAndSendMail(email);
+        return response;
     }
 
-    public String sendFindIdResult(String email) {
+    public FindResponse findPassword(String loginId, String email) {
+        inputValidator.validateUSWEmail(email);
         Member member = findByEmail(email);
-        mailService.sendFindIdResult(email, member.getLoginId());
-        return email;
+
+        if (!StringUtils.equals(loginId, member.getLoginId())) {
+            throw new CustomException(ErrorCode.EMAIL_ID_NOT_MATCH);
+        }
+
+        FindResponse response = issueTokenAndSendMail(email);
+        return response;
     }
 
-    @Transactional
-    public String sendNewPassword(String email) {
-        Member member = findByEmail(email);
-        String newPassword = RandomGenerator.getRandomPassword();
+    public void validateCertification(String email, String certification) {
+        Token findRequestToken = findRequestTokenService.findToken(email);
+        findRequestToken.validateExpireTime();
+        inputValidator.validateCertification(certification, findRequestToken.getValue());
+    }
 
+    @Transactional // 비밀번호를 잊어서 바꾸는 경우
+    public void changePassword(String email, String newPassword) {
+        inputValidator.validatePassword(newPassword);
+        Member member = findByEmail(email);
         member.updatePassword(passwordEncoder.encode(newPassword));
-        return mailService.sendNewPassword(email, newPassword);
     }
 
-    @Transactional
+    @Transactional // 비밀번호를 유저가 변경하는 경우
     public String updatePassword(Long memberId, UpdatePasswordRequest updatePasswordRequest) {
-        validatePassword(memberId, updatePasswordRequest.getCurrentPassword());
+        inputValidator.validatePassword(updatePasswordRequest.getNewPassword());
+        Member member = validateMemberPassword(memberId, updatePasswordRequest.getCurrentPassword());
 
-        Member member = findById(memberId);
         if (passwordEncoder.matches(updatePasswordRequest.getNewPassword(), member.getPassword())) {
             throw new CustomException(ErrorCode.PASSWORD_IS_SAME);
         }
@@ -77,27 +105,31 @@ public class MemberService {
         return member.getLoginId();
     }
 
-    @Transactional
-    public MyPageResponse getMyPage(String loginId) {
-        Member member = findByLoginId(loginId);
+    public MemberProfileResponse getMemberProfile(String loginId) {
+        AvatarResponse avatarResponse = avatarService.getAvatar(loginId);
+        List<ParticipateResponse> participateResponseList = memberActivityService.getAllActivitiesOfMember(loginId);
         List<PostDto> postList = getMemberPostByLoginId(loginId);
 
-        return MyPageResponse.of(member, postList);
+        return MemberProfileResponse.of(avatarResponse, participateResponseList, postList);
+    }
+
+    public MyProfileResponse getMyProfile(long memberId) {
+        return avatarService.getMyProfile(memberId);
     }
 
     @Transactional
-    public String updateProfile(Long memberId, UpdateProfileRequest updateProfileRequest) {
-        Member member = findById(memberId);
-        member.updateProfile(updateProfileRequest);
-
-        return member.getLoginId();
+    public void updateAvatar(long memberId, UpdateAvatarRequest updateAvatarRequest) {
+        avatarService.updateAvatar(memberId, updateAvatarRequest);
     }
 
     @Transactional
     //@Scheduled(cron = "000000")  이후에 설정하기
     public void changeAllToSleepMember() {
-        List<Member> sleepingList = memberRepository.getAllSleepMembers();
-        sleepingList.forEach(member -> sleepingRepository.save(Sleeping.of(member,passwordEncoder)));
+        List<Member> sleepingMembers = memberRepository.getAllSleepMembers();
+        List<Sleeping> sleepingList = sleepingMembers.stream()
+                        .map(member -> Sleeping.of(member, passwordEncoder))
+                        .collect(Collectors.toList());
+        sleepingRepository.saveAll(sleepingList);
     }
 
     @Transactional(readOnly = true)
@@ -115,25 +147,26 @@ public class MemberService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
-    private void validatePassword(Long memberId, String password) {
-        // 비밀번호 검사는 로그인된 대상만 진행
+    public Member findById(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    private Member validateMemberPassword(Long memberId, String password) {
         Member member = findById(memberId);
 
         if (!passwordEncoder.matches(password, member.getPassword())) {
             throw new CustomException(ErrorCode.PASSWORD_NOT_MATCH);
         }
+
+        return member;
     }
 
-    private void validateUSWEmail(String email) {
-        int separateIndex = StringUtils.indexOf(email, "@");
-        if (!StringUtils.equals(email.substring(separateIndex), "@suwon.ac.kr")) {
-            throw new CustomException(ErrorCode.NOT_USW_EMAIL);
-        }
-    }
-
-    public Member findById(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    private FindResponse issueTokenAndSendMail(String email) {
+        String certification = RandomGenerator.getRandomNumber();
+        Token findRequestToken = findRequestTokenService.issueToken(email, certification);
+        mailService.sendFindCertification(email, certification);
+        return FindResponse.from(findRequestToken);
     }
 
     private Member findByEmail(String email) {

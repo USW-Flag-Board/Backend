@@ -1,6 +1,7 @@
 package com.FlagHome.backend.domain.activity.memberactivity.service;
 
 import com.FlagHome.backend.domain.activity.entity.Activity;
+import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.entity.MemberActivity;
 import com.FlagHome.backend.domain.activity.memberactivity.repository.MemberActivityRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
@@ -8,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,5 +24,15 @@ public class MemberActivityService {
                         .collect(Collectors.toList());
 
         memberActivityRepository.saveAll(memberActivityList);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ParticipateResponse> getAllActivitiesOfMember(String loginId) {
+        return memberActivityRepository.getAllActivitiesOfMember(loginId);
+    }
+
+    @Transactional
+    public void deleteAllByActivity(long activityId) {
+        memberActivityRepository.deleteAllByActivityId(activityId);
     }
 }
