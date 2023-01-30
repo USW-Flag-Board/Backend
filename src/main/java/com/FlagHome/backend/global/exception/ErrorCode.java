@@ -33,6 +33,7 @@ public enum ErrorCode {
     APPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하는 신청 내역이 없습니다."),
     ACTIVITY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 활동입니다."),
     REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "신고이력이 존재하지 않습니다."),
+    EMAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "휴면계정이 존재하지 않습니다."),
 
     /**
      * 409 - REQUEST_CONFLICT

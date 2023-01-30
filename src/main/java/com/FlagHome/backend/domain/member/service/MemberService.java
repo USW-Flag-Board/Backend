@@ -9,8 +9,8 @@ import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.dto.PostDto;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
-import com.FlagHome.backend.domain.withdrawal.entity.Withdrawal;
-import com.FlagHome.backend.domain.withdrawal.repository.WithdrawalRepository;
+import com.FlagHome.backend.domain.sleeping.entity.Sleeping;
+import com.FlagHome.backend.domain.sleeping.repository.SleepingRepository;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.utility.RandomGenerator;
@@ -27,8 +27,8 @@ import java.util.List;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
+    private final SleepingRepository sleepingRepository;
     private final MailService mailService;
-    private final WithdrawalRepository withdrawalRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
@@ -97,7 +97,7 @@ public class MemberService {
     //@Scheduled(cron = "000000")  이후에 설정하기
     public void changeAllToSleepMember() {
         List<Member> sleepingList = memberRepository.getAllSleepMembers();
-        sleepingList.forEach(member -> withdrawalRepository.save(Withdrawal.of(member,passwordEncoder)));
+        sleepingList.forEach(member -> sleepingRepository.save(Sleeping.of(member,passwordEncoder)));
     }
 
     @Transactional(readOnly = true)
@@ -131,7 +131,7 @@ public class MemberService {
         }
     }
 
-    private Member findById(Long memberId) {
+    public Member findById(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }

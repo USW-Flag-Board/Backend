@@ -1,8 +1,5 @@
-package com.FlagHome.backend.domain.withdrawal.entity;
+package com.FlagHome.backend.domain.sleeping.entity;
 
-import com.FlagHome.backend.domain.Status;
-import com.FlagHome.backend.domain.member.Major;
-import com.FlagHome.backend.domain.member.Role;
 import com.FlagHome.backend.domain.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,11 +15,15 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Withdrawal {
+public class Sleeping {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @Column(name = "expired_at")
     private LocalDateTime expiredAt;
@@ -55,10 +56,14 @@ public class Withdrawal {
     private String phoneNumber;
 
     @Column
-    private String role;
+    private String status;
 
-    public static Withdrawal of(Member member, PasswordEncoder passwordEncoder){
-        return Withdrawal.builder()
+    @Column
+    private String certification;
+
+    public static Sleeping of(Member member, PasswordEncoder passwordEncoder){
+        return Sleeping.builder()
+                .member(member)
                 .loginId(passwordEncoder.encode(member.getLoginId()))
                 .password(passwordEncoder.encode(member.getPassword()))
                 .email(passwordEncoder.encode(member.getEmail()))
@@ -68,7 +73,7 @@ public class Withdrawal {
                 .major(passwordEncoder.encode(member.getMajor().toString()))
                 .profileImg(passwordEncoder.encode(member.getProfileImg()))
                 .phoneNumber(passwordEncoder.encode(member.getPhoneNumber()))
-                .role(passwordEncoder.encode(member.getRole().toString()))
+                .status(passwordEncoder.encode(member.getStatus().toString()))
                 .expiredAt(LocalDateTime.now().plusDays(90))
                 .build();
     }
