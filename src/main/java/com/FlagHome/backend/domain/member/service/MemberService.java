@@ -2,7 +2,6 @@ package com.FlagHome.backend.domain.member.service;
 
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.service.MemberActivityService;
-import com.FlagHome.backend.domain.activity.service.ActivityService;
 import com.FlagHome.backend.domain.board.enums.SearchType;
 import com.FlagHome.backend.domain.mail.service.MailService;
 import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
@@ -12,6 +11,7 @@ import com.FlagHome.backend.domain.member.avatar.service.AvatarService;
 import com.FlagHome.backend.domain.member.dto.FindResponse;
 import com.FlagHome.backend.domain.member.dto.MemberProfileResponse;
 import com.FlagHome.backend.domain.member.dto.UpdatePasswordRequest;
+import com.FlagHome.backend.domain.member.dto.ViewLogResponse;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.dto.PostDto;
@@ -173,5 +173,9 @@ public class MemberService {
     private Member findByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    public List<ViewLogResponse> viewLog() {
+        return memberRepository.getAllLogs();
     }
 }

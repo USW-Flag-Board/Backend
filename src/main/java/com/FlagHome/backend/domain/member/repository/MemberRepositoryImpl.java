@@ -1,5 +1,7 @@
 package com.FlagHome.backend.domain.member.repository;
 
+import com.FlagHome.backend.domain.member.dto.QViewLogResponse;
+import com.FlagHome.backend.domain.member.dto.ViewLogResponse;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,17 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
         return queryFactory
                 .selectFrom(member)
                 .where(member.loginId.in(loginIdList))
+                .fetch();
+    }
+
+    @Override
+    public List<ViewLogResponse> getAllLogs() {
+        return queryFactory
+                .select(new QViewLogResponse(
+                        member.loginId,
+                        member.name,
+                        member.lastLoginTime
+                )).from(member)
                 .fetch();
     }
 }
