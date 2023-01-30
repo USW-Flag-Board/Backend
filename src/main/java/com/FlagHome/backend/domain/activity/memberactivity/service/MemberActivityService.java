@@ -25,7 +25,7 @@ public class MemberActivityService {
     @Transactional
     public void registerMembers(Activity activity, List<Member> memberList) {
         List<MemberActivity> memberActivityList = memberList.stream()
-                        .map(member -> MemberActivity.builder().member(member).activity(activity).build())
+                        .map(member -> MemberActivity.of(member, activity))
                         .collect(Collectors.toList());
 
         memberActivityRepository.saveAll(memberActivityList);

@@ -130,8 +130,9 @@ public class ActivityService {
         Activity activity = validateLeaderAndReturn(memberId, activityId);
         List<Member> memberList = memberService.getMembersByLoginId(loginIdList);
 
+        activityApplyService.deleteAllApplies(activityId);
         memberActivityService.registerMembers(activity, memberList);
-        activity.updateStatus(Status.ON); // 다시 모집할 수 있으므로 신청내역은 남겨둔다.
+        activity.updateStatus(Status.ON);
     }
 
     @Transactional

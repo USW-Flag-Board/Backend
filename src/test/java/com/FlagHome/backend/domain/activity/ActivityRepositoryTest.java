@@ -31,6 +31,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -199,7 +200,7 @@ public class ActivityRepositoryTest {
         }
 
         @Test
-        @DisplayName("활동 신청 정보 가져오기 테스트")
+        @DisplayName("활동 신청 정보 지우기 테스트")
         void findApplyByMemberAndActivityTest() {
             // given
             Member member = memberRepository.save(Member.builder().build());
@@ -211,12 +212,12 @@ public class ActivityRepositoryTest {
                     .build());
 
             // when
-            ActivityApply findApply = activityApplyRepository.findByMemberIdAndActivityId(member.getId(), activity.getId());
+            entityManager.clear();
+            activityApplyRepository.deleteByMemberIdAndActivityId(member.getId(), activity.getId());
 
             // then
-            assertThat(apply.getId()).isEqualTo(findApply.getId());
-            assertThat(apply.getMember()).isEqualTo(findApply.getMember());
-            assertThat(apply.getActivity()).isEqualTo(findApply.getActivity());
+            Optional<ActivityApply> findApply = activityApplyRepository.findById(apply.getId());
+            assertThat(findApply.isPresent()).isFalse();
         }
     }
 

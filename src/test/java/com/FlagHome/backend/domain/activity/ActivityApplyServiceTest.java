@@ -95,18 +95,15 @@ public class ActivityApplyServiceTest {
 
     @Test
     @DisplayName("활동 신청 취소하기 테스트")
-    void cancelApplyTesT() {
+    void cancelApplyTest() {
         // given
         long testId = 1L;
-        ActivityApply apply = ActivityApply.builder().build();
-        given(activityApplyRepository.findByMemberIdAndActivityId(anyLong(), anyLong())).willReturn(apply);
-        doNothing().when(activityApplyRepository).delete(any());
+        doNothing().when(activityApplyRepository).deleteByMemberIdAndActivityId(anyLong(), anyLong());
 
         // when
         activityApplyService.cancelApply(testId, testId);
 
         // then
-        then(activityApplyRepository).should(times(1)).findByMemberIdAndActivityId(anyLong(), anyLong());
-        then(activityApplyRepository).should(times(1)).delete(any());
+        then(activityApplyRepository).should(times(1)).deleteByMemberIdAndActivityId(anyLong(), anyLong());
     }
 }

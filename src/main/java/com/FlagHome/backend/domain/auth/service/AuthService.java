@@ -4,9 +4,9 @@ import com.FlagHome.backend.domain.auth.JoinType;
 import com.FlagHome.backend.domain.auth.dto.*;
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
+import com.FlagHome.backend.domain.mail.service.MailService;
 import com.FlagHome.backend.domain.member.avatar.service.AvatarService;
 import com.FlagHome.backend.domain.member.entity.Member;
-import com.FlagHome.backend.domain.mail.service.MailService;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.domain.token.dto.TokenRequest;
@@ -18,7 +18,6 @@ import com.FlagHome.backend.global.jwt.JwtUtilizer;
 import com.FlagHome.backend.global.utility.InputValidator;
 import com.FlagHome.backend.global.utility.RandomGenerator;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -27,8 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor

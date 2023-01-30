@@ -64,8 +64,8 @@ public class MemberService {
         if (!memberRepository.existsByEmail(email)) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
-        FindResponse response = issueTokenAndSendMail(email);
-        return response;
+
+        return issueTokenAndSendMail(email);
     }
 
     public FindResponse findPassword(String loginId, String email) {
@@ -76,8 +76,7 @@ public class MemberService {
             throw new CustomException(ErrorCode.EMAIL_ID_NOT_MATCH);
         }
 
-        FindResponse response = issueTokenAndSendMail(email);
-        return response;
+        return issueTokenAndSendMail(email);
     }
 
     public void validateCertification(String email, String certification) {

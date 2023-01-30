@@ -24,10 +24,9 @@ public class ActivityApplyService {
     @Transactional
     public ActivityApply apply(long memberId, Activity activity) {
         ActivityApply activityApply = ActivityApply.builder()
-                .member(Member.builder().id(memberId).build())
-                .activity(activity)
-                .applyTime(LocalDateTime.now())
-                .build();
+                        .member(Member.builder().id(memberId).build())
+                        .activity(activity)
+                        .build();
 
         return activityApplyRepository.save(activityApply);
     }
@@ -39,8 +38,7 @@ public class ActivityApplyService {
 
     @Transactional
     public void cancelApply(long memberId, long activityId) {
-        ActivityApply activityApply = activityApplyRepository.findByMemberIdAndActivityId(memberId, activityId);
-        activityApplyRepository.delete(activityApply);
+        activityApplyRepository.deleteByMemberIdAndActivityId(memberId, activityId);
     }
 
     @Transactional
