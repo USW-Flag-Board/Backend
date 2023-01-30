@@ -21,7 +21,7 @@ public class ActivityApplyRepositoryImpl implements ActivityApplyRepositoryCusto
     public List<ActivityApplyResponse> getAllApplies(long activityId) {
         return queryFactory
                 .select(new QActivityApplyResponse(
-                        member.id,
+                        activityApply.id,
                         member.loginId,
                         member.name,
                         member.major))

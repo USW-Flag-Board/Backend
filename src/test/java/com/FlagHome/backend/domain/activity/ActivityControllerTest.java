@@ -34,6 +34,7 @@ public class ActivityControllerTest {
                 .password("1234")
                 //.email("yabueng@suwon.ac.kr")
                 .studentId("1").build());
+    }
 
 /*
         @Nested
@@ -77,5 +78,4 @@ public class ActivityControllerTest {
                 assertThat(member.getId()).isEqualTo(dummyMember1.getId());
 
             }*/
-    }
 }

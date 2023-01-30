@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.auth.controller;
 
-import com.FlagHome.backend.domain.HttpResponse;
+import com.FlagHome.backend.domain.ApplicationResponse;
 import com.FlagHome.backend.domain.auth.dto.*;
 import com.FlagHome.backend.domain.auth.service.AuthService;
 import com.FlagHome.backend.domain.token.dto.TokenRequest;
@@ -44,7 +44,7 @@ public class AuthController {
     })
     @PostMapping("/check/email")
     public ResponseEntity<Void> checkEmail(@RequestBody CheckEmailRequest checkEmailRequest) {
-        authService.validateDuplicateEmail(checkEmailRequest.getEmail());
+        authService.validateEmail(checkEmailRequest.getEmail());
         return ResponseEntity.ok().build();
     }
 
@@ -57,8 +57,8 @@ public class AuthController {
             @ApiResponse(responseCode = "500", description = "서버 에러입니다. 관리자에게 문의해주세요.")
     })
     @PostMapping("/join")
-    public ResponseEntity<HttpResponse> join(@RequestBody JoinRequest joinRequest) {
-        HttpResponse response = HttpResponse.ok(authService.join(joinRequest), OK, "회원정보 입력 성공 및 메일 발송 완료");
+    public ResponseEntity<ApplicationResponse> join(@RequestBody JoinRequest joinRequest) {
+        ApplicationResponse response = ApplicationResponse.of(authService.join(joinRequest), OK, "회원정보 입력 성공 및 메일 발송 완료");
         return ResponseEntity.ok(response);
     }
 

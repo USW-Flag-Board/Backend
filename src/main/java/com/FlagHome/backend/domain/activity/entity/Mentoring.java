@@ -25,9 +25,9 @@ public class Mentoring extends Activity {
     private String bookName;
 
     @Builder
-    public Mentoring(Long id, String name, String description, Member leader, ActivityType activityType,
-                     Proceed proceed, Status status, BookUsage bookUsage, String bookName) {
-        super(id, name, description, leader, activityType, proceed, status);
+    public Mentoring(String name, String description, Member leader, ActivityType activityType,
+                     Proceed proceed, Status status, LocalDateTime season, BookUsage bookUsage, String bookName) {
+        super(name, description, leader, activityType, proceed, status, season);
         this.bookUsage = bookUsage;
         this.bookName = bookName;
     }
@@ -47,6 +47,7 @@ public class Mentoring extends Activity {
                 .bookName(activityRequest.getBookName())
                 .activityType(ActivityType.MENTORING)
                 .status(Status.RECRUIT)
+                .season(LocalDateTime.now())
                 .build();
     }
 }

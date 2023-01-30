@@ -88,4 +88,9 @@ public class PostService {
     public void deletePost(long postId) {
         postRepository.deleteById(postId);
     }
+
+    @Transactional
+    public List<PostDto> getTopNPostListByDateAndLike(int postCount) {
+        return postRepository.findTopNPostListByDateAndLike(postCount);
+    }
 }

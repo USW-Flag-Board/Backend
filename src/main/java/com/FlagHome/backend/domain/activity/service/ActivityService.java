@@ -3,6 +3,7 @@ package com.FlagHome.backend.domain.activity.service;
 import com.FlagHome.backend.domain.activity.ActivityType;
 import com.FlagHome.backend.domain.activity.Status;
 import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyResponse;
+import com.FlagHome.backend.domain.activity.activityapply.entity.ActivityApply;
 import com.FlagHome.backend.domain.activity.activityapply.service.ActivityApplyService;
 import com.FlagHome.backend.domain.activity.dto.ActivityRequest;
 import com.FlagHome.backend.domain.activity.dto.ActivityResponse;
@@ -11,6 +12,7 @@ import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.Mentoring;
 import com.FlagHome.backend.domain.activity.entity.Project;
 import com.FlagHome.backend.domain.activity.entity.Study;
+import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.service.MemberActivityService;
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
@@ -18,9 +20,11 @@ import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,17 +51,9 @@ public class ActivityService {
     public GetAllActivitiesResponse getAllActivities() {
         List<ActivityResponse> activityResponseList = activityRepository.getAllActivities();
 
-        Map<String, Map<ActivityType, List<Map<String, String>>>> allActivities = activityResponseList.stream()
+        Map<String, Map<ActivityType, List<ActivityResponse>>> allActivities = activityResponseList.stream()
                 .collect(groupingBy(ActivityResponse::getYear,
-                        groupingBy(ActivityResponse::getActivityType,
-                                mapping(response -> {
-                                    Map<String, String> innerMap = new HashMap<>();
-                                    innerMap.put("id",  String.valueOf(response.getId()));
-                                    innerMap.put("name", response.getName());
-                                    innerMap.put("status", String.valueOf(response.getStatus()));
-                                    innerMap.put("season", response.getSeason());
-                                    return innerMap;
-                                }, toList()))));
+                        groupingBy(ActivityResponse::getActivityType, toList())));
 
         return GetAllActivitiesResponse.from(allActivities);
     }
@@ -73,18 +69,26 @@ public class ActivityService {
     }
 
     @Transactional
-    public void applyActivity(long memberId, long activityId) {
+    public ActivityApply applyActivity(long memberId, long activityId) {
         if (checkApply(memberId, activityId)) {
             throw new CustomException(ErrorCode.ALREADY_APPLIED);
         }
         Activity activity = findById(activityId);
-        activityApplyService.apply(memberId, activity);
+        return activityApplyService.apply(memberId, activity);
     }
 
     @Transactional
-    public long create(Activity activity) {
-        Activity savedActivity = activityRepository.save(activity);
-        return savedActivity.getId();
+    public Activity create(long memberId, ActivityRequest activityRequest) {
+        Activity activity = Arrays.stream(ActivityType.values())
+                .filter(type -> type == activityRequest.getActivityType())
+                .findFirst()
+                .map(type -> type.toEntity(activityRequest))
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_SUPPORT_ACTIVITY));
+
+        Member member = Member.builder().id(memberId).build();
+        activity.setLeader(member);
+
+        return activityRepository.save(activity);
     }
 
     @Transactional

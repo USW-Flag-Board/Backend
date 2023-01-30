@@ -7,15 +7,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class HttpResponse<T> {
+public class ApplicationResponse<T> {
     @Schema(name = "페이로드", description = "응답 데이터")
     private T payload;
 
@@ -25,8 +21,8 @@ public class HttpResponse<T> {
     @Schema(name = "API 결과 메세지")
     private String message;
 
-    public static <T> HttpResponse<Object> ok(T payload, HttpStatus status, String message) {
-        return HttpResponse.builder()
+    public static <T> ApplicationResponse<Object> of(T payload, HttpStatus status, String message) {
+        return ApplicationResponse.builder()
                 .payload(payload)
                 .status(status)
                 .message(message)

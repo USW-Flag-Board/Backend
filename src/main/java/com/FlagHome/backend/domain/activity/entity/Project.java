@@ -21,9 +21,9 @@ public class Project extends Activity {
     private String githubLink;
 
     @Builder
-    public Project(Long id, String name, String description, Member leader, ActivityType activityType,
-                   Proceed proceed, Status status, String githubLink) {
-        super(id, name, description, leader, activityType, proceed, status);
+    public Project(String name, String description, Member leader, ActivityType activityType,
+                   Proceed proceed, Status status, LocalDateTime season, String githubLink) {
+        super(name, description, leader, activityType, proceed, status, season);
         this.githubLink = githubLink;
     }
 
@@ -40,6 +40,7 @@ public class Project extends Activity {
                 .githubLink(activityRequest.getGithubLink())
                 .activityType(ActivityType.PROJECT)
                 .status(Status.RECRUIT)
+                .season(LocalDateTime.now())
                 .build();
     }
 }

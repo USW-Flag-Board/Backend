@@ -35,16 +35,4 @@ public class AuthRepositoryImpl implements AuthRepositoryCustom {
                 .where(authInformation.isAuthorizedCrew.eq(true))
                 .fetch();
     }
-
-    @Override
-    public void deleteAllNotProceedAuthInformation(List<AuthInformation> authInformationList) {
-        List<Long> authInformationIdList = authInformationList.stream()
-                .map(AuthInformation::getId)
-                .collect(Collectors.toList());
-
-        queryFactory
-                .delete(authInformation)
-                .where(authInformation.id.in(authInformationIdList))
-                .execute();
-    }
 }

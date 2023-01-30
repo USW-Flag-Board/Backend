@@ -11,7 +11,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class AuthMemberService {
+public class AuthInformationService {
     private final AuthRepository authRepository;
 
     /**
@@ -22,6 +22,6 @@ public class AuthMemberService {
     @Transactional
     public void deleteAllNotProceedAuthInformation() {
         List<AuthInformation> unAuthInformationList = authRepository.getAllNotProceedAuthInformation();
-        authRepository.deleteAllNotProceedAuthInformation(unAuthInformationList);
+        authRepository.deleteAllInBatch(unAuthInformationList);
     }
 }

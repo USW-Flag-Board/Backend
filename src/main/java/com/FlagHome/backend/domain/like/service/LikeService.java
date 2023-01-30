@@ -51,9 +51,7 @@ public class LikeService {
                 Reply reply = replyRepository.findById(targetId).orElse(null);
                 if(reply == null)
                     throw new CustomException(ErrorCode.REPLY_NOT_FOUND);
-
-                // reply.setLikeCount(reply.getLikeCount() + adder);
-                // 위의 코드는 Reply에 likeCount 대응하고 넣으면 됩니다.  (2023.01.26 윤희승)
+                reply.setLikeCount(reply.getLikeCount() + adder);
             }
         }
 

@@ -8,6 +8,7 @@ import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.Mentoring;
 import com.FlagHome.backend.domain.activity.entity.Project;
 import com.FlagHome.backend.domain.activity.entity.Study;
+import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.entity.MemberActivity;
 import com.FlagHome.backend.domain.activity.memberactivity.repository.MemberActivityRepository;
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
@@ -25,6 +26,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -69,6 +71,7 @@ public class ActivityRepositoryTest {
                     .name(activityName)
                     .leader(member)
                     .activityType(activityType)
+                    .season(LocalDateTime.now())
                     .build();
 
             Activity activity = activityRepository.saveAndFlush(project);
@@ -92,16 +95,19 @@ public class ActivityRepositoryTest {
             Project project = Project.builder()
                     .leader(member)
                     .activityType(ActivityType.PROJECT)
+                    .season(LocalDateTime.now())
                     .build();
 
             Study study = Study.builder()
                     .leader(member)
                     .activityType(ActivityType.STUDY)
+                    .season(LocalDateTime.now())
                     .build();
 
             Mentoring mentoring = Mentoring.builder()
                     .leader(member)
                     .activityType(ActivityType.MENTORING)
+                    .season(LocalDateTime.now())
                     .build();
 
             activityRepository.saveAll(Arrays.asList(project, study, mentoring));
@@ -127,7 +133,7 @@ public class ActivityRepositoryTest {
             Member member2 = memberRepository.save(Member.builder().major(major).build());
             Member member3 = memberRepository.save(Member.builder().major(major).build());
 
-            Activity activity = activityRepository.saveAndFlush(Project.builder().leader(member1).build());
+            Activity activity = activityRepository.saveAndFlush(Project.builder().leader(member1).season(LocalDateTime.now()).build());
 
             ActivityApply activityApply1 = ActivityApply.builder().member(member2).activity(activity).build();
             ActivityApply activityApply2 = ActivityApply.builder().member(member3).activity(activity).build();
@@ -153,7 +159,7 @@ public class ActivityRepositoryTest {
             Member member2 = memberRepository.save(Member.builder().major(major).build());
             Member member3 = memberRepository.save(Member.builder().major(major).build());
 
-            Activity activity = activityRepository.saveAndFlush(Project.builder().leader(member1).build());
+            Activity activity = activityRepository.saveAndFlush(Project.builder().leader(member1).season(LocalDateTime.now()).build());
 
             ActivityApply activityApply1 = ActivityApply.builder().member(member2).activity(activity).build();
             ActivityApply activityApply2 = ActivityApply.builder().member(member3).activity(activity).build();
@@ -175,7 +181,7 @@ public class ActivityRepositoryTest {
             Member member1 = memberRepository.save(Member.builder().build());
             Member member2 = memberRepository.save(Member.builder().build());
 
-            Activity activity = activityRepository.save(Study.builder().leader(member1).build());
+            Activity activity = activityRepository.save(Study.builder().leader(member1).season(LocalDateTime.now()).build());
 
             activityApplyRepository.save(ActivityApply.builder()
                     .member(member2)
@@ -196,7 +202,7 @@ public class ActivityRepositoryTest {
         void findApplyByMemberAndActivityTest() {
             // given
             Member member = memberRepository.save(Member.builder().build());
-            Activity activity = activityRepository.save(Mentoring.builder().leader(member).build());
+            Activity activity = activityRepository.save(Mentoring.builder().leader(member).season(LocalDateTime.now()).build());
 
             ActivityApply apply = activityApplyRepository.save(ActivityApply.builder()
                     .member(member)
@@ -220,7 +226,7 @@ public class ActivityRepositoryTest {
         @DisplayName("활동으로 지우기 테스트")
         void deleteAllByActivityTest() {
             // given
-            Activity activity = activityRepository.save(Project.builder().build());
+            Activity activity = activityRepository.save(Project.builder().season(LocalDateTime.now()).build());
 
             MemberActivity memberActivity1 = MemberActivity.builder().activity(activity).build();
             MemberActivity memberActivity2 = MemberActivity.builder().activity(activity).build();
@@ -234,6 +240,62 @@ public class ActivityRepositoryTest {
             // then
             assertThatExceptionOfType(NoSuchElementException.class)
                     .isThrownBy(() -> memberActivityRepository.findById(activity.getId()).get());
+        }
+
+        @Test
+        @DisplayName("멤버 참가활동 가져오기 테스트")
+        void getAllParticipateActivityTest() {
+            // given
+            String loginId = "gmlwh124";
+            Member member = memberRepository.save(Member.builder().loginId(loginId).build());
+
+            Activity project = Project.builder()
+                    .name("project")
+                    .season(LocalDateTime.now())
+                    .status(Status.ON)
+                    .build();
+
+            Activity mentoring = Mentoring.builder()
+                    .name("mentoring")
+                    .season(LocalDateTime.now())
+                    .status(Status.RECRUIT)
+                    .build();
+
+            Activity study = Study.builder()
+                    .name("study")
+                    .season(LocalDateTime.now())
+                    .status(Status.OFF)
+                    .build();
+
+            activityRepository.saveAll(Arrays.asList(project, mentoring, study));
+
+
+            MemberActivity memberActivity1 = MemberActivity.builder()
+                    .member(member)
+                    .activity(project)
+                    .build();
+
+            MemberActivity memberActivity2 = MemberActivity.builder()
+                    .member(member)
+                    .activity(mentoring)
+                    .build();
+
+            MemberActivity memberActivity3 = MemberActivity.builder()
+                    .member(member)
+                    .activity(study)
+                    .build();
+
+            memberActivityRepository.saveAll(Arrays.asList(memberActivity1, memberActivity2, memberActivity3));
+
+            // when
+            List<ParticipateResponse> responseList = memberActivityRepository.getAllActivitiesOfMember(loginId);
+
+            // then
+            assertThat(responseList.size()).isEqualTo(3);
+            assertThat(responseList.get(0).getId()).isNotNull();
+            assertThat(responseList.get(0).getYear()).isInstanceOf(Integer.class);
+            assertThat(responseList.get(0).getSeason()).isNotNull();
+            assertThat(responseList.get(0).getStatus()).isNotNull();
         }
     }
 }

@@ -20,6 +20,7 @@ public class ReplyDto {
     private long replyGroup;
     private long replyOrder;
     private long replyDepth;
+    private long likeCount;
     private Status status;
 
     public ReplyDto(Reply replyEntity) {
@@ -30,6 +31,7 @@ public class ReplyDto {
         this.replyGroup = replyEntity.getReplyGroup();
         this.replyOrder = replyEntity.getReplyOrder();
         this.replyDepth = replyEntity.getReplyDepth();
+        this.likeCount = replyEntity.getLikeCount();
         this.status = replyEntity.getStatus();
     }
 }

@@ -1,6 +1,7 @@
 package com.FlagHome.backend.domain.member.controller;
 
-import com.FlagHome.backend.domain.HttpResponse;
+import com.FlagHome.backend.domain.ApplicationResponse;
+import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
 import com.FlagHome.backend.domain.member.dto.*;
 import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.global.utility.SecurityUtils;
@@ -19,105 +20,133 @@ import static org.springframework.http.HttpStatus.OK;
 
 @Tag(name = "member", description = "멤버 API")
 @RestController
-@RequestMapping("/api/member")
+@RequestMapping("/api/members")
 @RequiredArgsConstructor
 public class MemberController {
-    private final static String MEMBER_DEFAULT_URL = "/api/member";
+    private final static String MEMBER_DEFAULT_URL = "/api/members";
     private final MemberService memberService;
 
     @Tag(name = "member")
-    @Operation(summary = "유저 확인", description = "아이디/비밀번호 찾기 전 유저 확인, parameter에 따라 다르게 동작한다.\n" +
-                                                    "아이디 찾기 : 이메일 입력 / 비밀번호 재발급 : 이메일, 아이디 입력")
+    @Operation(summary = "멤버 프로필 가져오기", description = "프로필, 작성한 게시글, 참여한 활동들을 가져온다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "존재하는 사용자 입니다."),
-            @ApiResponse(responseCode = "400", description = "이메일을 입력하지 않은 경우 400 Error 발생"),
+            @ApiResponse(responseCode = "200", description = "멤버 정보를 가져왔습니다."),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
+    })
+    @GetMapping("/{loginId}")
+    public ResponseEntity<ApplicationResponse> getMemberPage(@PathVariable("loginId") String loginId) {
+        return ResponseEntity.ok(ApplicationResponse.of(memberService.getMemberProfile(loginId), OK, "멤버의 정보를 가져왔습니다."));
+    }
+
+    @Tag(name = "member")
+    @Operation(summary = "내 상세정보 보기", description = "[토큰 필요] 내 상세정보 보기. 프로필 정보(개인정보X)와 개인 정보를 가져온다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "내 정보를 가져왔습니다."),
+            @ApiResponse(responseCode = "401", description = "토큰을 넣지 않으면 401 발생")
+    })
+    @GetMapping
+    public ResponseEntity<ApplicationResponse> getMyProfile() {
+        return ResponseEntity.ok(ApplicationResponse.of(memberService.getMyProfile(SecurityUtils.getMemberId()), OK, "내 정보를 가져왔습니다."));
+    }
+
+    @Tag(name = "member")
+    @Operation(summary = "아이디 찾기", description = "존재하는 멤버라면 인증 이메일 발송.\n" +
+                                                    "201이 뜬다면 인증 진행하기")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "조회에 성공해 메일을 발송합니다."),
+            @ApiResponse(responseCode = "400", description = "이메일 형식이 아닙니다."),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
             @ApiResponse(responseCode = "422", description = "수원대학교 웹 메일 주소가 아닙니다.")
     })
-    @GetMapping()
-    public ResponseEntity<Void> findMember(@RequestParam(value = "id", required = false) String loginId,
-                                           @RequestParam String email) {
-        memberService.isMemberExist(loginId, email);
-        return ResponseEntity.ok().build();
+    @PostMapping("/find/id")
+    public ResponseEntity<ApplicationResponse> findId(@RequestBody FindIdRequest findIdRequest) {
+        return ResponseEntity.ok(ApplicationResponse
+                .of(memberService.findId(findIdRequest.getEmail()), OK, "멤버 조회에 성공해 메일을 발송합니다."));
     }
 
     @Tag(name = "member")
-    @Operation(summary = "멤버 프로필 가져오기", description = "아직 미완성")
+    @Operation(summary = "비밀번호 찾기(바꾸기)", description = "존재하는 멤버라면 인증 이메일 발송.\n" +
+                                                            "201이 뜬다면 인증 진행하기")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "멤버 정보 조회 성공"),
+            @ApiResponse(responseCode = "201", description = "조회에 성공해 메일을 발송합니다."),
+            @ApiResponse(responseCode = "400", description = "이메일 형식이 아닙니다."),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
+            @ApiResponse(responseCode = "422", description = "수원대학교 웹 메일 주소가 아닙니다.")
     })
-    @GetMapping("/{id}")
-    public ResponseEntity<MyPageResponse> getMemberPage(@PathVariable("id") String loginId) {
-        return ResponseEntity.ok(memberService.getMyPage(loginId));
+    @PostMapping("/find/password")
+    public ResponseEntity<ApplicationResponse> findPassword(@RequestBody FindPasswordRequest findPasswordRequest) {
+        return ResponseEntity.ok(ApplicationResponse
+                .of(memberService.findPassword(findPasswordRequest.getLoginId(), findPasswordRequest.getEmail()), OK, "멤버 조회에 성공해 메일을 발송합니다."));
     }
 
     @Tag(name = "member")
-    @Operation(summary = "아이디 찾기 결과 메일 전송", description = "저장된 유저 아이디를 메일로 전송한다.")
+    @Operation(summary = "인증번호 인증하기", description = "아이디/비밀번호 찾기 이후 인증 단계")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "아이디 찾기 결과 메일 발송 성공"),
-            @ApiResponse(responseCode = "500", description = "서버 에러입니다. 관리자에게 문의해주세요.")
+            @ApiResponse(responseCode = "200", description = "인증에 성공했습니다."),
+            @ApiResponse(responseCode = "400", description = "유효하지 않는 토큰입니다."),
+            @ApiResponse(responseCode = "404", description = "아이디/비밀번호 찾기 요청이 존재하지 않습니다."),
+            @ApiResponse(responseCode = "409", description = "인증번호가 일치하지 않습니다.")
     })
-    @PostMapping("/mail/id")
-    public ResponseEntity<HttpResponse> sendFindIdResult(@RequestBody SendEmailRequest sendEmailRequest) {
-        HttpResponse response = HttpResponse
-                .ok(memberService.sendFindIdResult(sendEmailRequest.getEmail()), OK, "아이디 찾기 결과 메일 발송 성공");
-        return ResponseEntity.ok(response);
+    @PostMapping("/certification")
+    public ResponseEntity<ApplicationResponse> authCertification(@RequestBody AuthenticationRequest authenticationRequest) {
+        memberService.validateCertification(authenticationRequest.getEmail(), authenticationRequest.getCertification());
+        return ResponseEntity.ok(ApplicationResponse.of(null, OK, "인증에 성공했습니다."));
     }
 
     @Tag(name = "member")
-    @Operation(summary = "새 비밀번호 메일 전송", description = "새 비밀번호 전송 후 비밀번호 업데이트")
+    @Operation(summary = "비밀번호 수정", description = "비밀번호 찾기로 새로운 비밀번호를 설정하는 경우")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "새 비밀번호 메일 발송 성공"),
-            @ApiResponse(responseCode = "500", description = "서버 에러입니다. 관리자에게 문의해주세요.")
+            @ApiResponse(responseCode = "200", description = "비밀번호를 변경했습니다. 로그인 해주세요."),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
+            @ApiResponse(responseCode = "422", description = "사용할 수 없는 비밀번호 입니다. (8~20자 이내 영문, 숫자, 특수문자를 모두 포함)")
     })
-    @PostMapping("/mail/password")
-    public ResponseEntity<HttpResponse> sendNewPassword(@RequestBody SendEmailRequest sendEmailRequest) {
-        HttpResponse response = HttpResponse
-                .ok(memberService.sendNewPassword(sendEmailRequest.getEmail()), OK, "새 비밀번호 메일 발송 성공");
-        return ResponseEntity.ok(response);
+    @PutMapping("/find/password")
+    public ResponseEntity<ApplicationResponse> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
+        memberService.changePassword(changePasswordRequest.getEmail(), changePasswordRequest.getNewPassword());
+        return ResponseEntity.ok(ApplicationResponse.of(null, OK, "비밀번호를 변경했습니다. 로그인 해주세요."));
     }
 
     @Tag(name = "member")
-    @Operation(summary = "비밀번호 수정", description = "로그인한 유저가 직접 변경하는 경우")
+    @Operation(summary = "비밀번호 수정", description = "[토큰 필요] 로그인한 유저가 직접 비밀번호를 변경하는 경우\n" +
+                                                      "유저 프로필로 이동한다. (URI 리턴)")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "비밀번호 수정 성공, 유저 URI 리턴"),
             @ApiResponse(responseCode = "400", description = "비밀번호가 일치하지 않습니다."),
+            @ApiResponse(responseCode = "401", description = "토큰을 넣지 않으면 401 발생"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
-            @ApiResponse(responseCode = "409", description = "기존과 같은 비밀번호는 사용할 수 없습니다.")
+            @ApiResponse(responseCode = "409", description = "기존과 같은 비밀번호는 사용할 수 없습니다."),
+            @ApiResponse(responseCode = "422", description = "사용할 수 없는 비밀번호 입니다. (8~20자 이내 영문, 숫자, 특수문자를 모두 포함)")
     })
-    @PatchMapping("/password")
-    public ResponseEntity<HttpResponse> updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest) {
+    @PutMapping("/password")
+    public ResponseEntity<ApplicationResponse> updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest) {
         String loginId = memberService.updatePassword(SecurityUtils.getMemberId(), updatePasswordRequest);
         URI location = UriCreator.createMemberUri(MEMBER_DEFAULT_URL, loginId);
-        HttpResponse response = HttpResponse.ok(location, OK, "비밀번호 변경에 성공했습니다.");
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApplicationResponse.of(location, OK, "비밀번호 변경에 성공했습니다."));
     }
 
     @Tag(name = "member")
-    @Operation(summary = "프로필 업데이트")
+    @Operation(summary = "아바타 수정하기", description = "[토큰 필요] 개인 프로필 수정한다.\n" +
+                                                       " 프로필은 개인 정보를 담지 않고 있다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "비밀번호 업데이트 성공, 유저 URI 리턴"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
+            @ApiResponse(responseCode = "200", description = "프로필 수정을 완료하였습니다."),
+            @ApiResponse(responseCode = "401", description = "토큰을 넣지 않으면 401 발생")
     })
-    @PatchMapping("/profile")
-    public ResponseEntity<HttpResponse> updateProfile(@RequestBody UpdateProfileRequest updateProfileRequest) {
-        String loginId = memberService.updateProfile(SecurityUtils.getMemberId(), updateProfileRequest);
-        URI location = UriCreator.createMemberUri(MEMBER_DEFAULT_URL, loginId);
-        HttpResponse response = HttpResponse.ok(location, OK, "비밀번호 변경에 성공했습니다.");
-        return ResponseEntity.ok(response);
+    @PutMapping("/avatar")
+    public ResponseEntity<ApplicationResponse> updateAvatar(@RequestBody UpdateAvatarRequest updateAvatarRequest) {
+        memberService.updateAvatar(SecurityUtils.getMemberId(), updateAvatarRequest);
+        return ResponseEntity.ok(ApplicationResponse.of(null, OK, "프로필 수정을 완료하였습니다."));
     }
 
     @Tag(name = "member")
-    @Operation(summary = "회원 탈퇴")
+    @Operation(summary = "회원 탈퇴", description = "[토큰 필요]")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "회원 탈퇴 성공"),
+            @ApiResponse(responseCode = "200", description = "회원 탈퇴에 성공하였습니다."),
+            @ApiResponse(responseCode = "401", description = "토큰을 넣지 않으면 401 발생"),
             @ApiResponse(responseCode = "400", description = "비밀번호가 일치하지 않습니다."),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다.")
     })
     @DeleteMapping()
-    public ResponseEntity<Void> withdraw(@RequestBody WithdrawRequest withdrawRequest) {
+    public ResponseEntity<ApplicationResponse> withdraw(@RequestBody WithdrawRequest withdrawRequest) {
         memberService.withdraw(SecurityUtils.getMemberId(), withdrawRequest.getPassword());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(ApplicationResponse.of(null, OK, "회원 탈퇴에 성공하였습니다."));
     }
 }
