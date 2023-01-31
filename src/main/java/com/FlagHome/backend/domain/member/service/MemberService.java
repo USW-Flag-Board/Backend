@@ -58,11 +58,12 @@ public class MemberService {
         memberRepository.deleteById(memberId);
     }
 
-    public FindResponse findId(String email) {
+    public FindResponse findId(String name, String email) {
         inputValidator.validateUSWEmail(email);
 
-        if (!memberRepository.existsByEmail(email)) {
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        Member member = findByEmail(email);
+        if (!StringUtils.equals(member.getName(), name)) {
+            throw new CustomException(ErrorCode.EMAIL_NAME_NOT_MATCH);
         }
 
         return issueTokenAndSendMail(email);
@@ -79,10 +80,11 @@ public class MemberService {
         return issueTokenAndSendMail(email);
     }
 
-    public void validateCertification(String email, String certification) {
+    public String validateCertification(String email, String certification) {
         Token findRequestToken = findRequestTokenService.findToken(email);
         findRequestToken.validateExpireTime();
         inputValidator.validateCertification(certification, findRequestToken.getValue());
+        return findByEmail(email).getLoginId();
     }
 
     @Transactional // 비밀번호를 잊어서 바꾸는 경우
