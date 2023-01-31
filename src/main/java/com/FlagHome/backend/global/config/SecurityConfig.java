@@ -70,6 +70,7 @@ public class SecurityConfig {
 
                 // 멤버
                 .antMatchers(HttpMethod.GET, "/api/members/{lgoinId}").permitAll()
+                .antMatchers(HttpMethod.PUT, "/api/members/find/password").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/members/**").permitAll()
                 .antMatchers("/api/members/**").hasAnyRole("USER", "CREW")
 
