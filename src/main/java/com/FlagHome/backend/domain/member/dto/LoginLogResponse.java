@@ -1,6 +1,5 @@
 package com.FlagHome.backend.domain.member.dto;
 
-import com.FlagHome.backend.domain.member.entity.Member;
 import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -10,10 +9,10 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
-public class ViewLogResponse {
+public class LoginLogResponse {
 
-    @Schema(name = "아이디", example = "gmlwh124")
-    private String loginId;
+    @Schema(name = "아이디")
+    private long id;
 
     @Schema(name = "이름", example = "김민정")
     private String name;
@@ -23,8 +22,8 @@ public class ViewLogResponse {
 
     @Builder
     @QueryProjection
-    public ViewLogResponse(String loginId, String name, LocalDateTime lastLoginTime) {
-        this.loginId = loginId;
+    public LoginLogResponse(long id, String name, LocalDateTime lastLoginTime) {
+        this.id = id;
         this.name = name;
         this.lastLoginTime = lastLoginTime;
     }

@@ -51,11 +51,11 @@ public class ActivityApplyRepositoryImpl implements ActivityApplyRepositoryCusto
     }
 
     @Override
-    public ActivityApply findByMemberIdAndActivityId(long memberId, long activityId) {
-        return queryFactory
-                .selectFrom(activityApply)
-                .where(activityApply.member.id.eq(memberId),
-                        activityApply.activity.id.eq(activityId))
-                .fetchOne();
+    public void deleteByMemberIdAndActivityId(long memberId, long activityId) {
+        queryFactory
+            .delete(activityApply)
+            .where(activityApply.member.id.eq(memberId),
+                    activityApply.activity.id.eq(activityId))
+            .execute();
     }
 }

@@ -9,9 +9,9 @@ import com.FlagHome.backend.domain.member.avatar.dto.MyProfileResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
 import com.FlagHome.backend.domain.member.avatar.service.AvatarService;
 import com.FlagHome.backend.domain.member.dto.FindResponse;
+import com.FlagHome.backend.domain.member.dto.LoginLogResponse;
 import com.FlagHome.backend.domain.member.dto.MemberProfileResponse;
 import com.FlagHome.backend.domain.member.dto.UpdatePasswordRequest;
-import com.FlagHome.backend.domain.member.dto.ViewLogResponse;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.dto.PostDto;
@@ -64,8 +64,8 @@ public class MemberService {
         if (!memberRepository.existsByEmail(email)) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
-        FindResponse response = issueTokenAndSendMail(email);
-        return response;
+
+        return issueTokenAndSendMail(email);
     }
 
     public FindResponse findPassword(String loginId, String email) {
@@ -76,8 +76,7 @@ public class MemberService {
             throw new CustomException(ErrorCode.EMAIL_ID_NOT_MATCH);
         }
 
-        FindResponse response = issueTokenAndSendMail(email);
-        return response;
+        return issueTokenAndSendMail(email);
     }
 
     public void validateCertification(String email, String certification) {
@@ -175,7 +174,7 @@ public class MemberService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
-    public List<ViewLogResponse> viewLog() {
-        return memberRepository.getAllLogs();
+    public List<LoginLogResponse> getAllLoginLogs() {
+        return memberRepository.getAllLoginLogs();
     }
 }
