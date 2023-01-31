@@ -47,9 +47,16 @@ public class MemberServiceSliceTest {
     @DisplayName("아이디 찾기 테스트")
     void findIdTest() {
         // given
+        String name = "문희조";
         String email = "gmlwh124@suwon.ac.kr";
         String certification = "123456";
         LocalDateTime expireAt = LocalDateTime.now();
+        
+        Member member = Member.builder()
+                .name(name)
+                .email(email)
+                .build();
+        
         Token findRequestToken = FindRequestToken.builder()
                 .key(email)
                 .value(certification)
@@ -57,12 +64,12 @@ public class MemberServiceSliceTest {
                 .build();
 
         doNothing().when(inputValidator).validateUSWEmail(anyString());
-        given(memberRepository.existsByEmail(anyString())).willReturn(true);
+        given(memberRepository.findByEmail(email)).willReturn(Optional.of(member));
         given(findRequestTokenService.issueToken(anyString(), anyString())).willReturn(findRequestToken);
         doNothing().when(mailService).sendFindCertification(anyString(), anyString());
 
         // when
-        FindResponse findResponse = memberService.findId(email);
+        FindResponse findResponse = memberService.findId(name, email);
 
         // then
         then(inputValidator).should(times(1)).validateUSWEmail(anyString());
@@ -115,7 +122,9 @@ public class MemberServiceSliceTest {
         // given
         String email = "gmlwh124@suwon.ac.kr";
         String certification = "123456";
-        LocalDateTime expireAt = LocalDateTime.now().plusMinutes(1);
+        LocalDateTime expireAt = LocalDateTime.now().plusMinutes(5);
+
+        Member member = Member.builder().build();
 
         Token findRequestToken = FindRequestToken.builder()
                 .key(email)
@@ -125,6 +134,7 @@ public class MemberServiceSliceTest {
 
         given(findRequestTokenService.findToken(anyString())).willReturn(findRequestToken);
         doNothing().when(inputValidator).validateCertification(anyString(), anyString());
+        given(memberRepository.findByEmail(anyString())).willReturn(Optional.of(member));
 
         // when
         memberService.validateCertification(email, certification);
