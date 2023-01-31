@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 @Tag(name = "member", description = "멤버 API")
@@ -60,7 +61,7 @@ public class MemberController {
     @PostMapping("/find/id")
     public ResponseEntity<ApplicationResponse> findId(@RequestBody FindIdRequest findIdRequest) {
         return ResponseEntity.ok(ApplicationResponse
-                .of(memberService.findId(findIdRequest.getEmail()), OK, "멤버 조회에 성공해 메일을 발송합니다."));
+                .of(memberService.findId(findIdRequest.getEmail()), CREATED, "멤버 조회에 성공해 메일을 발송합니다."));
     }
 
     @Tag(name = "member")
@@ -75,11 +76,11 @@ public class MemberController {
     @PostMapping("/find/password")
     public ResponseEntity<ApplicationResponse> findPassword(@RequestBody FindPasswordRequest findPasswordRequest) {
         return ResponseEntity.ok(ApplicationResponse
-                .of(memberService.findPassword(findPasswordRequest.getLoginId(), findPasswordRequest.getEmail()), OK, "멤버 조회에 성공해 메일을 발송합니다."));
+                .of(memberService.findPassword(findPasswordRequest.getLoginId(), findPasswordRequest.getEmail()), CREATED, "멤버 조회에 성공해 메일을 발송합니다."));
     }
 
     @Tag(name = "member")
-    @Operation(summary = "인증번호 인증하기", description = "아이디/비밀번호 찾기 이후 인증 단계")
+    @Operation(summary = "인증번호 인증하기", description = "아이디/비밀번호 찾기 이후 인증 단계, 아이디 찾기는 아이디를 리턴한다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "인증에 성공했습니다."),
             @ApiResponse(responseCode = "400", description = "유효하지 않는 토큰입니다."),
@@ -88,8 +89,8 @@ public class MemberController {
     })
     @PostMapping("/certification")
     public ResponseEntity<ApplicationResponse> authCertification(@RequestBody AuthenticationRequest authenticationRequest) {
-        memberService.validateCertification(authenticationRequest.getEmail(), authenticationRequest.getCertification());
-        return ResponseEntity.ok(ApplicationResponse.of(null, OK, "인증에 성공했습니다."));
+        String loginId = memberService.validateCertification(authenticationRequest.getEmail(), authenticationRequest.getCertification());
+        return ResponseEntity.ok(ApplicationResponse.of(loginId, OK, "인증에 성공했습니다."));
     }
 
     @Tag(name = "member")

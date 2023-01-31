@@ -79,10 +79,11 @@ public class MemberService {
         return issueTokenAndSendMail(email);
     }
 
-    public void validateCertification(String email, String certification) {
+    public String validateCertification(String email, String certification) {
         Token findRequestToken = findRequestTokenService.findToken(email);
         findRequestToken.validateExpireTime();
         inputValidator.validateCertification(certification, findRequestToken.getValue());
+        return findByEmail(email).getLoginId();
     }
 
     @Transactional // 비밀번호를 잊어서 바꾸는 경우

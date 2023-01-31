@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -23,9 +24,10 @@ public class ActivityApplyService {
     @Transactional
     public ActivityApply apply(long memberId, Activity activity) {
         ActivityApply activityApply = ActivityApply.builder()
-                        .member(Member.builder().id(memberId).build())
-                        .activity(activity)
-                        .build();
+                .member(Member.builder().id(memberId).build())
+                .activity(activity)
+                .applyTime(LocalDateTime.now())
+                .build();
 
         return activityApplyRepository.save(activityApply);
     }
