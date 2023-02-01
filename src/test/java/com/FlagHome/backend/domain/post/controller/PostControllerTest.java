@@ -12,7 +12,6 @@ import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.dto.PostDto;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
-import com.FlagHome.backend.domain.reply.entity.Reply;
 import com.FlagHome.backend.domain.reply.repository.ReplyRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +22,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -32,6 +36,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -69,7 +74,6 @@ class PostControllerTest {
     private WebApplicationContext webApplicationContext;
 
     private Member dummyMember;
-
     private Board dummyBoard1, dummyBoard2;
 
 
@@ -95,6 +99,8 @@ class PostControllerTest {
                 .boardDepth(1L)
                 .parent(dummyBoard1)
                 .build());
+
+        setJwtInformation(dummyMember.getId());
     }
 
     @Test
@@ -320,5 +326,13 @@ class PostControllerTest {
         }
 
         assertThat(leftBraceCount).isEqualTo(3);
+    }
+
+    private void setJwtInformation(long memberId) {
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add((GrantedAuthority) () -> "ROLE_USER");
+
+        UserDetails principal = new User(Long.toString(memberId), "", authorities);
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(principal, "", authorities));
     }
 }

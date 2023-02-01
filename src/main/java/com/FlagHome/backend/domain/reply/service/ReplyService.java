@@ -10,6 +10,7 @@ import com.FlagHome.backend.domain.reply.dto.ReplyDto;
 import com.FlagHome.backend.domain.reply.entity.Reply;
 import com.FlagHome.backend.domain.reply.repository.ReplyRepository;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
+import com.FlagHome.backend.global.utility.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,9 @@ public class ReplyService {
         Post foundPost = postRepository.findById(replyDto.getPostId()).orElse(null);
         if(foundPost == null)
             throw new CustomException(ErrorCode.POST_NOT_FOUND);
+
+        if(!foundPost.getMember().getId().equals(SecurityUtils.getMemberId()))
+            throw new CustomException(ErrorCode.HAVE_NO_AUTHORITY);
 
         Member foundMember = memberRepository.findById(replyDto.getMemberId()).orElse(null);
         if(foundMember == null)
@@ -69,6 +73,9 @@ public class ReplyService {
         Reply replyEntity = replyRepository.findById(replyId).orElse(null);
         if(replyEntity == null)
             throw new CustomException(ErrorCode.REPLY_NOT_FOUND);
+
+        if(!replyEntity.getMember().getId().equals(SecurityUtils.getMemberId()))
+            throw new CustomException(ErrorCode.HAVE_NO_AUTHORITY);
 
         Post postEntity = replyEntity.getPost();
         long replyEntityGroup = replyEntity.getReplyGroup();
@@ -111,6 +118,9 @@ public class ReplyService {
         Post postEntity = postRepository.findById(replyDto.getPostId()).orElse(null);
         if(postEntity == null)
             throw new CustomException(ErrorCode.POST_NOT_FOUND);
+
+        if(!postEntity.getMember().getId().equals(SecurityUtils.getMemberId()))
+            throw new CustomException(ErrorCode.HAVE_NO_AUTHORITY);
 
         List<Reply> postReplyList = postEntity.getReplyList();
         for(Reply eachReply : postReplyList) {

@@ -9,6 +9,7 @@ import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.dto.PostDto;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
+import com.FlagHome.backend.global.utility.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,9 @@ public class PostService {
         Member memberEntity = memberRepository.findById(postDto.getUserId()).orElse(null);
         if(memberEntity == null)
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
+
+        if(!memberEntity.getId().equals(SecurityUtils.getMemberId()))
+            throw new CustomException(ErrorCode.HAVE_NO_AUTHORITY);
 
         Board boardEntity = boardRepository.findById(postDto.getBoardId()).orElse(null);
         if(boardEntity == null)
@@ -61,6 +65,9 @@ public class PostService {
         if(postEntity == null)
             throw new CustomException(ErrorCode.POST_NOT_FOUND);
 
+        if(!postEntity.getMember().getId().equals(SecurityUtils.getMemberId()))
+            throw new CustomException(ErrorCode.HAVE_NO_AUTHORITY);
+
         Board boardEntity = boardRepository.findById(postDto.getBoardId()).orElse(null);
         if(boardEntity == null)
             throw new CustomException(ErrorCode.BOARD_NOT_EXISTS);
@@ -74,6 +81,13 @@ public class PostService {
 
     @Transactional
     public void deletePost(long postId) {
+        Post postEntity = postRepository.findById(postId).orElse(null);
+        if(postEntity == null)
+            throw new CustomException(ErrorCode.POST_NOT_FOUND);
+
+        if(!postEntity.getMember().getId().equals(SecurityUtils.getMemberId()))
+            throw new CustomException(ErrorCode.HAVE_NO_AUTHORITY);
+
         postRepository.deleteById(postId);
     }
 
