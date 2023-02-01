@@ -2,8 +2,6 @@ package com.FlagHome.backend.domain.post.service;
 
 import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.board.repository.BoardRepository;
-import com.FlagHome.backend.domain.reply.dto.ReplyDto;
-import com.FlagHome.backend.domain.reply.entity.Reply;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.domain.member.entity.Member;
@@ -49,22 +47,12 @@ public class PostService {
     }
 
     @Transactional
-    public PostDto getPost(long postId, Boolean viaBoard) {
+    public PostDto getPost(long postId) {
         Post postEntity = postRepository.findById(postId).orElse(null);
         if(postEntity == null)
             throw new CustomException(ErrorCode.POST_NOT_FOUND);
-        if(viaBoard == null || !viaBoard)
-            return new PostDto(postEntity);
 
-        PostDto postDto = new PostDto();
-        postDto.setId(postEntity.getId());
-        postDto.setContent(postEntity.getContent());
-        postDto.setReplyList(new ArrayList<>());
-        List<ReplyDto> postDtoReplyList = postDto.getReplyList();
-        for(Reply eachReply : postEntity.getReplyList())
-            postDtoReplyList.add(new ReplyDto(eachReply));
-
-        return postDto;
+        return new PostDto(postEntity);
     }
 
     @Transactional

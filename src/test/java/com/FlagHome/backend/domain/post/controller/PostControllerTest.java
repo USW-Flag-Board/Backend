@@ -140,34 +140,6 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("게시판을 통하여 게시글 가져오기 테스트")
-    public void getPostTestViaBorad() throws Exception {
-        String title = "게시판 통해서 가져오기 제목";
-        String content = "게시판 통해서 가져오기 내용";
-
-        Post postEntity = postRepository.save(Post.builder()
-                .title(title)
-                .content(content)
-                .viewCount(0L)
-                .replyList(new ArrayList<>())
-                .member(dummyMember)
-                .board(dummyBoard2)
-                .build());
-
-        Reply replyEntity = replyRepository.save(Reply.builder().member(dummyMember).post(postEntity).replyDepth(1L).replyGroup(2L).replyOrder(1L).likeCount(0L).content("댓글이다").build());
-        postEntity.getReplyList().add(replyEntity);
-        replyRepository.flush();
-
-        mockMvc.perform(get(BASE_URL)
-                        .param("id", Long.toString(postEntity.getId()))
-                        .param("via-board", "true"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("status", is("OK")))
-                .andExpect(jsonPath("message", is("게시글 가져오기에 성공 하였습니다.")))
-                .andDo(print());
-    }
-
-    @Test
     @DisplayName("게시글 수정 테스트")
     public void updatePostTest() throws Exception {
         String originalTitle = "원래제목";
