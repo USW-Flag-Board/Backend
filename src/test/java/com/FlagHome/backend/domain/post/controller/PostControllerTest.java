@@ -132,7 +132,7 @@ class PostControllerTest {
                 .build());
 
         mockMvc.perform(get(BASE_URL)
-                        .param("postId", Long.toString(postEntity.getId())))
+                        .param("id", Long.toString(postEntity.getId())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("status", is("OK")))
                 .andExpect(jsonPath("message", is("게시글 가져오기에 성공 하였습니다.")))
@@ -159,8 +159,8 @@ class PostControllerTest {
         replyRepository.flush();
 
         mockMvc.perform(get(BASE_URL)
-                        .param("postId", Long.toString(postEntity.getId()))
-                        .param("viaBoard", "true"))
+                        .param("id", Long.toString(postEntity.getId()))
+                        .param("via-board", "true"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("status", is("OK")))
                 .andExpect(jsonPath("message", is("게시글 가져오기에 성공 하였습니다.")))
@@ -281,9 +281,9 @@ class PostControllerTest {
 
         // when
         mockMvc.perform(delete(BASE_URL + "/like")
-                .param("userId", Long.toString(dummyMember.getId()))
-                .param("targetId", Long.toString(postId))
-                .param("targetType", "POST"))
+                .param("user-id", Long.toString(dummyMember.getId()))
+                .param("target-id", Long.toString(postId))
+                .param("target-type", "POST"))
                     .andDo(print());
 
         // then
@@ -334,7 +334,7 @@ class PostControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(get(BASE_URL + "/top")
-                        .param("postCount", Integer.toString(3)))
+                        .param("post-count", Integer.toString(3)))
                 .andExpect(status().isOk());
 
         // then

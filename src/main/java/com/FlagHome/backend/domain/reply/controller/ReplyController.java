@@ -40,7 +40,7 @@ public class ReplyController {
             @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없습니다.")
     })
     @GetMapping
-    public ResponseEntity<ApplicationResponse> getReplies(@RequestParam(name = "id") long postId) {
+    public ResponseEntity<ApplicationResponse> getReplies(@RequestParam(name = "post-id") long postId) {
         return ResponseEntity.ok(ApplicationResponse.of(replyService.findReplies(postId), HttpStatus.OK, "댓글 리스트 가져오기에 성공 하였습니다."));
     }
 
@@ -66,9 +66,9 @@ public class ReplyController {
 
     @Tag(name = "reply")
     @Operation(summary = "댓글 좋아요",
-            description = "targetId = 좋아요를 할 댓글의 Id\n\n" +
-                    "targetType = REPLY (REPLY 문자열을 넣으시면 됩니다, 참고로 게시글 일때는 POST)\n\n" +
-                    "userId = 서버에서 준 user의 고유ID를 넣으면 됩니다.")
+            description = "target-id = 좋아요를 할 댓글의 Id\n\n" +
+                    "target-type = REPLY (REPLY 문자열을 넣으시면 됩니다, 참고로 게시글 일때는 POST)\n\n" +
+                    "user-id = 서버에서 준 user의 고유ID를 넣으면 됩니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "댓글 좋아요를 하였습니다."),
             @ApiResponse(responseCode = "400", description = "댓글 좋아요 에러가 발생하였습니다.")
@@ -81,17 +81,17 @@ public class ReplyController {
 
     @Tag(name = "reply")
     @Operation(summary = "댓글 좋아요 취소",
-            description = "targetId = 좋아요를 할 댓글의 Id\n\n" +
-                    "targetType = REPLY (REPLY 문자열을 넣으시면 됩니다, 참고로 게시글 일때는 POST)\n\n" +
-                    "userId = 서버에서 준 user의 고유ID를 넣으면 됩니다.")
+            description = "target-id = 좋아요를 할 댓글의 Id\n\n" +
+                    "target-type = REPLY (REPLY 문자열을 넣으시면 됩니다, 참고로 게시글 일때는 POST)\n\n" +
+                    "user-id = 서버에서 준 user의 고유ID를 넣으면 됩니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "댓글 좋아요 취소를 하였습니다."),
             @ApiResponse(responseCode = "400", description = "댓글 좋아요 취소 에러가 발생하였습니다.")
     })
     @DeleteMapping("/like")
-    public ResponseEntity<ApplicationResponse> unlikePost(@RequestParam(value = "userId") long userId,
-                                                          @RequestParam(value = "targetId") long targetId,
-                                                          @RequestParam(value = "targetType") String targetType ) {
+    public ResponseEntity<ApplicationResponse> unlikePost(@RequestParam(value = "user-id") long userId,
+                                                          @RequestParam(value = "target-id") long targetId,
+                                                          @RequestParam(value = "target-type") String targetType) {
         likeService.likeOrUnlike(userId, targetId, targetType, false);
         return ResponseEntity.ok(ApplicationResponse.of(true, HttpStatus.NO_CONTENT, "댓글 좋아요를 취소 하였습니다."));
     }

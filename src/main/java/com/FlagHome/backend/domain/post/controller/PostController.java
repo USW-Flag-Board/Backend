@@ -43,15 +43,15 @@ public class PostController {
     @Tag(name = "post")
     @Operation(summary = "게시글 가져오기",
             description = "현재 board를 통해 게시글 리스트를 가져오면 게시글의 content와 replyList를 제외한 요소들이 가져와 집니다.\n" +
-                    "그러므로 게시글을 진입할때 content와 replyList가 필요한데 그럴때는 get query parameter에 viaBoard = true를 주면\n" +
+                    "그러므로 게시글을 진입할때 content와 replyList가 필요한데 그럴때는 get query parameter에 via-board = true를 주면\n" +
                     "content와 replyList를 리턴해줍니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "게시글 가져오기에 성공 하였습니다."),
             @ApiResponse(responseCode = "404", description = "요청하신 postId에 일치하는 Post가 존재하지 않습니다.")
     })
     @GetMapping
-    public ResponseEntity<ApplicationResponse> getPost(@RequestParam(value = "postId") long postId,
-                                                       @RequestParam(value = "viaBoard", required = false) Boolean viaBoard) {
+    public ResponseEntity<ApplicationResponse> getPost(@RequestParam(value = "id") long postId,
+                                                       @RequestParam(value = "via-board", required = false) Boolean viaBoard) {
         ApplicationResponse applicationResponse = ApplicationResponse.of(postService.getPost(postId, viaBoard), HttpStatus.OK, "게시글 가져오기에 성공 하였습니다.");
         return ResponseEntity.ok(applicationResponse);
     }
@@ -71,17 +71,17 @@ public class PostController {
     @Tag(name = "post")
     @Operation(summary = "게시글 삭제")
     @ApiResponse(responseCode = "204", description = "게시글 삭제에 성공 하였습니다.")
-    @DeleteMapping("/{post_id}")
-    public ResponseEntity<ApplicationResponse> deletePost(@PathVariable(name = "post_id") long postId) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApplicationResponse> deletePost(@PathVariable(name = "id") long postId) {
         postService.deletePost(postId);
         return ResponseEntity.ok(ApplicationResponse.of(true, HttpStatus.NO_CONTENT, "게시글 삭제에 성공 하였습니다."));
     }
 
     @Tag(name = "post")
     @Operation(summary = "게시글 좋아요",
-                description = "targetId = 좋아요를 할 게시글의 Id\n\n" +
-                                "targetType = POST (POST 문자열을 넣으시면 됩니다, 참고로 댓글일때는 REPLY)\n\n" +
-                                "userId = 서버에서 준 user의 고유ID를 넣으면 됩니다.")
+                description = "target-id = 좋아요를 할 게시글의 id\n\n" +
+                                "target-type = POST (POST 문자열을 넣으시면 됩니다, 참고로 댓글일때는 REPLY)\n\n" +
+                                "user-id = 서버에서 준 user의 고유ID를 넣으면 됩니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "게시글 좋아요를 하였습니다."),
             @ApiResponse(responseCode = "400", description = "게시글 좋아요 에러가 발생하였습니다.")
@@ -94,17 +94,17 @@ public class PostController {
 
     @Tag(name = "post")
     @Operation(summary = "게시글 좋아요 취소",
-                description = "targetId = 좋아요를 할 게시글의 Id\n\n" +
-                        "targetType = POST (POST 문자열을 넣으시면 됩니다, 참고로 댓글일때는 REPLY)\n\n" +
-                        "userId = 서버에서 준 user의 고유ID를 넣으면 됩니다.")
+                description = "target-id = 좋아요를 할 게시글의 Id\n\n" +
+                        "target-type = POST (POST 문자열을 넣으시면 됩니다, 참고로 댓글일때는 REPLY)\n\n" +
+                        "user-id = 서버에서 준 user의 고유ID를 넣으면 됩니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "게시글 좋아요 취소를 하였습니다."),
             @ApiResponse(responseCode = "400", description = "게시글 좋아요 취소 에러가 발생하였습니다.")
     })
     @DeleteMapping("/like")
-    public ResponseEntity<ApplicationResponse> unlikePost(@RequestParam(value = "userId") long userId,
-                                                          @RequestParam(value = "targetId") long targetId,
-                                                          @RequestParam(value = "targetType") String targetType ) {
+    public ResponseEntity<ApplicationResponse> unlikePost(@RequestParam(value = "user-id") long userId,
+                                                          @RequestParam(value = "target-id") long targetId,
+                                                          @RequestParam(value = "target-type") String targetType ) {
         likeService.likeOrUnlike(userId, targetId, targetType, false);
         return ResponseEntity.ok(ApplicationResponse.of(true, HttpStatus.NO_CONTENT, "게시글 좋아요를 취소 하였습니다."));
     }
@@ -113,7 +113,7 @@ public class PostController {
     @Operation(summary = "최신날짜 + 좋아요갯수 를 기준으로 상위 N개의 게시글을 줍니다.")
     @ApiResponse(responseCode = "200", description = "상위 N개의 게시글을 가져왔습니다.")
     @GetMapping("/top")
-    public ResponseEntity<ApplicationResponse> getTopNPostListByDateAndLike(@RequestParam(value = "postCount") int postCount) {
+    public ResponseEntity<ApplicationResponse> getTopNPostListByDateAndLike(@RequestParam(value = "post-count") int postCount) {
         return ResponseEntity.ok(ApplicationResponse.of(postService.getTopNPostListByDateAndLike(postCount), HttpStatus.OK, "상위 N개의 게시글을 가져왔습니다."));
     }
 }
