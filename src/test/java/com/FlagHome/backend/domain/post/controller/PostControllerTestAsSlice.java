@@ -100,7 +100,7 @@ public class PostControllerTestAsSlice {
 
         // when
         ResultActions actions = mockMvc.perform(get(BASE_URL)
-                .param("postId", Long.toString(dummyPost.getId())));
+                .param("id", Long.toString(dummyPost.getId())));
 
         // then
         actions
@@ -124,8 +124,8 @@ public class PostControllerTestAsSlice {
 
         // when
         ResultActions actions = mockMvc.perform(get(BASE_URL)
-                .param("postId", Long.toString(dummyPost.getId()))
-                .param("viaBoard", "true"));
+                .param("id", Long.toString(dummyPost.getId()))
+                .param("via-board", "true"));
 
         // then
         actions

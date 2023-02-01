@@ -117,7 +117,7 @@ class ReplyControllerTest {
 
         String postId = Long.toString(savedPost.getId());
         mockMvc.perform(get(BASE_URL)
-                .param("id", postId))
+                .param("post-id", postId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("status", is("OK")))
                     .andExpect(jsonPath("message", is("댓글 리스트 가져오기에 성공 하였습니다.")));
@@ -260,9 +260,9 @@ class ReplyControllerTest {
 
         // when
         mockMvc.perform(delete(BASE_URL + "/like")
-                .param("userId", Long.toString(userId))
-                .param("targetId", Long.toString(replyId))
-                .param("targetType", LikeType.REPLY.toString()))
+                .param("user-id", Long.toString(userId))
+                .param("target-id", Long.toString(replyId))
+                .param("target-type", LikeType.REPLY.toString()))
                     .andDo(print());
 
         // then
