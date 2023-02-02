@@ -12,7 +12,6 @@ import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.dto.PostDto;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
-import com.FlagHome.backend.domain.reply.entity.Reply;
 import com.FlagHome.backend.domain.reply.repository.ReplyRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +22,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -32,6 +36,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -69,7 +74,6 @@ class PostControllerTest {
     private WebApplicationContext webApplicationContext;
 
     private Member dummyMember;
-
     private Board dummyBoard1, dummyBoard2;
 
 
@@ -95,6 +99,8 @@ class PostControllerTest {
                 .boardDepth(1L)
                 .parent(dummyBoard1)
                 .build());
+
+        setJwtInformation(dummyMember.getId());
     }
 
     @Test
@@ -132,35 +138,7 @@ class PostControllerTest {
                 .build());
 
         mockMvc.perform(get(BASE_URL)
-                        .param("postId", Long.toString(postEntity.getId())))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("status", is("OK")))
-                .andExpect(jsonPath("message", is("게시글 가져오기에 성공 하였습니다.")))
-                .andDo(print());
-    }
-
-    @Test
-    @DisplayName("게시판을 통하여 게시글 가져오기 테스트")
-    public void getPostTestViaBorad() throws Exception {
-        String title = "게시판 통해서 가져오기 제목";
-        String content = "게시판 통해서 가져오기 내용";
-
-        Post postEntity = postRepository.save(Post.builder()
-                .title(title)
-                .content(content)
-                .viewCount(0L)
-                .replyList(new ArrayList<>())
-                .member(dummyMember)
-                .board(dummyBoard2)
-                .build());
-
-        Reply replyEntity = replyRepository.save(Reply.builder().member(dummyMember).post(postEntity).replyDepth(1L).replyGroup(2L).replyOrder(1L).likeCount(0L).content("댓글이다").build());
-        postEntity.getReplyList().add(replyEntity);
-        replyRepository.flush();
-
-        mockMvc.perform(get(BASE_URL)
-                        .param("postId", Long.toString(postEntity.getId()))
-                        .param("viaBoard", "true"))
+                        .param("id", Long.toString(postEntity.getId())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("status", is("OK")))
                 .andExpect(jsonPath("message", is("게시글 가져오기에 성공 하였습니다.")))
@@ -281,9 +259,9 @@ class PostControllerTest {
 
         // when
         mockMvc.perform(delete(BASE_URL + "/like")
-                .param("userId", Long.toString(dummyMember.getId()))
-                .param("targetId", Long.toString(postId))
-                .param("targetType", "POST"))
+                .param("user-id", Long.toString(dummyMember.getId()))
+                .param("target-id", Long.toString(postId))
+                .param("target-type", "POST"))
                     .andDo(print());
 
         // then
@@ -334,7 +312,7 @@ class PostControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(get(BASE_URL + "/top")
-                        .param("postCount", Integer.toString(3)))
+                        .param("post-count", Integer.toString(3)))
                 .andExpect(status().isOk());
 
         // then
@@ -348,5 +326,13 @@ class PostControllerTest {
         }
 
         assertThat(leftBraceCount).isEqualTo(3);
+    }
+
+    private void setJwtInformation(long memberId) {
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add((GrantedAuthority) () -> "ROLE_USER");
+
+        UserDetails principal = new User(Long.toString(memberId), "", authorities);
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(principal, "", authorities));
     }
 }

@@ -19,6 +19,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -26,6 +31,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -70,6 +76,8 @@ class ReplyControllerTest {
                 .email("gildong@naver.com")
                 .name("honggildong")
                 .build());
+
+        setJwtInformation(dummyMember.getId());
     }
 
     @Test
@@ -117,7 +125,7 @@ class ReplyControllerTest {
 
         String postId = Long.toString(savedPost.getId());
         mockMvc.perform(get(BASE_URL)
-                .param("id", postId))
+                .param("post-id", postId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("status", is("OK")))
                     .andExpect(jsonPath("message", is("댓글 리스트 가져오기에 성공 하였습니다.")));
@@ -260,13 +268,21 @@ class ReplyControllerTest {
 
         // when
         mockMvc.perform(delete(BASE_URL + "/like")
-                .param("userId", Long.toString(userId))
-                .param("targetId", Long.toString(replyId))
-                .param("targetType", LikeType.REPLY.toString()))
+                .param("user-id", Long.toString(userId))
+                .param("target-id", Long.toString(replyId))
+                .param("target-type", LikeType.REPLY.toString()))
                     .andDo(print());
 
         // then
         replyRepository.findById(replyId).ifPresent(resultReply -> assertThat(resultReply.getLikeCount()).isEqualTo(0L));
         assertThat(likeRepository.findLikeByUserId(userId).size()).isEqualTo(0);
+    }
+
+    private void setJwtInformation(long memberId) {
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add((GrantedAuthority) () -> "ROLE_USER");
+
+        UserDetails principal = new User(Long.toString(memberId), "", authorities);
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(principal, "", authorities));
     }
 }
