@@ -7,6 +7,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.FlagHome.backend.domain.member.entity.QMember.member;
@@ -19,9 +20,11 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
     @Override
     public List<Member> getAllSleepMembers() {
+        final LocalDateTime limit = LocalDateTime.now().minusDays(7);
+
         return queryFactory
                 .selectFrom(member)
-                .where()
+                .where(member.lastLoginTime.before(limit))
                 .fetch();
     }
 
