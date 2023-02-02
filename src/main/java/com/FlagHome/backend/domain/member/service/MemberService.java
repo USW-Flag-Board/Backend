@@ -2,6 +2,7 @@ package com.FlagHome.backend.domain.member.service;
 
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.service.MemberActivityService;
+import com.FlagHome.backend.domain.auth.dto.JoinRequest;
 import com.FlagHome.backend.domain.board.enums.SearchType;
 import com.FlagHome.backend.domain.mail.service.MailService;
 import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
@@ -29,6 +30,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -127,9 +129,16 @@ public class MemberService {
     public void changeAllToSleepMember() {
         List<Member> sleepingMembers = memberRepository.getAllSleepMembers();
         List<Sleeping> sleepingList = sleepingMembers.stream()
-                        .map(member -> Sleeping.of(member, passwordEncoder))
+                        .map(member -> Sleeping.of(member))
                         .collect(Collectors.toList());
         sleepingRepository.saveAll(sleepingList);
+    }
+
+    @Transactional
+    //@Scheduled(cron = "000000")
+    public void beforeSleep(JoinRequest joinRequest) {
+        List<Member> beforeSleeping = memberRepository.getAllBeforeSleep();
+        mailService.sendChangeSleep(joinRequest.getEmail());
     }
 
     @Transactional(readOnly = true)

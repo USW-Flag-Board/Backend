@@ -10,4 +10,6 @@ public interface MemberRepositoryCustom {
     List<Member> getAllSleepMembers();
 
     List<Member> getMembersByLoginId(List<String> loginIdList);
+
+    List<Member> getAllBeforeSleep();
 }

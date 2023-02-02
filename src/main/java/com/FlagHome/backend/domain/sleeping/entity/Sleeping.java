@@ -44,35 +44,22 @@ public class Sleeping {
     private String studentId;
 
     @Column
-    private String bio;
-
-    @Column
     private String major;
-
-    @Column(name = "profile_img")
-    private String profileImg;
 
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column
-    private String status;
-
-    @Column
-    private String certification;
-
-    public static Sleeping of(Member member, PasswordEncoder passwordEncoder){
+    public static Sleeping of(Member member){
         return Sleeping.builder()
                 .member(member)
-                .loginId(passwordEncoder.encode(member.getLoginId()))
-                .password(passwordEncoder.encode(member.getPassword()))
-                .email(passwordEncoder.encode(member.getEmail()))
-                .name(passwordEncoder.encode(member.getName()))
-                .studentId(passwordEncoder.encode(member.getStudentId()))
-                .major(passwordEncoder.encode(member.getMajor().toString()))
-                .phoneNumber(passwordEncoder.encode(member.getPhoneNumber()))
-                .status(passwordEncoder.encode(member.getStatus().toString()))
-                .expiredAt(LocalDateTime.now().plusDays(90))
+                .loginId(member.getLoginId())
+                .password(member.getPassword())
+                .email(member.getEmail())
+                .name(member.getName())
+                .studentId(member.getStudentId())
+                .major(member.getMajor().toString())
+                .phoneNumber(member.getPhoneNumber())
+                .expiredAt(LocalDateTime.now().plusDays(60))
                 .build();
     }
 

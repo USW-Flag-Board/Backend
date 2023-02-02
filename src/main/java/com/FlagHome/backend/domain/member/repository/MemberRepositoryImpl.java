@@ -32,4 +32,13 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
                 .where(member.loginId.in(loginIdList))
                 .fetch();
     }
+
+    @Override
+    public List<Member> getAllBeforeSleep() {
+        final LocalDateTime limit = LocalDateTime.now().minusDays(7);
+        return queryFactory
+                .selectFrom(member)
+                .where()
+                .fetch();
+    }
 }

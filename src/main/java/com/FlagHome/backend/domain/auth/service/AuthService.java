@@ -1,5 +1,6 @@
 package com.FlagHome.backend.domain.auth.service;
 
+import com.FlagHome.backend.domain.Status;
 import com.FlagHome.backend.domain.auth.JoinType;
 import com.FlagHome.backend.domain.auth.dto.*;
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
@@ -9,6 +10,7 @@ import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.mail.service.MailService;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
+import com.FlagHome.backend.domain.sleeping.service.SleepingService;
 import com.FlagHome.backend.domain.token.dto.TokenRequest;
 import com.FlagHome.backend.domain.token.dto.TokenResponse;
 import com.FlagHome.backend.domain.token.service.RefreshTokenService;
@@ -43,6 +45,7 @@ public class AuthService {
     private final JwtUtilizer jwtUtilizer;
     private final InputValidator inputValidator;
     private final AvatarService avatarService;
+    private final SleepingService sleepingService;
 
     public void validateDuplicateLoginId(String loginId) {
         if (memberRepository.existsByLoginId(loginId)) {
@@ -89,6 +92,11 @@ public class AuthService {
 
     @Transactional
     public TokenResponse login(LoginRequest loginRequest) {
+        Member member = memberService.findByLoginId(loginRequest.getLoginId());
+        if (member.getStatus() == Status.SLEEPING) {
+            sleepingService.changeSleepToMember(loginRequest.getLoginId());
+        }
+
         // Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
 
@@ -99,7 +107,6 @@ public class AuthService {
         TokenResponse tokenResponse = jwtUtilizer.generateTokenDto(authentication);
 
         // 마지막 로그인 시간 갱신
-        Member member = memberService.findByLoginId(loginRequest.getLoginId());
         member.updateLastLoginTime(LocalDateTime.now());
 
         // RefreshToken 저장
