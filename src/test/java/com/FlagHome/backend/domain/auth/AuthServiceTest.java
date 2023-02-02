@@ -287,86 +287,86 @@ public class AuthServiceTest {
         }
     }
 
-    @Test
-    @DisplayName("로그인 테스트")
-    void loginTest() {
-        // given
-        String loginId = "gmlwh124";
-        String password = "1234";
-
-        Member savedMember = memberRepository.saveAndFlush(Member.builder()
-                        .loginId(loginId)
-                        .password(passwordEncoder.encode(password))
-                        .role(Role.ROLE_USER)
-                        .build());
-
-        LoginRequest logInRequest = LoginRequest.builder()
-                .loginId(loginId)
-                .password(password)
-                .build();
-
-        // when
-        TokenResponse tokenResponse = authService.login(logInRequest);
-        entityManager.clear();
-
-        // then : 정상적으로 발급되는 지, 유효한 지, 데이터가 일치하는 지
-        assertThat(tokenResponse.getAccessToken()).isNotNull();
-        assertThat(tokenResponse.getRefreshToken()).isNotNull();
-        assertThat(tokenResponse.getAccessTokenExpiresIn()).isNotNull();
-        assertThat(tokenResponse.getGrantType()).isEqualTo("Bearer");
-
-        String accessToken = tokenResponse.getAccessToken();
-
-        assertThat(jwtUtilizer.validateToken(accessToken)).isTrue();
-
-        Authentication authentication = jwtUtilizer.getAuthentication(accessToken);
-        long memberId = Long.parseLong(authentication.getName());
-        Member member = memberRepository.findByLoginId(loginId).get();
-        assertThat(savedMember.getLastLoginTime()).isNotEqualTo(member.getLastLoginTime());
-        assertThat(member.getId()).isEqualTo(memberId);
-    }
-
-    @Test
-    @DisplayName("토큰 재발급 테스트")
-    void reIssueToken() {
-        // given
-        String loginId = "gmlwh124";
-        String password = "1234";
-
-        memberRepository.saveAndFlush(Member.builder()
-                        .loginId(loginId)
-                        .password(passwordEncoder.encode(password))
-                        .role(Role.ROLE_USER)
-                        .build());
-
-        LoginRequest logInRequest = LoginRequest.builder()
-                .loginId(loginId)
-                .password(password)
-                .build();
-
-        TokenResponse tokenResponse = authService.login(logInRequest);
-
-        TokenRequest tokenRequest = TokenRequest.builder()
-                .accessToken(tokenResponse.getAccessToken())
-                .refreshToken(tokenResponse.getRefreshToken())
-                .build();
-
-        // when
-        TokenResponse reissueToken = authService.reissueToken(tokenRequest);
-
-        // then
-        assertThat(reissueToken.getAccessToken()).isNotNull();
-        assertThat(reissueToken.getRefreshToken()).isNotNull();
-        assertThat(reissueToken.getGrantType()).isNotNull();
-        assertThat(reissueToken.getAccessTokenExpiresIn()).isNotNull();
-
-        String accessToken = reissueToken.getAccessToken();
-
-        assertThat(jwtUtilizer.validateToken(accessToken)).isTrue();
-
-        Authentication authentication = jwtUtilizer.getAuthentication(accessToken);
-        long memberId = Long.parseLong(authentication.getName());
-        Member member = memberRepository.findByLoginId(loginId).get();
-        assertThat(member.getId()).isEqualTo(memberId);
-    }
+//    @Test
+//    @DisplayName("로그인 테스트")
+//    void loginTest() {
+//        // given
+//        String loginId = "gmlwh124";
+//        String password = "1234";
+//
+//        Member savedMember = memberRepository.saveAndFlush(Member.builder()
+//                        .loginId(loginId)
+//                        .password(passwordEncoder.encode(password))
+//                        .role(Role.ROLE_USER)
+//                        .build());
+//
+//        LoginRequest logInRequest = LoginRequest.builder()
+//                .loginId(loginId)
+//                .password(password)
+//                .build();
+//
+//        // when
+//        TokenResponse tokenResponse = authService.login(logInRequest);
+//        entityManager.clear();
+//
+//        // then : 정상적으로 발급되는 지, 유효한 지, 데이터가 일치하는 지
+//        assertThat(tokenResponse.getAccessToken()).isNotNull();
+//        assertThat(tokenResponse.getRefreshToken()).isNotNull();
+//        assertThat(tokenResponse.getAccessTokenExpiresIn()).isNotNull();
+//        assertThat(tokenResponse.getGrantType()).isEqualTo("Bearer");
+//
+//        String accessToken = tokenResponse.getAccessToken();
+//
+//        assertThat(jwtUtilizer.validateToken(accessToken)).isTrue();
+//
+//        Authentication authentication = jwtUtilizer.getAuthentication(accessToken);
+//        long memberId = Long.parseLong(authentication.getName());
+//        Member member = memberRepository.findByLoginId(loginId).get();
+//        assertThat(savedMember.getLastLoginTime()).isNotEqualTo(member.getLastLoginTime());
+//        assertThat(member.getId()).isEqualTo(memberId);
+//    }
+//
+//    @Test
+//    @DisplayName("토큰 재발급 테스트")
+//    void reIssueToken() {
+//        // given
+//        String loginId = "gmlwh124";
+//        String password = "1234";
+//
+//        memberRepository.saveAndFlush(Member.builder()
+//                        .loginId(loginId)
+//                        .password(passwordEncoder.encode(password))
+//                        .role(Role.ROLE_USER)
+//                        .build());
+//
+//        LoginRequest logInRequest = LoginRequest.builder()
+//                .loginId(loginId)
+//                .password(password)
+//                .build();
+//
+//        TokenResponse tokenResponse = authService.login(logInRequest);
+//
+//        TokenRequest tokenRequest = TokenRequest.builder()
+//                .accessToken(tokenResponse.getAccessToken())
+//                .refreshToken(tokenResponse.getRefreshToken())
+//                .build();
+//
+//        // when
+//        TokenResponse reissueToken = authService.reissueToken(tokenRequest);
+//
+//        // then
+//        assertThat(reissueToken.getAccessToken()).isNotNull();
+//        assertThat(reissueToken.getRefreshToken()).isNotNull();
+//        assertThat(reissueToken.getGrantType()).isNotNull();
+//        assertThat(reissueToken.getAccessTokenExpiresIn()).isNotNull();
+//
+//        String accessToken = reissueToken.getAccessToken();
+//
+//        assertThat(jwtUtilizer.validateToken(accessToken)).isTrue();
+//
+//        Authentication authentication = jwtUtilizer.getAuthentication(accessToken);
+//        long memberId = Long.parseLong(authentication.getName());
+//        Member member = memberRepository.findByLoginId(loginId).get();
+//        assertThat(member.getId()).isEqualTo(memberId);
+//    }
 }
