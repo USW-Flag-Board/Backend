@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 public class MailRequest {
-    private static final String FROM = "no-reply@FLAG.com";
+    private static final String FROM = "no-reply@flaground.kr";
 
     private String to;
     private String subject;
@@ -29,7 +29,7 @@ public class MailRequest {
                         .withHtml(createContent(this.content)));
 
         return new SendEmailRequest()
-                .withSource("gmlwh124@naver.com") // 도메인 만들면 변경하기
+                .withSource(FROM)
                 .withDestination(destination)
                 .withMessage(message);
     }
