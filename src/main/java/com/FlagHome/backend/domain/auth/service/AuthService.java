@@ -65,12 +65,13 @@ public class AuthService {
 
         return JoinResponse.from(joinRequest.getEmail());
     }
+
     @Transactional
-    public SignUpResponse signUp(SignUpRequest signUpRequest) {
-        AuthInformation authInformation = authRepository.findFirstByEmailOrderByCreatedAtDesc(signUpRequest.getEmail())
+    public SignUpResponse signUp(String email, String certification) {
+        AuthInformation authInformation = authRepository.findFirstByEmailOrderByCreatedAtDesc(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.AUTH_INFORMATION_NOT_FOUND));
 
-        inputValidator.validateCertification(signUpRequest.getCertification(), authInformation.getCertification());
+        inputValidator.validateCertification(certification, authInformation.getCertification());
 
         // 동아리원이면 인증 상태를 업데이트하고 이후 관리자의 확인을 받는다.
         if (authInformation.getJoinType() == JoinType.동아리) {
@@ -85,9 +86,9 @@ public class AuthService {
     }
 
     @Transactional
-    public TokenResponse login(LoginRequest loginRequest) {
+    public TokenResponse login(String loginId, String password) {
         // Login ID/PW 를 기반으로 AuthenticationToken 생성
-        UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginId, password);;
 
         // 실제로 검증(비밀번호 체크)이 이루어지는 부분
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
@@ -96,7 +97,7 @@ public class AuthService {
         TokenResponse tokenResponse = jwtUtilizer.generateTokenDto(authentication);
 
         // 마지막 로그인 시간 갱신
-        Member member = memberService.findByLoginId(loginRequest.getLoginId());
+        Member member = memberService.findByLoginId(loginId);
         member.updateLastLoginTime(LocalDateTime.now());
 
         // RefreshToken 저장
@@ -106,7 +107,7 @@ public class AuthService {
     }
 
     @Transactional
-    public TokenResponse reissueToken(TokenRequest tokenRequest) {
-        return refreshTokenService.reissueToken(tokenRequest);
+    public TokenResponse reissueToken(String accessToken, String refreshToken) {
+        return refreshTokenService.reissueToken(accessToken, refreshToken);
     }
 }

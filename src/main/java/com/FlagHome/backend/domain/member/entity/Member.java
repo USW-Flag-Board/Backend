@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.member.entity;
 
-import com.FlagHome.backend.domain.BaseEntity;
-import com.FlagHome.backend.domain.Status;
+import com.FlagHome.backend.domain.common.BaseEntity;
+import com.FlagHome.backend.domain.common.Status;
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.member.Major;
 import com.FlagHome.backend.domain.member.Role;

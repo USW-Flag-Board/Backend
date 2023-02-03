@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.reply.dto;
 
-import com.FlagHome.backend.domain.Status;
+import com.FlagHome.backend.domain.common.Status;
 import com.FlagHome.backend.domain.reply.entity.Reply;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;

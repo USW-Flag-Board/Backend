@@ -18,8 +18,4 @@ public class LoginRequest {
 
     @Schema(description = "비밀번호", required = true, example = "qwer1234!")
     private String password;
-
-    public UsernamePasswordAuthenticationToken toAuthentication() {
-        return new UsernamePasswordAuthenticationToken(loginId, password);
-    }
 }

@@ -1,9 +1,6 @@
 package com.FlagHome.backend.domain.auth;
 
-import com.FlagHome.backend.domain.auth.dto.JoinRequest;
-import com.FlagHome.backend.domain.auth.dto.LoginRequest;
-import com.FlagHome.backend.domain.auth.dto.SignUpRequest;
-import com.FlagHome.backend.domain.auth.dto.SignUpResponse;
+import com.FlagHome.backend.domain.auth.dto.*;
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import com.FlagHome.backend.domain.auth.service.AuthService;
@@ -80,10 +77,10 @@ public class AuthServiceTest {
         @Test
         @DisplayName("아이디가 중복되어 실패")
         void validateIdFailTest() {
-            String overlapedId = "gmlwh124";
+            String overlappedId = "gmlwh124";
 
             assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> authService.validateDuplicateLoginId(overlapedId))
+                    .isThrownBy(() -> authService.validateDuplicateLoginId(overlappedId))
                     .withMessage(ErrorCode.LOGIN_ID_EXISTS.getMessage());
         }
     }
@@ -137,53 +134,22 @@ public class AuthServiceTest {
         }
     }
 
-    @Nested
-    @DisplayName("회원가입(join) 테스트")
-    class signUpJoinTest {
-//        @Test
-//        @DisplayName("회원가입 join 성공")
-//        void joinSuccessTest() {
-//            // given
-//            String loginId = "gmlwh124";
-//            String password = "qwer1234!";
-//            String email = "gmlwh124@suwon.ac.kr";
-//
-//            JoinRequest joinRequest = JoinRequest.builder()
-//                    .loginId(loginId)
-//                    .password(password)
-//                    .email(email)
-//                    .build();
-//
-//            given(mailService.sendCertification(any(), any())).willReturn(email);
-//            given(amazonSimpleEmailService.sendEmail(any())).willReturn(new SendEmailResult());
-//
-//            // when
-//            authService.join(joinRequest);
-//
-//            // then
-//            AuthInformation authInformation = authRepository.findFirstByEmailOrderByCreatedAtDesc(email).get();
-//            assertThat(authInformation).isNotNull();
-//            assertThat(authInformation.getLoginId()).isEqualTo(loginId);
-//            assertThat(authInformation.getPassword()).isEqualTo(password);
-//        }
+    @Test
+    @DisplayName("비밀번호 유효성 검사 실패로 join 실패")
+    void joinFailTest() {
+        String loginId = "gmlwh124";
+        String password = "1234";
+        String email = "gmlwh124@suwon.ac.kr";
 
-        @Test
-        @DisplayName("비밀번호 유효성 검사 실패로 join 실패")
-        void joinFailTest() {
-            String loginId = "gmlwh124";
-            String password = "1234";
-            String email = "gmlwh124@suwon.ac.kr";
+        JoinRequest joinRequest = JoinRequest.builder()
+                .loginId(loginId)
+                .password(password)
+                .email(email)
+                .build();
 
-            JoinRequest joinRequest = JoinRequest.builder()
-                    .loginId(loginId)
-                    .password(password)
-                    .email(email)
-                    .build();
-
-            assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> authService.join(joinRequest))
-                    .withMessage(ErrorCode.INVALID_PASSWORD.getMessage());
-        }
+        assertThatExceptionOfType(CustomException.class)
+                .isThrownBy(() -> authService.join(joinRequest))
+                .withMessage(ErrorCode.INVALID_PASSWORD.getMessage());
     }
 
     @Nested
@@ -209,13 +175,8 @@ public class AuthServiceTest {
             AuthInformation authInformation = AuthInformation.of(joinRequest, certification);
             authRepository.saveAndFlush(authInformation);
 
-            SignUpRequest signUpRequest = SignUpRequest.builder()
-                    .email(email)
-                    .certification(certification)
-                    .build();
-
             // when
-            SignUpResponse signUpResponse = authService.signUp(signUpRequest);
+            SignUpResponse signUpResponse = authService.signUp(email, certification);
 
             // then
             assertThat(signUpResponse.getEmail()).isEqualTo(email);
@@ -244,13 +205,8 @@ public class AuthServiceTest {
             AuthInformation authInformation = AuthInformation.of(joinRequest, certification);
             authRepository.saveAndFlush(authInformation);
 
-            SignUpRequest signUpRequest = SignUpRequest.builder()
-                    .email(email)
-                    .certification(certification)
-                    .build();
-
             // when
-            SignUpResponse signUpResponse = authService.signUp(signUpRequest);
+            SignUpResponse signUpResponse = authService.signUp(email, certification);
 
             // then
             assertThat(signUpResponse.getEmail()).isEqualTo(email);
@@ -276,97 +232,77 @@ public class AuthServiceTest {
 
             authRepository.saveAndFlush(AuthInformation.of(joinRequest, certification));
 
-            SignUpRequest signUpRequest = SignUpRequest.builder()
-                    .email(email)
-                    .certification(wrongCertification)
-                    .build();
-
             assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> authService.signUp(signUpRequest))
+                    .isThrownBy(() -> authService.signUp(email, wrongCertification))
                     .withMessage(ErrorCode.CERTIFICATION_NOT_MATCH.getMessage());
         }
     }
 
-//    @Test
-//    @DisplayName("로그인 테스트")
-//    void loginTest() {
-//        // given
-//        String loginId = "gmlwh124";
-//        String password = "1234";
-//
-//        Member savedMember = memberRepository.saveAndFlush(Member.builder()
-//                        .loginId(loginId)
-//                        .password(passwordEncoder.encode(password))
-//                        .role(Role.ROLE_USER)
-//                        .build());
-//
-//        LoginRequest logInRequest = LoginRequest.builder()
-//                .loginId(loginId)
-//                .password(password)
-//                .build();
-//
-//        // when
-//        TokenResponse tokenResponse = authService.login(logInRequest);
-//        entityManager.clear();
-//
-//        // then : 정상적으로 발급되는 지, 유효한 지, 데이터가 일치하는 지
-//        assertThat(tokenResponse.getAccessToken()).isNotNull();
-//        assertThat(tokenResponse.getRefreshToken()).isNotNull();
-//        assertThat(tokenResponse.getAccessTokenExpiresIn()).isNotNull();
-//        assertThat(tokenResponse.getGrantType()).isEqualTo("Bearer");
-//
-//        String accessToken = tokenResponse.getAccessToken();
-//
-//        assertThat(jwtUtilizer.validateToken(accessToken)).isTrue();
-//
-//        Authentication authentication = jwtUtilizer.getAuthentication(accessToken);
-//        long memberId = Long.parseLong(authentication.getName());
-//        Member member = memberRepository.findByLoginId(loginId).get();
-//        assertThat(savedMember.getLastLoginTime()).isNotEqualTo(member.getLastLoginTime());
-//        assertThat(member.getId()).isEqualTo(memberId);
-//    }
-//
-//    @Test
-//    @DisplayName("토큰 재발급 테스트")
-//    void reIssueToken() {
-//        // given
-//        String loginId = "gmlwh124";
-//        String password = "1234";
-//
-//        memberRepository.saveAndFlush(Member.builder()
-//                        .loginId(loginId)
-//                        .password(passwordEncoder.encode(password))
-//                        .role(Role.ROLE_USER)
-//                        .build());
-//
-//        LoginRequest logInRequest = LoginRequest.builder()
-//                .loginId(loginId)
-//                .password(password)
-//                .build();
-//
-//        TokenResponse tokenResponse = authService.login(logInRequest);
-//
-//        TokenRequest tokenRequest = TokenRequest.builder()
-//                .accessToken(tokenResponse.getAccessToken())
-//                .refreshToken(tokenResponse.getRefreshToken())
-//                .build();
-//
-//        // when
-//        TokenResponse reissueToken = authService.reissueToken(tokenRequest);
-//
-//        // then
-//        assertThat(reissueToken.getAccessToken()).isNotNull();
-//        assertThat(reissueToken.getRefreshToken()).isNotNull();
-//        assertThat(reissueToken.getGrantType()).isNotNull();
-//        assertThat(reissueToken.getAccessTokenExpiresIn()).isNotNull();
-//
-//        String accessToken = reissueToken.getAccessToken();
-//
-//        assertThat(jwtUtilizer.validateToken(accessToken)).isTrue();
-//
-//        Authentication authentication = jwtUtilizer.getAuthentication(accessToken);
-//        long memberId = Long.parseLong(authentication.getName());
-//        Member member = memberRepository.findByLoginId(loginId).get();
-//        assertThat(member.getId()).isEqualTo(memberId);
-//    }
+    @Test
+    @DisplayName("로그인 테스트")
+    void loginTest() {
+        // given
+        String loginId = "gmlwh124";
+        String password = "1234";
+
+        Member savedMember = memberRepository.saveAndFlush(Member.builder()
+                        .loginId(loginId)
+                        .password(passwordEncoder.encode(password))
+                        .role(Role.ROLE_USER)
+                        .build());
+
+        // when
+        TokenResponse tokenResponse = authService.login(loginId, password);
+        entityManager.clear();
+
+        // then : 정상적으로 발급되는 지, 유효한 지, 데이터가 일치하는 지
+        assertThat(tokenResponse.getAccessToken()).isNotNull();
+        assertThat(tokenResponse.getRefreshToken()).isNotNull();
+        assertThat(tokenResponse.getAccessTokenExpiresIn()).isNotNull();
+        assertThat(tokenResponse.getGrantType()).isEqualTo("Bearer");
+
+        String accessToken = tokenResponse.getAccessToken();
+
+        assertThat(jwtUtilizer.validateToken(accessToken)).isTrue();
+
+        Authentication authentication = jwtUtilizer.getAuthentication(accessToken);
+        long memberId = Long.parseLong(authentication.getName());
+        Member member = memberRepository.findByLoginId(loginId).get();
+        assertThat(savedMember.getLastLoginTime()).isNotEqualTo(member.getLastLoginTime());
+        assertThat(member.getId()).isEqualTo(memberId);
+    }
+
+    @Test
+    @DisplayName("토큰 재발급 테스트")
+    void reIssueToken() {
+        // given
+        String loginId = "gmlwh124";
+        String password = "1234";
+
+        memberRepository.saveAndFlush(Member.builder()
+                        .loginId(loginId)
+                        .password(passwordEncoder.encode(password))
+                        .role(Role.ROLE_USER)
+                        .build());
+
+        TokenResponse tokenResponse = authService.login(loginId, password);
+
+        // when
+        TokenResponse reissueToken = authService.reissueToken(tokenResponse.getAccessToken(), tokenResponse.getRefreshToken());
+
+        // then
+        assertThat(reissueToken.getAccessToken()).isNotNull();
+        assertThat(reissueToken.getRefreshToken()).isNotNull();
+        assertThat(reissueToken.getGrantType()).isNotNull();
+        assertThat(reissueToken.getAccessTokenExpiresIn()).isNotNull();
+
+        String accessToken = reissueToken.getAccessToken();
+
+        assertThat(jwtUtilizer.validateToken(accessToken)).isTrue();
+
+        Authentication authentication = jwtUtilizer.getAuthentication(accessToken);
+        long memberId = Long.parseLong(authentication.getName());
+        Member member = memberRepository.findByLoginId(loginId).get();
+        assertThat(member.getId()).isEqualTo(memberId);
+    }
 }

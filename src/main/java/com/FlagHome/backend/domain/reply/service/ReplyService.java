@@ -2,7 +2,7 @@ package com.FlagHome.backend.domain.reply.service;
 
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
-import com.FlagHome.backend.domain.Status;
+import com.FlagHome.backend.domain.common.Status;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.repository.PostRepository;

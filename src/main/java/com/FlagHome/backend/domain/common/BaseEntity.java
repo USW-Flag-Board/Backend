@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain;
+package com.FlagHome.backend.domain.common;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
