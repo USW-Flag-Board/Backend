@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.reply.entity;
 
-import com.FlagHome.backend.domain.BaseEntity;
-import com.FlagHome.backend.domain.Status;
+import com.FlagHome.backend.domain.common.BaseEntity;
+import com.FlagHome.backend.domain.common.Status;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.member.entity.Member;
 import lombok.*;
