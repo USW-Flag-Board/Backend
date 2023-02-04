@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class LikeDto {
-    private Long userId;
+    private Long memberId;
     private Long targetId;
-    private String targetType;
 }

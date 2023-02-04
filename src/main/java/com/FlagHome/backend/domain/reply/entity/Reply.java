@@ -2,11 +2,13 @@ package com.FlagHome.backend.domain.reply.entity;
 
 import com.FlagHome.backend.domain.common.BaseEntity;
 import com.FlagHome.backend.domain.common.Status;
+import com.FlagHome.backend.domain.like.entity.Like;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.member.entity.Member;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -27,6 +29,9 @@ public class Reply extends BaseEntity {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Like> likeList;
+
     @Column
     private String content;
 
@@ -38,9 +43,6 @@ public class Reply extends BaseEntity {
 
     @Column(name = "reply_depth")
     private Long replyDepth;
-
-    @Column
-    private Long likeCount;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)

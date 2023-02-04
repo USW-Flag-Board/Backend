@@ -1,6 +1,7 @@
 package com.FlagHome.backend.domain.post.repository;
 
 import com.FlagHome.backend.domain.board.enums.SearchType;
+import com.FlagHome.backend.domain.post.dto.LightPostDto;
 import com.FlagHome.backend.domain.post.dto.PostDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -24,8 +25,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         post.createdAt,
                         post.board.id,
                         post.member.name,
-                        post.viewCount,
-                        post.likeCount))
+                        post.viewCount))
                 .from(post)
                 .where(boardNameCondition(boardName),
                         titleCondition(searchType, searchWord),
@@ -37,20 +37,19 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     }
 
     @Override
-    public List<PostDto> findTopNPostListByDateAndLike(int postCount) {
+    public List<LightPostDto> findTopNPostListByDateAndLike(int postCount) {
         return jpaQueryFactory
-                .select(Projections.constructor(PostDto.class,
+                .select(Projections.constructor(LightPostDto.class,
                         post.id,
                         post.title,
+                        post.board.englishName,
                         post.createdAt,
-                        post.board.id,
-                        post.member.name,
                         post.viewCount,
-                        post.likeCount))
+                        post.likeList.size()))
                 .from(post)
                 .orderBy(
                         post.createdAt.desc(),
-                        post.likeCount.desc()
+                        post.likeList.size().desc()
                 )
                 .limit(postCount)
                 .fetch();

@@ -3,6 +3,8 @@ package com.FlagHome.backend.domain.like.service;
 import com.FlagHome.backend.domain.like.entity.Like;
 import com.FlagHome.backend.domain.like.enums.LikeType;
 import com.FlagHome.backend.domain.like.repository.LikeRepository;
+import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
 import com.FlagHome.backend.domain.reply.entity.Reply;
@@ -19,45 +21,77 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LikeService {
     private final LikeRepository likeRepository;
+    private final MemberRepository memberRepository;
     private final PostRepository postRepository;
     private final ReplyRepository replyRepository;
 
     @Transactional
-    public void likeOrUnlike(long userId, long targetId, String targetType, boolean isLike) {
-        List<Like> likeList = likeRepository.findLikeByUserId(userId);
-        Like alreadyExistedLike = null;
+    public void like(Long memberId, Long targetId, LikeType likeType) {
+        Member member = findMember(memberId);
+        if(likeType == LikeType.POST)
+            likeInner(findPost(targetId).getLikeList(), targetId, member, likeType);
+        else if(likeType == LikeType.REPLY)
+            likeInner(findReply(targetId).getLikeList(), targetId, member, likeType);
+    }
+
+    @Transactional
+    public void unlike(Long memberId, Long targetId, LikeType likeType) {
+        Member member = findMember(memberId);
+        if(likeType == LikeType.POST)
+            unlikeInner(findPost(targetId).getLikeList(), member);
+        else if(likeType == LikeType.REPLY)
+            unlikeInner(findReply(targetId).getLikeList(), member);
+    }
+
+    private void likeInner(List<Like> likeList, Long targetId, Member member, LikeType likeType) {
         for(Like eachLike : likeList) {
-            if(eachLike.getTargetId() == targetId && eachLike.getTargetType().equals(targetType)) {
-                alreadyExistedLike = eachLike;
+            if(eachLike.getMember() == member)
+                throw new CustomException(ErrorCode.ALREADY_EXISTS_LIKE);
+        }
+
+        likeList.add(Like.builder()
+                .member(member)
+                .targetId(targetId)
+                .targetType(likeType)
+                .build());
+    }
+
+    private void unlikeInner(List<Like> likeList, Member member) {
+        Like deleteTargetLike = null;
+        for (Like like : likeList) {
+            if (like.getMember() == member) {
+                deleteTargetLike = like;
                 break;
             }
         }
 
-        if(isLike && alreadyExistedLike != null)
-            throw new CustomException(ErrorCode.ALREADY_EXISTS_LIKE);
-        else if(!isLike && alreadyExistedLike == null)
-            throw new CustomException(ErrorCode.NOT_EXISTS_LIKE);
-
-        int adder = (isLike) ? 1 : -1;
-        LikeType likeType = LikeType.of(targetType);
-        switch (likeType) {
-            case POST -> {
-                Post post = postRepository.findById(targetId).orElse(null);
-                if(post == null)
-                    throw new CustomException(ErrorCode.POST_NOT_FOUND);
-                post.setLikeCount(post.getLikeCount() + adder);
-            }
-            case REPLY -> {
-                Reply reply = replyRepository.findById(targetId).orElse(null);
-                if(reply == null)
-                    throw new CustomException(ErrorCode.REPLY_NOT_FOUND);
-                reply.setLikeCount(reply.getLikeCount() + adder);
-            }
+        if(deleteTargetLike != null) {
+            likeList.remove(deleteTargetLike);
+            likeRepository.delete(deleteTargetLike);
         }
+    }
 
-        if(isLike)
-            likeRepository.save(Like.builder().userId(userId).targetId(targetId).targetType(LikeType.of(targetType)).build());
-        else
-            likeRepository.delete(alreadyExistedLike);
+    private Post findPost(Long postId) {
+        Post post = postRepository.findById(postId).orElse(null);
+        if(post == null)
+            throw new CustomException(ErrorCode.POST_NOT_FOUND);
+
+        return post;
+    }
+
+    private Reply findReply(Long replyId) {
+        Reply reply = replyRepository.findById(replyId).orElse(null);
+        if(reply == null)
+            throw new CustomException(ErrorCode.REPLY_NOT_FOUND);
+
+        return reply;
+    }
+
+    private Member findMember(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElse(null);
+        if(member == null)
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+
+        return member;
     }
 }

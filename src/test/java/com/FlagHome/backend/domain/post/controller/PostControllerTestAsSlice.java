@@ -60,9 +60,20 @@ public class PostControllerTestAsSlice {
 
         dummyMember = Member.builder().id(1L).name("gildong").email("gildong@naver.com").loginId("gildong123").password("123123").phoneNumber("010-444-4444").build();
 
-        dummyPost = new Post(1L, dummyMember, "제목이다", "내용이다", new ArrayList<>(), dummyBoard, Status.NORMAL, 444L, 0L);
+        dummyPost = Post.builder()
+                .id(1L)
+                .member(dummyMember)
+                .title("제목이다")
+                .content("내용이다")
+                .replyList(new ArrayList<>())
+                .likeList(new ArrayList<>())
+                .board(dummyBoard)
+                .status(Status.NORMAL)
+                .viewCount(0L)
+                .build();
 
-        dummyReply = new Reply(1L, dummyMember, dummyPost, "댓글내용", 1L, 1L, 1L, 0L, Status.NORMAL);
+
+        dummyReply = Reply.builder().id(1L).member(dummyMember).post(dummyPost).content("댓글내용").likeList(new ArrayList<>()).replyGroup(1L).replyDepth(1L).replyOrder(1L).status(Status.NORMAL).build();
         dummyPost.getReplyList().add(dummyReply);
     }
 
