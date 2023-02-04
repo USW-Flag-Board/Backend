@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -45,6 +46,7 @@ public class ReplyService {
                                 .replyGroup(replyDto.getReplyGroup())
                                 .replyOrder(replyDto.getReplyOrder())
                                 .replyDepth(replyDto.getReplyDepth())
+                                .likeList(new ArrayList<>())
                                 .status(Status.ON)
                                 .build();
 
