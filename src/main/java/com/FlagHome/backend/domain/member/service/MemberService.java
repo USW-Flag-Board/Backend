@@ -95,16 +95,15 @@ public class MemberService {
     }
 
     @Transactional // 비밀번호를 유저가 변경하는 경우
-    public String updatePassword(Long memberId, UpdatePasswordRequest updatePasswordRequest) {
-        inputValidator.validatePassword(updatePasswordRequest.getNewPassword());
-        Member member = validateMemberPassword(memberId, updatePasswordRequest.getCurrentPassword());
+    public void updatePassword(Long memberId, String currentPassword, String newPassword) {
+        Member member = validateMemberPassword(memberId, currentPassword);
+        inputValidator.validatePassword(newPassword);
 
-        if (passwordEncoder.matches(updatePasswordRequest.getNewPassword(), member.getPassword())) {
+        if (passwordEncoder.matches(newPassword, member.getPassword())) {
             throw new CustomException(ErrorCode.PASSWORD_IS_SAME);
         }
 
-        member.updatePassword(passwordEncoder.encode(updatePasswordRequest.getNewPassword()));
-        return member.getLoginId();
+        member.updatePassword(passwordEncoder.encode(newPassword));
     }
 
     public MemberProfileResponse getMemberProfile(String loginId) {

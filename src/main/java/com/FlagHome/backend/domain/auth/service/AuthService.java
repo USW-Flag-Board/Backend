@@ -41,18 +41,22 @@ public class AuthService {
     private final InputValidator inputValidator;
     private final AvatarService avatarService;
 
-    public void validateDuplicateLoginId(String loginId) {
+    public Boolean validateDuplicateLoginId(String loginId) {
         if (memberRepository.existsByLoginId(loginId)) {
-            throw new CustomException(ErrorCode.LOGIN_ID_EXISTS);
+            return Boolean.TRUE;
         }
+
+        return Boolean.FALSE;
     }
 
-    public void validateEmail(String email) {
+    public Boolean validateEmail(String email) {
         inputValidator.validateUSWEmail(email);
 
         if (memberRepository.existsByEmail(email)) {
-            throw new CustomException(ErrorCode.EMAIL_EXISTS);
+            return Boolean.TRUE;
         }
+
+        return Boolean.FALSE;
     }
 
     @Transactional
