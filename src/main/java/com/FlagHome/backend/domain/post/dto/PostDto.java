@@ -1,6 +1,8 @@
 package com.FlagHome.backend.domain.post.dto;
 
 import com.FlagHome.backend.domain.common.Status;
+import com.FlagHome.backend.domain.like.entity.Like;
+import com.FlagHome.backend.domain.like.entity.LikeDto;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.reply.dto.ReplyDto;
 import com.FlagHome.backend.domain.reply.entity.Reply;
@@ -25,10 +27,10 @@ public class PostDto {
     private String content;
     private String memberName;
     private List<ReplyDto> replyList;
+    private List<LikeDto> likeList;
     private long boardId;
     private Status status;
     private long viewCount;
-    private long likeCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -40,21 +42,23 @@ public class PostDto {
         this.boardId = postEntity.getBoard().getId();
         this.status = postEntity.getStatus();
         this.viewCount = postEntity.getViewCount();
-        this.likeCount = postEntity.getLikeCount();
 
-        replyList = new ArrayList<>();
+        this.replyList = new ArrayList<>();
         for(Reply reply : postEntity.getReplyList())
-            replyList.add(new ReplyDto(reply));
+            this.replyList.add(new ReplyDto(reply));
+
+        this.likeList = new ArrayList<>();
+        for(Like eachLike : postEntity.getLikeList())
+            this.likeList.add(new LikeDto(eachLike.getMember().getId(), eachLike.getTargetId()));
     }
 
     // Projection용 생성자
-    public PostDto(long id, String title, LocalDateTime createdAt, long boardId, String memberName, long viewCount, long likeCount) {
+    public PostDto(long id, String title, LocalDateTime createdAt, long boardId, String memberName, long viewCount) {
         this.id = id;
         this.title = title;
         this.createdAt = createdAt;
         this.boardId = boardId;
         this.memberName = memberName;
         this.viewCount = viewCount;
-        this.likeCount = likeCount;
     }
 }

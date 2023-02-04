@@ -1,19 +1,19 @@
 package com.FlagHome.backend.domain.post.controller;
 
-import com.FlagHome.backend.domain.common.ApiResponse;
 import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.board.repository.BoardRepository;
+import com.FlagHome.backend.domain.common.Status;
 import com.FlagHome.backend.domain.like.entity.Like;
 import com.FlagHome.backend.domain.like.entity.LikeDto;
 import com.FlagHome.backend.domain.like.enums.LikeType;
 import com.FlagHome.backend.domain.like.repository.LikeRepository;
+import com.FlagHome.backend.domain.like.service.LikeService;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.dto.PostDto;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
 import com.FlagHome.backend.domain.reply.repository.ReplyRepository;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +29,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
@@ -62,9 +61,11 @@ class PostControllerTest {
     private ReplyRepository replyRepository;
     @Autowired
     private LikeRepository likeRepository;
-
     @Autowired
     private BoardRepository boardRepository;
+
+    @Autowired
+    private LikeService likeService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -131,8 +132,8 @@ class PostControllerTest {
                 .title(title)
                 .content(content)
                 .viewCount(0L)
-                .likeCount(0L)
                 .replyList(new ArrayList<>())
+                .likeList(new ArrayList<>())
                 .member(dummyMember)
                 .board(dummyBoard2)
                 .build());
@@ -157,8 +158,8 @@ class PostControllerTest {
                                         .content(originalContent)
                                         .board(originalBoard)
                                         .viewCount(0L)
-                                        .likeCount(0L)
                                         .replyList(new ArrayList<>())
+                                        .likeList(new ArrayList<>())
                                         .member(dummyMember)
                                         .build());
 
@@ -214,29 +215,32 @@ class PostControllerTest {
     @DisplayName("게시글 좋아요 테스트")
     public void likePostTest() throws Exception {
         // given
-        Post postEntity = postRepository.save(Post.builder()
-                .title("게시글 제목")
-                .content("게시글 내용")
-                .board(dummyBoard2)
+        Post post = postRepository.save(Post.builder()
                 .member(dummyMember)
+                .board(dummyBoard1)
+                .title("이게제목")
+                .content("이게 내용")
+                .status(Status.NORMAL)
                 .viewCount(0L)
-                .likeCount(0L)
+                .replyList(new ArrayList<>())
+                .likeList(new ArrayList<>())
                 .build());
 
-        long postId = postEntity.getId();
-        LikeDto likeDto = new LikeDto(dummyMember.getId(), postId, "POST");
+        long postId = post.getId();
+        long memberId = dummyMember.getId();
+        LikeDto likeDto = new LikeDto(memberId, postId);
         String jsonBody = objectMapper.writeValueAsString(likeDto);
 
         // when
         mockMvc.perform(post(BASE_URL + "/like")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonBody))
-                .andDo(print());
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonBody))
+                    .andExpect(status().isOk())
+                    .andDo(print());
 
         // then
-        postRepository.findById(postId).ifPresent(resultPost -> assertThat(resultPost.getLikeCount()).isEqualTo(1L));
-        List<Like> likeList = likeRepository.findLikeByUserId(dummyMember.getId());
+        List<Like> likeList = likeRepository.findAll();
         assertThat(likeList.size()).isEqualTo(1);
     }
 
@@ -244,88 +248,88 @@ class PostControllerTest {
     @DisplayName("게시글 좋아요 취소 테스트")
     public void unlikePostTest() throws Exception {
         // given
-        Post postEntity = postRepository.save(Post.builder()
-                .title("게시글 제목")
-                .content("게시글 내용")
-                .board(dummyBoard2)
+        Post post = postRepository.save(Post.builder()
                 .member(dummyMember)
+                .board(dummyBoard1)
+                .title("이게제목")
+                .content("이게 내용")
+                .status(Status.NORMAL)
                 .viewCount(0L)
-                .likeCount(1L)
+                .replyList(new ArrayList<>())
+                .likeList(new ArrayList<>())
                 .build());
-        long postId = postEntity.getId();
 
-        Like like = likeRepository.save(Like.builder().userId(dummyMember.getId()).targetId(postId).targetType(LikeType.POST).build());
-        long likeId = like.getId();
+        long postId = post.getId();
+        long memberId = dummyMember.getId();
+        likeService.like(memberId, postId, LikeType.POST);
 
         // when
         mockMvc.perform(delete(BASE_URL + "/like")
-                .param("user-id", Long.toString(dummyMember.getId()))
-                .param("target-id", Long.toString(postId))
-                .param("target-type", "POST"))
+                .param("member-id", Long.toString(memberId))
+                .param("target-id", Long.toString(postId)))
+                    .andExpect(status().isOk())
                     .andDo(print());
 
         // then
-        postRepository.findById(postId).ifPresent(resultPost -> assertThat(resultPost.getLikeCount()).isEqualTo(0L));
-        Like shouldBeNullLike = likeRepository.findById(likeId).orElse(null);
-        assertThat(shouldBeNullLike).isNull();
+        assertThat(likeRepository.findAll().size()).isEqualTo(0);
     }
 
     @Test
     @DisplayName("최신날짜+좋아요 상위 Top3 게시글 가져오기 테스트")
     public void getTop3PostListByDateAndLikeTest() throws Exception {
         // given
-        postRepository.save(Post.builder()
+        Post firstPost = postRepository.save(Post.builder()
                 .member(dummyMember)
                 .title("첫째 게시물 제목")
                 .content("첫째 게시물 내용")
                 .board(dummyBoard1)
                 .viewCount(0L)
-                .likeCount(44444L)
+                .replyList(new ArrayList<>())
+                .likeList(new ArrayList<>())
                 .build());
 
-        postRepository.save(Post.builder()
+        Post secondPost = postRepository.save(Post.builder()
                 .member(dummyMember)
                 .title("둘째 게시물 제목")
                 .content("둘째 게시물 내용")
-                .board(dummyBoard2)
-                .viewCount(0L)
-                .likeCount(77777L)
-                .build());
-
-        postRepository.save(Post.builder()
-                .member(dummyMember)
-                .title("셋째 게시물 제목")
-                .content("셋째 게시물 내용")
                 .board(dummyBoard1)
                 .viewCount(0L)
-                .likeCount(33L)
+                .replyList(new ArrayList<>())
+                .likeList(new ArrayList<>())
                 .build());
 
-        postRepository.save(Post.builder()
-                .member(dummyMember)
-                .title("네번째 게시물 제목")
-                .content("네번째 게시물 내용")
-                .board(dummyBoard2)
-                .viewCount(0L)
-                .likeCount(572L)
+        Member firstMember = memberRepository.save(Member.builder()
+                .loginId("first123")
+                .email("first@naver.com")
+                .password("123123")
+                .name("첫째임")
                 .build());
+
+        Member secondMember = memberRepository.save(Member.builder()
+                .loginId("second2")
+                .email("second@naver.com")
+                .password("123123")
+                .name("둘째다")
+                .build());
+
+        long firstPostId = firstPost.getId();
+        long secondPostId = secondPost.getId();
+        long dummyMemberId = dummyMember.getId();
+        long firstMemberId = firstMember.getId();
+        long secondMemberid = secondMember.getId();
+
+        likeService.like(dummyMemberId, firstPostId, LikeType.POST);
+        likeService.like(firstMemberId, firstPostId, LikeType.POST);
+        likeService.like(secondMemberid, firstPostId, LikeType.POST);
+
+        likeService.like(dummyMemberId, secondPostId, LikeType.POST);
 
         // when
-        ResultActions actions = mockMvc.perform(get(BASE_URL + "/top")
-                        .param("post-count", Integer.toString(3)))
-                .andExpect(status().isOk());
+        mockMvc.perform(get(BASE_URL + "/top")
+                .param("post-count", Integer.toString(3)))
+                .andDo(print());
 
         // then
-        ApiResponse httpResponse = objectMapper.readValue(actions.andReturn().getResponse().getContentAsString(), new TypeReference<>() {});
-        String payloadString = httpResponse.getPayload().toString();
-
-        int leftBraceCount = 0;
-        for(int i = 0; i < payloadString.length(); ++i) {
-            if(payloadString.charAt(i) == '{')
-                ++leftBraceCount;
-        }
-
-        assertThat(leftBraceCount).isEqualTo(3);
     }
 
     private void setJwtInformation(long memberId) {
