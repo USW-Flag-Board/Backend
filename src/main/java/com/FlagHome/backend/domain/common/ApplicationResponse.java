@@ -8,39 +8,34 @@ import org.springframework.http.HttpStatus;
 
 @Data
 @JsonPropertyOrder({"status", "message", "payload"})
-public class ApiResponse<T> {
+public class ApplicationResponse<T> {
     private final static HttpStatus OK = HttpStatus.OK;
     private final static String SUCCESS_MESSAGE = "성공적으로 요청을 불러왔습니다.";
 
-    @Schema(name = "페이로드", description = "응답 데이터")
     private T payload;
-
-    @Schema(name = "API 결과 상태")
     private HttpStatus status;
-
-    @Schema(name = "API 결과 메세지")
     private String message;
 
-    public ApiResponse(T payload) {
+    public ApplicationResponse(T payload) {
         this.payload = payload;
         this.status = OK;
         this.message = SUCCESS_MESSAGE;
     }
 
-    public ApiResponse() {
+    public ApplicationResponse() {
         this.status = OK;
         this.message = SUCCESS_MESSAGE;
     }
 
     @Builder
-    public ApiResponse(T payload, HttpStatus status, String message) {
+    public ApplicationResponse(T payload, HttpStatus status, String message) {
         this.payload = payload;
         this.status = status;
         this.message = message;
     }
 
-    public static <T> ApiResponse<Object> of(T payload, HttpStatus status, String message) {
-        return ApiResponse.builder()
+    public static <T> ApplicationResponse<Object> of(T payload, HttpStatus status, String message) {
+        return ApplicationResponse.builder()
                 .payload(payload)
                 .status(status)
                 .message(message)

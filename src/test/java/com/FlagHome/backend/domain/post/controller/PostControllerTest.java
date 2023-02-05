@@ -1,5 +1,6 @@
 package com.FlagHome.backend.domain.post.controller;
 
+import com.FlagHome.backend.domain.common.ApplicationResponse;
 import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.board.repository.BoardRepository;
 import com.FlagHome.backend.domain.common.Status;

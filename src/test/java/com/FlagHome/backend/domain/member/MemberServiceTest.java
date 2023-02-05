@@ -134,13 +134,8 @@ public class MemberServiceTest {
                             .password(passwordEncoder.encode(password))
                             .build());
 
-            UpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequest.builder()
-                            .currentPassword(password)
-                            .newPassword(newPassword)
-                            .build();
-
             // when
-            memberService.updatePassword(savedMember.getId(), updatePasswordRequest);
+            memberService.updatePassword(savedMember.getId(), password, newPassword);
 
             // then : 정상적으로 변경되었는고 같은 엔티티인지
             Member member = memberRepository.findById(savedMember.getId()).get();
@@ -161,13 +156,8 @@ public class MemberServiceTest {
                     .password(passwordEncoder.encode(password))
                     .build());
 
-            UpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequest.builder()
-                    .currentPassword(password)
-                    .newPassword(password)
-                    .build();
-
             assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> memberService.updatePassword(savedMember.getId(), updatePasswordRequest))
+                    .isThrownBy(() -> memberService.updatePassword(savedMember.getId(), password, password))
                     .withMessage(ErrorCode.PASSWORD_IS_SAME.getMessage());
         }
     }
