@@ -2,6 +2,7 @@ package com.FlagHome.backend.domain.post.service;
 
 import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.board.repository.BoardRepository;
+import com.FlagHome.backend.domain.post.dto.LightPostDto;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.domain.member.entity.Member;
@@ -43,6 +44,7 @@ public class PostService {
                 .board(boardEntity)
                 .status(postDto.getStatus())
                 .replyList(new ArrayList<>())
+                .likeList(new ArrayList<>())
                 .viewCount(0L)
                 .build());
 
@@ -92,7 +94,7 @@ public class PostService {
     }
 
     @Transactional
-    public List<PostDto> getTopNPostListByDateAndLike(int postCount) {
+    public List<LightPostDto> getTopNPostListByDateAndLike(int postCount) {
         return postRepository.findTopNPostListByDateAndLike(postCount);
     }
 }

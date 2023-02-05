@@ -2,6 +2,7 @@ package com.FlagHome.backend.domain.post.controller;
 
 import com.FlagHome.backend.domain.common.ApplicationResponse;
 import com.FlagHome.backend.domain.like.entity.LikeDto;
+import com.FlagHome.backend.domain.like.enums.LikeType;
 import com.FlagHome.backend.domain.like.service.LikeService;
 import com.FlagHome.backend.domain.post.dto.PostDto;
 import com.FlagHome.backend.domain.post.service.PostService;
@@ -36,8 +37,8 @@ public class PostController {
     public ResponseEntity<ApplicationResponse> createPost(@RequestBody PostDto postDto) {
         PostDto createdPostDto = postService.createPost(postDto);
         URI uri = UriCreator.createUri(BASE_URL, createdPostDto.getId());
-        ApplicationResponse applicationResponse = ApplicationResponse.of(uri, HttpStatus.CREATED, "게시글 생성에 성공 하였습니다.");
-        return ResponseEntity.ok(applicationResponse);
+        ApplicationResponse apiResponse = ApplicationResponse.of(uri, HttpStatus.CREATED, "게시글 생성에 성공 하였습니다.");
+        return ResponseEntity.ok(apiResponse);
     }
 
     @Tag(name = "post")
@@ -76,32 +77,29 @@ public class PostController {
     @Tag(name = "post")
     @Operation(summary = "게시글 좋아요",
                 description = "target-id = 좋아요를 할 게시글의 id\n\n" +
-                                "target-type = POST (POST 문자열을 넣으시면 됩니다, 참고로 댓글일때는 REPLY)\n\n" +
-                                "user-id = 서버에서 준 user의 고유ID를 넣으면 됩니다.")
+                                "member-id = 서버에서 준 member의 고유ID를 넣으면 됩니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "게시글 좋아요를 하였습니다."),
             @ApiResponse(responseCode = "400", description = "게시글 좋아요 에러가 발생하였습니다.")
     })
     @PostMapping("/like")
     public ResponseEntity<ApplicationResponse> likePost(@RequestBody LikeDto likeDto) {
-        likeService.likeOrUnlike(likeDto.getUserId(), likeDto.getTargetId(), likeDto.getTargetType(), true);
+        likeService.like(likeDto.getMemberId(), likeDto.getTargetId(), LikeType.POST);
         return ResponseEntity.ok(ApplicationResponse.of(true, HttpStatus.OK, "게시글 좋아요를 하였습니다."));
     }
 
     @Tag(name = "post")
     @Operation(summary = "게시글 좋아요 취소",
                 description = "target-id = 좋아요를 할 게시글의 Id\n\n" +
-                        "target-type = POST (POST 문자열을 넣으시면 됩니다, 참고로 댓글일때는 REPLY)\n\n" +
-                        "user-id = 서버에서 준 user의 고유ID를 넣으면 됩니다.")
+                        "member-id = 서버에서 준 member의 고유ID를 넣으면 됩니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "게시글 좋아요 취소를 하였습니다."),
             @ApiResponse(responseCode = "400", description = "게시글 좋아요 취소 에러가 발생하였습니다.")
     })
     @DeleteMapping("/like")
-    public ResponseEntity<ApplicationResponse> unlikePost(@RequestParam(value = "user-id") long userId,
-                                                          @RequestParam(value = "target-id") long targetId,
-                                                          @RequestParam(value = "target-type") String targetType ) {
-        likeService.likeOrUnlike(userId, targetId, targetType, false);
+    public ResponseEntity<ApplicationResponse> unlikePost(@RequestParam(value = "member-id") long memberId,
+                                                  @RequestParam(value = "target-id") long targetId) {
+        likeService.unlike(memberId, targetId, LikeType.POST);
         return ResponseEntity.ok(ApplicationResponse.of(true, HttpStatus.NO_CONTENT, "게시글 좋아요를 취소 하였습니다."));
     }
 
@@ -110,6 +108,7 @@ public class PostController {
     @ApiResponse(responseCode = "200", description = "상위 N개의 게시글을 가져왔습니다.")
     @GetMapping("/top")
     public ResponseEntity<ApplicationResponse> getTopNPostListByDateAndLike(@RequestParam(value = "post-count") int postCount) {
-        return ResponseEntity.ok(ApplicationResponse.of(postService.getTopNPostListByDateAndLike(postCount), HttpStatus.OK, "상위 N개의 게시글을 가져왔습니다."));
+        String message = "상위 " + postCount + "개의 게시글을 가져왔습니다.";
+        return ResponseEntity.ok(ApplicationResponse.of(postService.getTopNPostListByDateAndLike(postCount), HttpStatus.OK, message));
     }
 }

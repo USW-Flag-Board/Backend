@@ -4,8 +4,8 @@ import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 
 public enum LikeType {
-    POST("POST"),
-    REPLY("REPLY");
+    POST("post"),
+    REPLY("reply");
 
     private final String type;
 

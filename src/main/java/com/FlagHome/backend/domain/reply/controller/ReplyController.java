@@ -2,6 +2,7 @@ package com.FlagHome.backend.domain.reply.controller;
 
 import com.FlagHome.backend.domain.common.ApplicationResponse;
 import com.FlagHome.backend.domain.like.entity.LikeDto;
+import com.FlagHome.backend.domain.like.enums.LikeType;
 import com.FlagHome.backend.domain.like.service.LikeService;
 import com.FlagHome.backend.domain.reply.dto.ReplyDto;
 import com.FlagHome.backend.domain.reply.service.ReplyService;
@@ -67,32 +68,29 @@ public class ReplyController {
     @Tag(name = "reply")
     @Operation(summary = "댓글 좋아요",
             description = "target-id = 좋아요를 할 댓글의 Id\n\n" +
-                    "target-type = REPLY (REPLY 문자열을 넣으시면 됩니다, 참고로 게시글 일때는 POST)\n\n" +
-                    "user-id = 서버에서 준 user의 고유ID를 넣으면 됩니다.")
+                    "member-id = 서버에서 준 member의 고유ID를 넣으면 됩니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "댓글 좋아요를 하였습니다."),
             @ApiResponse(responseCode = "400", description = "댓글 좋아요 에러가 발생하였습니다.")
     })
     @PostMapping("/like")
     public ResponseEntity<ApplicationResponse> likeReply(@RequestBody LikeDto likeDto) {
-        likeService.likeOrUnlike(likeDto.getUserId(), likeDto.getTargetId(), likeDto.getTargetType(), true);
+        likeService.like(likeDto.getMemberId(), likeDto.getTargetId(), LikeType.REPLY);
         return ResponseEntity.ok(ApplicationResponse.of(true, HttpStatus.OK, "댓글 좋아요를 하였습니다."));
     }
 
     @Tag(name = "reply")
     @Operation(summary = "댓글 좋아요 취소",
             description = "target-id = 좋아요를 할 댓글의 Id\n\n" +
-                    "target-type = REPLY (REPLY 문자열을 넣으시면 됩니다, 참고로 게시글 일때는 POST)\n\n" +
-                    "user-id = 서버에서 준 user의 고유ID를 넣으면 됩니다.")
+                    "member-id = 서버에서 준 member의 고유ID를 넣으면 됩니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "댓글 좋아요 취소를 하였습니다."),
             @ApiResponse(responseCode = "400", description = "댓글 좋아요 취소 에러가 발생하였습니다.")
     })
     @DeleteMapping("/like")
-    public ResponseEntity<ApplicationResponse> unlikePost(@RequestParam(value = "user-id") long userId,
-                                                          @RequestParam(value = "target-id") long targetId,
-                                                          @RequestParam(value = "target-type") String targetType) {
-        likeService.likeOrUnlike(userId, targetId, targetType, false);
+    public ResponseEntity<ApplicationResponse> unlikePost(@RequestParam(value = "member-id") long memberId,
+                                                  @RequestParam(value = "target-id") long targetId) {
+        likeService.unlike(memberId, targetId, LikeType.REPLY);
         return ResponseEntity.ok(ApplicationResponse.of(true, HttpStatus.NO_CONTENT, "댓글 좋아요를 취소 하였습니다."));
     }
 }
