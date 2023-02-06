@@ -12,6 +12,7 @@ import java.util.List;
 
 import static com.FlagHome.backend.domain.post.entity.QPost.post;
 
+
 @RequiredArgsConstructor
 public class PostRepositoryImpl implements PostRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;

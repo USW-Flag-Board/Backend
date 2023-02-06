@@ -8,6 +8,7 @@ import java.util.List;
 
 import static com.FlagHome.backend.domain.reply.entity.QReply.reply;
 
+
 @RequiredArgsConstructor
 public class ReplyRepositoryImpl implements ReplyRepositoryCustom{
     private final JPAQueryFactory jpaQueryFactory;

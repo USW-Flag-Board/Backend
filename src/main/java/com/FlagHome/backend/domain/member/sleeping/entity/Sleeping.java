@@ -1,11 +1,10 @@
-package com.FlagHome.backend.domain.withdrawal.entity;
+package com.FlagHome.backend.domain.member.sleeping.entity;
 
 import com.FlagHome.backend.domain.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -44,28 +43,22 @@ public class Sleeping {
     private String studentId;
 
     @Column
-    private String bio;
-
-    @Column
     private String major;
-
-    @Column(name = "profile_img")
-    private String profileImg;
 
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    public static Sleeping of(Member member, PasswordEncoder passwordEncoder){
+    public static Sleeping of(Member member){
         return Sleeping.builder()
                 .member(member)
-                .loginId(passwordEncoder.encode(member.getLoginId()))
-                .password(passwordEncoder.encode(member.getPassword()))
-                .email(passwordEncoder.encode(member.getEmail()))
-                .name(passwordEncoder.encode(member.getName()))
-                .studentId(passwordEncoder.encode(member.getStudentId()))
-                .major(passwordEncoder.encode(member.getMajor().toString()))
-                .phoneNumber(passwordEncoder.encode(member.getPhoneNumber()))
-                .expiredAt(LocalDateTime.now().plusDays(90))
+                .loginId(member.getLoginId())
+                .password(member.getPassword())
+                .email(member.getEmail())
+                .name(member.getName())
+                .studentId(member.getStudentId())
+                .major(member.getMajor().toString())
+                .phoneNumber(member.getPhoneNumber())
+                .expiredAt(LocalDateTime.now().plusDays(60))
                 .build();
     }
 

@@ -11,6 +11,7 @@ import java.util.List;
 import static com.FlagHome.backend.domain.member.entity.QMember.member;
 import static com.FlagHome.backend.domain.report.entity.QReport.report;
 
+
 @Repository
 @RequiredArgsConstructor
 public class ReportRepositoryImpl implements ReportRepositoryCustom {

@@ -2,7 +2,9 @@ package com.FlagHome.backend.domain.member.service;
 
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.service.MemberActivityService;
+import com.FlagHome.backend.domain.auth.dto.JoinRequest;
 import com.FlagHome.backend.domain.board.enums.SearchType;
+import com.FlagHome.backend.domain.common.Status;
 import com.FlagHome.backend.domain.mail.service.MailService;
 import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.MyProfileResponse;
@@ -11,15 +13,15 @@ import com.FlagHome.backend.domain.member.avatar.service.AvatarService;
 import com.FlagHome.backend.domain.member.dto.FindResponse;
 import com.FlagHome.backend.domain.member.dto.LoginLogResponse;
 import com.FlagHome.backend.domain.member.dto.MemberProfileResponse;
-import com.FlagHome.backend.domain.member.dto.UpdatePasswordRequest;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.dto.PostDto;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
+import com.FlagHome.backend.domain.member.sleeping.entity.Sleeping;
+import com.FlagHome.backend.domain.member.sleeping.repository.SleepingRepository;
+import com.FlagHome.backend.domain.member.sleeping.service.SleepingService;
 import com.FlagHome.backend.domain.token.entity.Token;
 import com.FlagHome.backend.domain.token.service.FindRequestTokenService;
-import com.FlagHome.backend.domain.withdrawal.entity.Sleeping;
-import com.FlagHome.backend.domain.withdrawal.repository.WithdrawalRepository;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.utility.InputValidator;
@@ -38,13 +40,14 @@ import java.util.stream.Collectors;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
+    private final SleepingRepository sleepingRepository;
     private final MailService mailService;
     private final AvatarService avatarService;
     private final FindRequestTokenService findRequestTokenService;
-    private final WithdrawalRepository withdrawalRepository;
     private final PasswordEncoder passwordEncoder;
     private final MemberActivityService memberActivityService;
     private final InputValidator inputValidator;
+    private final SleepingService sleepingService;
 
     @Transactional
     public void withdraw(Long memberId, String password) {
@@ -128,9 +131,23 @@ public class MemberService {
     public void changeAllToSleepMember() {
         List<Member> sleepingMembers = memberRepository.getAllSleepMembers();
         List<Sleeping> sleepingList = sleepingMembers.stream()
-                        .map(member -> Sleeping.of(member, passwordEncoder))
+                        .map(Sleeping::of)
                         .collect(Collectors.toList());
-        withdrawalRepository.saveAll(sleepingList);
+        sleepingRepository.saveAll(sleepingList);
+        emptyAllMembers(sleepingMembers);
+    }
+
+    @Transactional
+    public void emptyAllMembers(List<Member> memberList) {
+        final Status sleeping = Status.SLEEPING;
+        memberList.forEach(member -> member.emptyAndUpdate(sleeping));
+    }
+
+    @Transactional
+    //@Scheduled(cron = "000000")
+    public void beforeSleep(JoinRequest joinRequest) {
+        List<Member> beforeSleeping = memberRepository.getAllBeforeSleep();
+        mailService.sendChangeSleep(joinRequest.getEmail());
     }
 
     @Transactional(readOnly = true)
