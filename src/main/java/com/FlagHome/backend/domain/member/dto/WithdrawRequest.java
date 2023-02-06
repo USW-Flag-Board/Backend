@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WithdrawRequest {
-    @Schema(name = "비밀번호", required = true, example = "qwer1234!")
-    private String password;
+    @Schema(name = "현재 비밀번호", required = true, example = "qwer1234!")
+    private String currentPassword;
 }

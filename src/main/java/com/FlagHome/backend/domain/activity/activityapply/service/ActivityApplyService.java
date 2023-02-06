@@ -39,8 +39,7 @@ public class ActivityApplyService {
 
     @Transactional
     public void cancelApply(long memberId, long activityId) {
-        ActivityApply activityApply = activityApplyRepository.findByMemberIdAndActivityId(memberId, activityId);
-        activityApplyRepository.delete(activityApply);
+        activityApplyRepository.deleteByMemberIdAndActivityId(memberId, activityId);
     }
 
     @Transactional

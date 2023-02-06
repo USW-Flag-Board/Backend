@@ -1,12 +1,11 @@
 package com.FlagHome.backend.domain.member.entity;
 
-import com.FlagHome.backend.domain.BaseEntity;
-import com.FlagHome.backend.domain.Status;
+import com.FlagHome.backend.domain.common.BaseEntity;
+import com.FlagHome.backend.domain.common.Status;
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.member.Major;
 import com.FlagHome.backend.domain.member.Role;
-import com.FlagHome.backend.domain.sleeping.entity.Sleeping;
-import com.FlagHome.backend.domain.sleeping.repository.SleepingRepository;
+import com.FlagHome.backend.domain.member.sleeping.entity.Sleeping;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Entity
 @Getter
@@ -75,6 +73,17 @@ public class Member extends BaseEntity {
         this.studentId = sleeping.getStudentId();
         this.major = sleeping.getMember().getMajor();
         this.phoneNumber = sleeping.getPhoneNumber();
+    }
+
+    public void emptyAndUpdate(Status status) {
+        this.status = status;
+        this.loginId = null;
+        this.password = null;
+        this.email = null;
+        this.name = null;
+        this.studentId = null;
+        this.major = null;
+        this.phoneNumber = null;
     }
 
     public static Member of(AuthInformation authInformation, PasswordEncoder passwordEncoder) {

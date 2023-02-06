@@ -2,8 +2,7 @@ package com.FlagHome.backend.domain.post.service;
 
 import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.board.repository.BoardRepository;
-import com.FlagHome.backend.domain.reply.dto.ReplyDto;
-import com.FlagHome.backend.domain.reply.entity.Reply;
+import com.FlagHome.backend.domain.post.dto.LightPostDto;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.domain.member.entity.Member;
@@ -11,6 +10,7 @@ import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.dto.PostDto;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
+import com.FlagHome.backend.global.utility.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +30,9 @@ public class PostService {
         if(memberEntity == null)
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
+        if(!memberEntity.getId().equals(SecurityUtils.getMemberId()))
+            throw new CustomException(ErrorCode.HAVE_NO_AUTHORITY);
+
         Board boardEntity = boardRepository.findById(postDto.getBoardId()).orElse(null);
         if(boardEntity == null)
             throw new CustomException(ErrorCode.BOARD_NOT_EXISTS);
@@ -41,6 +44,7 @@ public class PostService {
                 .board(boardEntity)
                 .status(postDto.getStatus())
                 .replyList(new ArrayList<>())
+                .likeList(new ArrayList<>())
                 .viewCount(0L)
                 .build());
 
@@ -49,22 +53,12 @@ public class PostService {
     }
 
     @Transactional
-    public PostDto getPost(long postId, Boolean viaBoard) {
+    public PostDto getPost(long postId) {
         Post postEntity = postRepository.findById(postId).orElse(null);
         if(postEntity == null)
             throw new CustomException(ErrorCode.POST_NOT_FOUND);
-        if(viaBoard == null || !viaBoard)
-            return new PostDto(postEntity);
 
-        PostDto postDto = new PostDto();
-        postDto.setId(postEntity.getId());
-        postDto.setContent(postEntity.getContent());
-        postDto.setReplyList(new ArrayList<>());
-        List<ReplyDto> postDtoReplyList = postDto.getReplyList();
-        for(Reply eachReply : postEntity.getReplyList())
-            postDtoReplyList.add(new ReplyDto(eachReply));
-
-        return postDto;
+        return new PostDto(postEntity);
     }
 
     @Transactional
@@ -72,6 +66,9 @@ public class PostService {
         Post postEntity = postRepository.findById(postDto.getId()).orElse(null);
         if(postEntity == null)
             throw new CustomException(ErrorCode.POST_NOT_FOUND);
+
+        if(!postEntity.getMember().getId().equals(SecurityUtils.getMemberId()))
+            throw new CustomException(ErrorCode.HAVE_NO_AUTHORITY);
 
         Board boardEntity = boardRepository.findById(postDto.getBoardId()).orElse(null);
         if(boardEntity == null)
@@ -86,11 +83,18 @@ public class PostService {
 
     @Transactional
     public void deletePost(long postId) {
+        Post postEntity = postRepository.findById(postId).orElse(null);
+        if(postEntity == null)
+            throw new CustomException(ErrorCode.POST_NOT_FOUND);
+
+        if(!postEntity.getMember().getId().equals(SecurityUtils.getMemberId()))
+            throw new CustomException(ErrorCode.HAVE_NO_AUTHORITY);
+
         postRepository.deleteById(postId);
     }
 
     @Transactional
-    public List<PostDto> getTopNPostListByDateAndLike(int postCount) {
+    public List<LightPostDto> getTopNPostListByDateAndLike(int postCount) {
         return postRepository.findTopNPostListByDateAndLike(postCount);
     }
 }

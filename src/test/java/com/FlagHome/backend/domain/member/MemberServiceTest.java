@@ -1,6 +1,10 @@
 package com.FlagHome.backend.domain.member;
 
-import com.FlagHome.backend.domain.Status;
+import com.FlagHome.backend.domain.common.Status;
+import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
+import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
+import com.FlagHome.backend.domain.member.avatar.entity.Avatar;
+import com.FlagHome.backend.domain.member.avatar.repository.AvatarRepository;
 import com.FlagHome.backend.domain.member.dto.UpdatePasswordRequest;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
@@ -34,6 +38,9 @@ public class MemberServiceTest {
 
     @Autowired
     private EntityManager entityManager;
+
+    @Autowired
+    private AvatarRepository avatarRepository;
     
     @Nested
     @DisplayName("유저 탈퇴 테스트")
@@ -111,7 +118,6 @@ public class MemberServiceTest {
         }
     }
 
-
     @Nested
     @DisplayName("비밀번호 변경 테스트 - 유저가 바꾸는 경우")
     class updatePasswordTest {
@@ -128,13 +134,8 @@ public class MemberServiceTest {
                             .password(passwordEncoder.encode(password))
                             .build());
 
-            UpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequest.builder()
-                            .currentPassword(password)
-                            .newPassword(newPassword)
-                            .build();
-
             // when
-            memberService.updatePassword(savedMember.getId(), updatePasswordRequest);
+            memberService.updatePassword(savedMember.getId(), password, newPassword);
 
             // then : 정상적으로 변경되었는고 같은 엔티티인지
             Member member = memberRepository.findById(savedMember.getId()).get();
@@ -155,51 +156,36 @@ public class MemberServiceTest {
                     .password(passwordEncoder.encode(password))
                     .build());
 
-            UpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequest.builder()
-                    .currentPassword(password)
-                    .newPassword(password)
-                    .build();
-
             assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> memberService.updatePassword(savedMember.getId(), updatePasswordRequest))
+                    .isThrownBy(() -> memberService.updatePassword(savedMember.getId(), password, password))
                     .withMessage(ErrorCode.PASSWORD_IS_SAME.getMessage());
         }
     }
 
-//    @Nested
-//    @DisplayName("프로필 가져오기 테스트")
-//    class getProfileTest {
-//        @Test
-//        @DisplayName("유저 정보가 없어서 실패")
-//        void getProfileFailTest() {
-//            // given
-//            String wrongLoginId = "hejow124";
-//
-//            assertThatExceptionOfType(CustomException.class)
-//                    .isThrownBy(() -> memberService.getMemberProfile(wrongLoginId))
-//                    .withMessage(ErrorCode.USER_NOT_FOUND.getMessage());
-//        }
-//
-//        @Test
-//        @DisplayName("프로필 가져오기 성공")
-//        void getProfileSuccessTest() {
-//            // given
-//            String loginId = "gmlwh124";
-//            String bio = "안녕하세요";
-//            String profileImg = "url";
-//
-//            Member member = memberRepository.saveAndFlush(Member.builder()
-//                            .loginId(loginId)
-//                            .bio(bio)
-//                            .profileImg(profileImg)
-//                            .build());
-//
-//            // when
-//            MyPageResponse profileResponse = memberService.getMyPage(loginId);
-//
-//            // then
-//            assertThat(profileResponse.getBio()).isEqualTo(bio);
-//            assertThat(profileResponse.getProfileImg()).isEqualTo(profileImg);
-//        }
-//    }
+    @Test
+    @DisplayName("아바타 업데이트 테스트")
+    void updateAvatarTest() {
+        // given
+        String loginId = "gmlwh124";
+        String nickName = "john";
+        String newNickName = "hejow";
+
+        Member member = memberRepository.save(Member.builder().loginId(loginId).build());
+        Avatar avatar = avatarRepository.save(Avatar.builder()
+                .member(member)
+                .nickName(nickName)
+                .build());
+
+        UpdateAvatarRequest updateAvatarRequest = UpdateAvatarRequest.builder()
+                .nickName(newNickName)
+                .build();
+
+        // when
+        memberService.updateAvatar(member.getId(), updateAvatarRequest);
+
+        // then
+        AvatarResponse response = avatarRepository.getAvatar(loginId);
+        assertThat(response.getLoginId()).isEqualTo(loginId);
+        assertThat(response.getNickName()).isEqualTo(newNickName);
+    }
 }

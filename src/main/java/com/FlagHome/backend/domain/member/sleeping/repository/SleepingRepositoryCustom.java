@@ -1,6 +1,6 @@
-package com.FlagHome.backend.domain.sleeping.repository;
+package com.FlagHome.backend.domain.member.sleeping.repository;
 
-import com.FlagHome.backend.domain.sleeping.entity.Sleeping;
+import com.FlagHome.backend.domain.member.sleeping.entity.Sleeping;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

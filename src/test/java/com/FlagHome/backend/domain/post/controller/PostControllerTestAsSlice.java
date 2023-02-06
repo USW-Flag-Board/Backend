@@ -1,13 +1,12 @@
 package com.FlagHome.backend.domain.post.controller;
 
-import com.FlagHome.backend.domain.Status;
+import com.FlagHome.backend.domain.common.Status;
 import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.like.service.LikeService;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.post.dto.PostDto;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.service.PostService;
-import com.FlagHome.backend.domain.reply.dto.ReplyDto;
 import com.FlagHome.backend.domain.reply.entity.Reply;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,9 +60,20 @@ public class PostControllerTestAsSlice {
 
         dummyMember = Member.builder().id(1L).name("gildong").email("gildong@naver.com").loginId("gildong123").password("123123").phoneNumber("010-444-4444").build();
 
-        dummyPost = new Post(1L, dummyMember, "제목이다", "내용이다", new ArrayList<>(), dummyBoard, Status.NORMAL, 444L, 0L);
+        dummyPost = Post.builder()
+                .id(1L)
+                .member(dummyMember)
+                .title("제목이다")
+                .content("내용이다")
+                .replyList(new ArrayList<>())
+                .likeList(new ArrayList<>())
+                .board(dummyBoard)
+                .status(Status.NORMAL)
+                .viewCount(0L)
+                .build();
 
-        dummyReply = new Reply(1L, dummyMember, dummyPost, "댓글내용", 1L, 1L, 1L, 0L, Status.NORMAL);
+
+        dummyReply = Reply.builder().id(1L).member(dummyMember).post(dummyPost).content("댓글내용").likeList(new ArrayList<>()).replyGroup(1L).replyDepth(1L).replyOrder(1L).status(Status.NORMAL).build();
         dummyPost.getReplyList().add(dummyReply);
     }
 
@@ -96,36 +106,11 @@ public class PostControllerTestAsSlice {
     public void getPostTest() throws Exception {
         // given
         PostDto returnPostDto = new PostDto(dummyPost);
-        given(postService.getPost(dummyPost.getId(), null)).willReturn(returnPostDto);
+        given(postService.getPost(dummyPost.getId())).willReturn(returnPostDto);
 
         // when
         ResultActions actions = mockMvc.perform(get(BASE_URL)
-                .param("postId", Long.toString(dummyPost.getId())));
-
-        // then
-        actions
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("status", is("OK")))
-                .andExpect(jsonPath("message", is("게시글 가져오기에 성공 하였습니다.")));
-    }
-
-    @Test
-    @DisplayName("게시판 통하여 게시글 가져오기 테스트")
-    public void getPostTestViaBoard() throws Exception {
-        // given
-        PostDto returnPostDto = new PostDto();
-        returnPostDto.setId(dummyPost.getId());
-        returnPostDto.setContent(dummyPost.getContent());
-        returnPostDto.setReplyList(new ArrayList<>());
-        for(Reply eachReply : dummyPost.getReplyList())
-            returnPostDto.getReplyList().add(new ReplyDto(eachReply));
-
-        given(postService.getPost(dummyPost.getId(), true)).willReturn(returnPostDto);
-
-        // when
-        ResultActions actions = mockMvc.perform(get(BASE_URL)
-                .param("postId", Long.toString(dummyPost.getId()))
-                .param("viaBoard", "true"));
+                .param("id", Long.toString(dummyPost.getId())));
 
         // then
         actions

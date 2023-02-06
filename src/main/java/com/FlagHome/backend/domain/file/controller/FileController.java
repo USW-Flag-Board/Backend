@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.file.controller;
 
-import com.FlagHome.backend.domain.ApplicationResponse;
+import com.FlagHome.backend.domain.common.ApplicationResponse;
 import com.FlagHome.backend.domain.file.service.FileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -24,15 +24,15 @@ public class FileController {
     @Operation(summary = "AWS S3에 파일 업로드")
     @ApiResponse(responseCode = "200", description = "파일 업로드에 성공하였습니다. (파일의 URL을 리턴해줍니다.)")
     @PostMapping
-    public ResponseEntity<ApplicationResponse> uploadFile(@RequestPart("fileList") List<MultipartFile> fileList) {
+    public ResponseEntity<ApplicationResponse> uploadFile(@RequestPart("file-list") List<MultipartFile> fileList) {
         return ResponseEntity.ok(ApplicationResponse.of(fileService.upload(fileList), HttpStatus.OK, "파일 업로드에 성공하였습니다."));
     }
 
     @Tag(name = "file")
     @Operation(summary = "AWS S3에서 파일 삭제")
     @ApiResponse(responseCode = "204", description = "파일 삭제에 성공하였습니다.")
-    @DeleteMapping("/{fileName}")
-    public ResponseEntity<ApplicationResponse> deleteFile(@PathVariable(name = "fileName") String fileName) {
+    @DeleteMapping("/{file-name}")
+    public ResponseEntity<ApplicationResponse> deleteFile(@PathVariable(name = "file-name") String fileName) {
         fileService.delete(fileName);
         return ResponseEntity.ok(ApplicationResponse.of(true, HttpStatus.NO_CONTENT, "파일 삭제에 성공하였습니다."));
     }

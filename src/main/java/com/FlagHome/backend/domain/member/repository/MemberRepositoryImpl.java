@@ -1,5 +1,7 @@
 package com.FlagHome.backend.domain.member.repository;
 
+import com.FlagHome.backend.domain.member.dto.LoginLogResponse;
+import com.FlagHome.backend.domain.member.dto.QLoginLogResponse;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +21,20 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
     @Override
     public List<Member> getAllSleepMembers() {
         final LocalDateTime limit = LocalDateTime.now().minusDays(7);
+
         return queryFactory
                 .selectFrom(member)
-                .where()
+                .where(member.lastLoginTime.before(limit))
+                .fetch();
+    }
+
+    @Override
+    public List<Member> getAllBeforeSleep() {
+        final LocalDateTime limit = LocalDateTime.now().minusDays(6);
+
+        return queryFactory
+                .selectFrom(member)
+                .where(member.lastLoginTime.before(limit))
                 .fetch();
     }
 
@@ -34,11 +47,13 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
     }
 
     @Override
-    public List<Member> getAllBeforeSleep() {
-        final LocalDateTime limit = LocalDateTime.now().minusDays(7);
+    public List<LoginLogResponse> getAllLoginLogs() {
         return queryFactory
-                .selectFrom(member)
-                .where()
+                .select(new QLoginLogResponse(
+                        member.id,
+                        member.name,
+                        member.lastLoginTime))
+                .from(member)
                 .fetch();
     }
 }
