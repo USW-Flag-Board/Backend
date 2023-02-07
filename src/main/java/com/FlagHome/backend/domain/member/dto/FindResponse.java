@@ -17,13 +17,13 @@ public class FindResponse {
     @Schema(name = "이메일", example = "gmlwh124@suwon.ac.kr")
     private String email;
 
-    @Schema(name = "만료 시간")
-    private LocalDateTime expireAt;
+    @Schema(name = "제한 시간")
+    private LocalDateTime deadLine;
 
     public static FindResponse from(Token findRequestToken) {
         return FindResponse.builder()
                 .email(findRequestToken.getKey())
-                .expireAt(findRequestToken.getExpiredAt())
+                .deadLine(findRequestToken.getExpiredAt())
                 .build();
     }
 }

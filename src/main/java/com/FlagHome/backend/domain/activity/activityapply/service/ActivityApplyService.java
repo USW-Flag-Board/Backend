@@ -17,7 +17,7 @@ import java.util.List;
 public class ActivityApplyService {
     private final ActivityApplyRepository activityApplyRepository;
 
-    public boolean checkApply(long memberId, long activityId) {
+    public Boolean checkApply(long memberId, long activityId) {
         return activityApplyRepository.checkApply(memberId, activityId);
     }
 

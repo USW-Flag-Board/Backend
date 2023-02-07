@@ -98,7 +98,7 @@ public class MemberServiceSliceTest {
         then(findRequestTokenService).should(times(1)).issueToken(anyString(), anyString());
         then(mailService).should(times(1)).sendFindCertification(anyString(), anyString());
         assertThat(findResponse.getEmail()).isEqualTo(email);
-        assertThat(findResponse.getExpireAt()).isEqualTo(expireAt);
+        assertThat(findResponse.getDeadLine()).isEqualTo(expireAt);
     }
 
     @Test
@@ -135,7 +135,7 @@ public class MemberServiceSliceTest {
         then(findRequestTokenService).should(times(1)).issueToken(anyString(), anyString());
         then(mailService).should(times(1)).sendFindCertification(anyString(), anyString());
         assertThat(findResponse.getEmail()).isEqualTo(email);
-        assertThat(findResponse.getExpireAt()).isEqualTo(expireAt);
+        assertThat(findResponse.getDeadLine()).isEqualTo(expireAt);
     }
 
     @Test

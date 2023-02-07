@@ -69,7 +69,7 @@ public class ActivityService {
         return memberActivityService.getAllParticipants(activityId);
     }
 
-    public boolean checkApply(long memberId, long activityId) {
+    public Boolean checkApply(long memberId, long activityId) {
         return activityApplyService.checkApply(memberId, activityId);
     }
 
