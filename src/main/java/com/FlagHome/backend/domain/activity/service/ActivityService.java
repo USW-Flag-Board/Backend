@@ -69,7 +69,7 @@ public class ActivityService {
         return memberActivityService.getAllParticipants(activityId);
     }
 
-    public boolean checkApply(long memberId, long activityId) {
+    public Boolean checkApply(long memberId, long activityId) {
         return activityApplyService.checkApply(memberId, activityId);
     }
 
@@ -83,7 +83,7 @@ public class ActivityService {
     }
 
     @Transactional
-    public Activity create(long memberId, ActivityRequest activityRequest) {
+    public long create(long memberId, ActivityRequest activityRequest) {
         Activity activity = Arrays.stream(ActivityType.values())
                 .filter(type -> type == activityRequest.getActivityType())
                 .findFirst()
@@ -93,7 +93,7 @@ public class ActivityService {
         Member member = Member.builder().id(memberId).build();
         activity.setLeader(member);
 
-        return activityRepository.save(activity);
+        return activityRepository.save(activity).getId();
     }
 
     @Transactional
