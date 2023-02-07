@@ -120,7 +120,8 @@ public class ActivityController {
     @ResponseStatus(CREATED)
     @PostMapping
     public ApplicationResponse<URI> createActivity(@RequestBody ActivityRequest activityRequest) {
-        URI uri = UriCreator.createUri(DEFAULT_URL, activityService.create(SecurityUtils.getMemberId(), activityRequest));
+        long id = activityService.create(SecurityUtils.getMemberId(), activityRequest).getId();
+        URI uri = UriCreator.createUri(DEFAULT_URL, id);
         return new ApplicationResponse(uri);
     }
 

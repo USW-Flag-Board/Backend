@@ -83,7 +83,7 @@ public class ActivityService {
     }
 
     @Transactional
-    public long create(long memberId, ActivityRequest activityRequest) {
+    public Activity create(long memberId, ActivityRequest activityRequest) {
         Activity activity = Arrays.stream(ActivityType.values())
                 .filter(type -> type == activityRequest.getActivityType())
                 .findFirst()
@@ -93,7 +93,7 @@ public class ActivityService {
         Member member = Member.builder().id(memberId).build();
         activity.setLeader(member);
 
-        return activityRepository.save(activity).getId();
+        return activityRepository.save(activity);
     }
 
     @Transactional
