@@ -34,4 +34,14 @@ public class MailService {
         emailService.sendEmail(mailRequest.toSendRequest());
         log.info("Email sent : " + email);
     }
+
+    public void sendChangeSleep(String email) {
+        MailRequest mailRequest = MailRequest.builder()
+                .to(email)
+                .subject(MailType.SLEEP_EMAIL.getSubject())
+                .build();
+
+        emailService.sendEmail(mailRequest.toSendRequest());
+        log.info("Email sent : " + email);
+    }
 }

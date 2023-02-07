@@ -9,6 +9,7 @@ import java.util.List;
 
 import static com.FlagHome.backend.domain.board.entity.QBoard.board;
 
+
 @RequiredArgsConstructor
 public class BoardRepositoryImpl implements BoardRepositoryCustom {
 

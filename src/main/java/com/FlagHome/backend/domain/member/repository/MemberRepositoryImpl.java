@@ -29,6 +29,16 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
     }
 
     @Override
+    public List<Member> getAllBeforeSleep() {
+        final LocalDateTime limit = LocalDateTime.now().minusDays(6);
+
+        return queryFactory
+                .selectFrom(member)
+                .where(member.lastLoginTime.before(limit))
+                .fetch();
+    }
+
+    @Override
     public List<Member> getMembersByLoginId(List<String> loginIdList) {
         return queryFactory
                 .selectFrom(member)

@@ -34,6 +34,7 @@ public enum ErrorCode {
     ACTIVITY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 활동입니다."),
     REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "신고이력이 존재하지 않습니다."),
     FIND_REQUEST_NONE(HttpStatus.NOT_FOUND, "아이디/비밀번호 찾기 요청이 존재하지 않습니다."),
+    SLEEP_NOT_FOUND(HttpStatus.NOT_FOUND, "휴면계정이 존재하지 않습니다"),
     NOT_ACTIVITY_MEMBER(HttpStatus.NOT_FOUND, "이 활동의 멤버가 아닙니다."),
 
     /**
