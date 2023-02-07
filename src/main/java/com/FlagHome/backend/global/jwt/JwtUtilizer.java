@@ -91,6 +91,7 @@ public class JwtUtilizer {
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            return true;
         } catch (SecurityException e) {
             throw new CustomException(ErrorCode.INVALID_JWT_SIGNATURE_EXCEPTION);
         } catch (MalformedJwtException e) {
@@ -102,7 +103,6 @@ public class JwtUtilizer {
         } catch (IllegalArgumentException e) {
             throw new CustomException(ErrorCode.NOT_FOUND_JWT_CLAIMS_EXCEPTION);
         }
-        return true;
     }
 
     private Claims parseClaims(String accessToken) {

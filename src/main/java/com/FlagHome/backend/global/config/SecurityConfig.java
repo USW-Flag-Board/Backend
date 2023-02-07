@@ -62,7 +62,7 @@ public class SecurityConfig {
                 .antMatchers("/api/auth/**").permitAll()
 
                 .antMatchers(HttpMethod.GET, "/api/activities", "/api/activities/{id}").permitAll()
-                .antMatchers("/api/activities/**").hasAnyRole("CREW")
+                .antMatchers("/api/activities/**").hasRole("CREW")
 
                 .antMatchers(HttpMethod.GET, "/api/boards/**").permitAll()
                 .antMatchers("api/boards/**").hasRole("ADMIN")
