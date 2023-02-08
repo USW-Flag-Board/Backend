@@ -2,6 +2,11 @@ package com.FlagHome.backend.domain.post.service;
 
 import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.board.repository.BoardRepository;
+import com.FlagHome.backend.domain.common.Status;
+import com.FlagHome.backend.domain.post.dto.CreatePostRequest;
+import com.FlagHome.backend.domain.post.dto.GetPostResponse;
+import com.FlagHome.backend.domain.reply.dto.ReplyDto;
+import com.FlagHome.backend.domain.reply.entity.Reply;
 import com.FlagHome.backend.domain.post.dto.LightPostDto;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
@@ -25,7 +30,7 @@ public class PostService {
     private final BoardRepository boardRepository;
 
     @Transactional
-    public PostDto createPost(PostDto postDto) {
+    public long createPost(CreatePostRequest postDto) {
         Member memberEntity = memberRepository.findById(postDto.getUserId()).orElse(null);
         if(memberEntity == null)
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
@@ -41,28 +46,29 @@ public class PostService {
                 .member(memberEntity)
                 .title(postDto.getTitle())
                 .content(postDto.getContent())
+                .imgUrl(postDto.getImgUrl())
+                .fileUrl(postDto.getFileUrl())
                 .board(boardEntity)
-                .status(postDto.getStatus())
+                .status(Status.NORMAL)
                 .replyList(new ArrayList<>())
                 .likeList(new ArrayList<>())
                 .viewCount(0L)
                 .build());
 
-        postDto.setId(post.getId());
-        return postDto;
+        return post.getId();
     }
 
     @Transactional
-    public PostDto getPost(long postId) {
+    public GetPostResponse getPost(long postId) {
         Post postEntity = postRepository.findById(postId).orElse(null);
         if(postEntity == null)
             throw new CustomException(ErrorCode.POST_NOT_FOUND);
 
-        return new PostDto(postEntity);
+        return new GetPostResponse(postEntity);
     }
 
     @Transactional
-    public PostDto updatePost(PostDto postDto) {
+    public CreatePostRequest updatePost(CreatePostRequest postDto) {
         Post postEntity = postRepository.findById(postDto.getId()).orElse(null);
         if(postEntity == null)
             throw new CustomException(ErrorCode.POST_NOT_FOUND);
@@ -78,7 +84,7 @@ public class PostService {
         postEntity.setContent(postDto.getContent());
         postEntity.setBoard(boardEntity);
 
-        return new PostDto(postEntity);
+        return new CreatePostRequest(postEntity);
     }
 
     @Transactional

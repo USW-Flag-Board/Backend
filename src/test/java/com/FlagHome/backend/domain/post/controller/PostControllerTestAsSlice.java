@@ -4,6 +4,8 @@ import com.FlagHome.backend.domain.common.Status;
 import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.like.service.LikeService;
 import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.post.dto.CreatePostRequest;
+import com.FlagHome.backend.domain.post.dto.GetPostResponse;
 import com.FlagHome.backend.domain.post.dto.PostDto;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.service.PostService;
@@ -65,13 +67,14 @@ public class PostControllerTestAsSlice {
                 .member(dummyMember)
                 .title("제목이다")
                 .content("내용이다")
+                .imgUrl(null)
+                .fileUrl(null)
                 .replyList(new ArrayList<>())
                 .likeList(new ArrayList<>())
                 .board(dummyBoard)
                 .status(Status.NORMAL)
                 .viewCount(0L)
                 .build();
-
 
         dummyReply = Reply.builder().id(1L).member(dummyMember).post(dummyPost).content("댓글내용").likeList(new ArrayList<>()).replyGroup(1L).replyDepth(1L).replyOrder(1L).status(Status.NORMAL).build();
         dummyPost.getReplyList().add(dummyReply);
@@ -81,10 +84,10 @@ public class PostControllerTestAsSlice {
     @DisplayName("게시글 생성 테스트")
     public void createPostTest() throws Exception {
         // given
-        PostDto postDto = new PostDto(dummyPost);
+        CreatePostRequest postDto = new CreatePostRequest(dummyPost);
         String jsonBody = objectMapper.writeValueAsString(postDto);
 
-        given(postService.createPost(any())).willReturn(postDto);
+        given(postService.createPost(any())).willReturn(postDto.getId());
 
         // when
         ResultActions actions = mockMvc.perform(post(BASE_URL)
@@ -105,7 +108,7 @@ public class PostControllerTestAsSlice {
     @DisplayName("게시글 가져오기 테스트")
     public void getPostTest() throws Exception {
         // given
-        PostDto returnPostDto = new PostDto(dummyPost);
+        GetPostResponse returnPostDto = new GetPostResponse(dummyPost);
         given(postService.getPost(dummyPost.getId())).willReturn(returnPostDto);
 
         // when
@@ -123,7 +126,7 @@ public class PostControllerTestAsSlice {
     @DisplayName("게시글 수정 테스트")
     public void updatePostTest() throws Exception {
         // given
-        PostDto postDto = new PostDto(dummyPost);
+        CreatePostRequest postDto = new CreatePostRequest(dummyPost);
         given(postService.updatePost(any())).willReturn(postDto);
 
         String jsonBody = objectMapper.writeValueAsString(postDto);

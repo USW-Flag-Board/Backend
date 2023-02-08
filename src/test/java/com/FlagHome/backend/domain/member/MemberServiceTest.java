@@ -5,7 +5,7 @@ import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
 import com.FlagHome.backend.domain.member.avatar.entity.Avatar;
 import com.FlagHome.backend.domain.member.avatar.repository.AvatarRepository;
-import com.FlagHome.backend.domain.member.dto.UpdatePasswordRequest;
+import com.FlagHome.backend.domain.member.dto.LoginLogResponse;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
@@ -20,6 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -41,7 +43,7 @@ public class MemberServiceTest {
 
     @Autowired
     private AvatarRepository avatarRepository;
-    
+
     @Nested
     @DisplayName("유저 탈퇴 테스트")
     class withdrawTest {
@@ -188,4 +190,65 @@ public class MemberServiceTest {
         assertThat(response.getLoginId()).isEqualTo(loginId);
         assertThat(response.getNickName()).isEqualTo(newNickName);
     }
+//    @Test
+//    @DisplayName("로그보기")
+//    void viewLogTest() {
+//        //given
+//        String loginId = "minjung123";
+//        String name = "김민정";
+//        LocalDateTime lastLoginTime = LocalDateTime.of(2023,2,5,2,59);
+//
+//        Member member = memberRepository.save(Member.builder()
+//                .loginId(loginId)
+//                .name(name)
+//                .lastLoginTime(lastLoginTime)
+//                .build());
+//
+//        //when
+//        List<LoginLogResponse> memberList = memberService.getAllLoginLogs();
+//
+//        //then
+//        LoginLogResponse testMember = memberList.get(0);
+//
+//        assertThat(testMember.getId()).isEqualTo(member.getId());
+//        assertThat(testMember.getName()).isEqualTo(member.getName());
+//        assertThat(testMember.getLastLoginTime()).isEqualTo(member.getLastLoginTime());
+//    }
+
+//    @Nested
+//    @DisplayName("프로필 가져오기 테스트")
+//    class getProfileTest {
+//        @Test
+//        @DisplayName("유저 정보가 없어서 실패")
+//        void getProfileFailTest() {
+//            // given
+//            String wrongLoginId = "hejow124";
+//
+//            assertThatExceptionOfType(CustomException.class)
+//                    .isThrownBy(() -> memberService.getMemberProfile(wrongLoginId))
+//                    .withMessage(ErrorCode.USER_NOT_FOUND.getMessage());
+//        }
+//
+//        @Test
+//        @DisplayName("프로필 가져오기 성공")
+//        void getProfileSuccessTest() {
+//            // given
+//            String loginId = "gmlwh124";
+//            String bio = "안녕하세요";
+//            String profileImg = "url";
+//
+//            Member member = memberRepository.saveAndFlush(Member.builder()
+//                            .loginId(loginId)
+//                            .bio(bio)
+//                            .profileImg(profileImg)
+//                            .build());
+//
+//            // when
+//            MyPageResponse profileResponse = memberService.getMyPage(loginId);
+//
+//            // then
+//            assertThat(profileResponse.getBio()).isEqualTo(bio);
+//            assertThat(profileResponse.getProfileImg()).isEqualTo(profileImg);
+//        }
+//    }
 }

@@ -11,6 +11,7 @@ import com.FlagHome.backend.domain.like.repository.LikeRepository;
 import com.FlagHome.backend.domain.like.service.LikeService;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
+import com.FlagHome.backend.domain.post.dto.CreatePostRequest;
 import com.FlagHome.backend.domain.post.dto.PostDto;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
@@ -108,7 +109,7 @@ class PostControllerTest {
     @Test
     @DisplayName("게시글 생성 테스트")
     public void createPostTest() throws Exception {
-        PostDto postDto = new PostDto();
+        CreatePostRequest postDto = new CreatePostRequest();
         postDto.setTitle("테스트 제목");
         postDto.setContent("테스트 내용");
         postDto.setUserId(dummyMember.getId());
