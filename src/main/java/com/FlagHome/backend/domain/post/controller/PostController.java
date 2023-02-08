@@ -35,8 +35,8 @@ public class PostController {
     })
     @PostMapping
     public ResponseEntity<ApplicationResponse> createPost(@RequestBody CreatePostRequest postPostDto) {
-        CreatePostRequest createdPostDto = postService.createPost(postPostDto);
-        URI uri = UriCreator.createUri(BASE_URL, createdPostDto.getId());
+        long id = postService.createPost(postPostDto);
+        URI uri = UriCreator.createUri(BASE_URL, id);
         ApplicationResponse apiResponse = ApplicationResponse.of(uri, HttpStatus.CREATED, "게시글 생성에 성공 하였습니다.");
         return ResponseEntity.ok(apiResponse);
     }

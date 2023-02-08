@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.post.dto;
 
-import com.FlagHome.backend.domain.Status;
+import com.FlagHome.backend.domain.common.Status;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.reply.dto.ReplyDto;
 import com.FlagHome.backend.domain.reply.entity.Reply;
@@ -43,7 +43,7 @@ public class GetPostResponse {
         this.boardId = postEntity.getBoard().getId();
         this.status = postEntity.getStatus();
         this.viewCount = postEntity.getViewCount();
-        this.likeCount = postEntity.getLikeCount();
+        //this.likeCount = postEntity.getLikeList();
 
         replyList = new ArrayList<>();
         for(Reply reply : postEntity.getReplyList())

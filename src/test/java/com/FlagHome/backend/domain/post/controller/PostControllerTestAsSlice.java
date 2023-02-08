@@ -87,7 +87,7 @@ public class PostControllerTestAsSlice {
         CreatePostRequest postDto = new CreatePostRequest(dummyPost);
         String jsonBody = objectMapper.writeValueAsString(postDto);
 
-        given(postService.createPost(any())).willReturn(postDto);
+        given(postService.createPost(any())).willReturn(postDto.getId());
 
         // when
         ResultActions actions = mockMvc.perform(post(BASE_URL)
@@ -109,7 +109,7 @@ public class PostControllerTestAsSlice {
     public void getPostTest() throws Exception {
         // given
         GetPostResponse returnPostDto = new GetPostResponse(dummyPost);
-        given(postService.getPost(dummyPost.getId(), null)).willReturn(returnPostDto);
+        given(postService.getPost(dummyPost.getId())).willReturn(returnPostDto);
 
         // when
         ResultActions actions = mockMvc.perform(get(BASE_URL)

@@ -5,6 +5,7 @@ import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
 import com.FlagHome.backend.domain.member.avatar.entity.Avatar;
 import com.FlagHome.backend.domain.member.avatar.repository.AvatarRepository;
+import com.FlagHome.backend.domain.member.dto.LoginLogResponse;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
@@ -204,12 +205,12 @@ public class MemberServiceTest {
                 .build());
 
         //when
-        List<ViewLogResponse> memberList = memberService.viewLog();
+        List<LoginLogResponse> memberList = memberService.getAllLoginLogs();
 
         //then
-        ViewLogResponse testMember = memberList.get(0);
+        LoginLogResponse testMember = memberList.get(0);
 
-        assertThat(testMember.getLoginId()).isEqualTo(member.getLoginId());
+        assertThat(testMember.getId()).isEqualTo(member.getId());
         assertThat(testMember.getName()).isEqualTo(member.getName());
         assertThat(testMember.getLastLoginTime()).isEqualTo(member.getLastLoginTime());
     }
