@@ -31,6 +31,12 @@ public class Post extends BaseEntity {
     @Column
     private String content;
 
+    @Column
+    private String imgUrl;
+
+    @Column
+    private String fileUrl;
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reply> replyList;
 

@@ -18,14 +18,13 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode
 @JsonNaming(PropertyNamingStrategies.LowerCamelCaseStrategy.class)
-public class PostDto {
+public class GetPostResponse {
     private long id;
     private long userId;
     private String title;
     private String content;
     private String imgUrl;
     private String fileUrl;
-    private String memberName;
     private List<ReplyDto> replyList;
     private long boardId;
     private Status status;
@@ -34,7 +33,7 @@ public class PostDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public PostDto(Post postEntity) {
+    public GetPostResponse(Post postEntity) {
         this.id = postEntity.getId();
         this.userId = postEntity.getMember().getId();
         this.title = postEntity.getTitle();
@@ -50,15 +49,5 @@ public class PostDto {
         for(Reply reply : postEntity.getReplyList())
             replyList.add(new ReplyDto(reply));
     }
-
-    // Projection용 생성자
-    public PostDto(long id, String title, LocalDateTime createdAt, long boardId, String memberName, long viewCount, long likeCount) {
-        this.id = id;
-        this.title = title;
-        this.createdAt = createdAt;
-        this.boardId = boardId;
-        this.memberName = memberName;
-        this.viewCount = viewCount;
-        this.likeCount = likeCount;
-    }
 }
+

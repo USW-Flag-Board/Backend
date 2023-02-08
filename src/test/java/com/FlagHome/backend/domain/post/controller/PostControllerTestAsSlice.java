@@ -4,6 +4,8 @@ import com.FlagHome.backend.domain.Status;
 import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.like.service.LikeService;
 import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.post.dto.CreatePostRequest;
+import com.FlagHome.backend.domain.post.dto.GetPostResponse;
 import com.FlagHome.backend.domain.post.dto.PostDto;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.service.PostService;
@@ -61,7 +63,7 @@ public class PostControllerTestAsSlice {
 
         dummyMember = Member.builder().id(1L).name("gildong").email("gildong@naver.com").loginId("gildong123").password("123123").phoneNumber("010-444-4444").build();
 
-        dummyPost = new Post(1L, dummyMember, "제목이다", "내용이다", new ArrayList<>(), dummyBoard, Status.NORMAL, 444L, 0L);
+        dummyPost = new Post(1L, dummyMember, "제목이다", "내용이다", null, null, new ArrayList<>(), dummyBoard, Status.NORMAL, 444L, 0L);
 
         dummyReply = new Reply(1L, dummyMember, dummyPost, "댓글내용", 1L, 1L, 1L, 0L, Status.NORMAL);
         dummyPost.getReplyList().add(dummyReply);
@@ -71,7 +73,7 @@ public class PostControllerTestAsSlice {
     @DisplayName("게시글 생성 테스트")
     public void createPostTest() throws Exception {
         // given
-        PostDto postDto = new PostDto(dummyPost);
+        CreatePostRequest postDto = new CreatePostRequest(dummyPost);
         String jsonBody = objectMapper.writeValueAsString(postDto);
 
         given(postService.createPost(any())).willReturn(postDto);
@@ -95,7 +97,7 @@ public class PostControllerTestAsSlice {
     @DisplayName("게시글 가져오기 테스트")
     public void getPostTest() throws Exception {
         // given
-        PostDto returnPostDto = new PostDto(dummyPost);
+        GetPostResponse returnPostDto = new GetPostResponse(dummyPost);
         given(postService.getPost(dummyPost.getId(), null)).willReturn(returnPostDto);
 
         // when
@@ -113,7 +115,7 @@ public class PostControllerTestAsSlice {
     @DisplayName("게시판 통하여 게시글 가져오기 테스트")
     public void getPostTestViaBoard() throws Exception {
         // given
-        PostDto returnPostDto = new PostDto();
+        GetPostResponse returnPostDto = new GetPostResponse();
         returnPostDto.setId(dummyPost.getId());
         returnPostDto.setContent(dummyPost.getContent());
         returnPostDto.setReplyList(new ArrayList<>());
@@ -138,7 +140,7 @@ public class PostControllerTestAsSlice {
     @DisplayName("게시글 수정 테스트")
     public void updatePostTest() throws Exception {
         // given
-        PostDto postDto = new PostDto(dummyPost);
+        CreatePostRequest postDto = new CreatePostRequest(dummyPost);
         given(postService.updatePost(any())).willReturn(postDto);
 
         String jsonBody = objectMapper.writeValueAsString(postDto);

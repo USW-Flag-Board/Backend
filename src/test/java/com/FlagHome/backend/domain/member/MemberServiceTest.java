@@ -2,6 +2,7 @@ package com.FlagHome.backend.domain.member;
 
 import com.FlagHome.backend.domain.Status;
 import com.FlagHome.backend.domain.member.dto.UpdatePasswordRequest;
+import com.FlagHome.backend.domain.member.dto.ViewLogResponse;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
@@ -16,6 +17,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -164,6 +168,32 @@ public class MemberServiceTest {
                     .isThrownBy(() -> memberService.updatePassword(savedMember.getId(), updatePasswordRequest))
                     .withMessage(ErrorCode.PASSWORD_IS_SAME.getMessage());
         }
+    }
+
+    @Test
+    @DisplayName("로그보기")
+    void viewLogTest() {
+        //레포지토리에 정보를 저장하고 모든 로그를 가져오는 서비스를 호출해서 가져온 정보가 맞는지 확인하기?
+        //given
+        String loginId = "minjung123";
+        String name = "김민정";
+        LocalDateTime lastLoginTime = LocalDateTime.of(2023,2,5,2,59);
+
+        Member member = memberRepository.save(Member.builder()
+                .loginId(loginId)
+                .name(name)
+                .lastLoginTime(lastLoginTime)
+                .build());
+
+        //when : 모든 로그를 볼 수 있는 서비스 호출
+        List<ViewLogResponse> memberList = memberService.viewLog();
+
+        //then : 가져온 로그가 맞는지? 1. 리스트 형식으로 반환하니까 내가 넣은 개수만큼 리턴을 하는지 2. 아이디와 이름, 시간이 일치하는지
+        ViewLogResponse testMember = memberList.get(0);
+
+        assertThat(testMember.getLoginId()).isEqualTo(member.getLoginId());
+        assertThat(testMember.getName()).isEqualTo(member.getName());
+        assertThat(testMember.getLastLoginTime()).isEqualTo(member.getLastLoginTime());
     }
 
 //    @Nested

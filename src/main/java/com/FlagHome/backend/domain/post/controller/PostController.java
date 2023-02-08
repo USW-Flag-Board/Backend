@@ -3,7 +3,7 @@ package com.FlagHome.backend.domain.post.controller;
 import com.FlagHome.backend.domain.ApplicationResponse;
 import com.FlagHome.backend.domain.like.entity.LikeDto;
 import com.FlagHome.backend.domain.like.service.LikeService;
-import com.FlagHome.backend.domain.post.dto.PostDto;
+import com.FlagHome.backend.domain.post.dto.CreatePostRequest;
 import com.FlagHome.backend.domain.post.service.PostService;
 import com.FlagHome.backend.global.utility.UriCreator;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,8 +33,8 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "파라미터로 준 유저 또는 카테고리 에러 입니다.")
     })
     @PostMapping
-    public ResponseEntity<ApplicationResponse> createPost(@RequestBody PostDto postDto) {
-        PostDto createdPostDto = postService.createPost(postDto);
+    public ResponseEntity<ApplicationResponse> createPost(@RequestBody CreatePostRequest postPostDto) {
+        CreatePostRequest createdPostDto = postService.createPost(postPostDto);
         URI uri = UriCreator.createUri(BASE_URL, createdPostDto.getId());
         ApplicationResponse applicationResponse = ApplicationResponse.of(uri, HttpStatus.CREATED, "게시글 생성에 성공 하였습니다.");
         return ResponseEntity.ok(applicationResponse);
@@ -63,7 +63,7 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "대상이 되는 게시글 또는 카테고리를 찾을수 없습니다.")
     })
     @PatchMapping
-    public ResponseEntity<ApplicationResponse> updatePost(@RequestBody PostDto postDto) {
+    public ResponseEntity<ApplicationResponse> updatePost(@RequestBody CreatePostRequest postDto) {
         ApplicationResponse applicationResponse = ApplicationResponse.of(postService.updatePost(postDto), HttpStatus.OK, "게시글 수정에 성공 하였습니다.");
         return ResponseEntity.ok(applicationResponse);
     }
