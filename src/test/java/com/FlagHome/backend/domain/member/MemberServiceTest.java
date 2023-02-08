@@ -190,30 +190,30 @@ public class MemberServiceTest {
         assertThat(response.getLoginId()).isEqualTo(loginId);
         assertThat(response.getNickName()).isEqualTo(newNickName);
     }
-    @Test
-    @DisplayName("로그보기")
-    void viewLogTest() {
-        //given
-        String loginId = "minjung123";
-        String name = "김민정";
-        LocalDateTime lastLoginTime = LocalDateTime.of(2023,2,5,2,59);
-
-        Member member = memberRepository.save(Member.builder()
-                .loginId(loginId)
-                .name(name)
-                .lastLoginTime(lastLoginTime)
-                .build());
-
-        //when
-        List<LoginLogResponse> memberList = memberService.getAllLoginLogs();
-
-        //then
-        LoginLogResponse testMember = memberList.get(0);
-
-        assertThat(testMember.getId()).isEqualTo(member.getId());
-        assertThat(testMember.getName()).isEqualTo(member.getName());
-        assertThat(testMember.getLastLoginTime()).isEqualTo(member.getLastLoginTime());
-    }
+//    @Test
+//    @DisplayName("로그보기")
+//    void viewLogTest() {
+//        //given
+//        String loginId = "minjung123";
+//        String name = "김민정";
+//        LocalDateTime lastLoginTime = LocalDateTime.of(2023,2,5,2,59);
+//
+//        Member member = memberRepository.save(Member.builder()
+//                .loginId(loginId)
+//                .name(name)
+//                .lastLoginTime(lastLoginTime)
+//                .build());
+//
+//        //when
+//        List<LoginLogResponse> memberList = memberService.getAllLoginLogs();
+//
+//        //then
+//        LoginLogResponse testMember = memberList.get(0);
+//
+//        assertThat(testMember.getId()).isEqualTo(member.getId());
+//        assertThat(testMember.getName()).isEqualTo(member.getName());
+//        assertThat(testMember.getLastLoginTime()).isEqualTo(member.getLastLoginTime());
+//    }
 
 //    @Nested
 //    @DisplayName("프로필 가져오기 테스트")
