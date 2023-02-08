@@ -1,8 +1,9 @@
 package com.FlagHome.backend.domain.post.entity;
 
-import com.FlagHome.backend.domain.BaseEntity;
-import com.FlagHome.backend.domain.Status;
+import com.FlagHome.backend.domain.common.BaseEntity;
+import com.FlagHome.backend.domain.common.Status;
 import com.FlagHome.backend.domain.board.entity.Board;
+import com.FlagHome.backend.domain.like.entity.Like;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.reply.entity.Reply;
 import lombok.*;
@@ -40,6 +41,9 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reply> replyList;
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Like> likeList;
+
     @ManyToOne
     @JoinColumn(name = "board_id")
     private Board board;
@@ -50,7 +54,4 @@ public class Post extends BaseEntity {
 
     @Column
     private Long viewCount;
-
-    @Column
-    private Long likeCount;
 }

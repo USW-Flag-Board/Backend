@@ -10,7 +10,10 @@ public enum MailType {
 
     FIND_AUTH("[FLAG] 아이디/비밀번호 찾기 이메일 인증 요청입니다.",
             "<div>아이디/비밀번호 찾기 이메일 인증 요청입니다.<br>" +
-                    "다음 6자리 인증번호를 입력해주세요.</div>");
+                    "다음 6자리 인증번호를 입력해주세요.</div>"),
+
+    SLEEP_EMAIL("[FLAG] 휴면계정 전환 안내 메일입니다.",
+            "일주일간 홈페이지 서비스 이용이 없으셨던 회원님의 계정이 휴면계정으로 전환될 예정입니다");
 
     private final String subject;
     private final String content;

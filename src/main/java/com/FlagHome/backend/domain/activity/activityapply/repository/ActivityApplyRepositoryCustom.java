@@ -14,5 +14,5 @@ public interface ActivityApplyRepositoryCustom {
 
     boolean checkApply(long memberId, long activityId);
 
-    ActivityApply findByMemberIdAndActivityId(long memberId, long activityId);
+    void deleteByMemberIdAndActivityId(long memberId, long activityId);
 }

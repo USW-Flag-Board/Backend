@@ -1,10 +1,11 @@
 package com.FlagHome.backend.domain.member.entity;
 
-import com.FlagHome.backend.domain.BaseEntity;
-import com.FlagHome.backend.domain.Status;
+import com.FlagHome.backend.domain.common.BaseEntity;
+import com.FlagHome.backend.domain.common.Status;
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.member.Major;
 import com.FlagHome.backend.domain.member.Role;
+import com.FlagHome.backend.domain.member.sleeping.entity.Sleeping;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -62,6 +63,27 @@ public class Member extends BaseEntity {
 
     public void updateLastLoginTime(LocalDateTime loginTime) {
         this.lastLoginTime = loginTime;
+    }
+
+    public void sleepToMember(Sleeping sleeping) {
+        this.loginId = sleeping.getLoginId();
+        this.password = sleeping.getPassword();
+        this.email = sleeping.getEmail();
+        this.name = sleeping.getName();
+        this.studentId = sleeping.getStudentId();
+        this.major = sleeping.getMember().getMajor();
+        this.phoneNumber = sleeping.getPhoneNumber();
+    }
+
+    public void emptyAndUpdate(Status status) {
+        this.status = status;
+        this.loginId = null;
+        this.password = null;
+        this.email = null;
+        this.name = null;
+        this.studentId = null;
+        this.major = null;
+        this.phoneNumber = null;
     }
 
     public static Member of(AuthInformation authInformation, PasswordEncoder passwordEncoder) {

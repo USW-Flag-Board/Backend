@@ -1,10 +1,15 @@
 package com.FlagHome.backend.domain.reply.dto;
 
-import com.FlagHome.backend.domain.Status;
+import com.FlagHome.backend.domain.common.Status;
+import com.FlagHome.backend.domain.like.entity.Like;
+import com.FlagHome.backend.domain.like.entity.LikeDto;
 import com.FlagHome.backend.domain.reply.entity.Reply;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -17,10 +22,10 @@ public class ReplyDto {
     private long memberId;
     private long postId;
     private String content;
+    private List<LikeDto> likeList;
     private long replyGroup;
     private long replyOrder;
     private long replyDepth;
-    private long likeCount;
     private Status status;
 
     public ReplyDto(Reply replyEntity) {
@@ -31,7 +36,10 @@ public class ReplyDto {
         this.replyGroup = replyEntity.getReplyGroup();
         this.replyOrder = replyEntity.getReplyOrder();
         this.replyDepth = replyEntity.getReplyDepth();
-        this.likeCount = replyEntity.getLikeCount();
         this.status = replyEntity.getStatus();
+
+        this.likeList = new ArrayList<>();
+        for(Like eachLike : replyEntity.getLikeList())
+            this.likeList.add(new LikeDto(eachLike.getMember().getId(), eachLike.getTargetId()));
     }
 }

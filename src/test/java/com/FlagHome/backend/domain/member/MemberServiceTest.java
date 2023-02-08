@@ -1,8 +1,10 @@
 package com.FlagHome.backend.domain.member;
 
-import com.FlagHome.backend.domain.Status;
-import com.FlagHome.backend.domain.member.dto.UpdatePasswordRequest;
-import com.FlagHome.backend.domain.member.dto.ViewLogResponse;
+import com.FlagHome.backend.domain.common.Status;
+import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
+import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
+import com.FlagHome.backend.domain.member.avatar.entity.Avatar;
+import com.FlagHome.backend.domain.member.avatar.repository.AvatarRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
@@ -17,7 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -38,7 +39,10 @@ public class MemberServiceTest {
 
     @Autowired
     private EntityManager entityManager;
-    
+
+    @Autowired
+    private AvatarRepository avatarRepository;
+
     @Nested
     @DisplayName("유저 탈퇴 테스트")
     class withdrawTest {
@@ -115,7 +119,6 @@ public class MemberServiceTest {
         }
     }
 
-
     @Nested
     @DisplayName("비밀번호 변경 테스트 - 유저가 바꾸는 경우")
     class updatePasswordTest {
@@ -132,13 +135,8 @@ public class MemberServiceTest {
                             .password(passwordEncoder.encode(password))
                             .build());
 
-            UpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequest.builder()
-                            .currentPassword(password)
-                            .newPassword(newPassword)
-                            .build();
-
             // when
-            memberService.updatePassword(savedMember.getId(), updatePasswordRequest);
+            memberService.updatePassword(savedMember.getId(), password, newPassword);
 
             // then : 정상적으로 변경되었는고 같은 엔티티인지
             Member member = memberRepository.findById(savedMember.getId()).get();
@@ -159,21 +157,41 @@ public class MemberServiceTest {
                     .password(passwordEncoder.encode(password))
                     .build());
 
-            UpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequest.builder()
-                    .currentPassword(password)
-                    .newPassword(password)
-                    .build();
-
             assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> memberService.updatePassword(savedMember.getId(), updatePasswordRequest))
+                    .isThrownBy(() -> memberService.updatePassword(savedMember.getId(), password, password))
                     .withMessage(ErrorCode.PASSWORD_IS_SAME.getMessage());
         }
     }
 
     @Test
+    @DisplayName("아바타 업데이트 테스트")
+    void updateAvatarTest() {
+        // given
+        String loginId = "gmlwh124";
+        String nickName = "john";
+        String newNickName = "hejow";
+
+        Member member = memberRepository.save(Member.builder().loginId(loginId).build());
+        Avatar avatar = avatarRepository.save(Avatar.builder()
+                .member(member)
+                .nickName(nickName)
+                .build());
+
+        UpdateAvatarRequest updateAvatarRequest = UpdateAvatarRequest.builder()
+                .nickName(newNickName)
+                .build();
+
+        // when
+        memberService.updateAvatar(member.getId(), updateAvatarRequest);
+
+        // then
+        AvatarResponse response = avatarRepository.getAvatar(loginId);
+        assertThat(response.getLoginId()).isEqualTo(loginId);
+        assertThat(response.getNickName()).isEqualTo(newNickName);
+    }
+    @Test
     @DisplayName("로그보기")
     void viewLogTest() {
-        //레포지토리에 정보를 저장하고 모든 로그를 가져오는 서비스를 호출해서 가져온 정보가 맞는지 확인하기?
         //given
         String loginId = "minjung123";
         String name = "김민정";
@@ -185,10 +203,10 @@ public class MemberServiceTest {
                 .lastLoginTime(lastLoginTime)
                 .build());
 
-        //when : 모든 로그를 볼 수 있는 서비스 호출
+        //when
         List<ViewLogResponse> memberList = memberService.viewLog();
 
-        //then : 가져온 로그가 맞는지? 1. 리스트 형식으로 반환하니까 내가 넣은 개수만큼 리턴을 하는지 2. 아이디와 이름, 시간이 일치하는지
+        //then
         ViewLogResponse testMember = memberList.get(0);
 
         assertThat(testMember.getLoginId()).isEqualTo(member.getLoginId());

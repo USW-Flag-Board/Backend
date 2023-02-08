@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
 public class JwtUtilizer {
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "Bearer";
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 30 * 60 * 1000L; // 30분
-    private static final long REFRESH_TOKEN_EXPIRE_TIME = 7 * 24 * 60 * 60 * 1000L; // 7일
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 3 * 60 * 1000L; // 30 * 60 * 1000L; // 30분
+    private static final long REFRESH_TOKEN_EXPIRE_TIME = 5 * 60 * 1000L; // 7 * 24 * 60 * 60 * 1000L; // 7일
 
     private final Key key;
 
@@ -92,16 +92,17 @@ public class JwtUtilizer {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.info("잘못된 JWT 서명입니다.");
+        } catch (SecurityException e) {
+            throw new CustomException(ErrorCode.INVALID_JWT_SIGNATURE_EXCEPTION);
+        } catch (MalformedJwtException e) {
+            throw new CustomException(ErrorCode.INVALID_JWT_TOKEN_EXCEPTION);
         } catch (ExpiredJwtException e) {
-            log.info("만료된 JWT 토큰입니다.");
+            throw new CustomException(ErrorCode.EXPIRED_JWT_TOKEN_EXCEPTION);
         } catch (UnsupportedJwtException e) {
-            log.info("지원되지 않는 JWT 토큰입니다.");
+            throw new CustomException(ErrorCode.UNSUPPORTED_JWT_TOKEN_EXCEPTION);
         } catch (IllegalArgumentException e) {
-            log.info("JWT 토큰이 잘못되었습니다.");
+            throw new CustomException(ErrorCode.NOT_FOUND_JWT_CLAIMS_EXCEPTION);
         }
-        return false;
     }
 
     private Claims parseClaims(String accessToken) {

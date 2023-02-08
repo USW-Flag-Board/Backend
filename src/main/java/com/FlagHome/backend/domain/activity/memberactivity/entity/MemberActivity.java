@@ -1,5 +1,6 @@
 package com.FlagHome.backend.domain.activity.memberactivity.entity;
 
+import com.FlagHome.backend.domain.common.BaseEntity;
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.member.entity.Member;
 import lombok.AllArgsConstructor;
@@ -14,7 +15,7 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberActivity {
+public class MemberActivity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,4 +27,11 @@ public class MemberActivity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "activity_id")
     private Activity activity;
+
+    public static MemberActivity of(Member member, Activity activity) {
+        return MemberActivity.builder()
+                .member(member)
+                .activity(activity)
+                .build();
+    }
 }

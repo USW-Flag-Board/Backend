@@ -1,11 +1,10 @@
 package com.FlagHome.backend.domain.activity.controller;
 
-import com.FlagHome.backend.domain.ApplicationResponse;
-import com.FlagHome.backend.domain.activity.dto.ActivityRequest;
-import com.FlagHome.backend.domain.activity.dto.ChangeLeaderRequest;
-import com.FlagHome.backend.domain.activity.dto.CloseRecruitRequest;
-import com.FlagHome.backend.domain.activity.entity.Activity;
+import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyResponse;
+import com.FlagHome.backend.domain.activity.dto.*;
+import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantResponse;
 import com.FlagHome.backend.domain.activity.service.ActivityService;
+import com.FlagHome.backend.domain.common.ApplicationResponse;
 import com.FlagHome.backend.global.utility.SecurityUtils;
 import com.FlagHome.backend.global.utility.UriCreator;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,10 +12,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
@@ -35,23 +34,24 @@ public class ActivityController {
             @ApiResponse(responseCode = "200", description = "활동 상세보기가 정상적으로 처리되었습니다."),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 활동입니다.")
     })
+    @ResponseStatus(OK)
     @GetMapping("/{id}")
-    public ResponseEntity<ApplicationResponse> getActivity(@PathVariable("id") long activityId) {
-        ApplicationResponse response = ApplicationResponse
-                .of(activityService.getActivity(activityId), OK, "활동 데이터를 가져왔습니다..");
-        return ResponseEntity.ok(response);
+    public ApplicationResponse<ActivityResponse> getActivity(@PathVariable("id") long activityId) {
+        ActivityResponse response = activityService.getActivity(activityId);
+        return new ApplicationResponse(response);
     }
 
     @Tag(name = "activity")
-    @Operation(summary = "모든 활동 가져오기", description = "동아리 소개에 사용될 API\n" +
+    @Operation(summary = "모든 활동 가져오기", description = "동아리 소개에 사용될 API\n\n" +
                                                           "연도 별로 활동 종류에 따라서 고유번호, 이름, 상태, 시즌을 리턴한다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "모든 활동들을 가져왔습니다."),
     })
+    @ResponseStatus(OK)
     @GetMapping
-    public ResponseEntity<ApplicationResponse> getAllActivities() {
-        ApplicationResponse response = ApplicationResponse.of(activityService.getAllActivities(), OK, "모든 활동들을 가져왔습니다.");
-        return ResponseEntity.ok(response);
+    public ApplicationResponse<GetAllActivitiesResponse> getAllActivities() {
+        GetAllActivitiesResponse response = activityService.getAllActivities();
+        return new ApplicationResponse(response);
     }
 
     @Tag(name = "activity")
@@ -61,24 +61,39 @@ public class ActivityController {
             @ApiResponse(responseCode = "401", description = "활동장이 아닙니다."),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 활동입니다.")
     })
+    @ResponseStatus(OK)
     @GetMapping("/{id}/apply")
-    public ResponseEntity<ApplicationResponse> getAllActivityApplies(@PathVariable("id") long activityId) {
-        ApplicationResponse response = ApplicationResponse
-                .of(activityService.getAllActivityApplies(SecurityUtils.getMemberId(), activityId), OK, "모든 신청을 가져왔습니다.");
-        return ResponseEntity.ok(response);
+    public ApplicationResponse<List<ActivityApplyResponse>> getAllActivityApplies(@PathVariable("id") long activityId) {
+        List<ActivityApplyResponse> response = activityService.getAllActivityApplies(SecurityUtils.getMemberId(), activityId);
+        return new ApplicationResponse(response);
     }
 
     @Tag(name = "activity")
-    @Operation(summary = "활동 신청여부 확인하기", description = "[토큰필요] 한 멤버가 한 활동에 한번만 신청할 수 있다")
+    @Operation(summary = "활동원 리스트 가져오기", description = "[토큰필요] 활동장 전용기능" +
+            "\n\n활동원 관리용 API, 활동원들 리스트를 가져온다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "활동원들 정보를 가져왔습니다."),
+            @ApiResponse(responseCode = "401", description = "활동장이 아닙니다.")
+    })
+    @ResponseStatus(OK)
+    @GetMapping("/{id}/participant")
+    public ApplicationResponse<List<ParticipantResponse>> getAllParticipants(@PathVariable("id") long activityId) {
+        List<ParticipantResponse> response = activityService.getAllParticipants(SecurityUtils.getMemberId(), activityId);
+        return new ApplicationResponse(response);
+    }
+
+    @Tag(name = "activity")
+    @Operation(summary = "활동 신청여부 확인하기", description = "[토큰필요] 한 멤버가 한 활동에 한번만 신청할 수 있다.\n\n" +
+            "False : 미신청, True : 신청")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "신청여부 조회에 성공하였습니다."),
             @ApiResponse(responseCode = "500", description = "서버 에러입니다. 관리자에게 문의해주세요.")
     })
+    @ResponseStatus(OK)
     @PostMapping("/{id}/check")
-    public ResponseEntity<ApplicationResponse> checkApply(@PathVariable("id") long activityId) {
-        boolean check = activityService.checkApply(SecurityUtils.getMemberId(), activityId);
-        ApplicationResponse response = ApplicationResponse.of(check, OK, "신청여부 조회하였습니다.");
-        return ResponseEntity.ok(response);
+    public ApplicationResponse<Boolean> checkApply(@PathVariable("id") long activityId) {
+        Boolean check = activityService.checkApply(SecurityUtils.getMemberId(), activityId);
+        return new ApplicationResponse(check);
     }
 
     @Tag(name = "activity")
@@ -89,11 +104,11 @@ public class ActivityController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 활동입니다."),
             @ApiResponse(responseCode = "409", description = "이미 신청한 활동입니다.")
     })
+    @ResponseStatus(CREATED)
     @PostMapping("/{id}/apply")
-    public ResponseEntity<ApplicationResponse> applyActivity(@PathVariable("id") long activityId) {
+    public ApplicationResponse applyActivity(@PathVariable("id") long activityId) {
         activityService.applyActivity(SecurityUtils.getMemberId(), activityId);
-        ApplicationResponse response = ApplicationResponse.of(null, CREATED, "신청에 성공했습니다.");
-        return ResponseEntity.ok(response);
+        return new ApplicationResponse();
     }
 
     @Tag(name = "activity")
@@ -102,12 +117,12 @@ public class ActivityController {
             @ApiResponse(responseCode = "201", description = "스터디 내용이 성공적으로 수정되었습니다."),
             @ApiResponse(responseCode = "401", description = "일반 유저가 만들려고한 경우")
     })
+    @ResponseStatus(CREATED)
     @PostMapping
-    public ResponseEntity<ApplicationResponse> createActivity(@RequestBody ActivityRequest activityRequest) {
-        Activity activity = activityService.create(SecurityUtils.getMemberId(), activityRequest);
-        URI location = UriCreator.createUri(DEFAULT_URL, activity.getId());
-        ApplicationResponse response = ApplicationResponse.of(location, CREATED, "활동을 만들었습니다.");
-        return ResponseEntity.ok(response);
+    public ApplicationResponse<URI> createActivity(@RequestBody ActivityRequest activityRequest) {
+        long id = activityService.create(SecurityUtils.getMemberId(), activityRequest).getId();
+        URI uri = UriCreator.createUri(DEFAULT_URL, id);
+        return new ApplicationResponse(uri);
     }
 
 //    @Tag(name = "activity")
@@ -124,48 +139,51 @@ public class ActivityController {
 //    }
 
     @Tag(name = "activity")
-    @Operation(summary = "프로젝트 내용 수정하기", description = "[토큰필요] 활동장만 수정할 수 있다.\n" +
+    @Operation(summary = "프로젝트 내용 수정하기", description = "[토큰필요] 활동장만 수정할 수 있다.\n\n" +
                                                                "프로젝트는 책 사용여부와 책 이름을 적지 않아도 된다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "프로젝트 내용이 성공적으로 수정되었습니다."),
             @ApiResponse(responseCode = "401", description = "활동장이 아닙니다."),
     })
+    @ResponseStatus(OK)
     @PutMapping("/project/{id}")
-    public ResponseEntity<ApplicationResponse> updateProject(@PathVariable("id") long activityId,
-                                                             @RequestBody ActivityRequest activityRequest) {
+    public ApplicationResponse<URI> updateProject(@PathVariable("id") long activityId,
+                                                  @RequestBody ActivityRequest activityRequest) {
         activityService.updateProject(SecurityUtils.getMemberId(), activityId, activityRequest);
-        ApplicationResponse response = ApplicationResponse.of(null, OK, "프로젝트 내용이 성공적으로 수정되었습니다.");
-        return ResponseEntity.ok(response);
+        URI uri = UriCreator.createUri(DEFAULT_URL, activityId);
+        return new ApplicationResponse(uri);
     }
 
     @Tag(name = "activity")
-    @Operation(summary = "멘토링 내용 수정하기", description = "[토큰필요] 활동장만 수정할 수 있다.\n" +
+    @Operation(summary = "멘토링 내용 수정하기", description = "[토큰필요] 활동장만 수정할 수 있다.\n\n" +
                                                              "멘토링은 깃허브 주소를 적지 않아도 된다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "멘토링 내용이 성공적으로 수정되었습니다."),
             @ApiResponse(responseCode = "401", description = "활동장이 아닙니다."),
     })
+    @ResponseStatus(OK)
     @PutMapping("/mentoring/{id}")
-    public ResponseEntity<ApplicationResponse> updateMentoring(@PathVariable("id") long activityId,
-                                                               @RequestBody ActivityRequest activityRequest) {
+    public ApplicationResponse<URI> updateMentoring(@PathVariable("id") long activityId,
+                                                    @RequestBody ActivityRequest activityRequest) {
         activityService.updateMentoring(SecurityUtils.getMemberId(), activityId, activityRequest);
-        ApplicationResponse response = ApplicationResponse.of(null, OK, "멘토링 내용이 성공적으로 수정되었습니다.");
-        return ResponseEntity.ok(response);
+        URI uri = UriCreator.createUri(DEFAULT_URL, activityId);
+        return new ApplicationResponse(uri);
     }
 
     @Tag(name = "activity")
-    @Operation(summary = "스터디 내용 수정하기", description = "[토큰필요] 활동장만 수정할 수 있다.\n" +
+    @Operation(summary = "스터디 내용 수정하기", description = "[토큰필요] 활동장만 수정할 수 있다.\n\n" +
                                                               "스터디는 깃허브 주소를 적지 않아도 된다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "스터디 내용이 성공적으로 수정되었습니다."),
             @ApiResponse(responseCode = "401", description = "활동장이 아닙니다."),
     })
+    @ResponseStatus(OK)
     @PutMapping("/study/{id}")
-    public ResponseEntity<ApplicationResponse> updateStudy(@PathVariable("id") long activityId,
-                                                           @RequestBody ActivityRequest activityRequest) {
+    public ApplicationResponse<URI> updateStudy(@PathVariable("id") long activityId,
+                                                @RequestBody ActivityRequest activityRequest) {
         activityService.updateStudy(SecurityUtils.getMemberId(), activityId, activityRequest);
-        ApplicationResponse response = ApplicationResponse.of(null, OK, "스터디 내용이 성공적으로 수정되었습니다.");
-        return ResponseEntity.ok(response);
+        URI uri = UriCreator.createUri(DEFAULT_URL, activityId);
+        return new ApplicationResponse(uri);
     }
 
     @Tag(name = "activity")
@@ -173,28 +191,29 @@ public class ActivityController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "권한을 성공적으로 넘겼습니다."),
             @ApiResponse(responseCode = "401", description = "활동장이 아닙니다."),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다.")
+            @ApiResponse(responseCode = "404", description = "이 활동의 멤버가 아닙니다.")
     })
+    @ResponseStatus(OK)
     @PatchMapping("/{id}/leader")
-    public ResponseEntity<ApplicationResponse> updateLeader(@PathVariable("id") long activityId,
-                                                            @RequestBody ChangeLeaderRequest changeLeaderRequest) {
+    public ApplicationResponse<URI> updateLeader(@PathVariable("id") long activityId,
+                                                 @RequestBody ChangeLeaderRequest changeLeaderRequest) {
         activityService.changeLeader(SecurityUtils.getMemberId(), activityId, changeLeaderRequest.getLoginId());
-        ApplicationResponse response = ApplicationResponse.of(null, OK, "권한을 성공적으로 넘겼습니다.");
-        return ResponseEntity.ok(response);
+        URI uri = UriCreator.createUri(DEFAULT_URL, activityId);
+        return new ApplicationResponse(uri);
     }
 
     @Tag(name = "activity")
-    @Operation(summary = "활동 모집 마감하기", description = "[토큰필요] 활동 모집 마감 시 활동장이 같이 활동할 멤버를 정한다. 덜 구현")
+    @Operation(summary = "활동 모집 마감하기", description = "[토큰필요] 활동 모집 마감 시 활동장이 같이 활동할 멤버를 정한다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "모집이 마감되었습니다."),
             @ApiResponse(responseCode = "401", description = "활동장이 아닙니다.")
     })
     @PatchMapping("/{id}/close")
-    public ResponseEntity<ApplicationResponse> closeRecruitment(@PathVariable("id") long activityId,
+    public ApplicationResponse<URI> closeRecruitment(@PathVariable("id") long activityId,
                                                                 @RequestBody CloseRecruitRequest closeRecruitRequest) {
         activityService.closeRecruitment(SecurityUtils.getMemberId(), activityId, closeRecruitRequest.getLoginIdList());
-        ApplicationResponse response = ApplicationResponse.of(null, OK, "모집이 마감되었습니다.");
-        return ResponseEntity.ok(response);
+        URI uri = UriCreator.createUri(DEFAULT_URL, activityId);
+        return new ApplicationResponse(uri);
     }
 
     @Tag(name = "activity")
@@ -203,11 +222,12 @@ public class ActivityController {
             @ApiResponse(responseCode = "200", description = "다시 모집을 시작합니다."),
             @ApiResponse(responseCode = "401", description = "활동장이 아닙니다.")
     })
+    @ResponseStatus(OK)
     @PostMapping("/{id}/reopen")
-    public ResponseEntity<ApplicationResponse> reopenRecruitment(@PathVariable("id") long activityId) {
+    public ApplicationResponse<URI> reopenRecruitment(@PathVariable("id") long activityId) {
         activityService.reopenRecruitment(SecurityUtils.getMemberId(), activityId);
-        ApplicationResponse response = ApplicationResponse.of(null, OK, "다시 모집을 시작합니다.");
-        return ResponseEntity.ok(response);
+        URI uri = UriCreator.createUri(DEFAULT_URL, activityId);
+        return new ApplicationResponse(uri);
     }
 
     @Tag(name = "activity")
@@ -216,11 +236,12 @@ public class ActivityController {
             @ApiResponse(responseCode = "200", description = "활동이 종료되었습니다."),
             @ApiResponse(responseCode = "401", description = "활동장이 아닙니다.")
     })
+    @ResponseStatus(OK)
     @PatchMapping("/{id}/finish")
-    public ResponseEntity<ApplicationResponse> finishActivity(@PathVariable("id") long activityId) {
+    public ApplicationResponse<URI> finishActivity(@PathVariable("id") long activityId) {
         activityService.finishActivity(SecurityUtils.getMemberId(), activityId);
-        ApplicationResponse response = ApplicationResponse.of(null, OK, "활동이 종료되었습니다.");
-        return ResponseEntity.ok(response);
+        URI uri = UriCreator.createUri(DEFAULT_URL, activityId);
+        return new ApplicationResponse(uri);
     }
 
     @Tag(name = "activity")
@@ -229,11 +250,11 @@ public class ActivityController {
             @ApiResponse(responseCode = "200", description = "활동이 삭제되었습니다."),
             @ApiResponse(responseCode = "401", description = "활동장이 아닙니다.")
     })
+    @ResponseStatus(OK)
     @DeleteMapping("{id}")
-    public ResponseEntity<ApplicationResponse> deleteActivity(@PathVariable("id") long activityId) {
+    public ApplicationResponse deleteActivity(@PathVariable("id") long activityId) {
         activityService.delete(SecurityUtils.getMemberId(), activityId);
-        ApplicationResponse response = ApplicationResponse.of(null, OK, "활동이 삭제되었습니다.");
-        return ResponseEntity.ok(response);
+        return new ApplicationResponse();
     }
 
     @Tag(name = "activity")
@@ -242,10 +263,10 @@ public class ActivityController {
             @ApiResponse(responseCode = "200", description = "신청이 취소되었습니다."),
             @ApiResponse(responseCode = "404", description = "존재하는 신청 내역이 없습니다.")
     })
+    @ResponseStatus(OK)
     @DeleteMapping("/{id}/apply")
-    public ResponseEntity<ApplicationResponse> cancelApply(@PathVariable("id") long activityId) {
+    public ApplicationResponse cancelApply(@PathVariable("id") long activityId) {
         activityService.cancelApply(SecurityUtils.getMemberId(), activityId);
-        ApplicationResponse response = ApplicationResponse.of(null, OK, "신청이 취소되었습니다.");
-        return ResponseEntity.ok(response);
+        return new ApplicationResponse();
     }
 }

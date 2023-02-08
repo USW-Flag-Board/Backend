@@ -1,8 +1,6 @@
 package com.FlagHome.backend.domain.auth;
 
 import com.FlagHome.backend.domain.auth.dto.JoinRequest;
-import com.FlagHome.backend.domain.auth.dto.LoginRequest;
-import com.FlagHome.backend.domain.auth.dto.SignUpRequest;
 import com.FlagHome.backend.domain.auth.dto.SignUpResponse;
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
@@ -10,13 +8,11 @@ import com.FlagHome.backend.domain.auth.service.AuthService;
 import com.FlagHome.backend.domain.member.Role;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
-import com.FlagHome.backend.domain.token.dto.TokenRequest;
 import com.FlagHome.backend.domain.token.dto.TokenResponse;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.jwt.JwtUtilizer;
 import com.FlagHome.backend.global.utility.RandomGenerator;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -30,7 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
@@ -54,58 +51,42 @@ public class AuthServiceTest {
     @Autowired
     private EntityManager entityManager;
 
-    @Nested
+    @Test
     @DisplayName("아이디 유효성 테스트")
-    class validateIdTest {
-        @BeforeEach
-        void beforeValidateId() {
-            String loginId = "gmlwh124";
-            String password = "1234";
+    void validateLoginIdTest() {
+        // given
+        String loginId = "gmlwh124";
+        String noneLoginId = "hejow124";
 
-            memberRepository.save(Member.builder()
-                    .loginId(loginId)
-                    .password(password)
-                    .build());
-        }
+        memberRepository.save(Member.builder().loginId(loginId).build());
 
-        @Test
-        @DisplayName("아이디가 중복이 아님")
-        void validateIdSuccessTest() {
-            String validId = "hejow124";
+        // when
+        boolean shouldBeTrue = authService.validateDuplicateLoginId(loginId);
+        boolean shouldBeFalse = authService.validateDuplicateLoginId(noneLoginId);
 
-            assertThatNoException()
-                    .isThrownBy(() -> authService.validateDuplicateLoginId(validId));
-        }
-
-        @Test
-        @DisplayName("아이디가 중복되어 실패")
-        void validateIdFailTest() {
-            String overlapedId = "gmlwh124";
-
-            assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> authService.validateDuplicateLoginId(overlapedId))
-                    .withMessage(ErrorCode.LOGIN_ID_EXISTS.getMessage());
-        }
+        // then
+        assertThat(shouldBeTrue).isTrue();
+        assertThat(shouldBeFalse).isFalse();
     }
 
     @Nested
     @DisplayName("이메일 유효성 테스트")
     class validateEmailTest {
         @Test
-        @DisplayName("수원대 이메일이며 중복이 아님")
+        @DisplayName("이메일 유효성 감사 성공")
         void validateEmailSuccessTest() {
-            String loginId = "gmlwh124";
+            // given
             String email = "gmlwh124@suwon.ac.kr";
-            String password = "1234";
+            String noneEmail = "hejow124@suwon.ac.kr";
 
-            memberRepository.save(Member.builder()
-                    .loginId(loginId)
-                    .email(email)
-                    .password(password)
-                    .build());
+            memberRepository.save(Member.builder().email(email).build());
+            // when
+            boolean shouldBeTrue = authService.validateEmail(email);
+            boolean shouldBeFalse = authService.validateEmail(noneEmail);
 
-            assertThatNoException()
-                    .isThrownBy(() -> authService.validateEmail("hejow124@suwon.ac.kr"));
+            // them
+            assertThat(shouldBeTrue).isTrue();
+            assertThat(shouldBeFalse).isFalse();
         }
 
         @Test
@@ -117,73 +98,24 @@ public class AuthServiceTest {
                     .isThrownBy(() -> authService.validateEmail(email))
                     .withMessage(ErrorCode.NOT_USW_EMAIL.getMessage());
         }
-
-        @Test
-        @DisplayName("수원대 이메일이지만 중복이라서 실패")
-        void validateEmailFailTest() {
-            String loginId = "gmlwh124";
-            String email = "gmlwh124@suwon.ac.kr";
-            String password = "1234";
-
-            memberRepository.save(Member.builder()
-                    .loginId(loginId)
-                    .email(email)
-                    .password(password)
-                    .build());
-
-            assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> authService.validateEmail(email))
-                    .withMessage(ErrorCode.EMAIL_EXISTS.getMessage());
-        }
     }
 
-    @Nested
-    @DisplayName("회원가입(join) 테스트")
-    class signUpJoinTest {
-//        @Test
-//        @DisplayName("회원가입 join 성공")
-//        void joinSuccessTest() {
-//            // given
-//            String loginId = "gmlwh124";
-//            String password = "qwer1234!";
-//            String email = "gmlwh124@suwon.ac.kr";
-//
-//            JoinRequest joinRequest = JoinRequest.builder()
-//                    .loginId(loginId)
-//                    .password(password)
-//                    .email(email)
-//                    .build();
-//
-//            given(mailService.sendCertification(any(), any())).willReturn(email);
-//            given(amazonSimpleEmailService.sendEmail(any())).willReturn(new SendEmailResult());
-//
-//            // when
-//            authService.join(joinRequest);
-//
-//            // then
-//            AuthInformation authInformation = authRepository.findFirstByEmailOrderByCreatedAtDesc(email).get();
-//            assertThat(authInformation).isNotNull();
-//            assertThat(authInformation.getLoginId()).isEqualTo(loginId);
-//            assertThat(authInformation.getPassword()).isEqualTo(password);
-//        }
+    @Test
+    @DisplayName("비밀번호 유효성 검사 실패로 join 실패")
+    void joinFailTest() {
+        String loginId = "gmlwh124";
+        String password = "1234";
+        String email = "gmlwh124@suwon.ac.kr";
 
-        @Test
-        @DisplayName("비밀번호 유효성 검사 실패로 join 실패")
-        void joinFailTest() {
-            String loginId = "gmlwh124";
-            String password = "1234";
-            String email = "gmlwh124@suwon.ac.kr";
+        JoinRequest joinRequest = JoinRequest.builder()
+                .loginId(loginId)
+                .password(password)
+                .email(email)
+                .build();
 
-            JoinRequest joinRequest = JoinRequest.builder()
-                    .loginId(loginId)
-                    .password(password)
-                    .email(email)
-                    .build();
-
-            assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> authService.join(joinRequest))
-                    .withMessage(ErrorCode.INVALID_PASSWORD.getMessage());
-        }
+        assertThatExceptionOfType(CustomException.class)
+                .isThrownBy(() -> authService.join(joinRequest))
+                .withMessage(ErrorCode.INVALID_PASSWORD.getMessage());
     }
 
     @Nested
@@ -209,13 +141,8 @@ public class AuthServiceTest {
             AuthInformation authInformation = AuthInformation.of(joinRequest, certification);
             authRepository.saveAndFlush(authInformation);
 
-            SignUpRequest signUpRequest = SignUpRequest.builder()
-                    .email(email)
-                    .certification(certification)
-                    .build();
-
             // when
-            SignUpResponse signUpResponse = authService.signUp(signUpRequest);
+            SignUpResponse signUpResponse = authService.signUp(email, certification);
 
             // then
             assertThat(signUpResponse.getEmail()).isEqualTo(email);
@@ -244,13 +171,8 @@ public class AuthServiceTest {
             AuthInformation authInformation = AuthInformation.of(joinRequest, certification);
             authRepository.saveAndFlush(authInformation);
 
-            SignUpRequest signUpRequest = SignUpRequest.builder()
-                    .email(email)
-                    .certification(certification)
-                    .build();
-
             // when
-            SignUpResponse signUpResponse = authService.signUp(signUpRequest);
+            SignUpResponse signUpResponse = authService.signUp(email, certification);
 
             // then
             assertThat(signUpResponse.getEmail()).isEqualTo(email);
@@ -276,13 +198,8 @@ public class AuthServiceTest {
 
             authRepository.saveAndFlush(AuthInformation.of(joinRequest, certification));
 
-            SignUpRequest signUpRequest = SignUpRequest.builder()
-                    .email(email)
-                    .certification(wrongCertification)
-                    .build();
-
             assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> authService.signUp(signUpRequest))
+                    .isThrownBy(() -> authService.signUp(email, wrongCertification))
                     .withMessage(ErrorCode.CERTIFICATION_NOT_MATCH.getMessage());
         }
     }
@@ -300,13 +217,8 @@ public class AuthServiceTest {
                         .role(Role.ROLE_USER)
                         .build());
 
-        LoginRequest logInRequest = LoginRequest.builder()
-                .loginId(loginId)
-                .password(password)
-                .build();
-
         // when
-        TokenResponse tokenResponse = authService.login(logInRequest);
+        TokenResponse tokenResponse = authService.login(loginId, password);
         entityManager.clear();
 
         // then : 정상적으로 발급되는 지, 유효한 지, 데이터가 일치하는 지
@@ -339,20 +251,10 @@ public class AuthServiceTest {
                         .role(Role.ROLE_USER)
                         .build());
 
-        LoginRequest logInRequest = LoginRequest.builder()
-                .loginId(loginId)
-                .password(password)
-                .build();
-
-        TokenResponse tokenResponse = authService.login(logInRequest);
-
-        TokenRequest tokenRequest = TokenRequest.builder()
-                .accessToken(tokenResponse.getAccessToken())
-                .refreshToken(tokenResponse.getRefreshToken())
-                .build();
+        TokenResponse tokenResponse = authService.login(loginId, password);
 
         // when
-        TokenResponse reissueToken = authService.reissueToken(tokenRequest);
+        TokenResponse reissueToken = authService.reissueToken(tokenResponse.getAccessToken(), tokenResponse.getRefreshToken());
 
         // then
         assertThat(reissueToken.getAccessToken()).isNotNull();

@@ -17,7 +17,7 @@ import java.util.List;
 public class ActivityApplyService {
     private final ActivityApplyRepository activityApplyRepository;
 
-    public boolean checkApply(long memberId, long activityId) {
+    public Boolean checkApply(long memberId, long activityId) {
         return activityApplyRepository.checkApply(memberId, activityId);
     }
 
@@ -39,8 +39,7 @@ public class ActivityApplyService {
 
     @Transactional
     public void cancelApply(long memberId, long activityId) {
-        ActivityApply activityApply = activityApplyRepository.findByMemberIdAndActivityId(memberId, activityId);
-        activityApplyRepository.delete(activityApply);
+        activityApplyRepository.deleteByMemberIdAndActivityId(memberId, activityId);
     }
 
     @Transactional

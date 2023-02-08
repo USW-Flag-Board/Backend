@@ -2,7 +2,6 @@ package com.FlagHome.backend.domain.activity.repository;
 
 import com.FlagHome.backend.domain.activity.dto.ActivityResponse;
 import com.FlagHome.backend.domain.activity.dto.QActivityResponse;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

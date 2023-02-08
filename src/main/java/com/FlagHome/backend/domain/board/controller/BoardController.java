@@ -80,8 +80,8 @@ public class BoardController {
             @ApiResponse(responseCode = "200", description = "게시판 수정을 성공하였습니다."),
             @ApiResponse(responseCode = "404", description = "찾을 수 없는 게시판 입니다.")
     })
-    @PatchMapping("/{board-id}")
-    public ResponseEntity<Void> updateBoard(@PathVariable("board-id") long boardId,
+    @PatchMapping("/{id}")
+    public ResponseEntity<Void> updateBoard(@PathVariable("id") long boardId,
                                          @RequestBody BoardPatchDto boardPatchDto) {
         boardPatchDto.setId(boardId);
         boardService.updateBoard(mapper.BoardPatchDtoToBoard(boardPatchDto, boardService));
@@ -94,8 +94,8 @@ public class BoardController {
             @ApiResponse(responseCode = "204", description = "게시판 삭제를 완료하였습니다."),
             @ApiResponse(responseCode = "404", description = "찾을 수 없는 게시판 입니다.")
     })
-    @DeleteMapping("/{board-id}")
-    public ResponseEntity<Void> deleteBoard(@PathVariable("board-id") long boardId) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBoard(@PathVariable("id") long boardId) {
         boardService.deleteBoard(boardId);
         return ResponseEntity.noContent().build();
     }

@@ -36,20 +36,20 @@ public class RefreshTokenService implements TokenService {
     }
 
     @Transactional
-    public TokenResponse reissueToken(TokenRequest tokenRequest) {
-        if (!jwtUtilizer.validateToken(tokenRequest.getRefreshToken())) {
+    public TokenResponse reissueToken(String accessToken, String refreshToken) {
+        if (!jwtUtilizer.validateToken(refreshToken)) {
             throw new CustomException(ErrorCode.INVALID_TOKEN);
         }
 
-        Authentication authentication = jwtUtilizer.getAuthentication(tokenRequest.getAccessToken());
-        Token refreshToken = findToken(authentication.getName());
+        Authentication authentication = jwtUtilizer.getAuthentication(accessToken);
+        Token findRefreshToken = findToken(authentication.getName());
 
-        if (!StringUtils.equals(refreshToken.getValue(), tokenRequest.getRefreshToken())) {
+        if (!StringUtils.equals(findRefreshToken.getValue(), refreshToken)) {
             throw new CustomException(ErrorCode.TOKEN_NOT_MATCH);
         }
 
         TokenResponse tokenResponse = jwtUtilizer.generateTokenDto(authentication);
-        refreshToken.updateValue(tokenResponse.getRefreshToken(), LocalDateTime.now().plusWeeks(1));
+        findRefreshToken.updateValue(refreshToken, LocalDateTime.now().plusWeeks(1));
 
         return tokenResponse;
     }
@@ -57,6 +57,6 @@ public class RefreshTokenService implements TokenService {
     @Override
     public Token findToken(String key) {
         return tokenRepository.findFirstByKeyOrderByIdDesc(key)
-                .orElseThrow(() -> new CustomException(ErrorCode.UNAUTHORIZED_TOKEN));
+                .orElseThrow(() -> new CustomException(ErrorCode.NONE_AUTHORIZATION_TOKEN));
     }
 }

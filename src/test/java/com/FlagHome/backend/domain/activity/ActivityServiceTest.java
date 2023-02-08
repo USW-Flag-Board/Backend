@@ -10,6 +10,9 @@ import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.Mentoring;
 import com.FlagHome.backend.domain.activity.entity.Project;
 import com.FlagHome.backend.domain.activity.entity.Study;
+import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantResponse;
+import com.FlagHome.backend.domain.activity.memberactivity.entity.MemberActivity;
+import com.FlagHome.backend.domain.activity.memberactivity.repository.MemberActivityRepository;
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
 import com.FlagHome.backend.domain.activity.service.ActivityService;
 import com.FlagHome.backend.domain.member.Major;
@@ -27,11 +30,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -44,6 +48,9 @@ public class ActivityServiceTest {
 
     @Autowired
     private ActivityRepository activityRepository;
+
+    @Autowired
+    private MemberActivityRepository memberActivityRepository;
 
     @Autowired
     private MemberRepository memberRepository;
@@ -367,5 +374,397 @@ public class ActivityServiceTest {
             assertThat(study.getBookUsage()).isEqualTo(bookUsage);
             assertThat(study.getBookName()).isEqualTo(bookName);
         }
+    }
+
+    @Nested
+    @DisplayName("활동 수정하기 테스트")
+    class updateActivityTest {
+        private Member member;
+
+        @BeforeEach
+        void testSetUp() {
+            member = memberRepository.save(Member.builder().build());
+        }
+
+        @Test
+        @DisplayName("프로젝트 수정하기 테스트")
+        void updateProjectTest() {
+            // given
+            String name = "name";
+            String changeName = "changed name";
+
+            String link = "link";
+            String changeLink = "changed link";
+
+            Project project = activityRepository.save(Project.builder()
+                            .leader(member)
+                            .name(name)
+                            .githubLink(link)
+                            .season(LocalDateTime.now())
+                            .build());
+
+            ActivityRequest activityRequest = ActivityRequest.builder()
+                    .name(changeName)
+                    .githubLink(changeLink)
+                    .build();
+
+            // when
+            activityService.updateProject(member.getId(), project.getId(), activityRequest);
+            entityManager.clear();
+
+            // then
+            Project updatedProject = (Project) activityRepository.findById(project.getId()).get();
+            assertThat(project.getName()).isNotEqualTo(updatedProject.getName());
+            assertThat(project.getGithubLink()).isNotEqualTo(updatedProject.getGithubLink());
+        }
+
+        @Test
+        @DisplayName("스터디 수정하기 테스트")
+        void updateStudyTest() {
+            // given
+            String name = "name";
+            String changeName = "changed name";
+
+            BookUsage bookUsage = BookUsage.미사용;
+            BookUsage changeBookUsage = BookUsage.사용;
+
+            String bookName = "book";
+            String changeBookName = "changed book";
+
+            Study study = activityRepository.save(Study.builder()
+                            .leader(member)
+                            .name(name)
+                            .bookUsage(bookUsage)
+                            .bookName(bookName)
+                            .season(LocalDateTime.now())
+                            .build());
+
+            ActivityRequest activityRequest = ActivityRequest.builder()
+                    .name(changeName)
+                    .bookUsage(changeBookUsage)
+                    .bookName(changeBookName)
+                    .build();
+
+            // when
+            activityService.updateStudy(member.getId(), study.getId(), activityRequest);
+            entityManager.clear();
+
+            // then
+            Study updatedStudy = (Study) activityRepository.findById(study.getId()).get();
+            assertThat(study.getName()).isNotEqualTo(updatedStudy.getName());
+            assertThat(study.getBookUsage()).isNotEqualTo(updatedStudy.getBookUsage());
+            assertThat(study.getBookName()).isNotEqualTo(updatedStudy.getBookName());
+        }
+
+        @Test
+        @DisplayName("멘토링 수정하기 테스트")
+        void updateMentoringTest() {
+            // given
+            String name = "name";
+            String changeName = "changed name";
+
+            BookUsage bookUsage = BookUsage.미사용;
+            BookUsage changeBookUsage = BookUsage.사용;
+
+            String bookName = "book";
+            String changeBookName = "changed book";
+
+            Mentoring mentoring = activityRepository.save(Mentoring.builder()
+                    .leader(member)
+                    .name(name)
+                    .bookUsage(bookUsage)
+                    .bookName(bookName)
+                    .season(LocalDateTime.now())
+                    .build());
+
+            ActivityRequest activityRequest = ActivityRequest.builder()
+                    .name(changeName)
+                    .bookUsage(changeBookUsage)
+                    .bookName(changeBookName)
+                    .build();
+
+
+            // when
+            activityService.updateMentoring(member.getId(), mentoring.getId(), activityRequest);
+            entityManager.clear();
+
+            // then
+            Mentoring updateMentoring = (Mentoring) activityRepository.findById(mentoring.getId()).get();
+            assertThat(mentoring.getName()).isNotEqualTo(updateMentoring.getName());
+            assertThat(mentoring.getBookUsage()).isNotEqualTo(updateMentoring.getBookUsage());
+            assertThat(mentoring.getBookName()).isNotEqualTo(updateMentoring.getBookName());
+        }
+    }
+
+    @Nested
+    @DisplayName("활동장 변경하기 테스트")
+    class changeLeaderTest {
+        private Member member;
+        private Member notLeader;
+        private Activity activity;
+
+        @BeforeEach
+        void testSetUp() {
+            member = memberRepository.save(Member.builder().build());
+            notLeader = memberRepository.save(Member.builder().build());
+
+            activity = activityRepository.save(Project.builder()
+                    .leader(member)
+                    .season(LocalDateTime.now())
+                    .build());
+        }
+
+        @Test
+        @DisplayName("활동장 변경하기 성공")
+        void changeSuccessTest() {
+            // given
+            String loginId = "gmlwh124";
+            Member participant = memberRepository.save(Member.builder().loginId(loginId).build());
+
+            memberActivityRepository.saveAndFlush(MemberActivity.builder()
+                    .member(participant)
+                    .activity(activity)
+                    .build());
+
+            // when
+            activityService.changeLeader(member.getId(), activity.getId(), loginId);
+
+            // then
+            Activity foundActivity = activityRepository.findById(activity.getId()).get();
+            assertThat(foundActivity).isNotNull();
+            assertThat(foundActivity.getLeader().getLoginId()).isNotEqualTo(member.getLoginId());
+            assertThat(foundActivity.getLeader().getLoginId()).isEqualTo(participant.getLoginId());
+        }
+
+        @Test
+        @DisplayName("활동장 변경하기 실패 - 활동장이 아님")
+        void changeFailByNotLeaderTest() {
+            String loginId = "gmlwh124";
+
+            assertThatExceptionOfType(CustomException.class)
+                    .isThrownBy(() -> activityService.changeLeader(notLeader.getId(), activity.getId(), loginId))
+                    .withMessage(ErrorCode.NOT_ACTIVITY_LEADER.getMessage());
+        }
+
+        @Test
+        @DisplayName("활동장 변경하기 실패 - 활동원이 아님")
+        void changeFailByNotMemberTest() {
+            String wrongLoginId = "hejow124";
+
+            assertThatThrownBy(() -> activityService.changeLeader(member.getId(), activity.getId(), wrongLoginId))
+                    .isInstanceOf(CustomException.class)
+                    .withFailMessage(ErrorCode.NOT_ACTIVITY_MEMBER.getMessage());
+        }
+    }
+
+    @Nested
+    @DisplayName("활동 마감하기 테스트")
+    class closeRecruitmentTest {
+        private Member member;
+        private Activity activity;
+
+        @BeforeEach
+        void testSetUp() {
+            member = memberRepository.save(Member.builder().build());
+            activity = activityRepository.save(Study.builder()
+                            .leader(member)
+                            .season(LocalDateTime.now())
+                            .status(Status.RECRUIT)
+                            .build());
+        }
+
+        @Test
+        @DisplayName("활동 마감하기 성공")
+        void closeSuccessTest() {
+            // given
+            String loginId1 = "gmlwh124";
+            String loginId2 = "hejow124";
+
+            Member applier1 = memberRepository.save(Member.builder().loginId(loginId1).build());
+            Member applier2 = memberRepository.save(Member.builder().loginId(loginId2).build());
+
+            ActivityApply apply1 = ActivityApply.builder()
+                    .member(applier1)
+                    .activity(activity)
+                    .build();
+
+            ActivityApply apply2 = ActivityApply.builder()
+                    .member(applier2)
+                    .activity(activity)
+                    .build();
+
+            activityApplyRepository.saveAll(Arrays.asList(apply1, apply2));
+
+            // when
+            activityService.closeRecruitment(member.getId(), activity.getId(), Arrays.asList(loginId1, loginId2));
+
+            // then
+            List<ActivityApplyResponse> allActivityApplies = activityService.getAllActivityApplies(member.getId(), activity.getId());
+            List<ParticipantResponse> participantResponses = memberActivityRepository.getAllParticipantByActivityId(activity.getId());
+            Activity findActivity = activityRepository.findById(activity.getId()).get();
+            assertThat(allActivityApplies.isEmpty()).isTrue();
+            assertThat(participantResponses.size()).isEqualTo(2);
+            assertThat(findActivity).isNotNull();
+            assertThat(findActivity.getStatus()).isEqualTo(Status.ON);
+        }
+
+        @Test
+        @DisplayName("활동 마감실패 - 활동장이 아님")
+        void closeFailByNotLeaderTest() {
+            Member notLeader = memberRepository.save(Member.builder().build());
+            List<String> list = new ArrayList<>();
+
+            assertThatExceptionOfType(CustomException.class)
+                    .isThrownBy(() -> activityService.closeRecruitment(notLeader.getId(), activity.getId(), list))
+                    .withMessage(ErrorCode.NOT_ACTIVITY_LEADER.getMessage());
+        }
+    }
+
+    @Nested
+    @DisplayName("활동 다시 열기 테스트")
+    class reopenRecruitmentTest {
+        private Member member;
+        private Activity activity;
+
+        @BeforeEach
+        void testSetUp() {
+            member = memberRepository.save(Member.builder().build());
+            activity = activityRepository.save(Study.builder()
+                    .leader(member)
+                    .season(LocalDateTime.now())
+                    .status(Status.RECRUIT)
+                    .build());
+        }
+
+        @Test
+        @DisplayName("활동 다시 열기 성공")
+        void reopenSuccessTest() {
+            // given
+            MemberActivity memberActivity1 = MemberActivity.builder().activity(activity).build();
+            MemberActivity memberActivity2 = MemberActivity.builder().activity(activity).build();
+
+            memberActivityRepository.saveAll(Arrays.asList(memberActivity1, memberActivity2));
+
+            // when
+            activityService.reopenRecruitment(member.getId(), activity.getId());
+
+            // then
+            List<ParticipantResponse> responses = memberActivityRepository.getAllParticipantByActivityId(activity.getId());
+            Activity findActivity = activityRepository.findById(activity.getId()).get();
+            assertThat(responses.isEmpty()).isTrue();
+            assertThat(findActivity).isNotNull();
+            assertThat(findActivity.getStatus()).isEqualTo(Status.RECRUIT);
+        }
+
+        @Test
+        @DisplayName("활동 다시 열기 실패 - 활동장이 아님")
+        void reopenFailByNotLeader() {
+            Member notLeader = memberRepository.save(Member.builder().build());
+
+            assertThatExceptionOfType(CustomException.class)
+                    .isThrownBy(() -> activityService.reopenRecruitment(notLeader.getId(), activity.getId()))
+                    .withMessage(ErrorCode.NOT_ACTIVITY_LEADER.getMessage());
+        }
+    }
+
+    @Nested
+    @DisplayName("활동 마감하기 테스트")
+    class finishActivityTest {
+        private Member member;
+        private Activity activity;
+
+        @BeforeEach
+        void testSetUp() {
+            member = memberRepository.save(Member.builder().build());
+            activity = activityRepository.save(Study.builder()
+                    .leader(member)
+                    .season(LocalDateTime.now())
+                    .status(Status.RECRUIT)
+                    .build());
+        }
+
+        @Test
+        @DisplayName("활동 마감하기 성공")
+        void finishSuccessTest() {
+            // given
+
+            // when
+            activityService.finishActivity(member.getId(), activity.getId());
+
+            // then
+            Activity findActivity = activityRepository.findById(activity.getId()).get();
+            assertThat(findActivity).isNotNull();
+            assertThat(findActivity.getStatus()).isEqualTo(Status.OFF);
+        }
+
+        @Test
+        @DisplayName("활동 다시 열기 실패 - 활동장이 아님")
+        void finishFailByNotLeader() {
+            Member notLeader = memberRepository.save(Member.builder().build());
+
+            assertThatExceptionOfType(CustomException.class)
+                    .isThrownBy(() -> activityService.finishActivity(notLeader.getId(), activity.getId()))
+                    .withMessage(ErrorCode.NOT_ACTIVITY_LEADER.getMessage());
+        }
+    }
+
+    @Nested
+    @DisplayName("활동 삭제하기 테스트")
+    class deleteActivityTest {
+        private Member member;
+        private Activity activity;
+
+        @BeforeEach
+        void testSetUp() {
+            member = memberRepository.save(Member.builder().build());
+            activity = activityRepository.save(Study.builder()
+                    .leader(member)
+                    .season(LocalDateTime.now())
+                    .status(Status.RECRUIT)
+                    .build());
+        }
+
+        @Test
+        @DisplayName("활동 삭제하기 성공")
+        void deleteSuccessTest() {
+            // given
+            Member applier = memberRepository.save(Member.builder().build());
+
+            activityService.applyActivity(applier.getId(), activity.getId());
+
+            // when
+            activityService.delete(member.getId(), activity.getId());
+
+            // then
+            Optional<Activity> findActivity = activityRepository.findById(activity.getId());
+            assertThat(findActivity.isEmpty()).isTrue();
+        }
+
+        @Test
+        @DisplayName("활동 다시 열기 실패 - 활동장이 아님")
+        void deleteFailByNotLeader() {
+            Member notLeader = memberRepository.save(Member.builder().build());
+
+            assertThatExceptionOfType(CustomException.class)
+                    .isThrownBy(() -> activityService.delete(notLeader.getId(), activity.getId()))
+                    .withMessage(ErrorCode.NOT_ACTIVITY_LEADER.getMessage());
+        }
+    }
+
+    @Test
+    @DisplayName("활동 신청 취소 테스트")
+    void cancelApplyTest() {
+        // given
+        Activity activity = activityRepository.save(Project.builder().season(LocalDateTime.now()).build());
+        Member member = memberRepository.save(Member.builder().build());
+
+        activityService.applyActivity(member.getId(), activity.getId());
+
+        // when
+        activityService.cancelApply(member.getId(), activity.getId());
+
+        // then
+        boolean check = activityService.checkApply(member.getId(), activity.getId());
+        assertThat(check).isFalse();
     }
 }

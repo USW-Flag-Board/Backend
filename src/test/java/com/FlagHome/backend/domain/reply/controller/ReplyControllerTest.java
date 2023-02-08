@@ -1,9 +1,11 @@
 package com.FlagHome.backend.domain.reply.controller;
 
-import com.FlagHome.backend.domain.like.entity.Like;
+import com.FlagHome.backend.domain.board.entity.Board;
+import com.FlagHome.backend.domain.board.repository.BoardRepository;
 import com.FlagHome.backend.domain.like.entity.LikeDto;
 import com.FlagHome.backend.domain.like.enums.LikeType;
 import com.FlagHome.backend.domain.like.repository.LikeRepository;
+import com.FlagHome.backend.domain.like.service.LikeService;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.entity.Post;
@@ -19,6 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -26,6 +33,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -42,6 +50,9 @@ class ReplyControllerTest {
     private final static String BASE_URL = "/api/replies";
 
     @Autowired
+    private LikeService likeService;
+
+    @Autowired
     private PostRepository postRepository;
     @Autowired
     private ReplyRepository replyRepository;
@@ -50,6 +61,9 @@ class ReplyControllerTest {
     @Autowired
     private LikeRepository likeRepository;
     @Autowired
+    private BoardRepository boardRepository;
+
+    @Autowired
     private ObjectMapper objectMapper;
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -57,6 +71,8 @@ class ReplyControllerTest {
     private MockMvc mockMvc;
 
     private Member dummyMember;
+    private Board dummyBoard;
+    private Post dummyPost;
 
     @BeforeEach
     public void testSetup() {
@@ -70,20 +86,36 @@ class ReplyControllerTest {
                 .email("gildong@naver.com")
                 .name("honggildong")
                 .build());
+
+        dummyBoard = boardRepository.save(Board.builder()
+                .koreanName("일반게시판")
+                .englishName("board")
+                .boardDepth(0L)
+                .build());
+
+        dummyPost = postRepository.save(Post.builder()
+                .title("제목이다")
+                .content("내용이다")
+                .member(dummyMember)
+                .board(dummyBoard)
+                .viewCount(0L)
+                .replyList(new ArrayList<>())
+                .likeList(new ArrayList<>())
+                .build());
+
+        setJwtInformation(dummyMember.getId());
     }
 
     @Test
     @DisplayName("댓글 생성 테스트")
     public void createReplyTest() throws Exception {
-        Post dummyPost = postRepository.save(Post.builder().member(dummyMember).title("가짜포스트").replyList(new ArrayList<>()).content("가짜포스트내용").build());
-
         ReplyDto replyDto = new ReplyDto();
         replyDto.setMemberId(dummyMember.getId());
         replyDto.setPostId(dummyPost.getId());
         replyDto.setReplyGroup(1);
         replyDto.setReplyOrder(2);
         replyDto.setReplyDepth(3);
-        replyDto.setLikeCount(0L);
+        replyDto.setLikeList(new ArrayList<>());
         replyDto.setContent("testReplyContent");
         String jsonBody = objectMapper.writeValueAsString(replyDto);
 
@@ -107,17 +139,15 @@ class ReplyControllerTest {
     @Test
     @DisplayName("PostID로 댓글 조회 테스트")
     public void findRepliesByPostIdTest() throws Exception {
-        Post savedPost = postRepository.save(Post.builder().member(dummyMember).title("제목이다").replyList(new ArrayList<>()).content("내용이다").build());
-
         for(int i = 0; i < 4; ++i) {
-            Reply reply = Reply.builder().post(savedPost).member(dummyMember).content(i + "번째").replyGroup(1L).replyOrder((long)i).replyDepth(1L).likeCount(0L).build();
-            savedPost.getReplyList().add(reply);
+            Reply reply = Reply.builder().post(dummyPost).member(dummyMember).content(i + "번째").replyGroup(1L).replyOrder((long)i).replyDepth(1L).likeList(new ArrayList<>()).build();
+            dummyPost.getReplyList().add(reply);
         }
         postRepository.flush();
 
-        String postId = Long.toString(savedPost.getId());
+        String postId = Long.toString(dummyPost.getId());
         mockMvc.perform(get(BASE_URL)
-                .param("id", postId))
+                .param("post-id", postId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("status", is("OK")))
                     .andExpect(jsonPath("message", is("댓글 리스트 가져오기에 성공 하였습니다.")));
@@ -126,8 +156,7 @@ class ReplyControllerTest {
     @Test
     @DisplayName("단일 댓글 삭제 테스트")
     public void deleteReplyTest() throws Exception {
-        Post dummyPost = postRepository.save(Post.builder().title("더미제목").member(dummyMember).replyList(new ArrayList<>()).content("더미내용").build());
-        Reply reply = Reply.builder().member(dummyMember).post(dummyPost).replyGroup(1L).replyDepth(0L).replyOrder(0L).likeCount(0L).build();
+        Reply reply = Reply.builder().member(dummyMember).post(dummyPost).replyGroup(1L).replyDepth(0L).replyOrder(0L).likeList(new ArrayList<>()).build();
         dummyPost.getReplyList().add(reply);
         postRepository.flush();
 
@@ -194,7 +223,6 @@ class ReplyControllerTest {
         final String originalContent = "원래내용";
         final String modifiedContent = "바뀐내용";
 
-        Post dummyPost = postRepository.save(Post.builder().title("더미제목").member(dummyMember).replyList(new ArrayList<>()).content("더미내용").build());
         Reply reply = Reply.builder().post(dummyPost).member(dummyMember).content(originalContent).build();
         dummyPost.getReplyList().add(reply);
         postRepository.flush();
@@ -224,14 +252,16 @@ class ReplyControllerTest {
     @DisplayName("댓글 좋아요 테스트")
     public void likeReplyTest() throws Exception {
         // given
-        Post dummyPost = postRepository.save(Post.builder().title("더미제목").member(dummyMember).replyList(new ArrayList<>()).content("더미내용").build());
-        Reply reply = replyRepository.save(Reply.builder().member(dummyMember).post(dummyPost).likeCount(0L).build());
+        Reply reply = replyRepository.save(Reply.builder()
+                .content("댓글 입니다.")
+                .post(dummyPost)
+                .member(dummyMember)
+                .likeList(new ArrayList<>())
+                .build());
 
-        long userId = dummyMember.getId();
+        long memberId = dummyMember.getId();
         long replyId = reply.getId();
-        String type = "REPLY";
-
-        LikeDto likeDto = new LikeDto(userId, replyId, type);
+        LikeDto likeDto = new LikeDto(memberId, replyId);
         String jsonBody = objectMapper.writeValueAsString(likeDto);
 
         // when
@@ -243,30 +273,40 @@ class ReplyControllerTest {
                     .andDo(print());
 
         // then
-        replyRepository.findById(replyId).ifPresent(resultReply -> assertThat(resultReply.getLikeCount()).isEqualTo(1L));
-        assertThat(likeRepository.findLikeByUserId(userId).size()).isEqualTo(1);
+        assertThat(likeRepository.findAll().size()).isEqualTo(1);
     }
 
     @Test
     @DisplayName("댓글 좋아요 취소 테스트")
     public void unlikeReplyTest() throws Exception {
         // given
-        Post dummyPost = postRepository.save(Post.builder().title("더미제목").member(dummyMember).replyList(new ArrayList<>()).content("더미내용").build());
-        Reply reply = replyRepository.save(Reply.builder().member(dummyMember).post(dummyPost).likeCount(1L).build());
+        Reply reply = replyRepository.save(Reply.builder()
+                .content("댓글 입니다.")
+                .post(dummyPost)
+                .member(dummyMember)
+                .likeList(new ArrayList<>())
+                .build());
 
-        long userId = dummyMember.getId();
+        long memberId = dummyMember.getId();
         long replyId = reply.getId();
-        likeRepository.save(Like.builder().userId(userId).targetId(replyId).targetType(LikeType.REPLY).build());
+        likeService.like(memberId, replyId, LikeType.REPLY);
 
         // when
         mockMvc.perform(delete(BASE_URL + "/like")
-                .param("userId", Long.toString(userId))
-                .param("targetId", Long.toString(replyId))
-                .param("targetType", LikeType.REPLY.toString()))
+                .param("member-id", Long.toString(memberId))
+                .param("target-id", Long.toString(replyId)))
+                    .andExpect(status().isOk())
                     .andDo(print());
 
         // then
-        replyRepository.findById(replyId).ifPresent(resultReply -> assertThat(resultReply.getLikeCount()).isEqualTo(0L));
-        assertThat(likeRepository.findLikeByUserId(userId).size()).isEqualTo(0);
+        assertThat(likeRepository.findAll().size()).isEqualTo(0);
+    }
+
+    private void setJwtInformation(long memberId) {
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add((GrantedAuthority) () -> "ROLE_USER");
+
+        UserDetails principal = new User(Long.toString(memberId), "", authorities);
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(principal, "", authorities));
     }
 }

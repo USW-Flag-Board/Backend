@@ -2,24 +2,26 @@ package com.FlagHome.backend.domain.member.service;
 
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.service.MemberActivityService;
+import com.FlagHome.backend.domain.auth.dto.JoinRequest;
 import com.FlagHome.backend.domain.board.enums.SearchType;
+import com.FlagHome.backend.domain.common.Status;
 import com.FlagHome.backend.domain.mail.service.MailService;
 import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.MyProfileResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
 import com.FlagHome.backend.domain.member.avatar.service.AvatarService;
 import com.FlagHome.backend.domain.member.dto.FindResponse;
+import com.FlagHome.backend.domain.member.dto.LoginLogResponse;
 import com.FlagHome.backend.domain.member.dto.MemberProfileResponse;
-import com.FlagHome.backend.domain.member.dto.UpdatePasswordRequest;
-import com.FlagHome.backend.domain.member.dto.ViewLogResponse;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.dto.PostDto;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
+import com.FlagHome.backend.domain.member.sleeping.entity.Sleeping;
+import com.FlagHome.backend.domain.member.sleeping.repository.SleepingRepository;
+import com.FlagHome.backend.domain.member.sleeping.service.SleepingService;
 import com.FlagHome.backend.domain.token.entity.Token;
 import com.FlagHome.backend.domain.token.service.FindRequestTokenService;
-import com.FlagHome.backend.domain.withdrawal.entity.Sleeping;
-import com.FlagHome.backend.domain.withdrawal.repository.WithdrawalRepository;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.utility.InputValidator;
@@ -38,13 +40,14 @@ import java.util.stream.Collectors;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
+    private final SleepingRepository sleepingRepository;
     private final MailService mailService;
     private final AvatarService avatarService;
     private final FindRequestTokenService findRequestTokenService;
-    private final WithdrawalRepository withdrawalRepository;
     private final PasswordEncoder passwordEncoder;
     private final MemberActivityService memberActivityService;
     private final InputValidator inputValidator;
+    private final SleepingService sleepingService;
 
     @Transactional
     public void withdraw(Long memberId, String password) {
@@ -58,14 +61,15 @@ public class MemberService {
         memberRepository.deleteById(memberId);
     }
 
-    public FindResponse findId(String email) {
+    public FindResponse findId(String name, String email) {
         inputValidator.validateUSWEmail(email);
 
-        if (!memberRepository.existsByEmail(email)) {
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        Member member = findByEmail(email);
+        if (!StringUtils.equals(member.getName(), name)) {
+            throw new CustomException(ErrorCode.EMAIL_NAME_NOT_MATCH);
         }
-        FindResponse response = issueTokenAndSendMail(email);
-        return response;
+
+        return issueTokenAndSendMail(email);
     }
 
     public FindResponse findPassword(String loginId, String email) {
@@ -76,14 +80,14 @@ public class MemberService {
             throw new CustomException(ErrorCode.EMAIL_ID_NOT_MATCH);
         }
 
-        FindResponse response = issueTokenAndSendMail(email);
-        return response;
+        return issueTokenAndSendMail(email);
     }
 
-    public void validateCertification(String email, String certification) {
+    public String validateCertification(String email, String certification) {
         Token findRequestToken = findRequestTokenService.findToken(email);
         findRequestToken.validateExpireTime();
         inputValidator.validateCertification(certification, findRequestToken.getValue());
+        return findByEmail(email).getLoginId();
     }
 
     @Transactional // 비밀번호를 잊어서 바꾸는 경우
@@ -94,16 +98,15 @@ public class MemberService {
     }
 
     @Transactional // 비밀번호를 유저가 변경하는 경우
-    public String updatePassword(Long memberId, UpdatePasswordRequest updatePasswordRequest) {
-        inputValidator.validatePassword(updatePasswordRequest.getNewPassword());
-        Member member = validateMemberPassword(memberId, updatePasswordRequest.getCurrentPassword());
+    public void updatePassword(Long memberId, String currentPassword, String newPassword) {
+        Member member = validateMemberPassword(memberId, currentPassword);
+        inputValidator.validatePassword(newPassword);
 
-        if (passwordEncoder.matches(updatePasswordRequest.getNewPassword(), member.getPassword())) {
+        if (passwordEncoder.matches(newPassword, member.getPassword())) {
             throw new CustomException(ErrorCode.PASSWORD_IS_SAME);
         }
 
-        member.updatePassword(passwordEncoder.encode(updatePasswordRequest.getNewPassword()));
-        return member.getLoginId();
+        member.updatePassword(passwordEncoder.encode(newPassword));
     }
 
     public MemberProfileResponse getMemberProfile(String loginId) {
@@ -128,9 +131,23 @@ public class MemberService {
     public void changeAllToSleepMember() {
         List<Member> sleepingMembers = memberRepository.getAllSleepMembers();
         List<Sleeping> sleepingList = sleepingMembers.stream()
-                        .map(member -> Sleeping.of(member, passwordEncoder))
+                        .map(Sleeping::of)
                         .collect(Collectors.toList());
-        withdrawalRepository.saveAll(sleepingList);
+        sleepingRepository.saveAll(sleepingList);
+        emptyAllMembers(sleepingMembers);
+    }
+
+    @Transactional
+    public void emptyAllMembers(List<Member> memberList) {
+        final Status sleeping = Status.SLEEPING;
+        memberList.forEach(member -> member.emptyAndUpdate(sleeping));
+    }
+
+    @Transactional
+    //@Scheduled(cron = "000000")
+    public void beforeSleep(JoinRequest joinRequest) {
+        List<Member> beforeSleeping = memberRepository.getAllBeforeSleep();
+        mailService.sendChangeSleep(joinRequest.getEmail());
     }
 
     @Transactional(readOnly = true)
@@ -175,7 +192,7 @@ public class MemberService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
-    public List<ViewLogResponse> viewLog() {
-        return memberRepository.getAllLogs();
+    public List<LoginLogResponse> getAllLoginLogs() {
+        return memberRepository.getAllLoginLogs();
     }
 }
