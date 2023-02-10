@@ -6,13 +6,11 @@ import com.FlagHome.backend.domain.auth.dto.JoinResponse;
 import com.FlagHome.backend.domain.auth.dto.SignUpResponse;
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
-import com.FlagHome.backend.domain.common.Status;
 import com.FlagHome.backend.domain.mail.service.MailService;
 import com.FlagHome.backend.domain.member.avatar.service.AvatarService;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
-import com.FlagHome.backend.domain.member.sleeping.service.SleepingService;
 import com.FlagHome.backend.domain.token.dto.TokenResponse;
 import com.FlagHome.backend.domain.token.service.RefreshTokenService;
 import com.FlagHome.backend.global.exception.CustomException;
@@ -43,7 +41,6 @@ public class AuthService {
     private final JwtUtilizer jwtUtilizer;
     private final InputValidator inputValidator;
     private final AvatarService avatarService;
-    private final SleepingService sleepingService;
 
     public Boolean validateDuplicateLoginId(String loginId) {
         if (memberRepository.existsByLoginId(loginId)) {
@@ -95,11 +92,6 @@ public class AuthService {
 
     @Transactional
     public TokenResponse login(String loginId, String password) {
-        Member member = memberService.findByLoginId(loginId);
-        if (member.getStatus() == Status.SLEEPING) {
-            sleepingService.changeSleepToMember(member, loginId);
-        }
-
         // Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginId, password);;
 
@@ -110,6 +102,7 @@ public class AuthService {
         TokenResponse tokenResponse = jwtUtilizer.generateTokenDto(authentication);
 
         // 마지막 로그인 시간 갱신
+        Member member = memberService.findByLoginId(loginId);
         member.updateLastLoginTime(LocalDateTime.now());
 
         // RefreshToken 저장

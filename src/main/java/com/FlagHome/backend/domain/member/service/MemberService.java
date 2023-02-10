@@ -160,6 +160,10 @@ public class MemberService {
         return memberRepository.getMembersByLoginId(loginIdList);
     }
 
+    public List<LoginLogResponse> getAllLoginLogs() {
+        return memberRepository.getAllLoginLogs();
+    }
+
     public Member findByLoginId(String loginId) {
         return memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -190,9 +194,5 @@ public class MemberService {
     private Member findByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-    }
-
-    public List<LoginLogResponse> getAllLoginLogs() {
-        return memberRepository.getAllLoginLogs();
     }
 }

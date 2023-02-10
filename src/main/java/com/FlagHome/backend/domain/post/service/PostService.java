@@ -3,24 +3,22 @@ package com.FlagHome.backend.domain.post.service;
 import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.board.repository.BoardRepository;
 import com.FlagHome.backend.domain.common.Status;
-import com.FlagHome.backend.domain.post.dto.CreatePostRequest;
-import com.FlagHome.backend.domain.post.dto.GetPostResponse;
-import com.FlagHome.backend.domain.reply.dto.ReplyDto;
-import com.FlagHome.backend.domain.reply.entity.Reply;
-import com.FlagHome.backend.domain.post.dto.LightPostDto;
-import com.FlagHome.backend.global.exception.CustomException;
-import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
-import com.FlagHome.backend.domain.post.dto.PostDto;
+import com.FlagHome.backend.domain.post.dto.CreatePostRequest;
+import com.FlagHome.backend.domain.post.dto.GetPostResponse;
+import com.FlagHome.backend.domain.post.dto.LightPostDto;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
+import com.FlagHome.backend.global.exception.CustomException;
+import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.utility.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -57,7 +55,6 @@ public class PostService {
 
         return post.getId();
     }
-
     @Transactional
     public GetPostResponse getPost(long postId) {
         Post postEntity = postRepository.findById(postId).orElse(null);
