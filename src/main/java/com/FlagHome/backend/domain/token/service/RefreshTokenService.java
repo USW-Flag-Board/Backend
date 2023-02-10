@@ -45,12 +45,12 @@ public class RefreshTokenService implements TokenService {
         Authentication authentication = jwtUtilizer.getAuthentication(accessToken);
         Token findRefreshToken = findToken(authentication.getName());
 
-        if (!StringUtils.equals(findRefreshToken.getValue(), refreshToken)) {
+        if (findRefreshToken.isNotEqualTo(refreshToken)) {
             throw new CustomException(ErrorCode.TOKEN_NOT_MATCH);
         }
 
         TokenResponse tokenResponse = jwtUtilizer.generateTokenDto(authentication);
-        findRefreshToken.updateValue(refreshToken, LocalDateTime.now().plusWeeks(1));
+        findRefreshToken.updateValue(refreshToken, LocalDateTime.now().plusMinutes(5)); // 테스트용 시간
 
         return tokenResponse;
     }
