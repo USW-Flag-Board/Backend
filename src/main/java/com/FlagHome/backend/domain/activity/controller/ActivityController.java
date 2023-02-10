@@ -22,7 +22,7 @@ import static org.springframework.http.HttpStatus.OK;
 
 @Tag(name = "activity", description = "활동 API")
 @RestController
-@RequestMapping("/api/activities")
+@RequestMapping("/activities")
 @RequiredArgsConstructor
 public class ActivityController {
     private static final String DEFAULT_URL = "/api/activities";

@@ -29,7 +29,8 @@ public class RefreshTokenService implements TokenService {
         Token refreshToken = RefreshToken.builder()
                 .key(key)
                 .value(value)
-                .expiredAt(LocalDateTime.now().plusWeeks(1))
+//                .expiredAt(LocalDateTime.now().plusWeeks(1))
+                .expiredAt(LocalDateTime.now().plusMinutes(5))
                 .build();
 
         return tokenRepository.save(refreshToken);

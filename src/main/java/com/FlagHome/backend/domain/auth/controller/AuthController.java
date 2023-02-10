@@ -16,7 +16,7 @@ import static org.springframework.http.HttpStatus.OK;
 
 @Tag(name = "auth", description = "인증 API")
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;

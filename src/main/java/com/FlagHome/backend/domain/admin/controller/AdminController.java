@@ -15,7 +15,7 @@ import java.util.List;
 
 @Tag(name = "admin", description = "관리자 API")
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/admin")
 @RequiredArgsConstructor
 public class AdminController {
     private final AdminService adminService;
