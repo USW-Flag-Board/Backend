@@ -18,10 +18,10 @@ public class SleepingRepositoryImpl implements SleepingRepositoryCustom{
 
     @Override
     public List<Sleeping> getAllSleeping() {
-        final LocalDateTime limit = LocalDateTime.now().minusWeeks(2);
+        final LocalDateTime limit = LocalDateTime.now().minusDays(60);
         return queryFactory
                 .selectFrom(sleeping)
-                .where()
+                .where(sleeping.expiredAt.before(limit))
                 .fetch();
     }
 }

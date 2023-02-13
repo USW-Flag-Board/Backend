@@ -5,9 +5,13 @@ import com.FlagHome.backend.domain.auth.dto.SignUpResponse;
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import com.FlagHome.backend.domain.auth.service.AuthService;
+import com.FlagHome.backend.domain.common.Status;
 import com.FlagHome.backend.domain.member.Role;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
+import com.FlagHome.backend.domain.member.service.MemberService;
+import com.FlagHome.backend.domain.member.sleeping.entity.Sleeping;
+import com.FlagHome.backend.domain.member.sleeping.repository.SleepingRepository;
 import com.FlagHome.backend.domain.token.dto.TokenResponse;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
@@ -25,6 +29,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -50,6 +56,12 @@ public class AuthServiceTest {
 
     @Autowired
     private EntityManager entityManager;
+
+    @Autowired
+    private SleepingRepository sleepingRepository;
+
+    @Autowired
+    private MemberService memberService;
 
     @Test
     @DisplayName("아이디 유효성 테스트")
@@ -271,4 +283,34 @@ public class AuthServiceTest {
         Member member = memberRepository.findByLoginId(loginId).get();
         assertThat(member.getId()).isEqualTo(memberId);
     }
+
+//    @Test
+//    @DisplayName("휴면계정 확인 테스트")
+//    void checkSleepingTest() {
+//        //given
+//        String loginId = "hwyoung123";
+//        LocalDateTime lastLoginTime = LocalDateTime.now().minusDays(7);
+//        Status status = Status.GENERAL;
+//
+//        Member member = memberRepository.save(Member.builder()
+//                .loginId(loginId)
+//                .lastLoginTime(lastLoginTime)
+//                .status(status)
+//                .build());
+//
+//        memberService.changeAllToSleepMember();
+//
+////        Sleeping sleeping = sleepingRepository.save(Sleeping.builder()
+////                .loginId(loginId)
+////                .build());
+//
+//        //when
+//
+//        authService.checkSleeping(loginId);
+//
+//        //then
+//        assertThat(member.getStatus()).isEqualTo(Status.GENERAL);
+//
+//
+//    }
 }

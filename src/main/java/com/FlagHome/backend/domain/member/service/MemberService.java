@@ -47,7 +47,6 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MemberActivityService memberActivityService;
     private final InputValidator inputValidator;
-    private final SleepingService sleepingService;
 
     @Transactional
     public void withdraw(Long memberId, String password) {
@@ -145,9 +144,9 @@ public class MemberService {
 
     @Transactional
     //@Scheduled(cron = "000000")
-    public void beforeSleep(JoinRequest joinRequest) {
-        List<Member> beforeSleeping = memberRepository.getAllBeforeSleep();
-        mailService.sendChangeSleep(joinRequest.getEmail());
+    public void beforeSleep() {
+        List<String> emailLists = memberRepository.getAllBeforeSleepEmails();
+        emailLists.forEach(mailService::sendChangeSleep);
     }
 
     @Transactional(readOnly = true)
