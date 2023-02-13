@@ -19,9 +19,13 @@ public enum ErrorCode {
     /** 401 - UNAUTHORIZED  */
     UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, "로그인이 필요한 기능입니다."),
     NONE_AUTHORIZATION_TOKEN(HttpStatus.UNAUTHORIZED, "권한 정보가 없는 토큰입니다."),
-    LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요."),
     NOT_ACTIVITY_LEADER(HttpStatus.UNAUTHORIZED, "활동장이 아닙니다."),
     HAVE_NO_AUTHORITY(HttpStatus.UNAUTHORIZED, "권한이 없습니다."),
+    INVALID_JWT_SIGNATURE_EXCEPTION(HttpStatus.UNAUTHORIZED, "잘못된 JWT 서명입니다."),
+    INVALID_JWT_TOKEN_EXCEPTION(HttpStatus.UNAUTHORIZED, "잘못된 JWT 토큰입니다."),
+    EXPIRED_JWT_TOKEN_EXCEPTION(HttpStatus.UNAUTHORIZED, "만료된 JWT 토큰입니다."),
+    NOT_FOUND_JWT_CLAIMS_EXCEPTION(HttpStatus.UNAUTHORIZED, "JWT 토큰에 클레임이 존재하지 않습니다."),
+    UNSUPPORTED_JWT_TOKEN_EXCEPTION(HttpStatus.UNAUTHORIZED, "지원되지 않는 JWT 토큰입니다."),
 
     /** 404 - NOT_FOUND */
     INVALID_FOUND(HttpStatus.NOT_FOUND, "요청을 찾을 수 없습니다."),
@@ -43,8 +47,6 @@ public enum ErrorCode {
      * 저장된 데이터와 일치하는 경우 (technically 따지면 기존 자원과 충돌하는 경우)
      */
     PASSWORD_IS_SAME(HttpStatus.CONFLICT, "기존과 같은 비밀번호는 사용할 수 없습니다."),
-    LOGIN_ID_EXISTS(HttpStatus.CONFLICT, "이미 사용 중인 아이디입니다."),
-    EMAIL_EXISTS(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다."),
     CERTIFICATION_NOT_MATCH(HttpStatus.CONFLICT, "인증번호가 일치하지 않습니다."),
     ALREADY_REPORTED(HttpStatus.CONFLICT,"이미 신고한 대상입니다"),
     ALREADY_APPLIED(HttpStatus.CONFLICT,"이미 신청한 활동입니다"),
