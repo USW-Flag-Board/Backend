@@ -95,6 +95,9 @@ public class AuthService {
 
     @Transactional
     public TokenResponse login(String loginId, String password) {
+        //sleepingservice에서 조회하는 메서드 만들기
+
+
         Member member = memberService.findByLoginId(loginId);
         if (member.getStatus() == Status.SLEEPING) {
             sleepingService.changeSleepToMember(member, loginId);
