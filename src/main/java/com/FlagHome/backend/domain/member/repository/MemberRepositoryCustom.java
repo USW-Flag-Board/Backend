@@ -12,7 +12,7 @@ public interface MemberRepositoryCustom {
 
     List<Member> getMembersByLoginId(List<String> loginIdList);
 
-    List<Member> getAllBeforeSleep();
+    List<String> getAllBeforeSleepEmails();
 
     List<LoginLogResponse> getAllLoginLogs();
 }

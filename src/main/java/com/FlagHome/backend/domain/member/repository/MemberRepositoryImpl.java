@@ -29,11 +29,12 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
     }
 
     @Override
-    public List<Member> getAllBeforeSleep() {
+    public List<String> getAllBeforeSleepEmails() {
         final LocalDateTime limit = LocalDateTime.now().minusDays(6);
 
         return queryFactory
-                .selectFrom(member)
+                .select(member.email)
+                .from(member)
                 .where(member.lastLoginTime.before(limit))
                 .fetch();
     }

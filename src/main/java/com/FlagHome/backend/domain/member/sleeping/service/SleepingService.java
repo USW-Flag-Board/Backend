@@ -32,7 +32,7 @@ public class SleepingService {
         sleepingRepository.deleteAllInBatch(sleepingList);
     }
 
-    private Sleeping findByLoginId(String loginId) {
+    public Sleeping findByLoginId(String loginId) {
         return sleepingRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SLEEP_NOT_FOUND));
     }

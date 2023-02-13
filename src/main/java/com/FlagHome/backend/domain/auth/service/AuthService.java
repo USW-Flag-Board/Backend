@@ -12,6 +12,8 @@ import com.FlagHome.backend.domain.member.avatar.service.AvatarService;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
+import com.FlagHome.backend.domain.member.sleeping.entity.Sleeping;
+import com.FlagHome.backend.domain.member.sleeping.repository.SleepingRepository;
 import com.FlagHome.backend.domain.member.sleeping.service.SleepingService;
 import com.FlagHome.backend.domain.token.dto.TokenResponse;
 import com.FlagHome.backend.domain.token.service.RefreshTokenService;
@@ -95,13 +97,8 @@ public class AuthService {
 
     @Transactional
     public TokenResponse login(String loginId, String password) {
-        //sleepingservice에서 조회하는 메서드 만들기
 
-
-        Member member = memberService.findByLoginId(loginId);
-        if (member.getStatus() == Status.SLEEPING) {
-            sleepingService.changeSleepToMember(member, loginId);
-        }
+        Member member = checkSleeping(loginId); //loginId 중복시 문제 생김
 
         // Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginId, password);;
@@ -124,5 +121,14 @@ public class AuthService {
     @Transactional
     public TokenResponse reissueToken(String accessToken, String refreshToken) {
         return refreshTokenService.reissueToken(accessToken, refreshToken);
+    }
+
+    @Transactional
+    private Member checkSleeping(String loginId) {
+        Member member = memberRepository.findByLoginId(loginId).orElse(null);
+        if (member == null) {
+            sleepingService.changeSleepToMember(member, loginId);
+        }
+        return member;
     }
 }
