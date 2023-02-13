@@ -9,6 +9,7 @@ import com.FlagHome.backend.domain.member.dto.LoginLogResponse;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
+import com.FlagHome.backend.domain.member.sleeping.repository.SleepingRepository;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import org.junit.jupiter.api.DisplayName;
@@ -190,6 +191,28 @@ public class MemberServiceTest {
         assertThat(response.getLoginId()).isEqualTo(loginId);
         assertThat(response.getNickName()).isEqualTo(newNickName);
     }
+
+    @Test
+    @DisplayName("휴면계정으로 분류 테스트")
+    void changeAllToSleepMemberTest() {
+        //given
+        String loginId = "hwyoung123";
+        LocalDateTime lastLoginTime = LocalDateTime.now().minusDays(7);
+        Status status = Status.GENERAL;
+
+        Member member = memberRepository.save(Member.builder()
+                .loginId(loginId)
+                .lastLoginTime(lastLoginTime)
+                .status(status)
+                .build());
+
+        //when
+        memberService.changeAllToSleepMember();
+
+        //then
+        assertThat(member.getStatus()).isEqualTo(Status.SLEEPING);
+    }
+
 //    @Test
 //    @DisplayName("로그보기")
 //    void viewLogTest() {
