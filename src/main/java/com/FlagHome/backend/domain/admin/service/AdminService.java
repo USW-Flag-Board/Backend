@@ -3,6 +3,7 @@ package com.FlagHome.backend.domain.admin.service;
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import com.FlagHome.backend.domain.member.avatar.service.AvatarService;
+import com.FlagHome.backend.domain.member.dto.LoginLogResponse;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
@@ -47,5 +48,10 @@ public class AdminService {
     @Transactional
     public void withdrawMember(Long memberId) {
         memberService.deleteMemberById(memberId);
+    }
+
+    @Transactional
+    public List<LoginLogResponse> viewAllLoginLog() {
+        return memberService.getAllLoginLogs();
     }
 }
