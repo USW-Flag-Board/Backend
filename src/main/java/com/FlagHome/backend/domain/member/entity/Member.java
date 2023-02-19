@@ -73,6 +73,7 @@ public class Member extends BaseEntity {
         this.studentId = sleeping.getStudentId();
         this.major = sleeping.getMember().getMajor();
         this.phoneNumber = sleeping.getPhoneNumber();
+        this.status = Status.GENERAL;
     }
 
     public void emptyAndUpdate(Status status) {

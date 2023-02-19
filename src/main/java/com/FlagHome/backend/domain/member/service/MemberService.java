@@ -47,7 +47,6 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MemberActivityService memberActivityService;
     private final InputValidator inputValidator;
-    private final SleepingService sleepingService;
 
     @Transactional
     public void withdraw(Long memberId, String password) {
@@ -145,9 +144,9 @@ public class MemberService {
 
     @Transactional
     //@Scheduled(cron = "000000")
-    public void beforeSleep(JoinRequest joinRequest) {
-        List<Member> beforeSleeping = memberRepository.getAllBeforeSleep();
-        mailService.sendChangeSleep(joinRequest.getEmail());
+    public void beforeSleep() {
+        List<String> emailLists = memberRepository.getAllBeforeSleepEmails();
+        emailLists.forEach(mailService::sendChangeSleep);
     }
 
     @Transactional(readOnly = true)
@@ -158,6 +157,10 @@ public class MemberService {
     @Transactional(readOnly = true)
     public List<Member> getMembersByLoginId(List<String> loginIdList) {
         return memberRepository.getMembersByLoginId(loginIdList);
+    }
+
+    public List<LoginLogResponse> getAllLoginLogs() {
+        return memberRepository.getAllLoginLogs();
     }
 
     public Member findByLoginId(String loginId) {
@@ -190,9 +193,5 @@ public class MemberService {
     private Member findByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-    }
-
-    public List<LoginLogResponse> getAllLoginLogs() {
-        return memberRepository.getAllLoginLogs();
     }
 }

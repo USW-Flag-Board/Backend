@@ -21,7 +21,7 @@ import static org.springframework.http.HttpStatus.OK;
 
 @Tag(name = "member", description = "멤버 API")
 @RestController
-@RequestMapping("/api/members")
+@RequestMapping("/members")
 @RequiredArgsConstructor
 public class MemberController {
     private final static String MEMBER_DEFAULT_URL = "/api/members";

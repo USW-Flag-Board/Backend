@@ -5,6 +5,7 @@ import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -32,6 +33,10 @@ public abstract class Token {
         this.key = key;
         this.value = value;
         this.expiredAt = expiredAt;
+    }
+
+    public boolean isNotEqualTo(String value) {
+        return !StringUtils.equals(this.value, value);
     }
 
     public void updateValue(String value, LocalDateTime expiredAt) {

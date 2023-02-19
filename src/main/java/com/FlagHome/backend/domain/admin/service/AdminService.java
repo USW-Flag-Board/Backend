@@ -1,5 +1,6 @@
 package com.FlagHome.backend.domain.admin.service;
 
+import com.FlagHome.backend.domain.auth.dto.ApproveSignUpResponse;
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import com.FlagHome.backend.domain.member.avatar.service.AvatarService;
@@ -26,28 +27,23 @@ public class AdminService {
     private final AvatarService avatarService;
 
     @Transactional(readOnly = true)
-    public List<AuthInformation> getAllAuthorizedAuthMember() {
+    public List<ApproveSignUpResponse> getAllAuthorizedAuthMember() {
         return authRepository.getAllNeedApprovalAuthInformation();
     }
 
     @Transactional
-    public void approveMember(Long authInformationId) {
-        Member member = authRepository.findById(authInformationId)
-                .map(authInformation -> Member.of(authInformation, passwordEncoder))
-                .orElseThrow(() -> new CustomException(ErrorCode.AUTH_INFORMATION_NOT_FOUND));
+    public void approveMember(long authInformationId) {
+        AuthInformation authInformation = authRepository.findById(authInformationId)
+                        .orElseThrow(() -> new CustomException(ErrorCode.AUTH_INFORMATION_NOT_FOUND));
 
-        Member savedMember = memberRepository.save(member);
+        Member member = memberRepository.save(Member.of(authInformation, passwordEncoder));
+        avatarService.initAvatar(member, authInformation.getNickName());
         deleteAuthInformation(authInformationId);
     }
 
     @Transactional
-    public void deleteAuthInformation(Long authInformationId) {
+    public void deleteAuthInformation(long authInformationId) {
         authRepository.deleteById(authInformationId);
-    }
-
-    @Transactional
-    public void withdrawMember(Long memberId) {
-        memberService.deleteMemberById(memberId);
     }
 
     @Transactional

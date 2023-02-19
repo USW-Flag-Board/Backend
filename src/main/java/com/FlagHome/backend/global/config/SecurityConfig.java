@@ -59,18 +59,18 @@ public class SecurityConfig {
 
         http.authorizeRequests()
                 .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll()
-                .antMatchers("/api/auth/**").permitAll()
+                .antMatchers("/auth/**").permitAll()
 
-                .antMatchers(HttpMethod.GET, "/api/activities", "/api/activities/{id}").permitAll()
-                .antMatchers("/api/activities/**").hasRole("CREW")
+                .antMatchers(HttpMethod.GET, "/activities", "/activities/{id}").permitAll()
+                .antMatchers("/activities/**").hasRole("CREW")
 
-                .antMatchers(HttpMethod.GET, "/api/boards/**").permitAll()
-                .antMatchers("api/boards/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.GET, "/boards/**").permitAll()
+                .antMatchers("/api/boards/**").hasRole("ADMIN")
 
-                .antMatchers(HttpMethod.GET, "/api/members/{lgoinId}").permitAll()
-                .antMatchers(HttpMethod.PUT, "/api/members/find/password").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/members/**").permitAll()
-                .antMatchers("/api/members/**").hasAnyRole("USER", "CREW")
+                .antMatchers(HttpMethod.GET, "/members/{loginId}").permitAll()
+                .antMatchers(HttpMethod.PUT, "/members/find/password").permitAll()
+                .antMatchers(HttpMethod.POST, "/members/**").permitAll()
+                .antMatchers("/members/**").hasAnyRole("USER", "CREW")
 
                 .antMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
                 .antMatchers("/api/posts/**").hasAnyRole("USER", "CREW")

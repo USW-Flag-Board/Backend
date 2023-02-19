@@ -1,5 +1,7 @@
 package com.FlagHome.backend.domain.auth.repository;
 
+import com.FlagHome.backend.domain.auth.dto.ApproveSignUpResponse;
+import com.FlagHome.backend.domain.auth.dto.QApproveSignUpResponse;
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +30,14 @@ public class AuthRepositoryImpl implements AuthRepositoryCustom {
     }
 
     @Override
-    public List<AuthInformation> getAllNeedApprovalAuthInformation() {
+    public List<ApproveSignUpResponse> getAllNeedApprovalAuthInformation() {
         return queryFactory
-                .selectFrom(authInformation)
+                .select(new QApproveSignUpResponse(
+                        authInformation.id,
+                        authInformation.name,
+                        authInformation.email,
+                        authInformation.major))
+                .from(authInformation)
                 .where(authInformation.isAuthorizedCrew.eq(true))
                 .fetch();
     }

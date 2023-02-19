@@ -1,5 +1,6 @@
 package com.FlagHome.backend.domain.member.sleeping.entity;
 
+import com.FlagHome.backend.domain.member.Major;
 import com.FlagHome.backend.domain.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,7 +44,7 @@ public class Sleeping {
     private String studentId;
 
     @Column
-    private String major;
+    private Major major;
 
     @Column(name = "phone_number")
     private String phoneNumber;
@@ -56,7 +57,7 @@ public class Sleeping {
                 .email(member.getEmail())
                 .name(member.getName())
                 .studentId(member.getStudentId())
-                .major(member.getMajor().toString())
+                .major(member.getMajor())
                 .phoneNumber(member.getPhoneNumber())
                 .expiredAt(LocalDateTime.now().plusDays(60))
                 .build();

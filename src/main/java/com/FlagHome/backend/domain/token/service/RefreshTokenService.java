@@ -29,7 +29,8 @@ public class RefreshTokenService implements TokenService {
         Token refreshToken = RefreshToken.builder()
                 .key(key)
                 .value(value)
-                .expiredAt(LocalDateTime.now().plusWeeks(1))
+//                .expiredAt(LocalDateTime.now().plusWeeks(1))
+                .expiredAt(LocalDateTime.now().plusMinutes(5))
                 .build();
 
         return tokenRepository.save(refreshToken);
@@ -44,12 +45,12 @@ public class RefreshTokenService implements TokenService {
         Authentication authentication = jwtUtilizer.getAuthentication(accessToken);
         Token findRefreshToken = findToken(authentication.getName());
 
-        if (!StringUtils.equals(findRefreshToken.getValue(), refreshToken)) {
+        if (findRefreshToken.isNotEqualTo(refreshToken)) {
             throw new CustomException(ErrorCode.TOKEN_NOT_MATCH);
         }
 
         TokenResponse tokenResponse = jwtUtilizer.generateTokenDto(authentication);
-        findRefreshToken.updateValue(refreshToken, LocalDateTime.now().plusWeeks(1));
+        findRefreshToken.updateValue(tokenResponse.getRefreshToken(), LocalDateTime.now().plusMinutes(5)); // 테스트용 시간
 
         return tokenResponse;
     }
