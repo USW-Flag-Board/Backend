@@ -23,12 +23,12 @@ import java.util.List;
 
 @Tag(name = "board", description = "게시판 API")
 @RestController
-@RequestMapping("/api/boards")
+@RequestMapping("/boards")
 @RequiredArgsConstructor
 public class BoardController {
     private final BoardService boardService;
     private final BoardMapper mapper;
-    private final static String BOARD_DEFAULT_URL = "/api/boards";
+    private final static String BOARD_DEFAULT_URL = "/boards";
 
     @Tag(name = "board")
     @Operation(summary = "게시판 생성")
