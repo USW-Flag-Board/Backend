@@ -20,12 +20,12 @@ import java.net.URI;
 
 @Tag(name = "post", description = "게시글 API")
 @RestController
-@RequestMapping("/api/posts")
+@RequestMapping("/posts")
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
     private final LikeService likeService;
-    private final static String BASE_URL = "/api/posts";
+    private final static String BASE_URL = "/posts";
 
     @Tag(name = "post")
     @Operation(summary = "게시글 생성")

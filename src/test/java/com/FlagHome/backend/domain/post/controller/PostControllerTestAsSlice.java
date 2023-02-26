@@ -6,7 +6,6 @@ import com.FlagHome.backend.domain.like.service.LikeService;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.post.dto.CreatePostRequest;
 import com.FlagHome.backend.domain.post.dto.GetPostResponse;
-import com.FlagHome.backend.domain.post.dto.PostDto;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.service.PostService;
 import com.FlagHome.backend.domain.reply.entity.Reply;
@@ -36,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @MockBean(JpaMetamodelMappingContext.class)
 @WithMockUser
 public class PostControllerTestAsSlice {
-    private static final String BASE_URL = "/api/posts";
+    private static final String BASE_URL = "/posts";
 
     @Autowired
     private MockMvc mockMvc;

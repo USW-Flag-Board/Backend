@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @WithMockUser
 public class BoardControllerTest {
-    private final static String BASE_URI = "/api/boards";
+    private final static String BASE_URI = "/boards";
 
     @Autowired
     private BoardService boardService;
