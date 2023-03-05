@@ -65,18 +65,18 @@ public class SecurityConfig {
                 .antMatchers("/activities/**").hasRole("CREW")
 
                 .antMatchers(HttpMethod.GET, "/boards/**").permitAll()
-                .antMatchers("/api/boards/**").hasRole("ADMIN")
+                .antMatchers("/boards/**").hasRole("ADMIN")
 
                 .antMatchers(HttpMethod.GET, "/members/{loginId}").permitAll()
                 .antMatchers(HttpMethod.PUT, "/members/find/password").permitAll()
                 .antMatchers(HttpMethod.POST, "/members/**").permitAll()
                 .antMatchers("/members/**").hasAnyRole("USER", "CREW")
 
-                .antMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
-                .antMatchers("/api/posts/**").hasAnyRole("USER", "CREW")
+                .antMatchers(HttpMethod.GET, "/posts/**").permitAll()
+                .antMatchers("/posts/**").hasAnyRole("USER", "CREW")
 
-                .antMatchers(HttpMethod.GET, "/api/replies/**").permitAll()
-                .antMatchers("/api/replies/**").hasAnyRole("USER", "CREW")
+                .antMatchers(HttpMethod.GET, "/replies/**").permitAll()
+                .antMatchers("/replies/**").hasAnyRole("USER", "CREW")
 
                 .antMatchers(HttpMethod.POST, "api/reports/**").hasAnyRole("USER", "CREW")
                 .antMatchers("api/reports/**").hasRole("ADMIN")

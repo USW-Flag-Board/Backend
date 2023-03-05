@@ -4,6 +4,8 @@ import com.FlagHome.backend.domain.admin.service.AdminService;
 import com.FlagHome.backend.domain.auth.dto.ApproveSignUpResponse;
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.common.ApplicationResponse;
+import com.FlagHome.backend.domain.common.ApplicationResponse;
+import com.FlagHome.backend.domain.member.dto.LoginLogResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -56,5 +58,17 @@ public class AdminController {
     public ApplicationResponse deleteAuthInformation(@PathVariable("id") long authInformationId) {
         adminService.deleteAuthInformation(authInformationId);
         return new ApplicationResponse();
+    }
+
+    @Tag(name = "admin")
+    @Operation(summary = "로그 보기", description = "모든 회원들의 아이디와 이름과 마지막 로그인 시간을 볼 수 있는 로그 보기")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "로그 가져오기 성공")
+    })
+    @ResponseStatus(OK)
+    @GetMapping("/member/login-log")
+    public ApplicationResponse<List<LoginLogResponse>> viewAllLoginLog() {
+        List<LoginLogResponse> responses = adminService.viewAllLoginLog();
+        return new ApplicationResponse(responses);
     }
 }

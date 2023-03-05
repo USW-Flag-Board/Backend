@@ -1,6 +1,5 @@
 package com.FlagHome.backend.domain.post.controller;
 
-import com.FlagHome.backend.domain.common.ApplicationResponse;
 import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.board.repository.BoardRepository;
 import com.FlagHome.backend.domain.common.Status;
@@ -53,7 +52,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WithMockUser
 class PostControllerTest {
 
-    private final static String BASE_URL = "/api/posts";
+    private final static String BASE_URL = "/posts";
 
     @Autowired
     private MemberRepository memberRepository;
