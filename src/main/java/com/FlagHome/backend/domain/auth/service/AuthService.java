@@ -101,7 +101,7 @@ public class AuthService {
         Member member = checkSleeping(loginId); //loginId 중복시 문제 생김
 
         // Login ID/PW 를 기반으로 AuthenticationToken 생성
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginId, password);;
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginId, password);
 
         // 실제로 검증(비밀번호 체크)이 이루어지는 부분
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
@@ -123,10 +123,10 @@ public class AuthService {
         return refreshTokenService.reissueToken(accessToken, refreshToken);
     }
 
-    @Transactional
+    // 수정하기
     private Member checkSleeping(String loginId) {
         Member member = memberRepository.findByLoginId(loginId).orElse(null);
-        if (member == null) {
+        if (member != null) {
             sleepingService.changeSleepToMember(member, loginId);
         }
         return member;
