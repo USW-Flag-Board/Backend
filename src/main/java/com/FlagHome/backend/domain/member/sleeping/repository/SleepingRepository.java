@@ -12,4 +12,8 @@ import java.util.Optional;
 public interface SleepingRepository extends JpaRepository<Sleeping, Long>, SleepingRepositoryCustom {
     Optional<Sleeping> findById(Long id);
     Optional<Sleeping> findByLoginId(String loginId);
+
+    boolean existsByLoginId(String loginId);
+
+    boolean existsByEmail(String email);
 }

@@ -10,6 +10,7 @@ import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.Mentoring;
 import com.FlagHome.backend.domain.activity.entity.Project;
 import com.FlagHome.backend.domain.activity.entity.Study;
+import com.FlagHome.backend.domain.activity.mapper.ActivityMapper;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.entity.MemberActivity;
 import com.FlagHome.backend.domain.activity.memberactivity.repository.MemberActivityRepository;
@@ -54,6 +55,9 @@ public class ActivityServiceTest {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private ActivityMapper mapper;
 
     @Autowired
     private EntityManager entityManager;
@@ -315,8 +319,10 @@ public class ActivityServiceTest {
                     .githubLink(githubLink)
                     .build();
 
+            Activity activity = mapper.toActivity(activityRequest);
+
             // when
-            Project project = (Project) activityService.create(member.getId(), activityRequest);
+            Project project = (Project) activityService.create(member.getId(), activity);
 
             // then
             assertThat(project.getId()).isNotNull();
@@ -339,8 +345,10 @@ public class ActivityServiceTest {
                     .bookName(bookName)
                     .build();
 
+            Activity activity = mapper.toActivity(activityRequest);
+
             // when
-            Mentoring mentoring = (Mentoring) activityService.create(member.getId(), activityRequest);
+            Mentoring mentoring = (Mentoring) activityService.create(member.getId(), activity);
 
             // then
             assertThat(mentoring.getId()).isNotNull();
@@ -364,8 +372,10 @@ public class ActivityServiceTest {
                     .bookName(bookName)
                     .build();
 
+            Activity activity = mapper.toActivity(activityRequest);
+
             // when
-            Study study = (Study) activityService.create(member.getId(), activityRequest);
+            Study study = (Study) activityService.create(member.getId(), activity);
 
             // then
             assertThat(study.getId()).isNotNull();

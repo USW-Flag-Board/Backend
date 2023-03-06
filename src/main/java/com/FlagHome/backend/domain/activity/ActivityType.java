@@ -15,9 +15,9 @@ import java.util.function.Function;
 
 @Getter
 public enum ActivityType {
-    PROJECT("프로젝트", createActivityRequest -> Project.from(createActivityRequest)),
-    STUDY("스터디", createActivityRequest -> Study.from(createActivityRequest)),
-    MENTORING("멘토링", createActivityRequest -> Mentoring.from(createActivityRequest));
+    PROJECT("프로젝트", Project::from),
+    STUDY("스터디", Study::from),
+    MENTORING("멘토링", Mentoring::from);
 
     ActivityType(String type, Function<ActivityRequest, Activity> expression) {
         this.type = type;

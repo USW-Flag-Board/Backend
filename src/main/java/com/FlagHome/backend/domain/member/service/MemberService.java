@@ -2,7 +2,7 @@ package com.FlagHome.backend.domain.member.service;
 
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.service.MemberActivityService;
-import com.FlagHome.backend.domain.auth.dto.JoinRequest;
+import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.board.enums.SearchType;
 import com.FlagHome.backend.domain.common.Status;
 import com.FlagHome.backend.domain.mail.service.MailService;
@@ -15,11 +15,11 @@ import com.FlagHome.backend.domain.member.dto.LoginLogResponse;
 import com.FlagHome.backend.domain.member.dto.MemberProfileResponse;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
-import com.FlagHome.backend.domain.post.dto.PostDto;
-import com.FlagHome.backend.domain.post.repository.PostRepository;
 import com.FlagHome.backend.domain.member.sleeping.entity.Sleeping;
 import com.FlagHome.backend.domain.member.sleeping.repository.SleepingRepository;
 import com.FlagHome.backend.domain.member.sleeping.service.SleepingService;
+import com.FlagHome.backend.domain.post.dto.PostDto;
+import com.FlagHome.backend.domain.post.repository.PostRepository;
 import com.FlagHome.backend.domain.token.entity.Token;
 import com.FlagHome.backend.domain.token.service.FindRequestTokenService;
 import com.FlagHome.backend.global.exception.CustomException;
@@ -47,6 +47,21 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MemberActivityService memberActivityService;
     private final InputValidator inputValidator;
+    private final SleepingService sleepingService;
+
+    public Boolean isExistLoginId(String loginId) {
+        if (memberRepository.existsByLoginId(loginId) || sleepingService.existsByLoginId(loginId)) {
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
+    }
+
+    public Boolean isExistEmail(String email) {
+        if (memberRepository.existsByEmail(email) || sleepingService.existsByEmail(email)) {
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
+    }
 
     @Transactional
     public void withdraw(Long memberId, String password) {
@@ -93,7 +108,7 @@ public class MemberService {
     public void changePassword(String email, String newPassword) {
         inputValidator.validatePassword(newPassword);
         Member member = findByEmail(email);
-        member.updatePassword(passwordEncoder.encode(newPassword));
+        member.updatePassword(newPassword, passwordEncoder);
     }
 
     @Transactional // 비밀번호를 유저가 변경하는 경우
@@ -105,7 +120,25 @@ public class MemberService {
             throw new CustomException(ErrorCode.PASSWORD_IS_SAME);
         }
 
-        member.updatePassword(passwordEncoder.encode(newPassword));
+        member.updatePassword(newPassword, passwordEncoder);
+    }
+
+    @Transactional
+    public void createMember(AuthInformation authInformation) {
+        Member member = memberRepository.save(Member.of(authInformation, passwordEncoder));
+        avatarService.initAvatar(member, authInformation.getNickName());
+    }
+
+    @Transactional
+    public Member convertSleepingIfExist(String loginId) {
+        Sleeping sleeping = sleepingRepository.findByLoginId(loginId).orElse(null);
+        Member member = findByLoginId(loginId);
+
+        if (sleeping != null) {
+            sleepingService.convertSleepToMember(member, sleeping);
+        }
+
+        return member;
     }
 
     public MemberProfileResponse getMemberProfile(String loginId) {

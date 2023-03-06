@@ -39,11 +39,8 @@ public class ActivityService {
     private final MemberService memberService;
 
     public ActivityResponse getActivity(long activityId) {
-        if (!activityRepository.existsById(activityId)) {
-            throw new CustomException(ErrorCode.ACTIVITY_NOT_FOUND);
-        }
-
-        return activityRepository.getActivity(activityId);
+        return activityRepository.getActivity(activityId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ACTIVITY_NOT_FOUND));
     }
 
     @Transactional(readOnly = true)
@@ -83,16 +80,9 @@ public class ActivityService {
     }
 
     @Transactional
-    public Activity create(long memberId, ActivityRequest activityRequest) {
-        Activity activity = Arrays.stream(ActivityType.values())
-                .filter(type -> type == activityRequest.getActivityType())
-                .findFirst()
-                .map(type -> type.toEntity(activityRequest))
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_SUPPORT_ACTIVITY));
-
+    public Activity create(long memberId, Activity activity) {
         Member member = Member.builder().id(memberId).build();
-        activity.setLeader(member);
-
+        activity.updateLeader(member);
         return activityRepository.save(activity);
     }
 
@@ -122,7 +112,7 @@ public class ActivityService {
             throw new CustomException(ErrorCode.NOT_ACTIVITY_MEMBER);
         }
 
-        activity.setLeader(newLeader);
+        activity.updateLeader(newLeader);
     }
 
     @Transactional

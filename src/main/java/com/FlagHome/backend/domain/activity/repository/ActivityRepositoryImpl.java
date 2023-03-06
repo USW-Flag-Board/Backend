@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.FlagHome.backend.domain.activity.entity.QActivity.activity;
 import static com.FlagHome.backend.domain.member.entity.QMember.member;
@@ -18,8 +19,8 @@ public class ActivityRepositoryImpl implements ActivityRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public ActivityResponse getActivity(long activityId) {
-        return queryFactory
+    public Optional<ActivityResponse> getActivity(long activityId) {
+        ActivityResponse activityResponse = queryFactory
                 .select(new QActivityResponse(
                         asNumber(activityId).as(activity.id),
                         activity.name,
@@ -32,6 +33,8 @@ public class ActivityRepositoryImpl implements ActivityRepositoryCustom {
                 .innerJoin(activity.leader, member)
                 .where(activity.id.eq(activityId))
                 .fetchOne();
+
+        return Optional.ofNullable(activityResponse);
     }
 
     @Override

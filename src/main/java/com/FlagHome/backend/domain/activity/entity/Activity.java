@@ -58,7 +58,7 @@ public abstract class Activity extends BaseEntity {
         this.season = getSeason(season);
     }
 
-    public void setLeader(Member member) {
+    public void updateLeader(Member member) {
         this.leader = member;
     }
 

@@ -21,10 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminService {
     private final MemberService memberService;
-    private final MemberRepository memberRepository;
     private final AuthRepository authRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final AvatarService avatarService;
 
     @Transactional(readOnly = true)
     public List<ApproveSignUpResponse> getAllAuthorizedAuthMember() {
@@ -36,8 +33,7 @@ public class AdminService {
         AuthInformation authInformation = authRepository.findById(authInformationId)
                         .orElseThrow(() -> new CustomException(ErrorCode.AUTH_INFORMATION_NOT_FOUND));
 
-        Member member = memberRepository.save(Member.of(authInformation, passwordEncoder));
-        avatarService.initAvatar(member, authInformation.getNickName());
+        memberService.createMember(authInformation);
         deleteAuthInformation(authInformationId);
     }
 
@@ -47,7 +43,7 @@ public class AdminService {
     }
 
     @Transactional
-    public List<LoginLogResponse> viewAllLoginLog() {
+    public List<LoginLogResponse> viewAllLoginLogs() {
         return memberService.getAllLoginLogs();
     }
 }
