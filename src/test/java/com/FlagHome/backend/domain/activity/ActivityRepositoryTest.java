@@ -79,7 +79,7 @@ public class ActivityRepositoryTest {
             Activity activity = activityRepository.saveAndFlush(project);
 
             // when
-            ActivityResponse activityResponse = activityRepository.getActivity(activity.getId());
+            ActivityResponse activityResponse = activityRepository.getActivity(activity.getId()).get();
 
             // then
             assertThat(activity.getId()).isEqualTo(activityResponse.getId());

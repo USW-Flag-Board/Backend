@@ -79,17 +79,10 @@ public class ActivityService {
         return activityApplyService.apply(memberId, activity);
     }
 
-    @Transactional // 분리하기
-    public Activity create(long memberId, ActivityRequest activityRequest) {
-        Activity activity = Arrays.stream(ActivityType.values())
-                .filter(type -> type == activityRequest.getActivityType())
-                .findFirst()
-                .map(type -> type.toEntity(activityRequest))
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_SUPPORT_ACTIVITY));
-
+    @Transactional
+    public Activity create(long memberId, Activity activity) {
         Member member = Member.builder().id(memberId).build();
         activity.updateLeader(member);
-
         return activityRepository.save(activity);
     }
 

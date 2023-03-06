@@ -48,7 +48,6 @@ dependencies {
     // QueryDSL 추가
     // QueryDSL APT : 코드 제네레이션 -> QHello 만들어주는 라이브러리
     implementation "com.querydsl:querydsl-apt:5.0.0"
-    implementation 'org.springframework.boot:spring-boot-starter-mail'
 
     //JWT
     compileOnly('io.jsonwebtoken:jjwt-api:0.11.5')

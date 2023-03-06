@@ -45,6 +45,7 @@ public class JwtUtilizer {
 
         Date now = new Date();
         Date accessTokenExpiresIn = new Date(now.getTime() + ACCESS_TOKEN_EXPIRE_TIME);
+        Date refreshTokenExpiresIn = new Date(now.getTime() + REFRESH_TOKEN_EXPIRE_TIME);
 
         // Access Token 생성
         String accessToken = Jwts.builder()
@@ -56,7 +57,7 @@ public class JwtUtilizer {
 
         // Refresh Token 생성
         String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now.getTime() + REFRESH_TOKEN_EXPIRE_TIME))
+                .setExpiration(refreshTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
 

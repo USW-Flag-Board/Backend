@@ -81,7 +81,7 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.POST, "api/reports/**").hasAnyRole("USER", "CREW")
                 .antMatchers("api/reports/**").hasRole("ADMIN")
 
-                .antMatchers("/api/admin/**").hasRole("ADMIN")
+                .antMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated();
 
         http

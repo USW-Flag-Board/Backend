@@ -2,8 +2,6 @@ package com.FlagHome.backend.domain.admin.controller;
 
 import com.FlagHome.backend.domain.admin.service.AdminService;
 import com.FlagHome.backend.domain.auth.dto.ApproveSignUpResponse;
-import com.FlagHome.backend.domain.auth.entity.AuthInformation;
-import com.FlagHome.backend.domain.common.ApplicationResponse;
 import com.FlagHome.backend.domain.common.ApplicationResponse;
 import com.FlagHome.backend.domain.member.dto.LoginLogResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -68,7 +66,7 @@ public class AdminController {
     @ResponseStatus(OK)
     @GetMapping("/member/login-log")
     public ApplicationResponse<List<LoginLogResponse>> viewAllLoginLog() {
-        List<LoginLogResponse> responses = adminService.viewAllLoginLog();
+        List<LoginLogResponse> responses = adminService.viewAllLoginLogs();
         return new ApplicationResponse(responses);
     }
 }

@@ -6,15 +6,9 @@ import com.FlagHome.backend.domain.auth.dto.JoinResponse;
 import com.FlagHome.backend.domain.auth.dto.SignUpResponse;
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
-import com.FlagHome.backend.domain.common.Status;
 import com.FlagHome.backend.domain.mail.service.MailService;
-import com.FlagHome.backend.domain.member.avatar.service.AvatarService;
 import com.FlagHome.backend.domain.member.entity.Member;
-import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
-import com.FlagHome.backend.domain.member.sleeping.entity.Sleeping;
-import com.FlagHome.backend.domain.member.sleeping.repository.SleepingRepository;
-import com.FlagHome.backend.domain.member.sleeping.service.SleepingService;
 import com.FlagHome.backend.domain.token.dto.TokenResponse;
 import com.FlagHome.backend.domain.token.service.RefreshTokenService;
 import com.FlagHome.backend.global.exception.CustomException;
@@ -26,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,32 +30,19 @@ import java.time.LocalDateTime;
 public class AuthService {
     private final RefreshTokenService refreshTokenService;
     private final MailService mailService;
-    private final MemberRepository memberRepository;
     private final MemberService memberService;
     private final AuthRepository authRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final PasswordEncoder passwordEncoder;
     private final JwtUtilizer jwtUtilizer;
     private final InputValidator inputValidator;
-    private final AvatarService avatarService;
-    private final SleepingService sleepingService;
 
     public Boolean validateDuplicateLoginId(String loginId) {
-        if (memberRepository.existsByLoginId(loginId)) {
-            return Boolean.TRUE;
-        }
-
-        return Boolean.FALSE;
+        return memberService.isExistLoginId(loginId);
     }
 
     public Boolean validateEmail(String email) {
         inputValidator.validateUSWEmail(email);
-
-        if (memberRepository.existsByEmail(email)) {
-            return Boolean.TRUE;
-        }
-
-        return Boolean.FALSE;
+        return memberService.isExistEmail(email);
     }
 
     @Transactional
@@ -78,27 +58,22 @@ public class AuthService {
 
     @Transactional
     public SignUpResponse signUp(String email, String certification) {
-        AuthInformation authInformation = authRepository.findFirstByEmailOrderByCreatedAtDesc(email)
-                .orElseThrow(() -> new CustomException(ErrorCode.AUTH_INFORMATION_NOT_FOUND));
-
+        AuthInformation authInformation = findLatestAuthInformationByEmail(email);
         inputValidator.validateCertification(certification, authInformation.getCertification());
 
-        // 동아리원이면 인증 상태를 업데이트하고 이후 관리자의 확인을 받는다.
         if (authInformation.getJoinType() == JoinType.동아리) {
             authInformation.updateAuthorizedTrue();
             return SignUpResponse.from(authInformation);
         }
 
-        Member member = memberRepository.save(Member.of(authInformation, passwordEncoder));
-        avatarService.initAvatar(member, authInformation.getNickName());
+        memberService.createMember(authInformation);
         authRepository.delete(authInformation);
         return SignUpResponse.from(authInformation);
     }
 
     @Transactional
     public TokenResponse login(String loginId, String password) {
-
-        Member member = checkSleeping(loginId); //loginId 중복시 문제 생김
+        Member member = memberService.convertSleepingIfExist(loginId);
 
         // Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginId, password);
@@ -123,12 +98,8 @@ public class AuthService {
         return refreshTokenService.reissueToken(accessToken, refreshToken);
     }
 
-    // 수정하기
-    private Member checkSleeping(String loginId) {
-        Member member = memberRepository.findByLoginId(loginId).orElse(null);
-        if (member != null) {
-            sleepingService.changeSleepToMember(member, loginId);
-        }
-        return member;
+    private AuthInformation findLatestAuthInformationByEmail(String email) {
+        return authRepository.findFirstByEmailOrderByCreatedAtDesc(email)
+                .orElseThrow(() -> new CustomException(ErrorCode.AUTH_INFORMATION_NOT_FOUND));
     }
 }

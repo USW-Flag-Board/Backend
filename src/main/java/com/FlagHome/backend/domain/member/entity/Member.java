@@ -59,7 +59,9 @@ public class Member extends BaseEntity {
     @Column(name = "last_login_time")
     private LocalDateTime lastLoginTime;
 
-    public void updatePassword(String password) { this.password = password; }
+    public void updatePassword(String password, PasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(password);
+    }
 
     public void updateLastLoginTime(LocalDateTime loginTime) {
         this.lastLoginTime = loginTime;

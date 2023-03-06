@@ -2,6 +2,8 @@ package com.FlagHome.backend.domain.activity.controller;
 
 import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyResponse;
 import com.FlagHome.backend.domain.activity.dto.*;
+import com.FlagHome.backend.domain.activity.entity.Activity;
+import com.FlagHome.backend.domain.activity.mapper.ActivityMapper;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantResponse;
 import com.FlagHome.backend.domain.activity.service.ActivityService;
 import com.FlagHome.backend.domain.common.ApplicationResponse;
@@ -27,6 +29,7 @@ import static org.springframework.http.HttpStatus.OK;
 public class ActivityController {
     private static final String DEFAULT_URL = "/api/activities";
     private final ActivityService activityService;
+    private final ActivityMapper activityMapper;
 
     @Tag(name = "activity")
     @Operation(summary = "활동 상세보기")
@@ -120,7 +123,8 @@ public class ActivityController {
     @ResponseStatus(CREATED)
     @PostMapping
     public ApplicationResponse<URI> createActivity(@RequestBody ActivityRequest activityRequest) {
-        long id = activityService.create(SecurityUtils.getMemberId(), activityRequest).getId();
+        Activity activity = activityMapper.toActivity(activityRequest);
+        long id = activityService.create(SecurityUtils.getMemberId(), activity).getId();
         URI uri = UriCreator.createUri(DEFAULT_URL, id);
         return new ApplicationResponse(uri);
     }
@@ -210,7 +214,7 @@ public class ActivityController {
     })
     @PatchMapping("/{id}/close")
     public ApplicationResponse<URI> closeRecruitment(@PathVariable("id") long activityId,
-                                                                @RequestBody CloseRecruitRequest closeRecruitRequest) {
+                                                    @RequestBody CloseRecruitRequest closeRecruitRequest) {
         activityService.closeRecruitment(SecurityUtils.getMemberId(), activityId, closeRecruitRequest.getLoginIdList());
         URI uri = UriCreator.createUri(DEFAULT_URL, activityId);
         return new ApplicationResponse(uri);
