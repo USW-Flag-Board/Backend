@@ -3,6 +3,8 @@ package com.FlagHome.backend.domain.auth.entity;
 import com.FlagHome.backend.domain.auth.JoinType;
 import com.FlagHome.backend.domain.auth.dto.JoinRequest;
 import com.FlagHome.backend.domain.member.Major;
+import com.FlagHome.backend.global.exception.CustomException;
+import com.FlagHome.backend.global.exception.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -76,7 +78,14 @@ public class AuthInformation {
                 .build();
     }
 
-    public void updateAuthorizedTrue() {
+    public void authorized() {
         this.isAuthorizedCrew = true;
+    }
+
+    public void validateAuthTime() {
+        final LocalDateTime expireAt = this.createdAt.plusMinutes(10);
+        if (expireAt.isBefore(LocalDateTime.now())) {
+            throw new CustomException(ErrorCode.EXPIRED_AUTH_INFORMATION);
+        }
     }
 }

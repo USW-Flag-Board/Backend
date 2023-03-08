@@ -1,15 +1,14 @@
 package com.FlagHome.backend.domain.member;
 
+import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.common.Status;
 import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
 import com.FlagHome.backend.domain.member.avatar.entity.Avatar;
 import com.FlagHome.backend.domain.member.avatar.repository.AvatarRepository;
-import com.FlagHome.backend.domain.member.dto.LoginLogResponse;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
-import com.FlagHome.backend.domain.member.sleeping.repository.SleepingRepository;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import org.junit.jupiter.api.DisplayName;
@@ -22,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -44,6 +42,32 @@ public class MemberServiceTest {
 
     @Autowired
     private AvatarRepository avatarRepository;
+
+    @Test
+    @DisplayName("유저 생성 테스트")
+    void createMemberTest() {
+        // given
+        final String loginId = "gmlwh124";
+        final String nickName = "John";
+        final String email = "gmlwh124@suwon.ac.kr";
+        final String password = "qwer1234!";
+
+        AuthInformation authInformation = AuthInformation.builder()
+                .loginId(loginId)
+                .password(password)
+                .email(email)
+                .nickName(nickName)
+                .build();
+
+        // when
+        memberService.createMember(authInformation);
+
+        // then
+        Member member = memberService.findByLoginId(loginId);
+        Avatar avatar = avatarRepository.findByMemberId(member.getId()).orElse(null);
+        assertThat(avatar).isNotNull();
+        assertThat(avatar.getMember().getId()).isEqualTo(member.getId());
+    }
 
     @Nested
     @DisplayName("유저 탈퇴 테스트")

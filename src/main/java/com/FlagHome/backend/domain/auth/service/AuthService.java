@@ -59,10 +59,11 @@ public class AuthService {
     @Transactional
     public SignUpResponse signUp(String email, String certification) {
         AuthInformation authInformation = findLatestAuthInformationByEmail(email);
+        authInformation.validateAuthTime();
         inputValidator.validateCertification(certification, authInformation.getCertification());
 
         if (authInformation.getJoinType() == JoinType.동아리) {
-            authInformation.updateAuthorizedTrue();
+            authInformation.authorized();
             return SignUpResponse.from(authInformation);
         }
 

@@ -17,7 +17,6 @@ public class AuthInformationService {
     /**
      * 매 정오에 재학생 인증 절차를 진행하지 않은 테이블들을 지운다.
      */
-    // 나중에 설정하기
     @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void deleteAllNotProceedAuthInformation() {
