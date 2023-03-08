@@ -19,14 +19,7 @@ public class AvatarService {
 
     @Transactional
     public void initAvatar(Member member, String nickName) {
-        Avatar avatar = Avatar.builder()
-                .member(member)
-                .nickName(nickName)
-                .bio("")
-                .profileImg("default")
-                .build();
-
-        avatarRepository.save(avatar);
+        avatarRepository.save(Avatar.of(member, nickName));
     }
 
     @Transactional(readOnly = true)
@@ -41,14 +34,17 @@ public class AvatarService {
 
     @Transactional
     public void updateAvatar(long memberId, UpdateAvatarRequest updateAvatarRequest) {
-        Avatar avatar = avatarRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
+        Avatar avatar = findByMemberId(memberId);
         avatar.updateAvatar(updateAvatarRequest);
     }
 
     @Transactional
     public void deleteAvatar(long memberId) {
         avatarRepository.deleteByMemberId(memberId);
+    }
+
+    private Avatar findByMemberId(long memberId) {
+        return avatarRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 }

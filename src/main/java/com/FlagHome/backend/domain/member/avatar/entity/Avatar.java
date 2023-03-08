@@ -18,7 +18,7 @@ import javax.persistence.*;
 public class Avatar {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "member_id")
@@ -37,5 +37,14 @@ public class Avatar {
         this.nickName = updateAvatarRequest.getNickName();
         this.bio = updateAvatarRequest.getBio();
         this.profileImg = updateAvatarRequest.getProfileImg();
+    }
+
+    public static Avatar of(Member member, String nickName) {
+        return Avatar.builder()
+                .member(member)
+                .nickName(nickName)
+                .bio("")
+                .profileImg("default")
+                .build();
     }
 }

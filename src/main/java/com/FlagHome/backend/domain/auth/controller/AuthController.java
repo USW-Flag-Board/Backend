@@ -64,6 +64,7 @@ public class AuthController {
     @Operation(summary = "회원가입", description = "재학생 인증 완료 시 회원가입, 동아리원은 추가 관리자 인증 필요")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "회원가입 성공에 성공했습니다."),
+            @ApiResponse(responseCode = "400", description = "가입 시간이 만료되었습니다."),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 가입정보입니다."),
             @ApiResponse(responseCode = "409", description = "인증번호가 일치하지 않습니다."),
     })
