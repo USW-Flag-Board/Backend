@@ -17,6 +17,7 @@ import com.FlagHome.backend.global.jwt.JwtUtilizer;
 import com.FlagHome.backend.global.utility.InputValidator;
 import com.FlagHome.backend.global.utility.RandomGenerator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class AuthService {
     private final RefreshTokenService refreshTokenService;
@@ -67,7 +69,7 @@ public class AuthService {
             return SignUpResponse.from(authInformation);
         }
 
-        memberService.createMember(authInformation);
+        memberService.initMember(authInformation);
         authRepository.delete(authInformation);
         return SignUpResponse.from(authInformation);
     }
@@ -78,9 +80,11 @@ public class AuthService {
 
         // Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginId, password);
+        log.info("token : " + authenticationToken);
 
         // 실제로 검증(비밀번호 체크)이 이루어지는 부분
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        log.info("authentication : " + authentication);
 
         // 인증 정보를 기반으로 JWT 토큰 생성
         TokenResponse tokenResponse = jwtUtilizer.generateTokenDto(authentication);

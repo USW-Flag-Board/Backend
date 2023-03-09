@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -17,6 +18,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -34,8 +36,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://flaground.netlify.app"));
-        configuration.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "PATCH", "DELETE"));
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://flaground.netlify.app"));
+        configuration.setAllowedMethods(List.of("POST", "GET", "PUT", "PATCH", "DELETE"));
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);
 
@@ -45,12 +47,20 @@ public class SecurityConfig {
     }
 
     @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring()
+                .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**")
+                .antMatchers("/favicon.ico");
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .httpBasic().disable()
                 .formLogin().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().cors();
+                .and()
+                .cors().configurationSource(corsConfigurationSource());
 
         http
                 .exceptionHandling()
@@ -58,7 +68,6 @@ public class SecurityConfig {
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint);
 
         http.authorizeRequests()
-                .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll()
                 .antMatchers("/auth/**").permitAll()
 
                 .antMatchers(HttpMethod.GET, "/activities", "/activities/{id}").permitAll()

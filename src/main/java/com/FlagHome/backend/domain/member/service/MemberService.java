@@ -124,7 +124,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void createMember(AuthInformation authInformation) {
+    public void initMember(AuthInformation authInformation) {
         Member member = memberRepository.save(Member.of(authInformation, passwordEncoder));
         avatarService.initAvatar(member, authInformation.getNickName());
     }
