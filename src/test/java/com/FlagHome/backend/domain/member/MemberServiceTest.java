@@ -60,7 +60,7 @@ public class MemberServiceTest {
                 .build();
 
         // when
-        memberService.createMember(authInformation);
+        memberService.initMember(authInformation);
 
         // then
         Member member = memberService.findByLoginId(loginId);

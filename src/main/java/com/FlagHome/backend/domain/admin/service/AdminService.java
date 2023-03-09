@@ -3,15 +3,11 @@ package com.FlagHome.backend.domain.admin.service;
 import com.FlagHome.backend.domain.auth.dto.ApproveSignUpResponse;
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
-import com.FlagHome.backend.domain.member.avatar.service.AvatarService;
 import com.FlagHome.backend.domain.member.dto.LoginLogResponse;
-import com.FlagHome.backend.domain.member.entity.Member;
-import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +29,7 @@ public class AdminService {
         AuthInformation authInformation = authRepository.findById(authInformationId)
                         .orElseThrow(() -> new CustomException(ErrorCode.AUTH_INFORMATION_NOT_FOUND));
 
-        memberService.createMember(authInformation);
+        memberService.initMember(authInformation);
         deleteAuthInformation(authInformationId);
     }
 
