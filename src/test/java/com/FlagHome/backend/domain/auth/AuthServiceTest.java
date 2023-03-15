@@ -1,16 +1,14 @@
 package com.FlagHome.backend.domain.auth;
 
-import com.FlagHome.backend.domain.auth.dto.JoinRequest;
-import com.FlagHome.backend.domain.auth.dto.SignUpResponse;
+import com.FlagHome.backend.domain.auth.controller.dto.JoinRequest;
+import com.FlagHome.backend.domain.auth.controller.dto.SignUpResponse;
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import com.FlagHome.backend.domain.auth.service.AuthService;
-import com.FlagHome.backend.domain.common.Status;
 import com.FlagHome.backend.domain.member.Role;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
-import com.FlagHome.backend.domain.member.sleeping.entity.Sleeping;
 import com.FlagHome.backend.domain.member.sleeping.repository.SleepingRepository;
 import com.FlagHome.backend.domain.token.dto.TokenResponse;
 import com.FlagHome.backend.global.exception.CustomException;
@@ -29,8 +27,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-
-import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;

@@ -1,6 +1,6 @@
 package com.FlagHome.backend.global.config;
 
-import com.FlagHome.backend.global.jwt.JwtFilter;
+import com.FlagHome.backend.global.config.security.filter.JwtFilter;
 import com.FlagHome.backend.global.jwt.JwtUtilizer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;

@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.activity.memberactivity.entity;
 
-import com.FlagHome.backend.domain.common.BaseEntity;
+import com.FlagHome.backend.global.common.BaseEntity;
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.member.entity.Member;
 import lombok.AllArgsConstructor;

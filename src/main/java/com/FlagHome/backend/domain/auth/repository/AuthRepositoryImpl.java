@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.auth.repository;
 
-import com.FlagHome.backend.domain.auth.dto.ApproveSignUpResponse;
+import com.FlagHome.backend.domain.auth.controller.dto.ApproveSignUpResponse;
 import com.FlagHome.backend.domain.auth.dto.QApproveSignUpResponse;
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.querydsl.jpa.impl.JPAQueryFactory;

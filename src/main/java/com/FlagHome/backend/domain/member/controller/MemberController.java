@@ -1,20 +1,17 @@
 package com.FlagHome.backend.domain.member.controller;
 
-import com.FlagHome.backend.domain.common.ApplicationResponse;
+import com.FlagHome.backend.domain.member.controller.dto.*;
+import com.FlagHome.backend.global.common.ApplicationResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.MyProfileResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
-import com.FlagHome.backend.domain.member.dto.*;
 import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.global.utility.SecurityUtils;
-import com.FlagHome.backend.global.utility.UriCreator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import java.net.URI;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;

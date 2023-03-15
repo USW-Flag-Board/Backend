@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.activity.repository;
 
-import com.FlagHome.backend.domain.activity.dto.ActivityResponse;
+import com.FlagHome.backend.domain.activity.controller.dto.ActivityResponse;
 import com.FlagHome.backend.domain.activity.dto.QActivityResponse;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;

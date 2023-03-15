@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.member.repository;
 
-import com.FlagHome.backend.domain.member.dto.LoginLogResponse;
+import com.FlagHome.backend.domain.member.controller.dto.LoginLogResponse;
 import com.FlagHome.backend.domain.member.dto.QLoginLogResponse;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.querydsl.jpa.impl.JPAQueryFactory;

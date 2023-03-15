@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.post.controller;
 
-import com.FlagHome.backend.domain.common.Status;
+import com.FlagHome.backend.global.common.Status;
 import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.like.service.LikeService;
 import com.FlagHome.backend.domain.member.entity.Member;

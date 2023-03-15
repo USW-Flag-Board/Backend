@@ -1,12 +1,12 @@
 package com.FlagHome.backend.domain.activity.controller;
 
 import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyResponse;
-import com.FlagHome.backend.domain.activity.dto.*;
+import com.FlagHome.backend.domain.activity.controller.dto.*;
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.mapper.ActivityMapper;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantResponse;
 import com.FlagHome.backend.domain.activity.service.ActivityService;
-import com.FlagHome.backend.domain.common.ApplicationResponse;
+import com.FlagHome.backend.global.common.ApplicationResponse;
 import com.FlagHome.backend.global.utility.SecurityUtils;
 import com.FlagHome.backend.global.utility.UriCreator;
 import io.swagger.v3.oas.annotations.Operation;

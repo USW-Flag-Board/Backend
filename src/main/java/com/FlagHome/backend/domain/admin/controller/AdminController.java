@@ -1,9 +1,9 @@
 package com.FlagHome.backend.domain.admin.controller;
 
 import com.FlagHome.backend.domain.admin.service.AdminService;
-import com.FlagHome.backend.domain.auth.dto.ApproveSignUpResponse;
-import com.FlagHome.backend.domain.common.ApplicationResponse;
-import com.FlagHome.backend.domain.member.dto.LoginLogResponse;
+import com.FlagHome.backend.domain.auth.controller.dto.ApproveSignUpResponse;
+import com.FlagHome.backend.global.common.ApplicationResponse;
+import com.FlagHome.backend.domain.member.controller.dto.LoginLogResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
