@@ -7,6 +7,8 @@ import com.FlagHome.backend.domain.post.dto.PostDto;
 import java.util.List;
 
 public interface PostRepositoryCustom {
+
+    List<LightPostDto> findMyPostList(String memberId);
     List<PostDto> findBoardWithCondition(String boardName, SearchType searchType, String searchWord);
     List<LightPostDto> findTopNPostListByDateAndLike(int postCount);
 }

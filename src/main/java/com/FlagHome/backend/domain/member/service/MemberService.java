@@ -19,7 +19,7 @@ import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.sleeping.entity.Sleeping;
 import com.FlagHome.backend.domain.member.sleeping.repository.SleepingRepository;
 import com.FlagHome.backend.domain.member.sleeping.service.SleepingService;
-import com.FlagHome.backend.domain.post.dto.PostDto;
+import com.FlagHome.backend.domain.post.dto.LightPostDto;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
 import com.FlagHome.backend.domain.token.entity.Token;
 import com.FlagHome.backend.domain.token.service.FindRequestTokenService;
@@ -146,7 +146,7 @@ public class MemberService {
     public MemberProfileResponse getMemberProfile(String loginId) {
         AvatarResponse avatarResponse = avatarService.getAvatar(loginId);
         List<ParticipateResponse> participateResponseList = memberActivityService.getAllActivitiesOfMember(loginId);
-        List<PostDto> postList = getMemberPostByLoginId(loginId);
+        List<LightPostDto> postList = getMemberPostByLoginId(loginId);
 
         return MemberProfileResponse.of(avatarResponse, participateResponseList, postList);
     }
@@ -185,8 +185,8 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostDto> getMemberPostByLoginId(String loginId) {
-        return postRepository.findBoardWithCondition(null, SearchType.LOGIN_ID, loginId);
+    public List<LightPostDto> getMemberPostByLoginId(String loginId) {
+        return postRepository.findMyPostList(loginId);
     }
 
     @Transactional(readOnly = true)
@@ -231,6 +231,7 @@ public class MemberService {
     }
 
     public List<SearchMemberResponse> searchByMemberName(String name) {
+
         List<Member> memberList = memberRepository.findByMemberName(name);
         List<SearchMemberResponse> memberSearchList = new ArrayList<>(memberList.size());
         for (Member member : memberList) {

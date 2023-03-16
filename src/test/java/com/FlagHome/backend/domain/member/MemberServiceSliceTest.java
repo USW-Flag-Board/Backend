@@ -14,6 +14,7 @@ import com.FlagHome.backend.domain.member.dto.SearchMemberResponse;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
+import com.FlagHome.backend.domain.post.dto.LightPostDto;
 import com.FlagHome.backend.domain.post.dto.PostDto;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
 import com.FlagHome.backend.domain.token.entity.FindRequestToken;
@@ -182,11 +183,11 @@ public class MemberServiceSliceTest {
                 .build();
 
         List<ParticipateResponse> participateResponseList = new ArrayList<>();
-        List<PostDto> postDtoList = new ArrayList<>();
+        List<LightPostDto> postDtoList = new ArrayList<>();
 
         given(avatarService.getAvatar(anyString())).willReturn(avatarResponse);
         given(memberActivityService.getAllActivitiesOfMember(anyString())).willReturn(participateResponseList);
-        given(postRepository.findBoardWithCondition(any(), any(SearchType.class), anyString())).willReturn(postDtoList);
+        given(postRepository.findMyPostList(anyString())).willReturn(postDtoList);
 
         // when
         MemberProfileResponse response = memberService.getMemberProfile(loginId);
@@ -194,7 +195,7 @@ public class MemberServiceSliceTest {
         // then
         then(avatarService).should(times(1)).getAvatar(anyString());
         then(memberActivityService).should(times(1)).getAllActivitiesOfMember(anyString());
-        then(postRepository).should(times(1)).findBoardWithCondition(any(), any(SearchType.class), anyString());
+        then(postRepository).should(times(1)).findMyPostList(anyString());
         assertThat(response.getAvatarResponse().getLoginId()).isEqualTo(loginId);
         assertThat(response.getActivityList().size()).isEqualTo(0);
         assertThat(response.getPostList().size()).isEqualTo(0);
@@ -240,7 +241,6 @@ public class MemberServiceSliceTest {
         List<SearchMemberResponse> resultList = memberService.searchByMemberName(name);
 
         //then
-
         assertThat(resultList.get(0).getName()).contains(name);
         assertThat(resultList.get(1).getName()).contains(name);
 

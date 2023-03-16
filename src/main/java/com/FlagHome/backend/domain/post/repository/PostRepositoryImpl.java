@@ -18,6 +18,21 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
+    public List<LightPostDto> findMyPostList(String loginId) {
+        return jpaQueryFactory
+                .select(Projections.constructor(LightPostDto.class,
+                    post.id,
+                    post.title,
+                    post.createdAt,
+                    post.board.id,
+                    post.member.name,
+                    post.viewCount))
+                .from(post)
+                .where(post.member.loginId.eq(loginId))
+                .fetch();
+    }
+
+    @Override
     public List<PostDto> findBoardWithCondition(String boardName, SearchType searchType, String searchWord) {
         return jpaQueryFactory
                 .select(Projections.constructor(PostDto.class,
