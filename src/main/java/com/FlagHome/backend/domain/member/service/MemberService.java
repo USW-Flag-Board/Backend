@@ -13,6 +13,7 @@ import com.FlagHome.backend.domain.member.avatar.service.AvatarService;
 import com.FlagHome.backend.domain.member.dto.FindResponse;
 import com.FlagHome.backend.domain.member.dto.LoginLogResponse;
 import com.FlagHome.backend.domain.member.dto.MemberProfileResponse;
+import com.FlagHome.backend.domain.member.dto.SearchMemberResponse;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.sleeping.entity.Sleeping;
@@ -32,6 +33,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -226,5 +228,21 @@ public class MemberService {
     private Member findByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    public List<SearchMemberResponse> searchByMemberName(String name) {
+        List<Member> memberList = memberRepository.findByMemberName(name);
+        List<SearchMemberResponse> memberSearchList = new ArrayList<>(memberList.size());
+        for (Member member : memberList) {
+            memberSearchList.add(
+                    SearchMemberResponse.builder()
+                            .id(member.getId())
+                            .major(member.getMajor())
+                            .name(member.getName())
+                            .build()
+            );
+        }
+
+        return memberSearchList;
     }
 }
