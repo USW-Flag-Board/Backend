@@ -23,10 +23,10 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .select(Projections.constructor(LightPostDto.class,
                     post.id,
                     post.title,
+                    post.board.englishName,
                     post.createdAt,
-                    post.board.id,
-                    post.member.name,
-                    post.viewCount))
+                    post.viewCount,
+                    post.likeList.size()))
                 .from(post)
                 .where(post.member.loginId.eq(loginId))
                 .fetch();
@@ -41,7 +41,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         post.createdAt,
                         post.board.id,
                         post.member.name,
-                        post.viewCount))
+                        post.viewCount //데이터가 부족한것 같다. 좋아요수ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
+                ))
                 .from(post)
                 .where(boardNameCondition(boardName),
                         titleCondition(searchType, searchWord),
