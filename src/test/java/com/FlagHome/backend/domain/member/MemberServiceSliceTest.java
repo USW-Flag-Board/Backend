@@ -10,6 +10,7 @@ import com.FlagHome.backend.domain.member.avatar.entity.Avatar;
 import com.FlagHome.backend.domain.member.avatar.service.AvatarService;
 import com.FlagHome.backend.domain.member.dto.FindResponse;
 import com.FlagHome.backend.domain.member.dto.MemberProfileResponse;
+import com.FlagHome.backend.domain.member.dto.SearchMemberResponse;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
@@ -220,5 +222,27 @@ public class MemberServiceSliceTest {
         then(avatarService).should(times(1)).getMyProfile(anyLong());
         assertThat(response.getName()).isEqualTo(myProfileResponse.getName());
         assertThat(response.getEmail()).isEqualTo(myProfileResponse.getEmail());
+    }
+
+    @Test
+    @DisplayName("회원 이름으로 검색 테스트")
+    void searchByMemberName() {
+        //given
+        Member member1 = Member.builder().major(Major.정보보호).id(1L).name("홍길동").build();
+        Member member2 = Member.builder().major(Major.컴퓨터SW).id(2L).name("김길동").build();
+        List<Member> memberList = List.of(member1,member2);
+
+        String name = "길동";
+
+        given(memberRepository.findByMemberName(Mockito.anyString())).willReturn(memberList);
+
+        //when
+        List<SearchMemberResponse> resultList = memberService.searchByMemberName(name);
+
+        //then
+
+        assertThat(resultList.get(0).getName()).contains(name);
+        assertThat(resultList.get(1).getName()).contains(name);
+
     }
 }
