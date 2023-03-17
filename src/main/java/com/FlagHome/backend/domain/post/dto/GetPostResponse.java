@@ -43,6 +43,7 @@ public class GetPostResponse {
         this.boardId = postEntity.getBoard().getId();
         this.status = postEntity.getStatus();
         this.viewCount = postEntity.getViewCount();
+        this.createdAt = postEntity.getCreatedAt();
         //this.likeCount = postEntity.getLikeList();
 
         replyList = new ArrayList<>();
