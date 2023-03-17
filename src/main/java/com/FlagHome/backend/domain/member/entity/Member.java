@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.member.entity;
 
-import com.FlagHome.backend.domain.common.BaseEntity;
-import com.FlagHome.backend.domain.common.Status;
+import com.FlagHome.backend.global.common.BaseEntity;
+import com.FlagHome.backend.global.common.Status;
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.member.Major;
 import com.FlagHome.backend.domain.member.Role;
@@ -63,8 +63,8 @@ public class Member extends BaseEntity {
         this.password = passwordEncoder.encode(password);
     }
 
-    public void updateLastLoginTime(LocalDateTime loginTime) {
-        this.lastLoginTime = loginTime;
+    public void updateLastLoginTime() {
+        this.lastLoginTime = LocalDateTime.now();
     }
 
     public void sleepToMember(Sleeping sleeping) {

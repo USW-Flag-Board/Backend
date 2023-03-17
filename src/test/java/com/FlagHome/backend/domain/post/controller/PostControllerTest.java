@@ -2,7 +2,7 @@ package com.FlagHome.backend.domain.post.controller;
 
 import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.board.repository.BoardRepository;
-import com.FlagHome.backend.domain.common.Status;
+import com.FlagHome.backend.global.common.Status;
 import com.FlagHome.backend.domain.like.entity.Like;
 import com.FlagHome.backend.domain.like.entity.LikeDto;
 import com.FlagHome.backend.domain.like.enums.LikeType;

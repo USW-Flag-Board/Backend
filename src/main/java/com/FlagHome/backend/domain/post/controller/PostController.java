@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.post.controller;
 
-import com.FlagHome.backend.domain.common.ApplicationResponse;
+import com.FlagHome.backend.global.common.ApplicationResponse;
 import com.FlagHome.backend.domain.like.entity.LikeDto;
 import com.FlagHome.backend.domain.like.enums.LikeType;
 import com.FlagHome.backend.domain.like.service.LikeService;

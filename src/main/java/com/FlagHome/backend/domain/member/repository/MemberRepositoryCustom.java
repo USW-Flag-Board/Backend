@@ -1,7 +1,6 @@
 package com.FlagHome.backend.domain.member.repository;
 
-import com.FlagHome.backend.domain.member.dto.LoginLogResponse;
-import com.FlagHome.backend.domain.member.dto.SearchMemberResponse;
+import com.FlagHome.backend.domain.member.controller.dto.LoginLogResponse;
 import com.FlagHome.backend.domain.member.entity.Member;
 import org.springframework.stereotype.Repository;
 
@@ -16,8 +15,6 @@ public interface MemberRepositoryCustom {
     List<String> getAllBeforeSleepEmails();
 
     List<LoginLogResponse> getAllLoginLogs();
-
-//    List<Member> findByMemberName(String name);
 
     List<Member> findByMemberName(String name);
 }

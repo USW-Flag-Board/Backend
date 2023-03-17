@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.member;
 
-import com.FlagHome.backend.domain.common.Status;
+import com.FlagHome.backend.global.common.Status;
 import com.FlagHome.backend.domain.member.avatar.entity.Avatar;
 import com.FlagHome.backend.domain.member.avatar.repository.AvatarRepository;
 import com.FlagHome.backend.domain.member.entity.Member;

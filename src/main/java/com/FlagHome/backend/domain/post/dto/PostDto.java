@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.post.dto;
 
-import com.FlagHome.backend.domain.common.Status;
+import com.FlagHome.backend.global.common.Status;
 import com.FlagHome.backend.domain.like.entity.Like;
 import com.FlagHome.backend.domain.like.entity.LikeDto;
 import com.FlagHome.backend.domain.post.entity.Post;

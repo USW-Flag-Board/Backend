@@ -5,9 +5,9 @@ import com.FlagHome.backend.domain.activity.Status;
 import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyResponse;
 import com.FlagHome.backend.domain.activity.activityapply.entity.ActivityApply;
 import com.FlagHome.backend.domain.activity.activityapply.service.ActivityApplyService;
-import com.FlagHome.backend.domain.activity.dto.ActivityRequest;
-import com.FlagHome.backend.domain.activity.dto.ActivityResponse;
-import com.FlagHome.backend.domain.activity.dto.GetAllActivitiesResponse;
+import com.FlagHome.backend.domain.activity.controller.dto.ActivityRequest;
+import com.FlagHome.backend.domain.activity.controller.dto.ActivityResponse;
+import com.FlagHome.backend.domain.activity.controller.dto.GetAllActivitiesResponse;
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.Mentoring;
 import com.FlagHome.backend.domain.activity.entity.Project;
@@ -23,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 

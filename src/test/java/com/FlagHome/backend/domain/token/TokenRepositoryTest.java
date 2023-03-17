@@ -5,7 +5,6 @@ import com.FlagHome.backend.domain.token.entity.Token;
 import com.FlagHome.backend.domain.token.repository.TokenRepository;
 import com.FlagHome.backend.global.config.QueryDslConfig;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

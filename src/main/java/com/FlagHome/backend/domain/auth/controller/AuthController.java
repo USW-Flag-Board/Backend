@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.auth.controller;
 
-import com.FlagHome.backend.domain.common.ApplicationResponse;
-import com.FlagHome.backend.domain.auth.dto.*;
+import com.FlagHome.backend.domain.auth.controller.dto.*;
+import com.FlagHome.backend.global.common.ApplicationResponse;
 import com.FlagHome.backend.domain.auth.service.AuthService;
 import com.FlagHome.backend.domain.token.dto.TokenRequest;
 import com.FlagHome.backend.domain.token.dto.TokenResponse;
@@ -79,6 +79,7 @@ public class AuthController {
     @Operation(summary = "로그인")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "로그인 성공, JWT 토큰 발급"),
+            @ApiResponse(responseCode = "400", description = "비밀번호가 틀립니다."),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
     })
     @ResponseStatus(OK)

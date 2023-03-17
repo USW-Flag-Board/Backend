@@ -2,7 +2,7 @@ package com.FlagHome.backend.domain.post.service;
 
 import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.board.repository.BoardRepository;
-import com.FlagHome.backend.domain.common.Status;
+import com.FlagHome.backend.global.common.Status;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.dto.CreatePostRequest;

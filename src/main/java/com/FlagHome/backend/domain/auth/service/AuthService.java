@@ -1,12 +1,12 @@
 package com.FlagHome.backend.domain.auth.service;
 
 import com.FlagHome.backend.domain.auth.JoinType;
-import com.FlagHome.backend.domain.auth.dto.JoinRequest;
-import com.FlagHome.backend.domain.auth.dto.JoinResponse;
-import com.FlagHome.backend.domain.auth.dto.SignUpResponse;
+import com.FlagHome.backend.domain.auth.controller.dto.JoinRequest;
+import com.FlagHome.backend.domain.auth.controller.dto.JoinResponse;
+import com.FlagHome.backend.domain.auth.controller.dto.SignUpResponse;
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
-import com.FlagHome.backend.domain.mail.service.MailService;
+import com.FlagHome.backend.global.infra.aws.ses.service.MailService;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.domain.token.dto.TokenResponse;
@@ -17,17 +17,13 @@ import com.FlagHome.backend.global.jwt.JwtUtilizer;
 import com.FlagHome.backend.global.utility.InputValidator;
 import com.FlagHome.backend.global.utility.RandomGenerator;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class AuthService {
     private final RefreshTokenService refreshTokenService;
@@ -70,7 +66,6 @@ public class AuthService {
         }
 
         memberService.initMember(authInformation);
-        authRepository.delete(authInformation);
         return SignUpResponse.from(authInformation);
     }
 
@@ -78,23 +73,13 @@ public class AuthService {
     public TokenResponse login(String loginId, String password) {
         Member member = memberService.convertSleepingIfExist(loginId);
 
-        // Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginId, password);
-        log.info("token : " + authenticationToken);
-
-        // 실제로 검증(비밀번호 체크)이 이루어지는 부분
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        log.info("authentication : " + authentication);
 
-        // 인증 정보를 기반으로 JWT 토큰 생성
         TokenResponse tokenResponse = jwtUtilizer.generateTokenDto(authentication);
-
-        // 마지막 로그인 시간 갱신
-        member.updateLastLoginTime(LocalDateTime.now());
-
-        // RefreshToken 저장
         refreshTokenService.issueToken(authentication.getName(), tokenResponse.getRefreshToken());
 
+        member.updateLastLoginTime();
         return tokenResponse;
     }
 

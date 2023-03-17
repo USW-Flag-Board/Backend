@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.report.controller;
 
-import com.FlagHome.backend.domain.common.ApplicationResponse;
+import com.FlagHome.backend.global.common.ApplicationResponse;
 import com.FlagHome.backend.domain.report.Service.ReportService;
 import com.FlagHome.backend.domain.report.dto.ReportRequest;
 import com.FlagHome.backend.domain.report.entity.Report;
