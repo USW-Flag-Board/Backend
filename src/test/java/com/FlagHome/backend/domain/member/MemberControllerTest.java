@@ -5,6 +5,7 @@ import com.FlagHome.backend.domain.member.avatar.entity.Avatar;
 import com.FlagHome.backend.domain.member.avatar.repository.AvatarRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
+import com.FlagHome.backend.domain.member.service.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,13 +29,20 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+
+import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @SpringBootTest
 @Transactional
 @AutoConfigureMockMvc
 @WithMockUser
 public class MemberControllerTest {
-    private final static String BASE_URL = "/api/members";
+    private final static String BASE_URL = "/members";
 
     @Autowired
     private MockMvc mockMvc;
@@ -52,6 +61,9 @@ public class MemberControllerTest {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private MemberService memberService;
 
     private Member member;
 
@@ -95,6 +107,32 @@ public class MemberControllerTest {
 //                .
 
         // then
+    }
+
+    @Test
+    @DisplayName("회원 이름으로 검색 테스트")
+    void searchMemberByName() throws Exception {
+
+        //given
+        String name = "길동";
+
+        Member member1 = Member.builder()
+                .major(Major.정보보호)
+                .id(1L)
+                .name("홍길동")
+                .build();
+
+        memberRepository.save(member1);
+        memberRepository.flush();
+
+        //when, then
+        mockMvc.perform(get(BASE_URL+"/search")
+                .accept(MediaType.APPLICATION_JSON)
+                        .param("name", String.valueOf(name))
+        ).andExpect(status().isOk())
+         .andExpect(jsonPath("$.payload[0].name", containsString(name)))
+         .andExpect(jsonPath("$.payload[0].major", containsString("정보보호")))
+         .andExpect(jsonPath("$.payload[0].id").value(1L));
     }
 
 

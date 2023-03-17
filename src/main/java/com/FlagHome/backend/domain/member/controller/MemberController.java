@@ -1,10 +1,11 @@
 package com.FlagHome.backend.domain.member.controller;
 
-import com.FlagHome.backend.domain.member.controller.dto.*;
-import com.FlagHome.backend.global.common.ApplicationResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.MyProfileResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
+import com.FlagHome.backend.domain.member.controller.dto.*;
+import com.FlagHome.backend.domain.member.dto.SearchMemberResponse;
 import com.FlagHome.backend.domain.member.service.MemberService;
+import com.FlagHome.backend.global.common.ApplicationResponse;
 import com.FlagHome.backend.global.utility.SecurityUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,6 +13,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
@@ -158,5 +161,19 @@ public class MemberController {
     public ApplicationResponse withdraw(@RequestBody WithdrawRequest withdrawRequest) {
         memberService.withdraw(SecurityUtils.getMemberId(), withdrawRequest.getCurrentPassword());
         return new ApplicationResponse();
+    }
+
+
+    @Tag(name = "member")
+    @Operation(summary = "이름으로 회원 검색",
+            description = "회원의 id, 이름, 전공 정보를 리스트로 반환합니다. 정보가 없으면 null을 리턴합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "멤버 검색 리스트 가져오기에 성공하였습니다."),
+    })
+    @GetMapping("/search")
+    public ApplicationResponse searchMemberByName(@RequestParam(value = "name") String name) {
+
+        List<SearchMemberResponse> response = memberService.searchByMemberName(name);
+        return new ApplicationResponse(response);
     }
 }

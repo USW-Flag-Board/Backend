@@ -15,4 +15,6 @@ public interface MemberRepositoryCustom {
     List<String> getAllBeforeSleepEmails();
 
     List<LoginLogResponse> getAllLoginLogs();
+
+    List<Member> findByMemberName(String name);
 }

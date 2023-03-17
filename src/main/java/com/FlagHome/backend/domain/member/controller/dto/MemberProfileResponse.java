@@ -2,7 +2,7 @@ package com.FlagHome.backend.domain.member.controller.dto;
 
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
-import com.FlagHome.backend.domain.post.dto.PostDto;
+import com.FlagHome.backend.domain.post.dto.LightPostDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,9 +22,9 @@ public class MemberProfileResponse {
     private List<ParticipateResponse> activityList;
 
     @Schema(name = "작성한 게시글", example = "작성한 게시글 DTO")
-    private List<PostDto> postList;
+    private List<LightPostDto> postList;
 
-    public static MemberProfileResponse of(AvatarResponse avatarResponse, List<ParticipateResponse> activityList, List<PostDto> postList) {
+    public static MemberProfileResponse of(AvatarResponse avatarResponse, List<ParticipateResponse> activityList, List<LightPostDto> postList) {
         return MemberProfileResponse.builder()
                 .avatarResponse(avatarResponse)
                 .activityList(activityList)

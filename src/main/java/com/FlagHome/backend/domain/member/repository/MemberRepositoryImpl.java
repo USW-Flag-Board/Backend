@@ -12,7 +12,6 @@ import java.util.List;
 
 import static com.FlagHome.backend.domain.member.entity.QMember.member;
 
-
 @Repository
 @RequiredArgsConstructor
 public class MemberRepositoryImpl implements MemberRepositoryCustom {
@@ -56,5 +55,15 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
                         member.lastLoginTime))
                 .from(member)
                 .fetch();
+    }
+
+    @Override
+    public List<Member> findByMemberName(String name) {
+
+        return queryFactory
+                        .select(member)
+                        .from(member)
+                        .where(member.name.contains(name))
+                        .fetch();
     }
 }

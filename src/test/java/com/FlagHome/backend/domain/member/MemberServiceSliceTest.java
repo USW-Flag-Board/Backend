@@ -2,27 +2,28 @@ package com.FlagHome.backend.domain.member;
 
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.service.MemberActivityService;
-import com.FlagHome.backend.domain.board.enums.SearchType;
-import com.FlagHome.backend.global.infra.aws.ses.service.MailService;
 import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.MyProfileResponse;
 import com.FlagHome.backend.domain.member.avatar.service.AvatarService;
 import com.FlagHome.backend.domain.member.controller.dto.FindResponse;
 import com.FlagHome.backend.domain.member.controller.dto.MemberProfileResponse;
+import com.FlagHome.backend.domain.member.dto.SearchMemberResponse;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
-import com.FlagHome.backend.domain.post.dto.PostDto;
+import com.FlagHome.backend.domain.post.dto.LightPostDto;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
 import com.FlagHome.backend.domain.token.entity.FindRequestToken;
 import com.FlagHome.backend.domain.token.entity.Token;
 import com.FlagHome.backend.domain.token.service.FindRequestTokenService;
+import com.FlagHome.backend.global.infra.aws.ses.service.MailService;
 import com.FlagHome.backend.global.utility.InputValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
@@ -31,7 +32,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doNothing;
@@ -178,11 +180,11 @@ public class MemberServiceSliceTest {
                 .build();
 
         List<ParticipateResponse> participateResponseList = new ArrayList<>();
-        List<PostDto> postDtoList = new ArrayList<>();
+        List<LightPostDto> postDtoList = new ArrayList<>();
 
         given(avatarService.getAvatar(anyString())).willReturn(avatarResponse);
         given(memberActivityService.getAllActivitiesOfMember(anyString())).willReturn(participateResponseList);
-        given(postRepository.findBoardWithCondition(any(), any(SearchType.class), anyString())).willReturn(postDtoList);
+        given(postRepository.findMyPostList(anyString())).willReturn(postDtoList);
 
         // when
         MemberProfileResponse response = memberService.getMemberProfile(loginId);
@@ -190,7 +192,7 @@ public class MemberServiceSliceTest {
         // then
         then(avatarService).should(times(1)).getAvatar(anyString());
         then(memberActivityService).should(times(1)).getAllActivitiesOfMember(anyString());
-        then(postRepository).should(times(1)).findBoardWithCondition(any(), any(SearchType.class), anyString());
+        then(postRepository).should(times(1)).findMyPostList(anyString());
         assertThat(response.getAvatarResponse().getLoginId()).isEqualTo(loginId);
         assertThat(response.getActivityList().size()).isEqualTo(0);
         assertThat(response.getPostList().size()).isEqualTo(0);
@@ -218,5 +220,26 @@ public class MemberServiceSliceTest {
         then(avatarService).should(times(1)).getMyProfile(anyLong());
         assertThat(response.getName()).isEqualTo(myProfileResponse.getName());
         assertThat(response.getEmail()).isEqualTo(myProfileResponse.getEmail());
+    }
+
+    @Test
+    @DisplayName("회원 이름으로 검색 테스트")
+    void searchByMemberName() {
+        //given
+        Member member1 = Member.builder().major(Major.정보보호).id(1L).name("홍길동").build();
+        Member member2 = Member.builder().major(Major.컴퓨터SW).id(2L).name("김길동").build();
+        List<Member> memberList = List.of(member1,member2);
+
+        String name = "길동";
+
+        given(memberRepository.findByMemberName(Mockito.anyString())).willReturn(memberList);
+
+        //when
+        List<SearchMemberResponse> resultList = memberService.searchByMemberName(name);
+
+        //then
+        assertThat(resultList.get(0).getName()).contains(name);
+        assertThat(resultList.get(1).getName()).contains(name);
+
     }
 }

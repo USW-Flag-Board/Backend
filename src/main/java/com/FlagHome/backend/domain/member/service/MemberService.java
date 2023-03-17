@@ -3,9 +3,6 @@ package com.FlagHome.backend.domain.member.service;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.service.MemberActivityService;
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
-import com.FlagHome.backend.domain.board.enums.SearchType;
-import com.FlagHome.backend.global.common.Status;
-import com.FlagHome.backend.global.infra.aws.ses.service.MailService;
 import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.MyProfileResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
@@ -13,17 +10,20 @@ import com.FlagHome.backend.domain.member.avatar.service.AvatarService;
 import com.FlagHome.backend.domain.member.controller.dto.FindResponse;
 import com.FlagHome.backend.domain.member.controller.dto.LoginLogResponse;
 import com.FlagHome.backend.domain.member.controller.dto.MemberProfileResponse;
+import com.FlagHome.backend.domain.member.dto.SearchMemberResponse;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.sleeping.entity.Sleeping;
 import com.FlagHome.backend.domain.member.sleeping.repository.SleepingRepository;
 import com.FlagHome.backend.domain.member.sleeping.service.SleepingService;
-import com.FlagHome.backend.domain.post.dto.PostDto;
+import com.FlagHome.backend.domain.post.dto.LightPostDto;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
 import com.FlagHome.backend.domain.token.entity.Token;
 import com.FlagHome.backend.domain.token.service.FindRequestTokenService;
+import com.FlagHome.backend.global.common.Status;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
+import com.FlagHome.backend.global.infra.aws.ses.service.MailService;
 import com.FlagHome.backend.global.utility.InputValidator;
 import com.FlagHome.backend.global.utility.RandomGenerator;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +32,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -144,7 +145,7 @@ public class MemberService {
     public MemberProfileResponse getMemberProfile(String loginId) {
         AvatarResponse avatarResponse = avatarService.getAvatar(loginId);
         List<ParticipateResponse> participateResponseList = memberActivityService.getAllActivitiesOfMember(loginId);
-        List<PostDto> postList = getMemberPostByLoginId(loginId);
+        List<LightPostDto> postList = getMemberPostByLoginId(loginId);
 
         return MemberProfileResponse.of(avatarResponse, participateResponseList, postList);
     }
@@ -183,8 +184,8 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostDto> getMemberPostByLoginId(String loginId) {
-        return postRepository.findBoardWithCondition(null, SearchType.LOGIN_ID, loginId);
+    public List<LightPostDto> getMemberPostByLoginId(String loginId) {
+        return postRepository.findMyPostList(loginId);
     }
 
     @Transactional(readOnly = true)
@@ -226,5 +227,23 @@ public class MemberService {
     private Member findByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    // 수정하기
+    public List<SearchMemberResponse> searchByMemberName(String name) {
+
+        List<Member> memberList = memberRepository.findByMemberName(name);
+        List<SearchMemberResponse> memberSearchList = new ArrayList<>(memberList.size());
+        for (Member member : memberList) {
+            memberSearchList.add(
+                    SearchMemberResponse.builder()
+                            .id(member.getId())
+                            .major(member.getMajor())
+                            .name(member.getName())
+                            .build()
+            );
+        }
+
+        return memberSearchList;
     }
 }
