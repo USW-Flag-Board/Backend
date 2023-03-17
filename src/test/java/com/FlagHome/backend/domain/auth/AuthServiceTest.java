@@ -1,16 +1,14 @@
 package com.FlagHome.backend.domain.auth;
 
-import com.FlagHome.backend.domain.auth.dto.JoinRequest;
-import com.FlagHome.backend.domain.auth.dto.SignUpResponse;
+import com.FlagHome.backend.domain.auth.controller.dto.JoinRequest;
+import com.FlagHome.backend.domain.auth.controller.dto.SignUpResponse;
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import com.FlagHome.backend.domain.auth.service.AuthService;
-import com.FlagHome.backend.domain.common.Status;
 import com.FlagHome.backend.domain.member.Role;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
-import com.FlagHome.backend.domain.member.sleeping.entity.Sleeping;
 import com.FlagHome.backend.domain.member.sleeping.repository.SleepingRepository;
 import com.FlagHome.backend.domain.token.dto.TokenResponse;
 import com.FlagHome.backend.global.exception.CustomException;
@@ -24,16 +22,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
-import java.time.LocalDateTime;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
@@ -216,39 +212,63 @@ public class AuthServiceTest {
         }
     }
 
-    @Test
+    @Nested
     @DisplayName("로그인 테스트")
-    void loginTest() {
-        // given
-        String loginId = "gmlwh124";
-        String password = "1234";
+    class loginTest {
+        @Test
+        @DisplayName("로그인 테스트")
+        void loginSuccessTest() {
+            // given
+            String loginId = "gmlwh124";
+            String password = "1234";
 
-        Member savedMember = memberRepository.saveAndFlush(Member.builder()
-                        .loginId(loginId)
-                        .password(passwordEncoder.encode(password))
-                        .role(Role.ROLE_USER)
-                        .build());
+            Member savedMember = memberRepository.saveAndFlush(Member.builder()
+                            .loginId(loginId)
+                            .password(passwordEncoder.encode(password))
+                            .role(Role.ROLE_USER)
+                            .build());
 
-        // when
-        TokenResponse tokenResponse = authService.login(loginId, password);
-        entityManager.clear();
+            // when
+            TokenResponse tokenResponse = authService.login(loginId, password);
+            entityManager.clear();
 
-        // then : 정상적으로 발급되는 지, 유효한 지, 데이터가 일치하는 지
-        assertThat(tokenResponse.getAccessToken()).isNotNull();
-        assertThat(tokenResponse.getRefreshToken()).isNotNull();
-        assertThat(tokenResponse.getAccessTokenExpiresIn()).isNotNull();
-        assertThat(tokenResponse.getGrantType()).isEqualTo("Bearer");
+            // then : 정상적으로 발급되는 지, 유효한 지, 데이터가 일치하는 지
+            assertThat(tokenResponse.getAccessToken()).isNotNull();
+            assertThat(tokenResponse.getRefreshToken()).isNotNull();
+            assertThat(tokenResponse.getAccessTokenExpiresIn()).isNotNull();
+            assertThat(tokenResponse.getGrantType()).isEqualTo("Bearer");
 
-        String accessToken = tokenResponse.getAccessToken();
+            String accessToken = tokenResponse.getAccessToken();
 
-        assertThat(jwtUtilizer.validateToken(accessToken)).isTrue();
+            assertThat(jwtUtilizer.validateToken(accessToken)).isTrue();
 
-        Authentication authentication = jwtUtilizer.getAuthentication(accessToken);
-        long memberId = Long.parseLong(authentication.getName());
-        Member member = memberRepository.findByLoginId(loginId).get();
-        assertThat(savedMember.getLastLoginTime()).isNotEqualTo(member.getLastLoginTime());
-        assertThat(member.getId()).isEqualTo(memberId);
+            Authentication authentication = jwtUtilizer.getAuthentication(accessToken);
+            long memberId = Long.parseLong(authentication.getName());
+            Member member = memberRepository.findByLoginId(loginId).get();
+            assertThat(savedMember.getLastLoginTime()).isNotEqualTo(member.getLastLoginTime());
+            assertThat(member.getId()).isEqualTo(memberId);
+        }
+
+        @Test
+        @DisplayName("로그인 실패 테스트")
+        void loginFailTest() {
+            String loginId = "gmlwh124";
+            String password = "qwer1234!";
+            String wrongPassword = "wert2345@";
+
+            Member member = Member.builder()
+                    .loginId(loginId)
+                    .password(passwordEncoder.encode(password))
+                    .role(Role.ROLE_USER)
+                    .build();
+
+            memberRepository.save(member);
+
+            assertThatExceptionOfType(BadCredentialsException.class)
+                    .isThrownBy(() -> authService.login(loginId, wrongPassword));
+        }
     }
+
 
     @Test
     @DisplayName("토큰 재발급 테스트")

@@ -1,10 +1,11 @@
 package com.FlagHome.backend.domain.member.controller;
 
-import com.FlagHome.backend.domain.common.ApplicationResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.MyProfileResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
-import com.FlagHome.backend.domain.member.dto.*;
+import com.FlagHome.backend.domain.member.controller.dto.*;
+import com.FlagHome.backend.domain.member.dto.SearchMemberResponse;
 import com.FlagHome.backend.domain.member.service.MemberService;
+import com.FlagHome.backend.global.common.ApplicationResponse;
 import com.FlagHome.backend.global.utility.SecurityUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
