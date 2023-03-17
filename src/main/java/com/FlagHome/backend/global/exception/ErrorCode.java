@@ -65,7 +65,10 @@ public enum ErrorCode {
     NOT_USW_EMAIL(HttpStatus.UNPROCESSABLE_ENTITY, "수원대학교 웹 메일 주소가 아닙니다."),
     INVALID_PASSWORD(HttpStatus.UNPROCESSABLE_ENTITY, "사용할 수 없는 비밀번호 입니다. (8~20자 이내 영문, 숫자, 특수문자를 모두 포함)"),
 
-    /** 500 - INTERNAL_SERVER_ERROR */
+    /**
+     * 500 - INTERNAL_SERVER_ERROR
+     */
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다. 관리자에게 문의주세요."),
     FILE_CONVERT_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "파일 변환에 실패했습니다.")
     ;
 

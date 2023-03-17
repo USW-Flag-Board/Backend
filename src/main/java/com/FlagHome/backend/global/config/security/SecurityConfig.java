@@ -57,46 +57,47 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .httpBasic().disable()
-                .formLogin().disable()
-                .cors().configurationSource(corsConfigurationSource())
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http
+            .csrf().disable()
+            .httpBasic().disable()
+            .formLogin().disable()
+            .cors().configurationSource(corsConfigurationSource())
+            .and()
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http
-                .exceptionHandling()
-                .accessDeniedHandler(jwtAccessDeniedHandler)
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint);
+            .exceptionHandling()
+            .accessDeniedHandler(jwtAccessDeniedHandler)
+            .authenticationEntryPoint(jwtAuthenticationEntryPoint);
 
         http.authorizeRequests()
-                .antMatchers("/auth/**").permitAll()
+            .antMatchers("/auth/**").permitAll()
 
-                .antMatchers(HttpMethod.GET, "/activities", "/activities/{id}").permitAll()
-                .antMatchers("/activities/**").hasRole("CREW")
+            .antMatchers(HttpMethod.GET, "/activities", "/activities/{id}").permitAll()
+            .antMatchers("/activities/**").hasRole("CREW")
 
-                .antMatchers(HttpMethod.GET, "/boards/**").permitAll()
-                .antMatchers("/boards/**").hasRole("ADMIN")
+            .antMatchers(HttpMethod.GET, "/boards/**").permitAll()
+            .antMatchers("/boards/**").hasRole("ADMIN")
 
-                .antMatchers(HttpMethod.GET, "/members/{loginId}").permitAll()
-                .antMatchers(HttpMethod.PUT, "/members/find/password").permitAll()
-                .antMatchers(HttpMethod.POST, "/members/**").permitAll()
-                .antMatchers("/members/**").hasAnyRole("USER", "CREW")
+            .antMatchers(HttpMethod.GET, "/members/{loginId}").permitAll()
+            .antMatchers(HttpMethod.PUT, "/members/find/password").permitAll()
+            .antMatchers(HttpMethod.POST, "/members/**").permitAll()
+            .antMatchers("/members/**").hasAnyRole("USER", "CREW")
 
-                .antMatchers(HttpMethod.GET, "/posts/**").permitAll()
-                .antMatchers("/posts/**").hasAnyRole("USER", "CREW")
+            .antMatchers(HttpMethod.GET, "/posts/**").permitAll()
+            .antMatchers("/posts/**").hasAnyRole("USER", "CREW")
 
-                .antMatchers(HttpMethod.GET, "/replies/**").permitAll()
-                .antMatchers("/replies/**").hasAnyRole("USER", "CREW")
+            .antMatchers(HttpMethod.GET, "/replies/**").permitAll()
+            .antMatchers("/replies/**").hasAnyRole("USER", "CREW")
 
-                .antMatchers(HttpMethod.POST, "api/reports/**").hasAnyRole("USER", "CREW")
-                .antMatchers("api/reports/**").hasRole("ADMIN")
+            .antMatchers(HttpMethod.POST, "api/reports/**").hasAnyRole("USER", "CREW")
+            .antMatchers("api/reports/**").hasRole("ADMIN")
 
-                .antMatchers("/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated();
+            .antMatchers("/admin/**").hasRole("ADMIN")
+            .anyRequest().authenticated();
 
         http
-                .apply(jwtSecurityConfig(jwtUtilizer));
+            .apply(jwtSecurityConfig(jwtUtilizer));
 
         return http.build();
     }
