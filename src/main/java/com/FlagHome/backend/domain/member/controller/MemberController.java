@@ -1,9 +1,10 @@
 package com.FlagHome.backend.domain.member.controller;
 
+import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.MyProfileResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
 import com.FlagHome.backend.domain.member.controller.dto.*;
-import com.FlagHome.backend.domain.member.dto.SearchMemberResponse;
+import com.FlagHome.backend.domain.member.controller.dto.SearchMemberResponse;
 import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.global.common.ApplicationResponse;
 import com.FlagHome.backend.global.utility.SecurityUtils;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -28,17 +30,16 @@ public class MemberController {
     private final MemberService memberService;
 
     @Tag(name = "member")
-    @Operation(summary = "멤버 프로필 가져오기", description = "프로필, 작성한 게시글, 참여한 활동들을 가져온다.\n" +
-            "추후 도메인에 맞춰서 분리할 예정")
+    @Operation(summary = "아바타 정보 가져오기", description = "프로필을 가져온다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "멤버 정보를 가져왔습니다."),
+            @ApiResponse(responseCode = "200", description = "멤버 아바타를 가져왔습니다."),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
     })
     @ResponseStatus(OK)
     @GetMapping("/{loginId}")
-    public ApplicationResponse<MemberProfileResponse> getMemberPage(@PathVariable("loginId") String loginId) {
-        MemberProfileResponse response = memberService.getMemberProfile(loginId);
-        return new ApplicationResponse(response);
+    public ApplicationResponse<AvatarResponse> getMemberAvatar(@PathVariable("loginId") String loginId) {
+        AvatarResponse response = memberService.getAvatar(loginId);
+        return new ApplicationResponse<>(response);
     }
 
     @Tag(name = "member")
@@ -67,7 +68,7 @@ public class MemberController {
     })
     @ResponseStatus(CREATED)
     @PostMapping("/find/id")
-    public ApplicationResponse<FindResponse> findId(@RequestBody FindIdRequest findIdRequest) {
+    public ApplicationResponse<FindResponse> findId(@RequestBody @Valid FindIdRequest findIdRequest) {
         FindResponse response = memberService.findId(findIdRequest.getName(), findIdRequest.getEmail());
         return new ApplicationResponse(response);
     }
@@ -84,7 +85,7 @@ public class MemberController {
     })
     @ResponseStatus(CREATED)
     @PostMapping("/find/password")
-    public ApplicationResponse<FindResponse> findPassword(@RequestBody FindPasswordRequest findPasswordRequest) {
+    public ApplicationResponse<FindResponse> findPassword(@RequestBody @Valid FindPasswordRequest findPasswordRequest) {
         FindResponse response = memberService.findPassword(findPasswordRequest.getLoginId(), findPasswordRequest.getEmail());
         return new ApplicationResponse(response);
     }
@@ -99,9 +100,9 @@ public class MemberController {
     })
     @ResponseStatus(OK)
     @PostMapping("/certification")
-    public ApplicationResponse<String> authCertification(@RequestBody AuthenticationRequest authenticationRequest) {
+    public ApplicationResponse<String> authCertification(@RequestBody @Valid AuthenticationRequest authenticationRequest) {
         String loginId = memberService.validateCertification(authenticationRequest.getEmail(), authenticationRequest.getCertification());
-        return new ApplicationResponse(loginId);
+        return new ApplicationResponse<>(loginId);
     }
 
     @Tag(name = "member")
@@ -113,7 +114,7 @@ public class MemberController {
     })
     @ResponseStatus(OK)
     @PutMapping("/find/password")
-    public ApplicationResponse changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
+    public ApplicationResponse changePassword(@RequestBody @Valid ChangePasswordRequest changePasswordRequest) {
         memberService.changePassword(changePasswordRequest.getEmail(), changePasswordRequest.getNewPassword());
         return new ApplicationResponse();
     }
@@ -129,7 +130,7 @@ public class MemberController {
     })
     @ResponseStatus(OK)
     @PutMapping("/password")
-    public ApplicationResponse updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest) {
+    public ApplicationResponse updatePassword(@RequestBody @Valid UpdatePasswordRequest updatePasswordRequest) {
         memberService.updatePassword(SecurityUtils.getMemberId(), updatePasswordRequest.getCurrentPassword(), updatePasswordRequest.getNewPassword());
         return new ApplicationResponse();
     }
@@ -172,7 +173,6 @@ public class MemberController {
     })
     @GetMapping("/search")
     public ApplicationResponse searchMemberByName(@RequestParam(value = "name") String name) {
-
         List<SearchMemberResponse> response = memberService.searchByMemberName(name);
         return new ApplicationResponse(response);
     }

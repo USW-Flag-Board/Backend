@@ -3,7 +3,6 @@ package com.FlagHome.backend.domain.member;
 import com.FlagHome.backend.global.common.Status;
 import com.FlagHome.backend.domain.member.avatar.entity.Avatar;
 import com.FlagHome.backend.domain.member.avatar.repository.AvatarRepository;
-import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,7 +28,6 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;

@@ -1,9 +1,9 @@
 package com.FlagHome.backend.domain.report.controller;
 
-import com.FlagHome.backend.global.common.ApplicationResponse;
+import com.FlagHome.backend.domain.report.Report;
 import com.FlagHome.backend.domain.report.Service.ReportService;
-import com.FlagHome.backend.domain.report.dto.ReportRequest;
-import com.FlagHome.backend.domain.report.entity.Report;
+import com.FlagHome.backend.domain.report.controller.dto.ReportRequest;
+import com.FlagHome.backend.global.common.ApplicationResponse;
 import com.FlagHome.backend.global.utility.SecurityUtils;
 import com.FlagHome.backend.global.utility.UriCreator;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,24 +21,24 @@ import static org.springframework.http.HttpStatus.OK;
 @Tag(name = "report", description = "신고 API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/reports")
+@RequestMapping("/reports")
 public class ReportController {
-    private static final String DEFAULT_URL = "/api/reports";
+    private static final String DEFAULT_URL = "/reports";
     private final ReportService reportService;
 
     @Tag(name = "report")
-    @Operation(summary = "신고하기", description = "유저, 게시글, 댓글을 대상으로 신고할 수 있다.\n" +
+    @Operation(summary = "신고하기", description = "[토큰필요] 유저, 게시글, 댓글을 대상으로 신고할 수 있다.\n" +
             "한 멤버가 한 대상(URL 기준)으로 신고할 수 있고 취소할 수 없다.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "신고가 접수되었습니다."),
             @ApiResponse(responseCode = "409", description = "이미 신고한 대상입니다")
     })
+    @ResponseStatus(OK)
     @PostMapping
-    public ResponseEntity<ApplicationResponse> report(@RequestBody ReportRequest reportRequest) {
+    public ApplicationResponse<URI> report(@RequestBody ReportRequest reportRequest) {
         long id = reportService.create(SecurityUtils.getMemberId(), Report.from(reportRequest));
         URI location = UriCreator.createUri(DEFAULT_URL, id);
-        ApplicationResponse response = ApplicationResponse.of(location, OK, "신고가 접수되었습니다");
-        return ResponseEntity.ok(response);
+        return new ApplicationResponse(location);
     }
 
     @Tag(name = "report")

@@ -3,12 +3,13 @@ package com.FlagHome.backend.domain.member.avatar.dto;
 import com.FlagHome.backend.domain.member.Major;
 import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MyProfileResponse {
     @Schema(name = "닉네임", example = "john")
     private String nickName;

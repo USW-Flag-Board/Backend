@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.member.sleeping.service;
 
-import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.member.Member;
 import com.FlagHome.backend.domain.member.sleeping.entity.Sleeping;
 import com.FlagHome.backend.domain.member.sleeping.repository.SleepingRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +25,11 @@ public class SleepingService {
     }
 
     @Transactional
+    public void saveAllSleepings(List<Sleeping> sleepingList) {
+        sleepingRepository.saveAll(sleepingList);
+    }
+
+    @Transactional
     public void convertSleepToMember(Member member, Sleeping sleeping) {
         member.sleepToMember(sleeping);
         sleepingRepository.delete(sleeping);
@@ -35,5 +40,9 @@ public class SleepingService {
     public void deleteExpiredSleep() {
         List<Sleeping> sleepingList = sleepingRepository.getAllSleeping();
         sleepingRepository.deleteAllInBatch(sleepingList);
+    }
+
+    public Sleeping findByLoginId(String loginId) {
+        return sleepingRepository.findByLoginId(loginId).orElse(null);
     }
 }

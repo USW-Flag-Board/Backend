@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain.post.dto;
+package com.FlagHome.backend.domain.post.controller.dto;
 
 import com.FlagHome.backend.global.common.Status;
 import com.FlagHome.backend.domain.post.entity.Post;

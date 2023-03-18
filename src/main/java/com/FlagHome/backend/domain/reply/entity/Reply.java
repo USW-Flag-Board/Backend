@@ -4,7 +4,7 @@ import com.FlagHome.backend.global.common.BaseEntity;
 import com.FlagHome.backend.global.common.Status;
 import com.FlagHome.backend.domain.like.entity.Like;
 import com.FlagHome.backend.domain.post.entity.Post;
-import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.member.Member;
 import lombok.*;
 
 import javax.persistence.*;

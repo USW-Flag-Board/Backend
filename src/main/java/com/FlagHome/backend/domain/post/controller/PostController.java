@@ -1,11 +1,12 @@
 package com.FlagHome.backend.domain.post.controller;
 
-import com.FlagHome.backend.global.common.ApplicationResponse;
 import com.FlagHome.backend.domain.like.entity.LikeDto;
 import com.FlagHome.backend.domain.like.enums.LikeType;
 import com.FlagHome.backend.domain.like.service.LikeService;
-import com.FlagHome.backend.domain.post.dto.CreatePostRequest;
+import com.FlagHome.backend.domain.post.controller.dto.CreatePostRequest;
+import com.FlagHome.backend.domain.post.controller.dto.LightPostDto;
 import com.FlagHome.backend.domain.post.service.PostService;
+import com.FlagHome.backend.global.common.ApplicationResponse;
 import com.FlagHome.backend.global.utility.UriCreator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -17,6 +18,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
+
+import static org.springframework.http.HttpStatus.OK;
 
 @Tag(name = "post", description = "게시글 API")
 @RestController
@@ -49,8 +53,20 @@ public class PostController {
     })
     @GetMapping
     public ResponseEntity<ApplicationResponse> getPost(@RequestParam(value = "id") long postId) {
-        ApplicationResponse applicationResponse = ApplicationResponse.of(postService.getPost(postId), HttpStatus.OK, "게시글 가져오기에 성공 하였습니다.");
+        ApplicationResponse applicationResponse = ApplicationResponse.of(postService.getPost(postId), OK, "게시글 가져오기에 성공 하였습니다.");
         return ResponseEntity.ok(applicationResponse);
+    }
+
+    @Tag(name = "post")
+    @Operation(summary = "멤버 페이지 작성한 게시글 가져오기")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "멤버가 작성한 게시글을 가져왔습니다.")
+    })
+    @ResponseStatus(OK)
+    @GetMapping("/{loginId}")
+    public ApplicationResponse<List<LightPostDto>> getMemberPostByLoginId(@PathVariable String loginId) {
+        List<LightPostDto> response = postService.getMemberPostByLoginId(loginId);
+        return new ApplicationResponse<>(response);
     }
 
     @Tag(name = "post")
@@ -61,7 +77,7 @@ public class PostController {
     })
     @PatchMapping
     public ResponseEntity<ApplicationResponse> updatePost(@RequestBody CreatePostRequest postDto) {
-        ApplicationResponse applicationResponse = ApplicationResponse.of(postService.updatePost(postDto), HttpStatus.OK, "게시글 수정에 성공 하였습니다.");
+        ApplicationResponse applicationResponse = ApplicationResponse.of(postService.updatePost(postDto), OK, "게시글 수정에 성공 하였습니다.");
         return ResponseEntity.ok(applicationResponse);
     }
 
@@ -85,7 +101,7 @@ public class PostController {
     @PostMapping("/like")
     public ResponseEntity<ApplicationResponse> likePost(@RequestBody LikeDto likeDto) {
         likeService.like(likeDto.getMemberId(), likeDto.getTargetId(), LikeType.POST);
-        return ResponseEntity.ok(ApplicationResponse.of(true, HttpStatus.OK, "게시글 좋아요를 하였습니다."));
+        return ResponseEntity.ok(ApplicationResponse.of(true, OK, "게시글 좋아요를 하였습니다."));
     }
 
     @Tag(name = "post")
@@ -109,6 +125,6 @@ public class PostController {
     @GetMapping("/top")
     public ResponseEntity<ApplicationResponse> getTopNPostListByDateAndLike(@RequestParam(value = "post-count") int postCount) {
         String message = "상위 " + postCount + "개의 게시글을 가져왔습니다.";
-        return ResponseEntity.ok(ApplicationResponse.of(postService.getTopNPostListByDateAndLike(postCount), HttpStatus.OK, message));
+        return ResponseEntity.ok(ApplicationResponse.of(postService.getTopNPostListByDateAndLike(postCount), OK, message));
     }
 }

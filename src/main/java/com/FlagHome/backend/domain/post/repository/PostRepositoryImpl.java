@@ -1,8 +1,8 @@
 package com.FlagHome.backend.domain.post.repository;
 
 import com.FlagHome.backend.domain.board.enums.SearchType;
-import com.FlagHome.backend.domain.post.dto.LightPostDto;
-import com.FlagHome.backend.domain.post.dto.PostDto;
+import com.FlagHome.backend.domain.post.controller.dto.LightPostDto;
+import com.FlagHome.backend.domain.post.controller.dto.PostDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;

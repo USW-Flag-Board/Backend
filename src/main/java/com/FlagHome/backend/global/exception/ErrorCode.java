@@ -57,14 +57,6 @@ public enum ErrorCode {
     TOKEN_NOT_MATCH(HttpStatus.CONFLICT, "토큰의 정보가 일치하지 않습니다."),
 
 
-
-    /**
-     * 422 - UNPROCESSABLE_ENTITY
-     * 타입과 문법은 일치하지만 validation 실패 시
-     */
-    NOT_USW_EMAIL(HttpStatus.UNPROCESSABLE_ENTITY, "수원대학교 웹 메일 주소가 아닙니다."),
-    INVALID_PASSWORD(HttpStatus.UNPROCESSABLE_ENTITY, "사용할 수 없는 비밀번호 입니다. (8~20자 이내 영문, 숫자, 특수문자를 모두 포함)"),
-
     /**
      * 500 - INTERNAL_SERVER_ERROR
      */

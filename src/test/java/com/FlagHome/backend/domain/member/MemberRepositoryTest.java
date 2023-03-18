@@ -4,7 +4,6 @@ import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.MyProfileResponse;
 import com.FlagHome.backend.domain.member.avatar.entity.Avatar;
 import com.FlagHome.backend.domain.member.avatar.repository.AvatarRepository;
-import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.global.config.QueryDslConfig;
 import org.junit.jupiter.api.BeforeEach;

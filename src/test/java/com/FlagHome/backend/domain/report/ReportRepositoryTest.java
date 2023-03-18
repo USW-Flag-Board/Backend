@@ -1,9 +1,8 @@
 package com.FlagHome.backend.domain.report;
 
-import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.member.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
-import com.FlagHome.backend.domain.report.dto.ReportResponse;
-import com.FlagHome.backend.domain.report.entity.Report;
+import com.FlagHome.backend.domain.report.controller.dto.ReportResponse;
 import com.FlagHome.backend.domain.report.repository.ReportRepository;
 import com.FlagHome.backend.global.config.QueryDslConfig;
 import org.junit.jupiter.api.BeforeEach;

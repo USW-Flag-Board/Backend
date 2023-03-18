@@ -3,6 +3,7 @@ package com.FlagHome.backend.domain.activity.controller.dto;
 import com.FlagHome.backend.domain.activity.ActivityType;
 import com.FlagHome.backend.domain.activity.Status;
 import com.querydsl.core.annotations.QueryProjection;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ActivityResponse {
     private long id;
     private String name;

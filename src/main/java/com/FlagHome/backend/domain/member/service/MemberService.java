@@ -1,30 +1,22 @@
 package com.FlagHome.backend.domain.member.service;
 
-import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
-import com.FlagHome.backend.domain.activity.memberactivity.service.MemberActivityService;
-import com.FlagHome.backend.domain.auth.entity.AuthInformation;
+import com.FlagHome.backend.domain.auth.AuthInformation;
+import com.FlagHome.backend.domain.member.Member;
 import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.MyProfileResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
 import com.FlagHome.backend.domain.member.avatar.service.AvatarService;
 import com.FlagHome.backend.domain.member.controller.dto.FindResponse;
 import com.FlagHome.backend.domain.member.controller.dto.LoginLogResponse;
-import com.FlagHome.backend.domain.member.controller.dto.MemberProfileResponse;
-import com.FlagHome.backend.domain.member.dto.SearchMemberResponse;
-import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.member.controller.dto.SearchMemberResponse;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.sleeping.entity.Sleeping;
-import com.FlagHome.backend.domain.member.sleeping.repository.SleepingRepository;
 import com.FlagHome.backend.domain.member.sleeping.service.SleepingService;
-import com.FlagHome.backend.domain.post.dto.LightPostDto;
-import com.FlagHome.backend.domain.post.repository.PostRepository;
 import com.FlagHome.backend.domain.token.entity.Token;
 import com.FlagHome.backend.domain.token.service.FindRequestTokenService;
-import com.FlagHome.backend.global.common.Status;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.infra.aws.ses.service.MailService;
-import com.FlagHome.backend.global.utility.InputValidator;
 import com.FlagHome.backend.global.utility.RandomGenerator;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -40,14 +32,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
-    private final PostRepository postRepository;
-    private final SleepingRepository sleepingRepository;
     private final MailService mailService;
     private final AvatarService avatarService;
     private final FindRequestTokenService findRequestTokenService;
     private final PasswordEncoder passwordEncoder;
-    private final MemberActivityService memberActivityService;
-    private final InputValidator inputValidator;
     private final SleepingService sleepingService;
 
     public Boolean isExistLoginId(String loginId) {
@@ -64,6 +52,7 @@ public class MemberService {
         return Boolean.FALSE;
     }
 
+    // 멤버 삭제 고민하기 : 보관할 것인가?
     @Transactional
     public void withdraw(Long memberId, String password) {
         validateMemberPassword(memberId, password);
@@ -77,8 +66,6 @@ public class MemberService {
     }
 
     public FindResponse findId(String name, String email) {
-        inputValidator.validateUSWEmail(email);
-
         Member member = findByEmail(email);
         if (!StringUtils.equals(member.getName(), name)) {
             throw new CustomException(ErrorCode.EMAIL_NAME_NOT_MATCH);
@@ -88,7 +75,6 @@ public class MemberService {
     }
 
     public FindResponse findPassword(String loginId, String email) {
-        inputValidator.validateUSWEmail(email);
         Member member = findByEmail(email);
 
         if (!StringUtils.equals(loginId, member.getLoginId())) {
@@ -101,13 +87,12 @@ public class MemberService {
     public String validateCertification(String email, String certification) {
         Token findRequestToken = findRequestTokenService.findToken(email);
         findRequestToken.validateExpireTime();
-        inputValidator.validateCertification(certification, findRequestToken.getValue());
-        return findByEmail(email).getLoginId();
+        findRequestToken.validateValue(certification);
+        return email;
     }
 
     @Transactional // 비밀번호를 잊어서 바꾸는 경우
     public void changePassword(String email, String newPassword) {
-        inputValidator.validatePassword(newPassword);
         Member member = findByEmail(email);
         member.updatePassword(newPassword, passwordEncoder);
     }
@@ -115,7 +100,6 @@ public class MemberService {
     @Transactional // 비밀번호를 유저가 변경하는 경우
     public void updatePassword(Long memberId, String currentPassword, String newPassword) {
         Member member = validateMemberPassword(memberId, currentPassword);
-        inputValidator.validatePassword(newPassword);
 
         if (passwordEncoder.matches(newPassword, member.getPassword())) {
             throw new CustomException(ErrorCode.PASSWORD_IS_SAME);
@@ -132,7 +116,7 @@ public class MemberService {
 
     @Transactional
     public Member convertSleepingIfExist(String loginId) {
-        Sleeping sleeping = sleepingRepository.findByLoginId(loginId).orElse(null);
+        Sleeping sleeping = sleepingService.findByLoginId(loginId);
         Member member = findByLoginId(loginId);
 
         if (sleeping != null) {
@@ -142,12 +126,8 @@ public class MemberService {
         return member;
     }
 
-    public MemberProfileResponse getMemberProfile(String loginId) {
-        AvatarResponse avatarResponse = avatarService.getAvatar(loginId);
-        List<ParticipateResponse> participateResponseList = memberActivityService.getAllActivitiesOfMember(loginId);
-        List<LightPostDto> postList = getMemberPostByLoginId(loginId);
-
-        return MemberProfileResponse.of(avatarResponse, participateResponseList, postList);
+    public AvatarResponse getAvatar(String loginId) {
+        return avatarService.getAvatar(loginId);
     }
 
     public MyProfileResponse getMyProfile(long memberId) {
@@ -166,14 +146,13 @@ public class MemberService {
         List<Sleeping> sleepingList = sleepingMembers.stream()
                         .map(Sleeping::of)
                         .collect(Collectors.toList());
-        sleepingRepository.saveAll(sleepingList);
+        sleepingService.saveAllSleepings(sleepingList);
         emptyAllMembers(sleepingMembers);
     }
 
     @Transactional
     public void emptyAllMembers(List<Member> memberList) {
-        final Status sleeping = Status.SLEEPING;
-        memberList.forEach(member -> member.emptyAndUpdate(sleeping));
+        memberList.forEach(Member::changeToSleep);
     }
 
     @Transactional
@@ -184,17 +163,30 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public List<LightPostDto> getMemberPostByLoginId(String loginId) {
-        return postRepository.findMyPostList(loginId);
-    }
-
-    @Transactional(readOnly = true)
     public List<Member> getMembersByLoginId(List<String> loginIdList) {
         return memberRepository.getMembersByLoginId(loginIdList);
     }
 
+    @Transactional(readOnly = true)
     public List<LoginLogResponse> getAllLoginLogs() {
         return memberRepository.getAllLoginLogs();
+    }
+
+    // 수정하기
+    public List<SearchMemberResponse> searchByMemberName(String name) {
+        List<Member> memberList = memberRepository.findByMemberName(name);
+        List<SearchMemberResponse> memberSearchList = new ArrayList<>(memberList.size());
+        for (Member member : memberList) {
+            memberSearchList.add(
+                    SearchMemberResponse.builder()
+                            .id(member.getId())
+                            .major(member.getMajor())
+                            .name(member.getName())
+                            .build()
+            );
+        }
+
+        return memberSearchList;
     }
 
     public Member findByLoginId(String loginId) {
@@ -227,23 +219,5 @@ public class MemberService {
     private Member findByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-    }
-
-    // 수정하기
-    public List<SearchMemberResponse> searchByMemberName(String name) {
-
-        List<Member> memberList = memberRepository.findByMemberName(name);
-        List<SearchMemberResponse> memberSearchList = new ArrayList<>(memberList.size());
-        for (Member member : memberList) {
-            memberSearchList.add(
-                    SearchMemberResponse.builder()
-                            .id(member.getId())
-                            .major(member.getMajor())
-                            .name(member.getName())
-                            .build()
-            );
-        }
-
-        return memberSearchList;
     }
 }

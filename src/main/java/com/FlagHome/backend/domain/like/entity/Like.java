@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.like.entity;
 
 import com.FlagHome.backend.domain.like.enums.LikeType;
-import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.member.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

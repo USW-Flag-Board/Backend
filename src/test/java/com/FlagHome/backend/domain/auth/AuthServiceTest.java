@@ -2,11 +2,10 @@ package com.FlagHome.backend.domain.auth;
 
 import com.FlagHome.backend.domain.auth.controller.dto.JoinRequest;
 import com.FlagHome.backend.domain.auth.controller.dto.SignUpResponse;
-import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import com.FlagHome.backend.domain.auth.service.AuthService;
+import com.FlagHome.backend.domain.member.Member;
 import com.FlagHome.backend.domain.member.Role;
-import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.domain.member.sleeping.repository.SleepingRepository;
@@ -29,7 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
@@ -53,12 +53,6 @@ public class AuthServiceTest {
     @Autowired
     private EntityManager entityManager;
 
-    @Autowired
-    private SleepingRepository sleepingRepository;
-
-    @Autowired
-    private MemberService memberService;
-
     @Test
     @DisplayName("아이디 유효성 테스트")
     void validateLoginIdTest() {
@@ -77,53 +71,22 @@ public class AuthServiceTest {
         assertThat(shouldBeFalse).isFalse();
     }
 
-    @Nested
-    @DisplayName("이메일 유효성 테스트")
-    class validateEmailTest {
-        @Test
-        @DisplayName("이메일 유효성 감사 성공")
-        void validateEmailSuccessTest() {
-            // given
-            String email = "gmlwh124@suwon.ac.kr";
-            String noneEmail = "hejow124@suwon.ac.kr";
-
-            memberRepository.save(Member.builder().email(email).build());
-            // when
-            boolean shouldBeTrue = authService.validateEmail(email);
-            boolean shouldBeFalse = authService.validateEmail(noneEmail);
-
-            // them
-            assertThat(shouldBeTrue).isTrue();
-            assertThat(shouldBeFalse).isFalse();
-        }
-
-        @Test
-        @DisplayName("수원대 이메일이 아니라 실패")
-        void validateUSWEmailFailTest() {
-            String email = "gmlwh124@naver.com";
-
-            assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> authService.validateEmail(email))
-                    .withMessage(ErrorCode.NOT_USW_EMAIL.getMessage());
-        }
-    }
 
     @Test
-    @DisplayName("비밀번호 유효성 검사 실패로 join 실패")
-    void joinFailTest() {
-        String loginId = "gmlwh124";
-        String password = "1234";
+    @DisplayName("이메일 유효성 감사 성공")
+    void validateEmailSuccessTest() {
+        // given
         String email = "gmlwh124@suwon.ac.kr";
+        String noneEmail = "hejow124@suwon.ac.kr";
 
-        JoinRequest joinRequest = JoinRequest.builder()
-                .loginId(loginId)
-                .password(password)
-                .email(email)
-                .build();
+        memberRepository.save(Member.builder().email(email).build());
+        // when
+        boolean shouldBeTrue = authService.validateEmail(email);
+        boolean shouldBeFalse = authService.validateEmail(noneEmail);
 
-        assertThatExceptionOfType(CustomException.class)
-                .isThrownBy(() -> authService.join(joinRequest))
-                .withMessage(ErrorCode.INVALID_PASSWORD.getMessage());
+        // then
+        assertThat(shouldBeTrue).isTrue();
+        assertThat(shouldBeFalse).isFalse();
     }
 
     @Nested

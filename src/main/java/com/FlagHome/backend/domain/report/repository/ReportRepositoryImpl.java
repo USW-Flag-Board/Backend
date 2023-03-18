@@ -1,16 +1,15 @@
 package com.FlagHome.backend.domain.report.repository;
 
-import com.FlagHome.backend.domain.report.dto.QReportResponse;
-import com.FlagHome.backend.domain.report.dto.ReportResponse;
+import com.FlagHome.backend.domain.report.controller.dto.QReportResponse;
+import com.FlagHome.backend.domain.report.controller.dto.ReportResponse;
 import com.querydsl.jpa.JPQLQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.FlagHome.backend.domain.member.entity.QMember.member;
-import static com.FlagHome.backend.domain.report.entity.QReport.report;
-
+import static com.FlagHome.backend.domain.member.QMember.member;
+import static com.FlagHome.backend.domain.report.QReport.report;
 
 @Repository
 @RequiredArgsConstructor

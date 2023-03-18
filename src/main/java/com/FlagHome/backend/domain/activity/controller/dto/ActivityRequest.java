@@ -4,15 +4,10 @@ import com.FlagHome.backend.domain.activity.ActivityType;
 import com.FlagHome.backend.domain.activity.BookUsage;
 import com.FlagHome.backend.domain.activity.Proceed;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ActivityRequest {
     @Schema(name = "활동 이름", description = "한 문장으로 나타낼 이름", required = true)
     private String name;
@@ -34,4 +29,16 @@ public class ActivityRequest {
 
     @Schema(name = "사용할 책 이름", description = "사용에 체크했다면 입력 받기")
     private String bookName;
+
+    @Builder
+    public ActivityRequest(String name, String description, Proceed proceed, ActivityType activityType,
+                           String githubLink, BookUsage bookUsage, String bookName) {
+        this.name = name;
+        this.description = description;
+        this.proceed = proceed;
+        this.activityType = activityType;
+        this.githubLink = githubLink;
+        this.bookUsage = bookUsage;
+        this.bookName = bookName;
+    }
 }

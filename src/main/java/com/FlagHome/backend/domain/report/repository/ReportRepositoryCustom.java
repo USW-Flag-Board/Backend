@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.report.repository;
 
-import com.FlagHome.backend.domain.report.dto.ReportResponse;
+import com.FlagHome.backend.domain.report.controller.dto.ReportResponse;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

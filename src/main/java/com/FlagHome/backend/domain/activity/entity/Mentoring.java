@@ -5,7 +5,7 @@ import com.FlagHome.backend.domain.activity.BookUsage;
 import com.FlagHome.backend.domain.activity.Proceed;
 import com.FlagHome.backend.domain.activity.Status;
 import com.FlagHome.backend.domain.activity.controller.dto.ActivityRequest;
-import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.member.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

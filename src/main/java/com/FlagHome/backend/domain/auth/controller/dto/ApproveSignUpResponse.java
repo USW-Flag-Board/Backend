@@ -15,7 +15,7 @@ public class ApproveSignUpResponse {
     private String email;
     private Major major;
 
-    @Builder(access = AccessLevel.PACKAGE)
+    @Builder
     @QueryProjection
     public ApproveSignUpResponse(long id, String name, String email, Major major) {
         this.id = id;

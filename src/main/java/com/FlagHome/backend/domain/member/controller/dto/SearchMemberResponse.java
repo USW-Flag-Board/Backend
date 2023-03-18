@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain.member.dto;
+package com.FlagHome.backend.domain.member.controller.dto;
 
 import com.FlagHome.backend.domain.member.Major;
 import io.swagger.v3.oas.annotations.media.Schema;

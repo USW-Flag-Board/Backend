@@ -3,7 +3,7 @@ package com.FlagHome.backend.domain.like.service;
 import com.FlagHome.backend.domain.like.entity.Like;
 import com.FlagHome.backend.domain.like.enums.LikeType;
 import com.FlagHome.backend.domain.like.repository.LikeRepository;
-import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.member.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.repository.PostRepository;

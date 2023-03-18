@@ -1,13 +1,13 @@
 package com.FlagHome.backend.domain.member.avatar.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AvatarResponse {
     private String loginId;
 

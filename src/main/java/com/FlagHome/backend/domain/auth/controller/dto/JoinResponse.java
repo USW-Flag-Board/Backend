@@ -1,14 +1,13 @@
 package com.FlagHome.backend.domain.auth.controller.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class JoinResponse {
     @Schema(description = "이메일", example = "gmlwh124@suwon.ac.kr")

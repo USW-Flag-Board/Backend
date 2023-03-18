@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static com.FlagHome.backend.domain.activity.activityapply.entity.QActivityApply.activityApply;
-import static com.FlagHome.backend.domain.member.entity.QMember.member;
+import static com.FlagHome.backend.domain.member.QMember.member;
 
 
 @Repository

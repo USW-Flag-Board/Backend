@@ -8,8 +8,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import static com.FlagHome.backend.domain.member.QMember.member;
 import static com.FlagHome.backend.domain.member.avatar.entity.QAvatar.avatar;
-import static com.FlagHome.backend.domain.member.entity.QMember.member;
 import static com.querydsl.core.types.dsl.Expressions.asString;
 
 @Repository

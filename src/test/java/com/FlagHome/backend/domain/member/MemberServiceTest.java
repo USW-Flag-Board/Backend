@@ -1,12 +1,11 @@
 package com.FlagHome.backend.domain.member;
 
-import com.FlagHome.backend.domain.auth.entity.AuthInformation;
+import com.FlagHome.backend.domain.auth.AuthInformation;
 import com.FlagHome.backend.global.common.Status;
 import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
 import com.FlagHome.backend.domain.member.avatar.entity.Avatar;
 import com.FlagHome.backend.domain.member.avatar.repository.AvatarRepository;
-import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.global.exception.CustomException;
@@ -140,8 +139,7 @@ public class MemberServiceTest {
             String wrongPassword = "123456";
 
             assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> memberService.changePassword(email, wrongPassword))
-                    .withMessage(ErrorCode.INVALID_PASSWORD.getMessage());
+                    .isThrownBy(() -> memberService.changePassword(email, wrongPassword));
         }
     }
 
@@ -198,7 +196,7 @@ public class MemberServiceTest {
         String newNickName = "hejow";
 
         Member member = memberRepository.save(Member.builder().loginId(loginId).build());
-        Avatar avatar = avatarRepository.save(Avatar.builder()
+        avatarRepository.save(Avatar.builder()
                 .member(member)
                 .nickName(nickName)
                 .build());
@@ -234,7 +232,7 @@ public class MemberServiceTest {
         memberService.changeAllToSleepMember();
 
         //then
-        assertThat(member.getStatus()).isEqualTo(Status.SLEEPING);
+        assertThat(member.getStatus() == Status.SLEEPING).isTrue();
     }
 
 //    @Test
