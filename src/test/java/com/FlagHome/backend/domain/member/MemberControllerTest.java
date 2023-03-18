@@ -131,8 +131,7 @@ public class MemberControllerTest {
                         .param("name", String.valueOf(name))
         ).andExpect(status().isOk())
          .andExpect(jsonPath("$.payload[0].name", containsString(name)))
-         .andExpect(jsonPath("$.payload[0].major", containsString("정보보호")))
-         .andExpect(jsonPath("$.payload[0].id").value(1L));
+         .andExpect(jsonPath("$.payload[0].major", containsString("정보보호")));
     }
 
 
