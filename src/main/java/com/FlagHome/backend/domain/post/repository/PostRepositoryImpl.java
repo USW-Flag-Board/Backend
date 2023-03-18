@@ -41,7 +41,9 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         post.createdAt,
                         post.board.id,
                         post.member.name,
-                        post.viewCount //데이터가 부족한것 같다. 좋아요수ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
+                        post.viewCount,
+                        post.likeList.size(),
+                        post.replyList.size()
                 ))
                 .from(post)
                 .where(boardNameCondition(boardName),
