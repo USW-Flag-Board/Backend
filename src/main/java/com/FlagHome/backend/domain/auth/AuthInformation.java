@@ -1,23 +1,17 @@
-package com.FlagHome.backend.domain.auth.entity;
+package com.FlagHome.backend.domain.auth;
 
-import com.FlagHome.backend.domain.auth.JoinType;
 import com.FlagHome.backend.domain.auth.controller.dto.JoinRequest;
 import com.FlagHome.backend.domain.member.Major;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AuthInformation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +29,7 @@ public class AuthInformation {
     @Column
     private String email;
 
-    @Column
+    @Column(name = "nick_name")
     private String nickName;
 
     @Column(name = "phone_number")
@@ -52,7 +46,7 @@ public class AuthInformation {
     @Enumerated(value = EnumType.STRING)
     private JoinType joinType;
 
-    @Column
+    @Column(name = "authorized")
     private boolean isAuthorizedCrew;
 
     @Column
@@ -60,6 +54,23 @@ public class AuthInformation {
 
     @Column(name="created_at", updatable = false)
     private LocalDateTime createdAt;
+
+    @Builder
+    public AuthInformation(String loginId, String password, String name, String email, String nickName,
+                           String phoneNumber, String studentId, Major major, JoinType joinType, boolean isAuthorizedCrew, String certification, LocalDateTime createdAt) {
+        this.loginId = loginId;
+        this.password = password;
+        this.name = name;
+        this.email = email;
+        this.nickName = nickName;
+        this.phoneNumber = phoneNumber;
+        this.studentId = studentId;
+        this.major = major;
+        this.joinType = joinType;
+        this.isAuthorizedCrew = isAuthorizedCrew;
+        this.certification = certification;
+        this.createdAt = createdAt;
+    }
 
     public static AuthInformation of(JoinRequest joinRequest, String certification) {
         return AuthInformation.builder()

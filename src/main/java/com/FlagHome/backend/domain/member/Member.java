@@ -1,15 +1,10 @@
-package com.FlagHome.backend.domain.member.entity;
+package com.FlagHome.backend.domain.member;
 
 import com.FlagHome.backend.global.common.BaseEntity;
 import com.FlagHome.backend.global.common.Status;
-import com.FlagHome.backend.domain.auth.entity.AuthInformation;
-import com.FlagHome.backend.domain.member.Major;
-import com.FlagHome.backend.domain.member.Role;
+import com.FlagHome.backend.domain.auth.AuthInformation;
 import com.FlagHome.backend.domain.member.sleeping.entity.Sleeping;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
@@ -18,7 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Member extends BaseEntity {
     @Id
@@ -63,7 +58,7 @@ public class Member extends BaseEntity {
         this.password = passwordEncoder.encode(password);
     }
 
-    public void updateLastLoginTime() {
+    public void renewLastLoginTime() {
         this.lastLoginTime = LocalDateTime.now();
     }
 
@@ -78,8 +73,8 @@ public class Member extends BaseEntity {
         this.status = Status.GENERAL;
     }
 
-    public void emptyAndUpdate(Status status) {
-        this.status = status;
+    public void changeToSleep() {
+        this.status = Status.SLEEPING;
         this.loginId = null;
         this.password = null;
         this.email = null;

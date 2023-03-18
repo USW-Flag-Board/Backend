@@ -5,6 +5,7 @@ import com.FlagHome.backend.domain.activity.controller.dto.*;
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.mapper.ActivityMapper;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantResponse;
+import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
 import com.FlagHome.backend.domain.activity.service.ActivityService;
 import com.FlagHome.backend.global.common.ApplicationResponse;
 import com.FlagHome.backend.global.utility.SecurityUtils;
@@ -86,6 +87,18 @@ public class ActivityController {
     }
 
     @Tag(name = "activity")
+    @Operation(summary = "참가한 활동 리스트 가져오기", description = "멤버 프로필 참가 활동 리스트 가져오기")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "멤버 프로필을 가져왔습니다.")
+    })
+    @ResponseStatus(OK)
+    @GetMapping("/{loginId}")
+    public ApplicationResponse<List<ParticipateResponse>> getAllActivitiesOfMember(@PathVariable String loginId) {
+        List<ParticipateResponse> response = activityService.getAllActivitiesOfMember(loginId);
+        return new ApplicationResponse<>(response);
+    }
+
+    @Tag(name = "activity")
     @Operation(summary = "활동 신청여부 확인하기", description = "[토큰필요] 한 멤버가 한 활동에 한번만 신청할 수 있다.\n\n" +
             "False : 미신청, True : 신청")
     @ApiResponses({
@@ -96,7 +109,7 @@ public class ActivityController {
     @PostMapping("/{id}/check")
     public ApplicationResponse<Boolean> checkApply(@PathVariable("id") long activityId) {
         Boolean check = activityService.checkApply(SecurityUtils.getMemberId(), activityId);
-        return new ApplicationResponse(check);
+        return new ApplicationResponse<>(check);
     }
 
     @Tag(name = "activity")

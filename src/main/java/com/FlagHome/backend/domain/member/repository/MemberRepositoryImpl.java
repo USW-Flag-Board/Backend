@@ -1,8 +1,8 @@
 package com.FlagHome.backend.domain.member.repository;
 
+import com.FlagHome.backend.domain.member.Member;
 import com.FlagHome.backend.domain.member.controller.dto.LoginLogResponse;
 import com.FlagHome.backend.domain.member.controller.dto.QLoginLogResponse;
-import com.FlagHome.backend.domain.member.entity.Member;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -10,7 +10,8 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.FlagHome.backend.domain.member.entity.QMember.member;
+import static com.FlagHome.backend.domain.member.QMember.member;
+
 
 @Repository
 @RequiredArgsConstructor
@@ -59,7 +60,6 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
     @Override
     public List<Member> findByMemberName(String name) {
-
         return queryFactory
                         .select(member)
                         .from(member)

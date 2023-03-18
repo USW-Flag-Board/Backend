@@ -2,7 +2,7 @@ package com.FlagHome.backend.domain.member.avatar.entity;
 
 
 import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
-import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.member.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

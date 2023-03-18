@@ -1,6 +1,5 @@
 package com.FlagHome.backend.domain.auth;
 
-import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import com.FlagHome.backend.global.config.QueryDslConfig;
 import org.junit.jupiter.api.DisplayName;

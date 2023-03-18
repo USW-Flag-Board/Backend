@@ -12,6 +12,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 import static org.springframework.http.HttpStatus.OK;
 
 @Tag(name = "auth", description = "인증 API")
@@ -36,11 +38,10 @@ public class AuthController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "중복 체크 성공. False : 사용 가능, True : 사용 불가능"),
             @ApiResponse(responseCode = "400", description = "이메일 형식이 아닙니다."),
-            @ApiResponse(responseCode = "422", description = "수원대학교 웹 메일 주소가 아닙니다.")
     })
     @ResponseStatus(OK)
     @PostMapping("/check/email")
-    public ApplicationResponse<Boolean> checkEmail(@RequestBody CheckEmailRequest checkEmailRequest) {
+    public ApplicationResponse<Boolean> checkEmail(@RequestBody @Valid CheckEmailRequest checkEmailRequest) {
         boolean check = authService.validateEmail(checkEmailRequest.getEmail());
         return new ApplicationResponse(check);
     }

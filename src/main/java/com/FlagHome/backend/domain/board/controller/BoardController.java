@@ -5,7 +5,7 @@ import com.FlagHome.backend.domain.board.dto.BoardPostDto;
 import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.board.mapper.BoardMapper;
 import com.FlagHome.backend.domain.board.service.BoardService;
-import com.FlagHome.backend.domain.post.dto.PostDto;
+import com.FlagHome.backend.domain.post.controller.dto.PostDto;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.utility.UriCreator;

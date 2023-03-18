@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain.report.dto;
+package com.FlagHome.backend.domain.report.controller.dto;
 
 import com.FlagHome.backend.domain.report.ReportType;
 import com.querydsl.core.annotations.QueryProjection;
@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ReportResponse {
-
     private long id;
     private String reported;
     private ReportType reportType;

@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.auth.controller.dto;
 
 import com.FlagHome.backend.domain.auth.JoinType;
-import com.FlagHome.backend.domain.auth.entity.AuthInformation;
+import com.FlagHome.backend.domain.auth.AuthInformation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

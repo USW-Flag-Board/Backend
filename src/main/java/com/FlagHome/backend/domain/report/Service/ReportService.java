@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.report.Service;
 
-import com.FlagHome.backend.domain.report.dto.ReportResponse;
-import com.FlagHome.backend.domain.report.entity.Report;
+import com.FlagHome.backend.domain.report.Report;
+import com.FlagHome.backend.domain.report.controller.dto.ReportResponse;
 import com.FlagHome.backend.domain.report.repository.ReportRepository;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
@@ -30,9 +30,7 @@ public class ReportService {
 
     @Transactional
     public void deleteReport(long reportId) {
-        Report report = reportRepository.findById(reportId)
-                .orElseThrow(() -> new CustomException(ErrorCode.REPORT_NOT_FOUND));
-
+        Report report = findById(reportId);
         reportRepository.delete(report);
     }
 
@@ -42,8 +40,17 @@ public class ReportService {
     }
 
     private void validateDuplicateReport(Long memberId,String url) {
-        if (reportRepository.existsByMemberIdAndUrl(memberId, url)) {
+        if (isExistReport(memberId, url)) {
             throw new CustomException(ErrorCode.ALREADY_REPORTED);
         }
+    }
+
+    private boolean isExistReport(Long memberId, String url) {
+        return reportRepository.existsByMemberIdAndUrl(memberId, url);
+    }
+
+    private Report findById(long reportId) {
+        return reportRepository.findById(reportId)
+                .orElseThrow(() -> new CustomException(ErrorCode.REPORT_NOT_FOUND));
     }
 }

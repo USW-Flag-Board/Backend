@@ -4,7 +4,7 @@ import com.FlagHome.backend.global.common.BaseEntity;
 import com.FlagHome.backend.global.common.Status;
 import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.like.entity.Like;
-import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.member.Member;
 import com.FlagHome.backend.domain.reply.entity.Reply;
 import lombok.*;
 

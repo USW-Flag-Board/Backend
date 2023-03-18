@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain.post.dto;
+package com.FlagHome.backend.domain.post.controller.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

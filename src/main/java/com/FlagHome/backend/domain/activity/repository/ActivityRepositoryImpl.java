@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.FlagHome.backend.domain.activity.entity.QActivity.activity;
-import static com.FlagHome.backend.domain.member.entity.QMember.member;
+import static com.FlagHome.backend.domain.member.QMember.member;
 import static com.querydsl.core.types.dsl.Expressions.asNumber;
 
 @Repository

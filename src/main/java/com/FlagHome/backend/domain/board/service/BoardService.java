@@ -3,7 +3,7 @@ package com.FlagHome.backend.domain.board.service;
 import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.board.enums.SearchType;
 import com.FlagHome.backend.domain.board.repository.BoardRepository;
-import com.FlagHome.backend.domain.post.dto.PostDto;
+import com.FlagHome.backend.domain.post.controller.dto.PostDto;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;

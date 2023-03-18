@@ -13,9 +13,10 @@ import com.FlagHome.backend.domain.activity.entity.Mentoring;
 import com.FlagHome.backend.domain.activity.entity.Project;
 import com.FlagHome.backend.domain.activity.entity.Study;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantResponse;
+import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.service.MemberActivityService;
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
-import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.member.Member;
 import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
@@ -63,6 +64,10 @@ public class ActivityService {
     public List<ParticipantResponse> getAllParticipants(long memberId, long activityId) {
         validateLeaderAndReturn(memberId, activityId);
         return memberActivityService.getAllParticipants(activityId);
+    }
+
+    public List<ParticipateResponse> getAllActivitiesOfMember(String loginId) {
+        return memberActivityService.getAllActivitiesOfMember(loginId);
     }
 
     public Boolean checkApply(long memberId, long activityId) {

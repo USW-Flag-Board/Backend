@@ -3,11 +3,11 @@ package com.FlagHome.backend.domain.post.service;
 import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.board.repository.BoardRepository;
 import com.FlagHome.backend.global.common.Status;
-import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.member.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
-import com.FlagHome.backend.domain.post.dto.CreatePostRequest;
-import com.FlagHome.backend.domain.post.dto.GetPostResponse;
-import com.FlagHome.backend.domain.post.dto.LightPostDto;
+import com.FlagHome.backend.domain.post.controller.dto.CreatePostRequest;
+import com.FlagHome.backend.domain.post.controller.dto.GetPostResponse;
+import com.FlagHome.backend.domain.post.controller.dto.LightPostDto;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
 import com.FlagHome.backend.global.exception.CustomException;
@@ -62,6 +62,12 @@ public class PostService {
             throw new CustomException(ErrorCode.POST_NOT_FOUND);
 
         return new GetPostResponse(postEntity);
+    }
+
+    // 예외 생각하기
+    @Transactional(readOnly = true)
+    public List<LightPostDto> getMemberPostByLoginId(String loginId) {
+        return postRepository.findMyPostList(loginId);
     }
 
     @Transactional

@@ -1,9 +1,10 @@
 package com.FlagHome.backend.domain.member.controller;
 
+import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.MyProfileResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
 import com.FlagHome.backend.domain.member.controller.dto.*;
-import com.FlagHome.backend.domain.member.dto.SearchMemberResponse;
+import com.FlagHome.backend.domain.member.controller.dto.SearchMemberResponse;
 import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.global.common.ApplicationResponse;
 import com.FlagHome.backend.global.utility.SecurityUtils;
@@ -28,17 +29,16 @@ public class MemberController {
     private final MemberService memberService;
 
     @Tag(name = "member")
-    @Operation(summary = "멤버 프로필 가져오기", description = "프로필, 작성한 게시글, 참여한 활동들을 가져온다.\n" +
-            "추후 도메인에 맞춰서 분리할 예정")
+    @Operation(summary = "아바타 정보 가져오기", description = "프로필을 가져온다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "멤버 정보를 가져왔습니다."),
+            @ApiResponse(responseCode = "200", description = "멤버 아바타를 가져왔습니다."),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
     })
     @ResponseStatus(OK)
     @GetMapping("/{loginId}")
-    public ApplicationResponse<MemberProfileResponse> getMemberPage(@PathVariable("loginId") String loginId) {
-        MemberProfileResponse response = memberService.getMemberProfile(loginId);
-        return new ApplicationResponse(response);
+    public ApplicationResponse<AvatarResponse> getMemberAvatar(@PathVariable("loginId") String loginId) {
+        AvatarResponse response = memberService.getAvatar(loginId);
+        return new ApplicationResponse<>(response);
     }
 
     @Tag(name = "member")
@@ -172,7 +172,6 @@ public class MemberController {
     })
     @GetMapping("/search")
     public ApplicationResponse searchMemberByName(@RequestParam(value = "name") String name) {
-
         List<SearchMemberResponse> response = memberService.searchByMemberName(name);
         return new ApplicationResponse(response);
     }

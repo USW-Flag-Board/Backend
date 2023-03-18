@@ -1,21 +1,15 @@
-package com.FlagHome.backend.domain.report.entity;
+package com.FlagHome.backend.domain.report;
 
-import com.FlagHome.backend.domain.member.entity.Member;
-import com.FlagHome.backend.domain.report.ReportType;
-import com.FlagHome.backend.domain.report.dto.ReportRequest;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.FlagHome.backend.domain.member.Member;
+import com.FlagHome.backend.domain.report.controller.dto.ReportRequest;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Builder
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,6 +36,18 @@ public class Report {
 
     @Column
     private LocalDateTime createdAt;
+
+    @Builder
+    public Report(Long id, Member reporter, Member reported, String reportedURL,
+                  ReportType reportType, String detailReason, LocalDateTime createdAt) {
+        this.id = id;
+        this.reporter = reporter;
+        this.reported = reported;
+        this.reportedURL = reportedURL;
+        this.reportType = reportType;
+        this.detailReason = detailReason;
+        this.createdAt = createdAt;
+    }
 
     public static Report from(ReportRequest reportRequest) {
         return Report.builder()

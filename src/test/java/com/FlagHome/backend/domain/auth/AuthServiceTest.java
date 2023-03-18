@@ -2,11 +2,10 @@ package com.FlagHome.backend.domain.auth;
 
 import com.FlagHome.backend.domain.auth.controller.dto.JoinRequest;
 import com.FlagHome.backend.domain.auth.controller.dto.SignUpResponse;
-import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import com.FlagHome.backend.domain.auth.service.AuthService;
 import com.FlagHome.backend.domain.member.Role;
-import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.member.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.domain.member.sleeping.repository.SleepingRepository;

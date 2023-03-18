@@ -2,7 +2,7 @@ package com.FlagHome.backend.domain.activity;
 
 
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
-import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.member.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;

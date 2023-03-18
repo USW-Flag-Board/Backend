@@ -4,10 +4,10 @@ import com.FlagHome.backend.domain.auth.JoinType;
 import com.FlagHome.backend.domain.auth.controller.dto.JoinRequest;
 import com.FlagHome.backend.domain.auth.controller.dto.JoinResponse;
 import com.FlagHome.backend.domain.auth.controller.dto.SignUpResponse;
-import com.FlagHome.backend.domain.auth.entity.AuthInformation;
+import com.FlagHome.backend.domain.auth.AuthInformation;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import com.FlagHome.backend.global.infra.aws.ses.service.MailService;
-import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.member.Member;
 import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.domain.token.dto.TokenResponse;
 import com.FlagHome.backend.domain.token.service.RefreshTokenService;
@@ -79,7 +79,7 @@ public class AuthService {
         TokenResponse tokenResponse = jwtUtilizer.generateTokenDto(authentication);
         refreshTokenService.issueToken(authentication.getName(), tokenResponse.getRefreshToken());
 
-        member.updateLastLoginTime();
+        member.renewLastLoginTime();
         return tokenResponse;
     }
 

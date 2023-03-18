@@ -1,11 +1,9 @@
 package com.FlagHome.backend.domain.report.repository;
 
-import com.FlagHome.backend.domain.report.entity.Report;
+import com.FlagHome.backend.domain.report.Report;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
