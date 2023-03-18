@@ -30,6 +30,8 @@ public class PostDto {
     private String memberName;
     private List<ReplyDto> replyList;
     private List<LikeDto> likeList;
+    private int replyCount;
+    private int likeCount;
     private long boardId;
     private Status status;
     private long viewCount;
@@ -57,12 +59,14 @@ public class PostDto {
     }
 
     // Projection용 생성자
-    public PostDto(long id, String title, LocalDateTime createdAt, long boardId, String memberName, long viewCount) {
+    public PostDto(long id, String title, LocalDateTime createdAt, long boardId, String memberName, long viewCount, int likeCount, int replyCount) {
         this.id = id;
         this.title = title;
         this.createdAt = createdAt;
         this.boardId = boardId;
         this.memberName = memberName;
         this.viewCount = viewCount;
+        this.likeCount = likeCount;
+        this.replyCount = replyCount;
     }
 }
