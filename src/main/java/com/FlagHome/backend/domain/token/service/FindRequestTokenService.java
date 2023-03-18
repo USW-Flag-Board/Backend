@@ -16,12 +16,7 @@ public class FindRequestTokenService implements TokenService {
     private final TokenRepository tokenRepository;
     @Override
     public Token issueToken(String key, String value) {
-        Token findRequestToken = FindRequestToken.builder()
-                .key(key)
-                .value(value)
-                .expiredAt(LocalDateTime.now().plusMinutes(3))
-                .build();
-
+        Token findRequestToken = FindRequestToken.of(key, value);
         return tokenRepository.save(findRequestToken);
     }
 

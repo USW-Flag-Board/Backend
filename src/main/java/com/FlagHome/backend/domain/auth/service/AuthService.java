@@ -1,20 +1,19 @@
 package com.FlagHome.backend.domain.auth.service;
 
+import com.FlagHome.backend.domain.auth.AuthInformation;
 import com.FlagHome.backend.domain.auth.JoinType;
 import com.FlagHome.backend.domain.auth.controller.dto.JoinRequest;
 import com.FlagHome.backend.domain.auth.controller.dto.JoinResponse;
 import com.FlagHome.backend.domain.auth.controller.dto.SignUpResponse;
-import com.FlagHome.backend.domain.auth.AuthInformation;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
-import com.FlagHome.backend.global.infra.aws.ses.service.MailService;
 import com.FlagHome.backend.domain.member.Member;
 import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.domain.token.dto.TokenResponse;
 import com.FlagHome.backend.domain.token.service.RefreshTokenService;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
+import com.FlagHome.backend.global.infra.aws.ses.service.MailService;
 import com.FlagHome.backend.global.jwt.JwtUtilizer;
-import com.FlagHome.backend.global.utility.InputValidator;
 import com.FlagHome.backend.global.utility.RandomGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,20 +31,17 @@ public class AuthService {
     private final AuthRepository authRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtUtilizer jwtUtilizer;
-    private final InputValidator inputValidator;
 
     public Boolean validateDuplicateLoginId(String loginId) {
         return memberService.isExistLoginId(loginId);
     }
 
     public Boolean validateEmail(String email) {
-        inputValidator.validateUSWEmail(email);
         return memberService.isExistEmail(email);
     }
 
     @Transactional
     public JoinResponse join(JoinRequest joinRequest) {
-        inputValidator.validatePassword(joinRequest.getPassword());
         String certificationNumber = RandomGenerator.getRandomNumber();
 
         authRepository.save(AuthInformation.of(joinRequest, certificationNumber));
@@ -58,7 +54,7 @@ public class AuthService {
     public SignUpResponse signUp(String email, String certification) {
         AuthInformation authInformation = findLatestAuthInformationByEmail(email);
         authInformation.validateAuthTime();
-        inputValidator.validateCertification(certification, authInformation.getCertification());
+        authInformation.validateCertification(certification);
 
         if (authInformation.getJoinType() == JoinType.동아리) {
             authInformation.authorized();

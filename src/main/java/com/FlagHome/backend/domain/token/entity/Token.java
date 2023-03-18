@@ -3,6 +3,7 @@ package com.FlagHome.backend.domain.token.entity;
 
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table(name = "token", indexes = @Index(columnList = "token_key"))
 public abstract class Token {
@@ -39,7 +40,7 @@ public abstract class Token {
         return !StringUtils.equals(this.value, value);
     }
 
-    public void updateValue(String value, LocalDateTime expiredAt) {
+    public void renewValue(String value, LocalDateTime expiredAt) {
         this.value = value;
         this.expiredAt = expiredAt;
     }
@@ -47,6 +48,12 @@ public abstract class Token {
     public void validateExpireTime() {
         if (this.expiredAt.isBefore(LocalDateTime.now())) {
             throw new CustomException(ErrorCode.INVALID_TOKEN);
+        }
+    }
+
+    public void validateValue(String certification) {
+        if (!StringUtils.equals(certification, this.value)) {
+            throw new CustomException(ErrorCode.CERTIFICATION_NOT_MATCH);
         }
     }
 }

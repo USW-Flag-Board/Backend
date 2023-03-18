@@ -3,7 +3,6 @@ package com.FlagHome.backend.domain.auth;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import com.FlagHome.backend.domain.auth.service.AuthService;
 import com.FlagHome.backend.global.infra.aws.ses.service.MailService;
-import com.FlagHome.backend.global.utility.InputValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,9 +14,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 public class AuthServiceSliceTest {
     @InjectMocks
     private AuthService authService;
-
-    @Mock
-    private InputValidator inputValidator;
 
     @Mock
     private AuthRepository authRepository;

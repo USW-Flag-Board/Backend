@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -67,7 +68,7 @@ public class MemberController {
     })
     @ResponseStatus(CREATED)
     @PostMapping("/find/id")
-    public ApplicationResponse<FindResponse> findId(@RequestBody FindIdRequest findIdRequest) {
+    public ApplicationResponse<FindResponse> findId(@RequestBody @Valid FindIdRequest findIdRequest) {
         FindResponse response = memberService.findId(findIdRequest.getName(), findIdRequest.getEmail());
         return new ApplicationResponse(response);
     }
@@ -84,7 +85,7 @@ public class MemberController {
     })
     @ResponseStatus(CREATED)
     @PostMapping("/find/password")
-    public ApplicationResponse<FindResponse> findPassword(@RequestBody FindPasswordRequest findPasswordRequest) {
+    public ApplicationResponse<FindResponse> findPassword(@RequestBody @Valid FindPasswordRequest findPasswordRequest) {
         FindResponse response = memberService.findPassword(findPasswordRequest.getLoginId(), findPasswordRequest.getEmail());
         return new ApplicationResponse(response);
     }
@@ -99,9 +100,9 @@ public class MemberController {
     })
     @ResponseStatus(OK)
     @PostMapping("/certification")
-    public ApplicationResponse<String> authCertification(@RequestBody AuthenticationRequest authenticationRequest) {
+    public ApplicationResponse<String> authCertification(@RequestBody @Valid AuthenticationRequest authenticationRequest) {
         String loginId = memberService.validateCertification(authenticationRequest.getEmail(), authenticationRequest.getCertification());
-        return new ApplicationResponse(loginId);
+        return new ApplicationResponse<>(loginId);
     }
 
     @Tag(name = "member")
@@ -113,7 +114,7 @@ public class MemberController {
     })
     @ResponseStatus(OK)
     @PutMapping("/find/password")
-    public ApplicationResponse changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
+    public ApplicationResponse changePassword(@RequestBody @Valid ChangePasswordRequest changePasswordRequest) {
         memberService.changePassword(changePasswordRequest.getEmail(), changePasswordRequest.getNewPassword());
         return new ApplicationResponse();
     }
@@ -129,7 +130,7 @@ public class MemberController {
     })
     @ResponseStatus(OK)
     @PutMapping("/password")
-    public ApplicationResponse updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest) {
+    public ApplicationResponse updatePassword(@RequestBody @Valid UpdatePasswordRequest updatePasswordRequest) {
         memberService.updatePassword(SecurityUtils.getMemberId(), updatePasswordRequest.getCurrentPassword(), updatePasswordRequest.getNewPassword());
         return new ApplicationResponse();
     }

@@ -2,21 +2,20 @@ package com.FlagHome.backend.domain.auth.controller.dto;
 
 import com.FlagHome.backend.domain.auth.JoinType;
 import com.FlagHome.backend.domain.member.Major;
-import io.swagger.v3.oas.annotations.Parameter;
+import com.FlagHome.backend.global.annotation.PasswordFormat;
+import com.FlagHome.backend.global.annotation.USWEmailFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @Builder
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class JoinRequest {
     @Schema(description = "아이디", required = true, example = "gmlwh124")
     private String loginId;
 
+    @PasswordFormat
     @Schema(description = "비밀번호", required = true, example = "qwer1234!")
     private String password;
 
@@ -26,6 +25,7 @@ public class JoinRequest {
     @Schema(name = "닉네임", required = true, example = "john")
     private String nickName;
 
+    @USWEmailFormat
     @Schema(description = "이메일", required = true, example = "gmlwh124@suwon.ac.kr")
     private String email;
 

@@ -43,7 +43,7 @@ public class AuthController {
     @PostMapping("/check/email")
     public ApplicationResponse<Boolean> checkEmail(@RequestBody @Valid CheckEmailRequest checkEmailRequest) {
         boolean check = authService.validateEmail(checkEmailRequest.getEmail());
-        return new ApplicationResponse(check);
+        return new ApplicationResponse<>(check);
     }
 
     @Tag(name = "auth")
@@ -56,7 +56,7 @@ public class AuthController {
     })
     @ResponseStatus(OK)
     @PostMapping("/join")
-    public ApplicationResponse<JoinResponse> join(@RequestBody JoinRequest joinRequest) {
+    public ApplicationResponse<JoinResponse> join(@RequestBody @Valid JoinRequest joinRequest) {
         JoinResponse response = authService.join(joinRequest);
         return new ApplicationResponse(response);
     }

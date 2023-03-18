@@ -17,7 +17,6 @@ import com.FlagHome.backend.domain.token.service.FindRequestTokenService;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.infra.aws.ses.service.MailService;
-import com.FlagHome.backend.global.utility.InputValidator;
 import com.FlagHome.backend.global.utility.RandomGenerator;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +36,6 @@ public class MemberService {
     private final AvatarService avatarService;
     private final FindRequestTokenService findRequestTokenService;
     private final PasswordEncoder passwordEncoder;
-    private final InputValidator inputValidator;
     private final SleepingService sleepingService;
 
     public Boolean isExistLoginId(String loginId) {
@@ -68,8 +66,6 @@ public class MemberService {
     }
 
     public FindResponse findId(String name, String email) {
-        inputValidator.validateUSWEmail(email);
-
         Member member = findByEmail(email);
         if (!StringUtils.equals(member.getName(), name)) {
             throw new CustomException(ErrorCode.EMAIL_NAME_NOT_MATCH);
@@ -79,7 +75,6 @@ public class MemberService {
     }
 
     public FindResponse findPassword(String loginId, String email) {
-        inputValidator.validateUSWEmail(email);
         Member member = findByEmail(email);
 
         if (!StringUtils.equals(loginId, member.getLoginId())) {
@@ -92,13 +87,12 @@ public class MemberService {
     public String validateCertification(String email, String certification) {
         Token findRequestToken = findRequestTokenService.findToken(email);
         findRequestToken.validateExpireTime();
-        inputValidator.validateCertification(certification, findRequestToken.getValue());
-        return findByEmail(email).getLoginId();
+        findRequestToken.validateValue(certification);
+        return email;
     }
 
     @Transactional // 비밀번호를 잊어서 바꾸는 경우
     public void changePassword(String email, String newPassword) {
-        inputValidator.validatePassword(newPassword);
         Member member = findByEmail(email);
         member.updatePassword(newPassword, passwordEncoder);
     }
@@ -106,7 +100,6 @@ public class MemberService {
     @Transactional // 비밀번호를 유저가 변경하는 경우
     public void updatePassword(Long memberId, String currentPassword, String newPassword) {
         Member member = validateMemberPassword(memberId, currentPassword);
-        inputValidator.validatePassword(newPassword);
 
         if (passwordEncoder.matches(newPassword, member.getPassword())) {
             throw new CustomException(ErrorCode.PASSWORD_IS_SAME);

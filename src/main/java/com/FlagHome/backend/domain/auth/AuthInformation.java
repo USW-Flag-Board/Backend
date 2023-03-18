@@ -5,6 +5,7 @@ import com.FlagHome.backend.domain.member.Major;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import lombok.*;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -97,6 +98,12 @@ public class AuthInformation {
         final LocalDateTime expireAt = this.createdAt.plusMinutes(10);
         if (expireAt.isBefore(LocalDateTime.now())) {
             throw new CustomException(ErrorCode.EXPIRED_AUTH_INFORMATION);
+        }
+    }
+
+    public void validateCertification(String certification) {
+        if (!StringUtils.equals(certification, this.certification)) {
+            throw new CustomException(ErrorCode.CERTIFICATION_NOT_MATCH);
         }
     }
 }
