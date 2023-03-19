@@ -73,7 +73,7 @@ public class SecurityConfig {
         http.authorizeRequests()
             .antMatchers("/auth/**").permitAll()
 
-            .antMatchers(HttpMethod.GET, "/activities", "/activities/{id}").permitAll()
+            .antMatchers(HttpMethod.GET, "/activities", "/activities/{id}", "/activities/{loginId}/profile").permitAll()
             .antMatchers("/activities/**").hasRole("CREW")
 
             .antMatchers(HttpMethod.GET, "/boards/**").permitAll()

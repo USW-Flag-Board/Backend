@@ -1,15 +1,18 @@
 package com.FlagHome.backend.global.exception;
 
-import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ErrorResponse {
-    @ApiModelProperty(example = "LOGIN_FAILED")
+    @Schema(example = "LOGIN_FAILED")
     private ErrorCode errorCode;
 
-    @ApiModelProperty(example = "로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.")
+    @Schema(example = "로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.")
     private String message;
 
     @Builder
