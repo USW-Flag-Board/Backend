@@ -78,7 +78,7 @@ public class FileService {
             return new PutObjectRequest(bucket, fileName, file.getInputStream(), createObjectMetaData(file))
                     .withCannedAcl(CannedAccessControlList.PublicRead);
         } catch (IOException e) {
-            throw new CustomException(ErrorCode.FILE_CONVERT_FAIL);
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 
