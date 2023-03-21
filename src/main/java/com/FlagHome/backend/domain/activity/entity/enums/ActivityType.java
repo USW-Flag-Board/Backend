@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain.activity;
+package com.FlagHome.backend.domain.activity.entity.enums;
 
 import com.FlagHome.backend.domain.activity.controller.dto.ActivityRequest;
 import com.FlagHome.backend.domain.activity.entity.Activity;

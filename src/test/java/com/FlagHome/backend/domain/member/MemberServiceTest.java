@@ -1,6 +1,7 @@
 package com.FlagHome.backend.domain.member;
 
 import com.FlagHome.backend.domain.auth.AuthInformation;
+import com.FlagHome.backend.domain.member.mapper.MemberMapper;
 import com.FlagHome.backend.global.common.Status;
 import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
@@ -38,6 +39,9 @@ public class MemberServiceTest {
 
     @Autowired
     private EntityManager entityManager;
+
+    @Autowired
+    private MemberMapper memberMapper;
 
     @Autowired
     private AvatarRepository avatarRepository;
@@ -206,7 +210,7 @@ public class MemberServiceTest {
                 .build();
 
         // when
-        memberService.updateAvatar(member.getId(), updateAvatarRequest);
+        memberService.updateAvatar(member.getId(), memberMapper.toAvatar(updateAvatarRequest));
 
         // then
         AvatarResponse response = avatarRepository.getAvatar(loginId);

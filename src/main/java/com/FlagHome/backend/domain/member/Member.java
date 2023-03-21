@@ -58,7 +58,7 @@ public class Member extends BaseEntity {
         this.password = passwordEncoder.encode(password);
     }
 
-    public void renewLastLoginTime() {
+    public void renewLoginTime() {
         this.lastLoginTime = LocalDateTime.now();
     }
 

@@ -167,25 +167,4 @@ public class MemberServiceSliceTest {
         assertThat(response.getName()).isEqualTo(myProfileResponse.getName());
         assertThat(response.getEmail()).isEqualTo(myProfileResponse.getEmail());
     }
-
-    @Test
-    @DisplayName("회원 이름으로 검색 테스트")
-    void searchByMemberName() {
-        //given
-        Member member1 = Member.builder().major(Major.정보보호).id(1L).name("홍길동").build();
-        Member member2 = Member.builder().major(Major.컴퓨터SW).id(2L).name("김길동").build();
-        List<Member> memberList = List.of(member1,member2);
-
-        String name = "길동";
-
-        given(memberRepository.findByMemberName(Mockito.anyString())).willReturn(memberList);
-
-        //when
-        List<SearchMemberResponse> resultList = memberService.searchByMemberName(name);
-
-        //then
-        assertThat(resultList.get(0).getName()).contains(name);
-        assertThat(resultList.get(1).getName()).contains(name);
-
-    }
 }

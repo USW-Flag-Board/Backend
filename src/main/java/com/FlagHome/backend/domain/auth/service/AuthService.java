@@ -75,7 +75,7 @@ public class AuthService {
         TokenResponse tokenResponse = jwtUtilizer.generateTokenDto(authentication);
         refreshTokenService.issueToken(authentication.getName(), tokenResponse.getRefreshToken());
 
-        member.renewLastLoginTime();
+        member.renewLoginTime();
         return tokenResponse;
     }
 

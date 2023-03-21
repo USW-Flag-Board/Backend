@@ -1,11 +1,10 @@
 package com.FlagHome.backend.domain.member.avatar.service;
 
+import com.FlagHome.backend.domain.member.Member;
 import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.MyProfileResponse;
-import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
 import com.FlagHome.backend.domain.member.avatar.entity.Avatar;
 import com.FlagHome.backend.domain.member.avatar.repository.AvatarRepository;
-import com.FlagHome.backend.domain.member.Member;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -33,9 +32,9 @@ public class AvatarService {
     }
 
     @Transactional
-    public void updateAvatar(long memberId, UpdateAvatarRequest updateAvatarRequest) {
-        Avatar avatar = findByMemberId(memberId);
-        avatar.updateAvatar(updateAvatarRequest);
+    public void updateAvatar(long memberId, Avatar avatar) {
+        Avatar findAvatar = findByMemberId(memberId);
+        findAvatar.updateAvatar(avatar);
     }
 
     @Transactional

@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.activity.controller.dto;
 
-import com.FlagHome.backend.domain.activity.ActivityType;
-import com.FlagHome.backend.domain.activity.Status;
+import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
+import com.FlagHome.backend.domain.activity.entity.enums.Status;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AccessLevel;
 import lombok.Builder;

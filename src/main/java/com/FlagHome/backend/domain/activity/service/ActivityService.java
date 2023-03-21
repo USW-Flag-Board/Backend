@@ -1,7 +1,6 @@
 package com.FlagHome.backend.domain.activity.service;
 
-import com.FlagHome.backend.domain.activity.ActivityType;
-import com.FlagHome.backend.domain.activity.Status;
+import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
 import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyResponse;
 import com.FlagHome.backend.domain.activity.activityapply.entity.ActivityApply;
 import com.FlagHome.backend.domain.activity.activityapply.service.ActivityApplyService;
@@ -126,7 +125,7 @@ public class ActivityService {
 
         activityApplyService.deleteAllApplies(activityId);
         memberActivityService.registerMembers(activity, memberList);
-        activity.updateStatus(Status.ON);
+        activity.closeRecruitment();
     }
 
     @Transactional
@@ -134,13 +133,13 @@ public class ActivityService {
         Activity activity = validateLeaderAndReturn(memberId, activityId);
 
         memberActivityService.deleteAllByActivity(activity.getId());
-        activity.updateStatus(Status.RECRUIT);
+        activity.reopenRecruitment();
     }
 
     @Transactional
     public void finishActivity(long memberId, long activityId) {
         Activity activity = validateLeaderAndReturn(memberId, activityId);
-        activity.updateStatus(Status.OFF);
+        activity.finishActivity();
     }
 
     @Transactional

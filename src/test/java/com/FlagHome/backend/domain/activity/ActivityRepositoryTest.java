@@ -8,6 +8,8 @@ import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.Mentoring;
 import com.FlagHome.backend.domain.activity.entity.Project;
 import com.FlagHome.backend.domain.activity.entity.Study;
+import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
+import com.FlagHome.backend.domain.activity.entity.enums.Status;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.entity.MemberActivity;

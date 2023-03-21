@@ -1,10 +1,11 @@
 package com.FlagHome.backend.domain.activity.entity;
 
-import com.FlagHome.backend.domain.activity.ActivityType;
-import com.FlagHome.backend.domain.activity.Proceed;
-import com.FlagHome.backend.domain.activity.Status;
+import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
+import com.FlagHome.backend.domain.activity.entity.enums.Proceed;
+import com.FlagHome.backend.domain.activity.entity.enums.Status;
 import com.FlagHome.backend.domain.activity.controller.dto.ActivityRequest;
 import com.FlagHome.backend.domain.member.Member;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Project extends Activity {
     @Column
     private String githubLink;

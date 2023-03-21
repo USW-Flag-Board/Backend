@@ -3,8 +3,9 @@ package com.FlagHome.backend.domain.member.controller;
 import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.MyProfileResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
+import com.FlagHome.backend.domain.member.avatar.entity.Avatar;
 import com.FlagHome.backend.domain.member.controller.dto.*;
-import com.FlagHome.backend.domain.member.controller.dto.SearchMemberResponse;
+import com.FlagHome.backend.domain.member.mapper.MemberMapper;
 import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.global.common.ApplicationResponse;
 import com.FlagHome.backend.global.utility.SecurityUtils;
@@ -26,8 +27,8 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/members")
 @RequiredArgsConstructor
 public class MemberController {
-    private final static String MEMBER_DEFAULT_URL = "/api/members";
     private final MemberService memberService;
+    private final MemberMapper memberMapper;
 
     @Tag(name = "member")
     @Operation(summary = "아바타 정보 가져오기", description = "프로필을 가져온다.")
@@ -57,14 +58,23 @@ public class MemberController {
     }
 
     @Tag(name = "member")
+    @Operation(summary = "이름으로 회원 검색", description = "이름, 전공 정보를 리스트로 반환합니다. 없으면 null을 리턴합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "멤버 검색 리스트 가져오기에 성공하였습니다."),
+    })
+    @GetMapping("/search")
+    public ApplicationResponse searchMemberByName(@RequestParam(value = "name") String name) {
+        List<SearchMemberResponse> response = memberService.searchByMemberName(name);
+        return new ApplicationResponse(response);
+    }
+
+    @Tag(name = "member")
     @Operation(summary = "아이디 찾기", description = "존재하는 멤버라면 인증 이메일 발송한다.\n" +
                                                     "201이 뜬다면 인증을 진행한다")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "조회에 성공해 메일을 발송합니다."),
-            @ApiResponse(responseCode = "400", description = "이메일 형식이 아닙니다."),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
             @ApiResponse(responseCode = "409", description = "이메일과 이름이 일치하지 않습니다."),
-            @ApiResponse(responseCode = "422", description = "수원대학교 웹 메일 주소가 아닙니다.")
     })
     @ResponseStatus(CREATED)
     @PostMapping("/find/id")
@@ -78,10 +88,8 @@ public class MemberController {
                                                             "201이 뜬다면 인증을 진행한다")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "조회에 성공해 메일을 발송합니다."),
-            @ApiResponse(responseCode = "400", description = "이메일 형식이 아닙니다."),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
             @ApiResponse(responseCode = "409", description = "이메일과 아이디가 일치하지 않습니다."),
-            @ApiResponse(responseCode = "422", description = "수원대학교 웹 메일 주소가 아닙니다.")
     })
     @ResponseStatus(CREATED)
     @PostMapping("/find/password")
@@ -110,7 +118,6 @@ public class MemberController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "새로운 비밀번호를 변경했습니다."),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
-            @ApiResponse(responseCode = "422", description = "사용할 수 없는 비밀번호 입니다. (8~20자 이내 영문, 숫자, 특수문자를 모두 포함)")
     })
     @ResponseStatus(OK)
     @PutMapping("/find/password")
@@ -126,7 +133,6 @@ public class MemberController {
             @ApiResponse(responseCode = "401", description = "토큰을 넣지 않으면 401 발생"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
             @ApiResponse(responseCode = "409", description = "기존과 같은 비밀번호는 사용할 수 없습니다."),
-            @ApiResponse(responseCode = "422", description = "사용할 수 없는 비밀번호 입니다. (8~20자 이내 영문, 숫자, 특수문자를 모두 포함)")
     })
     @ResponseStatus(OK)
     @PutMapping("/password")
@@ -145,8 +151,9 @@ public class MemberController {
     @ResponseStatus(OK)
     @PutMapping("/avatar")
     public ApplicationResponse updateAvatar(@RequestBody UpdateAvatarRequest updateAvatarRequest) {
-        memberService.updateAvatar(SecurityUtils.getMemberId(), updateAvatarRequest);
-        return new ApplicationResponse();
+        Avatar avatar = memberMapper.toAvatar(updateAvatarRequest);
+        memberService.updateAvatar(SecurityUtils.getMemberId(), avatar);
+        return new ApplicationResponse<>();
     }
 
     @Tag(name = "member")
@@ -159,21 +166,8 @@ public class MemberController {
     })
     @ResponseStatus(OK)
     @DeleteMapping
-    public ApplicationResponse withdraw(@RequestBody WithdrawRequest withdrawRequest) {
+    public ApplicationResponse withdraw(@RequestBody @Valid WithdrawRequest withdrawRequest) {
         memberService.withdraw(SecurityUtils.getMemberId(), withdrawRequest.getCurrentPassword());
         return new ApplicationResponse();
-    }
-
-
-    @Tag(name = "member")
-    @Operation(summary = "이름으로 회원 검색",
-            description = "회원의 id, 이름, 전공 정보를 리스트로 반환합니다. 정보가 없으면 null을 리턴합니다.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "멤버 검색 리스트 가져오기에 성공하였습니다."),
-    })
-    @GetMapping("/search")
-    public ApplicationResponse searchMemberByName(@RequestParam(value = "name") String name) {
-        List<SearchMemberResponse> response = memberService.searchByMemberName(name);
-        return new ApplicationResponse(response);
     }
 }

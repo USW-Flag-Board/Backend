@@ -1,11 +1,11 @@
 package com.FlagHome.backend.domain.activity.entity;
 
-import com.FlagHome.backend.global.common.BaseEntity;
-import com.FlagHome.backend.domain.activity.ActivityType;
-import com.FlagHome.backend.domain.activity.Proceed;
-import com.FlagHome.backend.domain.activity.Status;
 import com.FlagHome.backend.domain.activity.controller.dto.ActivityRequest;
+import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
+import com.FlagHome.backend.domain.activity.entity.enums.Proceed;
+import com.FlagHome.backend.domain.activity.entity.enums.Status;
 import com.FlagHome.backend.domain.member.Member;
+import com.FlagHome.backend.global.common.BaseEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -62,9 +62,18 @@ public abstract class Activity extends BaseEntity {
         this.leader = member;
     }
 
-    public void updateStatus(Status status) {
-        this.status = status;
+    public void closeRecruitment() {
+        this.status = Status.ON;
     }
+
+    public void reopenRecruitment() {
+        this.status = Status.RECRUIT;
+    }
+
+    public void finishActivity() {
+        this.status = Status.OFF;
+    }
+
     public void update(ActivityRequest activityRequest) {
         this.name = activityRequest.getName();
         this.description = activityRequest.getDescription();
