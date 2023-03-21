@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.activity.controller.dto;
 
-import com.FlagHome.backend.domain.activity.ActivityType;
+import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 

@@ -2,16 +2,13 @@ package com.FlagHome.backend.domain.member.controller.dto;
 
 import com.FlagHome.backend.domain.token.entity.Token;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Builder
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class FindResponse {
     @Schema(name = "이메일", example = "gmlwh124@suwon.ac.kr")

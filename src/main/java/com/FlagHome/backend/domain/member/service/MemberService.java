@@ -4,7 +4,7 @@ import com.FlagHome.backend.domain.auth.AuthInformation;
 import com.FlagHome.backend.domain.member.Member;
 import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.MyProfileResponse;
-import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
+import com.FlagHome.backend.domain.member.avatar.entity.Avatar;
 import com.FlagHome.backend.domain.member.avatar.service.AvatarService;
 import com.FlagHome.backend.domain.member.controller.dto.FindResponse;
 import com.FlagHome.backend.domain.member.controller.dto.LoginLogResponse;
@@ -24,7 +24,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -135,8 +134,8 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateAvatar(long memberId, UpdateAvatarRequest updateAvatarRequest) {
-        avatarService.updateAvatar(memberId, updateAvatarRequest);
+    public void updateAvatar(long memberId, Avatar avatar) {
+        avatarService.updateAvatar(memberId, avatar);
     }
 
     @Transactional
@@ -155,7 +154,6 @@ public class MemberService {
         memberList.forEach(Member::changeToSleep);
     }
 
-    @Transactional
     //@Scheduled(cron = "000000")
     public void beforeSleep() {
         List<String> emailLists = memberRepository.getAllBeforeSleepEmails();
@@ -164,7 +162,7 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public List<Member> getMembersByLoginId(List<String> loginIdList) {
-        return memberRepository.getMembersByLoginId(loginIdList);
+        return memberRepository.getMembersByLoginIdList(loginIdList);
     }
 
     @Transactional(readOnly = true)
@@ -172,21 +170,9 @@ public class MemberService {
         return memberRepository.getAllLoginLogs();
     }
 
-    // 수정하기
+    @Transactional(readOnly = true)
     public List<SearchMemberResponse> searchByMemberName(String name) {
-        List<Member> memberList = memberRepository.findByMemberName(name);
-        List<SearchMemberResponse> memberSearchList = new ArrayList<>(memberList.size());
-        for (Member member : memberList) {
-            memberSearchList.add(
-                    SearchMemberResponse.builder()
-                            .id(member.getId())
-                            .major(member.getMajor())
-                            .name(member.getName())
-                            .build()
-            );
-        }
-
-        return memberSearchList;
+        return memberRepository.getSearchResultsByName(name);
     }
 
     public Member findByLoginId(String loginId) {

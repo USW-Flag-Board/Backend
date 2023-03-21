@@ -28,12 +28,12 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/activities")
 @RequiredArgsConstructor
 public class ActivityController {
-    private static final String DEFAULT_URL = "/api/activities";
+    private static final String DEFAULT_URL = "/activities";
     private final ActivityService activityService;
     private final ActivityMapper activityMapper;
 
     @Tag(name = "activity")
-    @Operation(summary = "활동 상세보기")
+    @Operation(summary = "활동 상세보기", description = "선택한 활동 상세보기")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "활동 상세보기가 정상적으로 처리되었습니다."),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 활동입니다.")
@@ -42,7 +42,7 @@ public class ActivityController {
     @GetMapping("/{id}")
     public ApplicationResponse<ActivityResponse> getActivity(@PathVariable("id") long activityId) {
         ActivityResponse response = activityService.getActivity(activityId);
-        return new ApplicationResponse(response);
+        return new ApplicationResponse<>(response);
     }
 
     @Tag(name = "activity")
@@ -55,7 +55,7 @@ public class ActivityController {
     @GetMapping
     public ApplicationResponse<GetAllActivitiesResponse> getAllActivities() {
         GetAllActivitiesResponse response = activityService.getAllActivities();
-        return new ApplicationResponse(response);
+        return new ApplicationResponse<>(response);
     }
 
     @Tag(name = "activity")
@@ -89,10 +89,10 @@ public class ActivityController {
     @Tag(name = "activity")
     @Operation(summary = "참가한 활동 리스트 가져오기", description = "멤버 프로필 참가 활동 리스트 가져오기")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "멤버 프로필을 가져왔습니다.")
+            @ApiResponse(responseCode = "200", description = "참가한 활동이 없다면 빈 리스트 리턴")
     })
     @ResponseStatus(OK)
-    @GetMapping("/{loginId}")
+    @GetMapping("/{loginId}/profile")
     public ApplicationResponse<List<ParticipateResponse>> getAllActivitiesOfMember(@PathVariable String loginId) {
         List<ParticipateResponse> response = activityService.getAllActivitiesOfMember(loginId);
         return new ApplicationResponse<>(response);

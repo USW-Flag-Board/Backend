@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.activity.memberactivity.dto;
 
-import com.FlagHome.backend.domain.activity.Status;
+import com.FlagHome.backend.domain.activity.entity.enums.Status;
 import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;

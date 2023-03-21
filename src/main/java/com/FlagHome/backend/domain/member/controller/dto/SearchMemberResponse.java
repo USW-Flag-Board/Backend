@@ -1,16 +1,16 @@
 package com.FlagHome.backend.domain.member.controller.dto;
 
 import com.FlagHome.backend.domain.member.Major;
+import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SearchMemberResponse {
-    @Schema(name = "아이디")
-    private Long id;
     @Schema(name = "회원 이름", example = "홍길동")
     private String name;
 
@@ -18,8 +18,8 @@ public class SearchMemberResponse {
     private String major;
 
     @Builder
-    public SearchMemberResponse(Long id, String name, Major major) {
-        this.id = id;
+    @QueryProjection
+    public SearchMemberResponse(String name, Major major) {
         this.name =  name;
         this.major = String.valueOf(major);
     }

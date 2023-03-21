@@ -6,17 +6,17 @@ import com.FlagHome.backend.domain.board.dto.BoardResultDto;
 import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.board.service.BoardService;
 import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface BoardMapper {
+    BoardMapper INSTANCE = Mappers.getMapper(BoardMapper.class);
 
     BoardResultDto BoardToBoardResultDto(Board board);
     List<BoardResultDto> BoardListToBoardResultDtoList(List<Board> categories);
 
-    @Transactional
     default Board BoardPostDtoToBoard(BoardPostDto boardPostDto, BoardService boardService) {
 
         if ( boardPostDto == null ) {

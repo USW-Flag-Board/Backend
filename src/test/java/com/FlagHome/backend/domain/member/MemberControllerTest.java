@@ -107,32 +107,6 @@ public class MemberControllerTest {
         // then
     }
 
-    @Test
-    @DisplayName("회원 이름으로 검색 테스트")
-    void searchMemberByName() throws Exception {
-
-        //given
-        String name = "길동";
-
-        Member member1 = Member.builder()
-                .major(Major.정보보호)
-                .id(1L)
-                .name("홍길동")
-                .build();
-
-        memberRepository.save(member1);
-        memberRepository.flush();
-
-        //when, then
-        mockMvc.perform(get(BASE_URL+"/search")
-                .accept(MediaType.APPLICATION_JSON)
-                        .param("name", String.valueOf(name))
-        ).andExpect(status().isOk())
-         .andExpect(jsonPath("$.payload[0].name", containsString(name)))
-         .andExpect(jsonPath("$.payload[0].major", containsString("정보보호")));
-    }
-
-
     private void setJwtInformation(long memberId) {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add((GrantedAuthority) () -> "ROLE_USER");

@@ -3,18 +3,13 @@ package com.FlagHome.backend.domain.member.avatar.entity;
 
 import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
 import com.FlagHome.backend.domain.member.Member;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
-@Builder
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Avatar {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,10 +28,18 @@ public class Avatar {
     @Column(name = "profile_img")
     private String profileImg;
 
-    public void updateAvatar(UpdateAvatarRequest updateAvatarRequest) {
-        this.nickName = updateAvatarRequest.getNickName();
-        this.bio = updateAvatarRequest.getBio();
-        this.profileImg = updateAvatarRequest.getProfileImg();
+    public void updateAvatar(Avatar avatar) {
+        this.nickName = avatar.getNickName();
+        this.bio = avatar.getBio();
+        this.profileImg = avatar.getProfileImg();
+    }
+
+    @Builder
+    public Avatar(Member member, String nickName, String bio, String profileImg) {
+        this.member = member;
+        this.nickName = nickName;
+        this.bio = bio;
+        this.profileImg = profileImg;
     }
 
     public static Avatar of(Member member, String nickName) {

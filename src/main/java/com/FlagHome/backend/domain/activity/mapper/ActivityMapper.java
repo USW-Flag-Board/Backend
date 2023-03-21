@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.activity.mapper;
 
-import com.FlagHome.backend.domain.activity.ActivityType;
+import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
 import com.FlagHome.backend.domain.activity.controller.dto.ActivityRequest;
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.global.exception.CustomException;

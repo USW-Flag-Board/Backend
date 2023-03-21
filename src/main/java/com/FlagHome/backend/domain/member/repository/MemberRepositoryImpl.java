@@ -3,6 +3,8 @@ package com.FlagHome.backend.domain.member.repository;
 import com.FlagHome.backend.domain.member.Member;
 import com.FlagHome.backend.domain.member.controller.dto.LoginLogResponse;
 import com.FlagHome.backend.domain.member.controller.dto.QLoginLogResponse;
+import com.FlagHome.backend.domain.member.controller.dto.QSearchMemberResponse;
+import com.FlagHome.backend.domain.member.controller.dto.SearchMemberResponse;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -11,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.FlagHome.backend.domain.member.QMember.member;
+import static com.querydsl.core.types.dsl.Expressions.asString;
 
 
 @Repository
@@ -40,7 +43,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
     }
 
     @Override
-    public List<Member> getMembersByLoginId(List<String> loginIdList) {
+    public List<Member> getMembersByLoginIdList(List<String> loginIdList) {
         return queryFactory
                 .selectFrom(member)
                 .where(member.loginId.in(loginIdList))
@@ -59,11 +62,13 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
     }
 
     @Override
-    public List<Member> findByMemberName(String name) {
+    public List<SearchMemberResponse> getSearchResultsByName(String name) {
         return queryFactory
-                        .select(member)
-                        .from(member)
-                        .where(member.name.contains(name))
-                        .fetch();
+                .select(new QSearchMemberResponse(
+                        asString(name).as(member.name),
+                        member.major))
+                .from(member)
+                .where(member.name.eq(name))
+                .fetch();
     }
 }
