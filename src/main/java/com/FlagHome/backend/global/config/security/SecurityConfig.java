@@ -79,9 +79,9 @@ public class SecurityConfig {
             .antMatchers(HttpMethod.GET, "/boards/**").permitAll()
             .antMatchers("/boards/**").hasRole("ADMIN")
 
-            .antMatchers(HttpMethod.GET, "/members/{loginId}").permitAll()
+            .antMatchers(HttpMethod.GET, "/members/{loginId}", "/members/search").permitAll()
             .antMatchers(HttpMethod.PUT, "/members/find/password").permitAll()
-            .antMatchers(HttpMethod.POST, "/members/**").permitAll()
+            .antMatchers(HttpMethod.POST, "/members/find/password", "/members/certification", "/members/find/id").permitAll()
             .antMatchers("/members/**").hasAnyRole("USER", "CREW")
 
             .antMatchers(HttpMethod.GET, "/posts/**").permitAll()

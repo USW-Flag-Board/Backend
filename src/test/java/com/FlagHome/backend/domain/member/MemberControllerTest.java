@@ -89,7 +89,7 @@ public class MemberControllerTest {
                 .nickName("john")
                 .member(member)
                 .bio("안녕하세요?")
-                .profileImg("default")
+                .profileImage("default")
                 .build());
 
         setJwtInformation(member.getId());

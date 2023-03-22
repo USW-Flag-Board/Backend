@@ -88,7 +88,7 @@ public class MemberRepositoryTest {
                                     .member(member)
                                     .bio(bio)
                                     .nickName(nickName)
-                                    .profileImg(profileImg)
+                                    .profileImage(profileImg)
                                     .build());
 
             // when
@@ -126,7 +126,7 @@ public class MemberRepositoryTest {
             avatarRepository.save(Avatar.builder()
                     .member(member)
                     .bio(bio)
-                    .profileImg(profileImg)
+                    .profileImage(profileImg)
                     .nickName(nickName)
                     .build());
 

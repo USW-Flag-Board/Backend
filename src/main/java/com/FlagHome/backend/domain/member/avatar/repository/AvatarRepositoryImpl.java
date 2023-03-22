@@ -24,7 +24,7 @@ public class AvatarRepositoryImpl implements AvatarRepositoryCustom {
                         asString(loginId).as(member.loginId),
                         avatar.nickName,
                         avatar.bio,
-                        avatar.profileImg))
+                        avatar.profileImage))
                 .from(avatar)
                 .innerJoin(avatar.member, member)
                 .where(member.loginId.eq(loginId))
@@ -37,7 +37,7 @@ public class AvatarRepositoryImpl implements AvatarRepositoryCustom {
                 .select(new QMyProfileResponse(
                         avatar.nickName,
                         avatar.bio,
-                        avatar.profileImg,
+                        avatar.profileImage,
                         member.name,
                         member.email,
                         member.major,
