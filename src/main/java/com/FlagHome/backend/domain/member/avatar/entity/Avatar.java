@@ -1,7 +1,6 @@
 package com.FlagHome.backend.domain.member.avatar.entity;
 
 
-import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
 import com.FlagHome.backend.domain.member.Member;
 import lombok.*;
 
@@ -26,20 +25,23 @@ public class Avatar {
     private String bio;
 
     @Column(name = "profile_img")
-    private String profileImg;
+    private String profileImage;
 
     public void updateAvatar(Avatar avatar) {
         this.nickName = avatar.getNickName();
         this.bio = avatar.getBio();
-        this.profileImg = avatar.getProfileImg();
+    }
+
+    public void changeProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 
     @Builder
-    public Avatar(Member member, String nickName, String bio, String profileImg) {
+    public Avatar(Member member, String nickName, String bio, String profileImage) {
         this.member = member;
         this.nickName = nickName;
         this.bio = bio;
-        this.profileImg = profileImg;
+        this.profileImage = profileImage;
     }
 
     public static Avatar of(Member member, String nickName) {
@@ -47,7 +49,7 @@ public class Avatar {
                 .member(member)
                 .nickName(nickName)
                 .bio("")
-                .profileImg("default")
+                .profileImage("default")
                 .build();
     }
 }

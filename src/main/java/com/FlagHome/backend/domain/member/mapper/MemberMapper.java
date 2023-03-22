@@ -13,5 +13,10 @@ import org.mapstruct.factory.Mappers;
 public interface MemberMapper {
     MemberMapper INSTANCE = Mappers.getMapper(MemberMapper.class);
 
-    Avatar toAvatar(UpdateAvatarRequest updateAvatarRequest);
+    default Avatar toAvatar(UpdateAvatarRequest updateAvatarRequest) {
+        return Avatar.builder()
+                .nickName(updateAvatarRequest.getNickName())
+                .bio(updateAvatarRequest.getBio())
+                .build();
+    }
 }

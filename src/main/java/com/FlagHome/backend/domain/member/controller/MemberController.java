@@ -3,6 +3,7 @@ package com.FlagHome.backend.domain.member.controller;
 import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.MyProfileResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
+import com.FlagHome.backend.domain.member.avatar.dto.UpdateProfileImageRequest;
 import com.FlagHome.backend.domain.member.avatar.entity.Avatar;
 import com.FlagHome.backend.domain.member.controller.dto.*;
 import com.FlagHome.backend.domain.member.mapper.MemberMapper;
@@ -15,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -114,6 +116,19 @@ public class MemberController {
     }
 
     @Tag(name = "member")
+    @Operation(summary = "프로필 사진 업데이트하기", description = "[토큰 필요] 개인 프로필 이미지 수정")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "프로필 사진 변경완료"),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류입니다. 관리자에게 문의주세요.")
+    })
+    @ResponseStatus(OK)
+    @PostMapping("/avatar/image")
+    public ApplicationResponse updateProfileImage(@RequestPart("profile-Image") MultipartFile profileImage) {
+        memberService.updateProfileImage(SecurityUtils.getMemberId(), profileImage);
+        return new ApplicationResponse<>();
+    }
+
+    @Tag(name = "member")
     @Operation(summary = "비밀번호 수정", description = "비밀번호 찾기로 새로운 비밀번호를 설정하는 경우")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "새로운 비밀번호를 변경했습니다."),
@@ -142,8 +157,7 @@ public class MemberController {
     }
 
     @Tag(name = "member")
-    @Operation(summary = "아바타 수정하기", description = "[토큰 필요] 개인 프로필 수정한다.\n" +
-                                                       " 프로필은 개인 정보를 담지 않고 있다.")
+    @Operation(summary = "아바타 수정하기", description = "[토큰 필요] 개인 프로필 중 가벼운 정보만 수정")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "프로필 수정을 완료하였습니다."),
             @ApiResponse(responseCode = "401", description = "토큰을 넣지 않으면 401 발생")

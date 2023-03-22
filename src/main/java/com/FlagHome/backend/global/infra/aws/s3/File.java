@@ -30,8 +30,7 @@ public class File extends BaseEntity {
     private Status status;
 
     @Builder
-    public File(Long id, Post post, String link, Status status) {
-        this.id = id;
+    public File(Post post, String link, Status status) {
         this.post = post;
         this.link = link;
         this.status = status;

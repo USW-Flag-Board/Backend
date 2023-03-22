@@ -1,10 +1,13 @@
 package com.FlagHome.backend.global.infra.aws.ses.dto;
 
 import com.amazonaws.services.simpleemail.model.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MailRequest {
     private static final String FROM = "no-reply@flaground.kr";
 

@@ -11,9 +11,6 @@ public class PasswordFormatValidator implements ConstraintValidator<PasswordForm
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         final Matcher matcher = PASSWORD_PATTERN.matcher(value);
-        if (matcher.find()) {
-            return Boolean.TRUE;
-        }
-        return Boolean.FALSE;
+        return matcher.matches();
     }
 }

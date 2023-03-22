@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -136,6 +137,11 @@ public class MemberService {
     @Transactional
     public void updateAvatar(long memberId, Avatar avatar) {
         avatarService.updateAvatar(memberId, avatar);
+    }
+
+    @Transactional
+    public void updateProfileImage(Long memberId, MultipartFile file) {
+        avatarService.updateProfileImage(memberId, file);
     }
 
     @Transactional
