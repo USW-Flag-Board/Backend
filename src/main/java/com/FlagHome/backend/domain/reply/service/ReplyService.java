@@ -47,7 +47,7 @@ public class ReplyService {
                                 .replyOrder(replyDto.getReplyOrder())
                                 .replyDepth(replyDto.getReplyDepth())
                                 .likeList(new ArrayList<>())
-                                .status(Status.ON)
+                                .status(Status.NORMAL)
                                 .build();
 
         List<Reply> replyList = foundPost.getReplyList();

@@ -35,8 +35,8 @@ public class MemberActivityRepositoryImpl implements MemberActivityRepositoryCus
                         activity.id,
                         activity.name,
                         activity.createdAt.year(), // Long 타입 해결하기 (메모리 누수)
-                        activity.season,
-                        activity.status))
+                        activity.semester,
+                        activity.activityStatus))
                 .from(memberActivity)
                 .innerJoin(memberActivity.member, member)
                 .innerJoin(memberActivity.activity, activity)

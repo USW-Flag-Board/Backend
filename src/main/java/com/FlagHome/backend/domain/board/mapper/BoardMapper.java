@@ -12,8 +12,6 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface BoardMapper {
-    BoardMapper INSTANCE = Mappers.getMapper(BoardMapper.class);
-
     BoardResultDto BoardToBoardResultDto(Board board);
     List<BoardResultDto> BoardListToBoardResultDtoList(List<Board> categories);
 

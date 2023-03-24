@@ -1,9 +1,10 @@
 package com.FlagHome.backend.domain.activity.entity;
 
 import com.FlagHome.backend.domain.activity.controller.dto.ActivityRequest;
+import com.FlagHome.backend.domain.activity.entity.enums.ActivityStatus;
 import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
 import com.FlagHome.backend.domain.activity.entity.enums.Proceed;
-import com.FlagHome.backend.domain.activity.entity.enums.Status;
+import com.FlagHome.backend.domain.activity.entity.enums.Semester;
 import com.FlagHome.backend.domain.member.Member;
 import com.FlagHome.backend.global.common.BaseEntity;
 import lombok.Getter;
@@ -42,20 +43,21 @@ public abstract class Activity extends BaseEntity {
 
     @Column
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private ActivityStatus activityStatus;
 
     @Column
-    private String season;
+    @Enumerated(EnumType.STRING)
+    private Semester semester;
 
     public Activity(String name, String description, Member leader, ActivityType activityType,
-                    Proceed proceed, Status status, LocalDateTime season) {
+                    Proceed proceed, ActivityStatus activityStatus, int semester) {
         this.name = name;
         this.description = description;
         this.leader = leader;
         this.activityType = activityType;
         this.proceed = proceed;
-        this.status = status;
-        this.season = getSeason(season);
+        this.activityStatus = activityStatus;
+        this.semester = Semester.findSemester(semester);
     }
 
     public void updateLeader(Member member) {
@@ -63,34 +65,20 @@ public abstract class Activity extends BaseEntity {
     }
 
     public void closeRecruitment() {
-        this.status = Status.ON;
+        this.activityStatus = ActivityStatus.ON;
     }
 
     public void reopenRecruitment() {
-        this.status = Status.RECRUIT;
+        this.activityStatus = ActivityStatus.RECRUIT;
     }
 
     public void finishActivity() {
-        this.status = Status.OFF;
+        this.activityStatus = ActivityStatus.OFF;
     }
 
     public void update(ActivityRequest activityRequest) {
         this.name = activityRequest.getName();
         this.description = activityRequest.getDescription();
         this.proceed = activityRequest.getProceed();
-    }
-
-    protected String getSeason(LocalDateTime now) { // 꼭 개선하기
-        final int month = now.getMonthValue();
-
-        if (3 <= month && month < 6) {
-            return "1학기";
-        } else if (6 <= month && month < 9) {
-            return "여름방학";
-        } else if (9 <= month && month < 12) {
-            return "2학기";
-        } else {
-            return "겨울방학";
-        }
     }
 }

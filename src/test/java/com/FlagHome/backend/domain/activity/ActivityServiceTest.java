@@ -10,9 +10,9 @@ import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.Mentoring;
 import com.FlagHome.backend.domain.activity.entity.Project;
 import com.FlagHome.backend.domain.activity.entity.Study;
+import com.FlagHome.backend.domain.activity.entity.enums.ActivityStatus;
 import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
 import com.FlagHome.backend.domain.activity.entity.enums.BookUsage;
-import com.FlagHome.backend.domain.activity.entity.enums.Status;
 import com.FlagHome.backend.domain.activity.mapper.ActivityMapper;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.entity.MemberActivity;
@@ -60,7 +60,7 @@ public class ActivityServiceTest {
     private MemberRepository memberRepository;
 
     @Autowired
-    private ActivityMapper mapper;
+    private ActivityMapper activityMapper;
 
     @Autowired
     private EntityManager entityManager;
@@ -73,14 +73,14 @@ public class ActivityServiceTest {
         void getActivitySuccessTest() {
             // given
             final ActivityType project = ActivityType.PROJECT;
-            final Status status = Status.RECRUIT;
+            final ActivityStatus activityStatus = ActivityStatus.RECRUIT;
 
             Member member = memberRepository.save(Member.builder().build());
             Activity activity = activityRepository.saveAndFlush(Project.builder()
                     .leader(member)
                     .activityType(project)
-                    .status(status)
-                    .season(LocalDateTime.now())
+                    .activityStatus(activityStatus)
+                    .semester(LocalDateTime.now().getMonthValue())
                     .build());
 
             // when
@@ -89,7 +89,7 @@ public class ActivityServiceTest {
             // then
             assertThat(activityResponse.getId()).isEqualTo(activity.getId());
             assertThat(activityResponse.getActivityType()).isEqualTo(project);
-            assertThat(activityResponse.getStatus()).isEqualTo(status);
+            assertThat(activityResponse.getActivityStatus()).isEqualTo(activityStatus);
         }
 
         @Test
@@ -119,19 +119,19 @@ public class ActivityServiceTest {
         Activity project = Project.builder()
                 .leader(member)
                 .activityType(projectType)
-                .season(LocalDateTime.now())
+                .semester(LocalDateTime.now().getMonthValue())
                 .build();
 
         Activity study = Study.builder()
                 .leader(member)
                 .activityType(studyType)
-                .season(LocalDateTime.now())
+                .semester(LocalDateTime.now().getMonthValue())
                 .build();
 
         Activity mentoring = Mentoring.builder()
                 .leader(member)
                 .activityType(mentoringType)
-                .season(LocalDateTime.now())
+                .semester(LocalDateTime.now().getMonthValue())
                 .build();
 
         activityRepository.saveAll(Arrays.asList(project, study, mentoring));
@@ -162,7 +162,7 @@ public class ActivityServiceTest {
             activity = activityRepository.save(Project.builder()
                             .leader(member)
                             .activityType(project)
-                            .season(LocalDateTime.now())
+                            .semester(LocalDateTime.now().getMonthValue())
                             .build());
         }
 
@@ -226,7 +226,7 @@ public class ActivityServiceTest {
         Member notApplier = memberRepository.save(Member.builder().build());
 
         Activity activity = activityRepository.save(Project.builder()
-                                    .season(LocalDateTime.now())
+                                    .semester(LocalDateTime.now().getMonthValue())
                                     .build());
 
         activityApplyRepository.save(ActivityApply.builder()
@@ -254,7 +254,7 @@ public class ActivityServiceTest {
         void testSetUp() {
             leader = memberRepository.save(Member.builder().build());
             applier = memberRepository.save(Member.builder().build());
-            activity = activityRepository.save(Study.builder().season(LocalDateTime.now()).leader(leader).build());
+            activity = activityRepository.save(Study.builder().semester(LocalDateTime.now().getMonthValue()).leader(leader).build());
         }
 
         @Test
@@ -322,14 +322,14 @@ public class ActivityServiceTest {
                     .githubLink(githubLink)
                     .build();
 
-            Activity activity = mapper.toActivity(activityRequest);
+            Activity activity = activityMapper.toActivity(activityRequest);
 
             // when
             Project project = (Project) activityService.create(member.getId(), activity);
 
             // then
             assertThat(project.getId()).isNotNull();
-            assertThat(project.getSeason()).isNotNull();
+            assertThat(project.getSemester()).isNotNull();
             assertThat(project.getActivityType()).isEqualTo(activityType);
             assertThat(project.getGithubLink()).isEqualTo(githubLink);
         }
@@ -339,7 +339,7 @@ public class ActivityServiceTest {
         void createMentoringTest() {
             // given
             ActivityType activityType = ActivityType.MENTORING;
-            BookUsage bookUsage = BookUsage.사용;
+            BookUsage bookUsage = BookUsage.USE;
             String bookName = "토비의 스프링";
 
             ActivityRequest activityRequest = ActivityRequest.builder()
@@ -348,14 +348,14 @@ public class ActivityServiceTest {
                     .bookName(bookName)
                     .build();
 
-            Activity activity = mapper.toActivity(activityRequest);
+            Activity activity = activityMapper.toActivity(activityRequest);
 
             // when
             Mentoring mentoring = (Mentoring) activityService.create(member.getId(), activity);
 
             // then
             assertThat(mentoring.getId()).isNotNull();
-            assertThat(mentoring.getSeason()).isNotNull();
+            assertThat(mentoring.getSemester()).isNotNull();
             assertThat(mentoring.getActivityType()).isEqualTo(activityType);
             assertThat(mentoring.getBookUsage()).isEqualTo(bookUsage);
             assertThat(mentoring.getBookName()).isEqualTo(bookName);
@@ -366,7 +366,7 @@ public class ActivityServiceTest {
         void createStudyTest() {
             // given
             ActivityType activityType = ActivityType.STUDY;
-            BookUsage bookUsage = BookUsage.미사용;
+            BookUsage bookUsage = BookUsage.NOT_USE;
             String bookName = "";
 
             ActivityRequest activityRequest = ActivityRequest.builder()
@@ -375,14 +375,14 @@ public class ActivityServiceTest {
                     .bookName(bookName)
                     .build();
 
-            Activity activity = mapper.toActivity(activityRequest);
+            Activity activity = activityMapper.toActivity(activityRequest);
 
             // when
             Study study = (Study) activityService.create(member.getId(), activity);
 
             // then
             assertThat(study.getId()).isNotNull();
-            assertThat(study.getSeason()).isNotNull();
+            assertThat(study.getSemester()).isNotNull();
             assertThat(study.getActivityType()).isEqualTo(activityType);
             assertThat(study.getBookUsage()).isEqualTo(bookUsage);
             assertThat(study.getBookName()).isEqualTo(bookName);
@@ -413,7 +413,7 @@ public class ActivityServiceTest {
                             .leader(member)
                             .name(name)
                             .githubLink(link)
-                            .season(LocalDateTime.now())
+                            .semester(LocalDateTime.now().getMonthValue())
                             .build());
 
             ActivityRequest activityRequest = ActivityRequest.builder()
@@ -438,8 +438,8 @@ public class ActivityServiceTest {
             String name = "name";
             String changeName = "changed name";
 
-            BookUsage bookUsage = BookUsage.미사용;
-            BookUsage changeBookUsage = BookUsage.사용;
+            BookUsage bookUsage = BookUsage.NOT_USE;
+            BookUsage changeBookUsage = BookUsage.USE;
 
             String bookName = "book";
             String changeBookName = "changed book";
@@ -449,7 +449,7 @@ public class ActivityServiceTest {
                             .name(name)
                             .bookUsage(bookUsage)
                             .bookName(bookName)
-                            .season(LocalDateTime.now())
+                            .semester(LocalDateTime.now().getMonthValue())
                             .build());
 
             ActivityRequest activityRequest = ActivityRequest.builder()
@@ -476,8 +476,8 @@ public class ActivityServiceTest {
             String name = "name";
             String changeName = "changed name";
 
-            BookUsage bookUsage = BookUsage.미사용;
-            BookUsage changeBookUsage = BookUsage.사용;
+            BookUsage bookUsage = BookUsage.NOT_USE;
+            BookUsage changeBookUsage = BookUsage.USE;
 
             String bookName = "book";
             String changeBookName = "changed book";
@@ -487,7 +487,7 @@ public class ActivityServiceTest {
                     .name(name)
                     .bookUsage(bookUsage)
                     .bookName(bookName)
-                    .season(LocalDateTime.now())
+                    .semester(LocalDateTime.now().getMonthValue())
                     .build());
 
             ActivityRequest activityRequest = ActivityRequest.builder()
@@ -523,7 +523,7 @@ public class ActivityServiceTest {
 
             activity = activityRepository.save(Project.builder()
                     .leader(member)
-                    .season(LocalDateTime.now())
+                    .semester(LocalDateTime.now().getMonthValue())
                     .build());
         }
 
@@ -581,8 +581,8 @@ public class ActivityServiceTest {
             member = memberRepository.save(Member.builder().build());
             activity = activityRepository.save(Study.builder()
                             .leader(member)
-                            .season(LocalDateTime.now())
-                            .status(Status.RECRUIT)
+                            .semester(LocalDateTime.now().getMonthValue())
+                            .activityStatus(ActivityStatus.RECRUIT)
                             .build());
         }
 
@@ -618,7 +618,7 @@ public class ActivityServiceTest {
             assertThat(allActivityApplies.isEmpty()).isTrue();
             assertThat(participantResponses.size()).isEqualTo(2);
             assertThat(findActivity).isNotNull();
-            assertThat(findActivity.getStatus()).isEqualTo(Status.ON);
+            assertThat(findActivity.getActivityStatus()).isEqualTo(ActivityStatus.ON);
         }
 
         @Test
@@ -644,8 +644,8 @@ public class ActivityServiceTest {
             member = memberRepository.save(Member.builder().build());
             activity = activityRepository.save(Study.builder()
                     .leader(member)
-                    .season(LocalDateTime.now())
-                    .status(Status.RECRUIT)
+                    .semester(LocalDateTime.now().getMonthValue())
+                    .activityStatus(ActivityStatus.RECRUIT)
                     .build());
         }
 
@@ -666,7 +666,7 @@ public class ActivityServiceTest {
             Activity findActivity = activityRepository.findById(activity.getId()).get();
             assertThat(responses.isEmpty()).isTrue();
             assertThat(findActivity).isNotNull();
-            assertThat(findActivity.getStatus()).isEqualTo(Status.RECRUIT);
+            assertThat(findActivity.getActivityStatus()).isEqualTo(ActivityStatus.RECRUIT);
         }
 
         @Test
@@ -691,8 +691,8 @@ public class ActivityServiceTest {
             member = memberRepository.save(Member.builder().build());
             activity = activityRepository.save(Study.builder()
                     .leader(member)
-                    .season(LocalDateTime.now())
-                    .status(Status.RECRUIT)
+                    .semester(LocalDateTime.now().getMonthValue())
+                    .activityStatus(ActivityStatus.RECRUIT)
                     .build());
         }
 
@@ -707,7 +707,7 @@ public class ActivityServiceTest {
             // then
             Activity findActivity = activityRepository.findById(activity.getId()).get();
             assertThat(findActivity).isNotNull();
-            assertThat(findActivity.getStatus()).isEqualTo(Status.OFF);
+            assertThat(findActivity.getActivityStatus()).isEqualTo(ActivityStatus.OFF);
         }
 
         @Test
@@ -732,8 +732,8 @@ public class ActivityServiceTest {
             member = memberRepository.save(Member.builder().build());
             activity = activityRepository.save(Study.builder()
                     .leader(member)
-                    .season(LocalDateTime.now())
-                    .status(Status.RECRUIT)
+                    .semester(LocalDateTime.now().getMonthValue())
+                    .activityStatus(ActivityStatus.RECRUIT)
                     .build());
         }
 
@@ -768,7 +768,7 @@ public class ActivityServiceTest {
     @DisplayName("활동 신청 취소 테스트")
     void cancelApplyTest() {
         // given
-        Activity activity = activityRepository.save(Project.builder().season(LocalDateTime.now()).build());
+        Activity activity = activityRepository.save(Project.builder().semester(LocalDateTime.now().getMonthValue()).build());
         Member member = memberRepository.save(Member.builder().build());
 
         activityService.applyActivity(member.getId(), activity.getId());

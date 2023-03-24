@@ -9,7 +9,7 @@ import com.FlagHome.backend.domain.activity.entity.Mentoring;
 import com.FlagHome.backend.domain.activity.entity.Project;
 import com.FlagHome.backend.domain.activity.entity.Study;
 import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
-import com.FlagHome.backend.domain.activity.entity.enums.Status;
+import com.FlagHome.backend.domain.activity.entity.enums.ActivityStatus;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.entity.MemberActivity;
@@ -75,7 +75,7 @@ public class ActivityRepositoryTest {
                     .name(activityName)
                     .leader(member)
                     .activityType(activityType)
-                    .season(LocalDateTime.now())
+                    .semester(LocalDateTime.now().getMonthValue())
                     .build();
 
             Activity activity = activityRepository.saveAndFlush(project);
@@ -99,19 +99,19 @@ public class ActivityRepositoryTest {
             Project project = Project.builder()
                     .leader(member)
                     .activityType(ActivityType.PROJECT)
-                    .season(LocalDateTime.now())
+                    .semester(LocalDateTime.now().getMonthValue())
                     .build();
 
             Study study = Study.builder()
                     .leader(member)
                     .activityType(ActivityType.STUDY)
-                    .season(LocalDateTime.now())
+                    .semester(LocalDateTime.now().getMonthValue())
                     .build();
 
             Mentoring mentoring = Mentoring.builder()
                     .leader(member)
                     .activityType(ActivityType.MENTORING)
-                    .season(LocalDateTime.now())
+                    .semester(LocalDateTime.now().getMonthValue())
                     .build();
 
             activityRepository.saveAll(Arrays.asList(project, study, mentoring));
@@ -137,7 +137,10 @@ public class ActivityRepositoryTest {
             Member member2 = memberRepository.save(Member.builder().major(major).build());
             Member member3 = memberRepository.save(Member.builder().major(major).build());
 
-            Activity activity = activityRepository.saveAndFlush(Project.builder().leader(member1).season(LocalDateTime.now()).build());
+            Activity activity = activityRepository.saveAndFlush(Project.builder()
+                                                                    .leader(member1)
+                                                                    .semester(LocalDateTime.now().getMonthValue())
+                                                                    .build());
 
             ActivityApply activityApply1 = ActivityApply.builder().member(member2).activity(activity).build();
             ActivityApply activityApply2 = ActivityApply.builder().member(member3).activity(activity).build();
@@ -163,7 +166,7 @@ public class ActivityRepositoryTest {
             Member member2 = memberRepository.save(Member.builder().major(major).build());
             Member member3 = memberRepository.save(Member.builder().major(major).build());
 
-            Activity activity = activityRepository.saveAndFlush(Project.builder().leader(member1).season(LocalDateTime.now()).build());
+            Activity activity = activityRepository.saveAndFlush(Project.builder().leader(member1).semester(LocalDateTime.now().getMonthValue()).build());
 
             ActivityApply activityApply1 = ActivityApply.builder().member(member2).activity(activity).build();
             ActivityApply activityApply2 = ActivityApply.builder().member(member3).activity(activity).build();
@@ -185,7 +188,7 @@ public class ActivityRepositoryTest {
             Member member1 = memberRepository.save(Member.builder().build());
             Member member2 = memberRepository.save(Member.builder().build());
 
-            Activity activity = activityRepository.save(Study.builder().leader(member1).season(LocalDateTime.now()).build());
+            Activity activity = activityRepository.save(Study.builder().leader(member1).semester(LocalDateTime.now().getMonthValue()).build());
 
             activityApplyRepository.save(ActivityApply.builder()
                     .member(member2)
@@ -206,7 +209,7 @@ public class ActivityRepositoryTest {
         void findApplyByMemberAndActivityTest() {
             // given
             Member member = memberRepository.save(Member.builder().build());
-            Activity activity = activityRepository.save(Mentoring.builder().leader(member).season(LocalDateTime.now()).build());
+            Activity activity = activityRepository.save(Mentoring.builder().leader(member).semester(LocalDateTime.now().getMonthValue()).build());
 
             ActivityApply apply = activityApplyRepository.save(ActivityApply.builder()
                     .member(member)
@@ -230,7 +233,7 @@ public class ActivityRepositoryTest {
         @DisplayName("활동으로 지우기 테스트")
         void deleteAllByActivityTest() {
             // given
-            Activity activity = activityRepository.save(Project.builder().season(LocalDateTime.now()).build());
+            Activity activity = activityRepository.save(Project.builder().semester(LocalDateTime.now().getMonthValue()).build());
 
             MemberActivity memberActivity1 = MemberActivity.builder().activity(activity).build();
             MemberActivity memberActivity2 = MemberActivity.builder().activity(activity).build();
@@ -255,20 +258,20 @@ public class ActivityRepositoryTest {
 
             Activity project = Project.builder()
                     .name("project")
-                    .season(LocalDateTime.now())
-                    .status(Status.ON)
+                    .semester(LocalDateTime.now().getMonthValue())
+                    .activityStatus(ActivityStatus.ON)
                     .build();
 
             Activity mentoring = Mentoring.builder()
                     .name("mentoring")
-                    .season(LocalDateTime.now())
-                    .status(Status.RECRUIT)
+                    .semester(LocalDateTime.now().getMonthValue())
+                    .activityStatus(ActivityStatus.RECRUIT)
                     .build();
 
             Activity study = Study.builder()
                     .name("study")
-                    .season(LocalDateTime.now())
-                    .status(Status.OFF)
+                    .semester(LocalDateTime.now().getMonthValue())
+                    .activityStatus(ActivityStatus.OFF)
                     .build();
 
             activityRepository.saveAll(Arrays.asList(project, mentoring, study));
@@ -298,8 +301,8 @@ public class ActivityRepositoryTest {
             assertThat(responseList.size()).isEqualTo(3);
             assertThat(responseList.get(0).getId()).isNotNull();
             assertThat(responseList.get(0).getYear()).isInstanceOf(Integer.class);
-            assertThat(responseList.get(0).getSeason()).isNotNull();
-            assertThat(responseList.get(0).getStatus()).isNotNull();
+            assertThat(responseList.get(0).getSemester()).isNotNull();
+            assertThat(responseList.get(0).getActivityStatus()).isNotNull();
         }
 
         @Test
@@ -322,7 +325,7 @@ public class ActivityRepositoryTest {
 
             Activity activity = activityRepository.save(Project.builder()
                             .leader(member)
-                            .season(LocalDateTime.now())
+                            .semester(LocalDateTime.now().getMonthValue())
                             .build());
 
             MemberActivity memberActivity1 = MemberActivity.builder()
@@ -364,7 +367,7 @@ public class ActivityRepositoryTest {
                             .build());
 
             Activity activity = activityRepository.save(Study.builder()
-                    .season(LocalDateTime.now())
+                    .semester(LocalDateTime.now().getMonthValue())
                     .build());
 
             memberActivityRepository.save(MemberActivity.builder()

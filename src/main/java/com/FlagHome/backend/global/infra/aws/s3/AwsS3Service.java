@@ -73,6 +73,7 @@ public class AwsS3Service {
     private ObjectMetadata createObjectMetaData(MultipartFile file) {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(file.getContentType());
+        objectMetadata.setContentLength(file.getSize());
         return objectMetadata;
     }
 }

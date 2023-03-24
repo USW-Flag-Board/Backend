@@ -1,7 +1,8 @@
 package com.FlagHome.backend.domain.activity.controller.dto;
 
+import com.FlagHome.backend.domain.activity.entity.enums.ActivityStatus;
 import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
-import com.FlagHome.backend.domain.activity.entity.enums.Status;
+import com.FlagHome.backend.domain.activity.entity.enums.Semester;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -17,20 +18,20 @@ public class ActivityResponse {
     private String name;
     private String leader;
     private ActivityType activityType;
-    private Status status;
-    private String season;
+    private ActivityStatus activityStatus;
+    private Semester semester;
     private LocalDateTime createdAt;
 
     @Builder
     @QueryProjection
     public ActivityResponse(long id, String name, String leader, ActivityType activityType,
-                            Status status, String season, LocalDateTime createdAt) {
+                            ActivityStatus activityStatus, Semester semester, LocalDateTime createdAt) {
         this.id = id;
         this.name = name;
         this.leader = leader;
         this.activityType = activityType;
-        this.status = status;
-        this.season = season;
+        this.activityStatus = activityStatus;
+        this.semester = semester;
         this.createdAt = createdAt;
     }
 
