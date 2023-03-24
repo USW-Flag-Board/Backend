@@ -26,8 +26,8 @@ public class ActivityRepositoryImpl implements ActivityRepositoryCustom {
                         activity.name,
                         member.name,
                         activity.activityType,
-                        activity.status,
-                        activity.season,
+                        activity.activityStatus,
+                        activity.semester,
                         activity.createdAt))
                 .from(activity)
                 .innerJoin(activity.leader, member)
@@ -45,8 +45,8 @@ public class ActivityRepositoryImpl implements ActivityRepositoryCustom {
                         activity.name,
                         member.name,
                         activity.activityType,
-                        activity.status,
-                        activity.season,
+                        activity.activityStatus,
+                        activity.semester,
                         activity.createdAt))
                 .from(activity)
                 .innerJoin(activity.leader, member)

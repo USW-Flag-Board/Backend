@@ -1,9 +1,9 @@
 package com.FlagHome.backend.domain.activity.entity;
 
+import com.FlagHome.backend.domain.activity.entity.enums.ActivityStatus;
 import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
 import com.FlagHome.backend.domain.activity.entity.enums.BookUsage;
 import com.FlagHome.backend.domain.activity.entity.enums.Proceed;
-import com.FlagHome.backend.domain.activity.entity.enums.Status;
 import com.FlagHome.backend.domain.activity.controller.dto.ActivityRequest;
 import com.FlagHome.backend.domain.member.Member;
 import lombok.AccessLevel;
@@ -27,8 +27,8 @@ public class Study extends Activity {
 
     @Builder
     public Study(String name, String description, Member leader, ActivityType activityType,
-                 Proceed proceed, Status status, LocalDateTime season, BookUsage bookUsage, String bookName) {
-        super(name, description, leader, activityType, proceed, status, season);
+                 Proceed proceed, ActivityStatus activityStatus, int semester, BookUsage bookUsage, String bookName) {
+        super(name, description, leader, activityType, proceed, activityStatus, semester);
         this.bookUsage = bookUsage;
         this.bookName = bookName;
     }
@@ -47,8 +47,8 @@ public class Study extends Activity {
                 .bookUsage(activityRequest.getBookUsage())
                 .bookName(activityRequest.getBookName())
                 .activityType(ActivityType.STUDY)
-                .status(Status.RECRUIT)
-                .season(LocalDateTime.now())
+                .activityStatus(ActivityStatus.RECRUIT)
+                .semester(LocalDateTime.now().getMonthValue())
                 .build();
     }
 }

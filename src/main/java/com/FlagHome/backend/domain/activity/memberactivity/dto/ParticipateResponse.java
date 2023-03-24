@@ -1,6 +1,7 @@
 package com.FlagHome.backend.domain.activity.memberactivity.dto;
 
-import com.FlagHome.backend.domain.activity.entity.enums.Status;
+import com.FlagHome.backend.domain.activity.entity.enums.ActivityStatus;
+import com.FlagHome.backend.domain.activity.entity.enums.Semester;
 import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
@@ -21,18 +22,19 @@ public class ParticipateResponse {
     private int year;
 
     @Schema(name = "활동 시즌")
-    private String season;
+    private Semester semester;
 
     @Schema(name = "활동 상태")
-    private Status status;
+    private ActivityStatus activityStatus;
 
     @Builder
     @QueryProjection
-    public ParticipateResponse(long id, String name, int year, String season, Status status) {
+    public ParticipateResponse(long id, String name, int year,
+                               Semester semester, ActivityStatus activityStatus) {
         this.id = id;
         this.name = name;
         this.year = year;
-        this.season = season;
-        this.status = status;
+        this.semester = semester;
+        this.activityStatus = activityStatus;
     }
 }

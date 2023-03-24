@@ -52,7 +52,7 @@ public class ActivityApplyServiceTest {
     void applyActivityTest() {
         // given
         long testId = 1L;
-        Activity activity = Study.builder().season(LocalDateTime.now()).build();
+        Activity activity = Study.builder().semester(LocalDateTime.now().getMonthValue()).build();
         ActivityApply apply = ActivityApply.builder().build();
 
         given(activityApplyRepository.save(any())).willReturn(apply);

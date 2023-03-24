@@ -1,5 +1,14 @@
 package com.FlagHome.backend.domain.activity.entity.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum Proceed {
-    온라인, 오프라인
+    ONLINE("온라인"),
+    OFFLINE("오프라인")
+    ;
+
+    private final String proceed;
 }
