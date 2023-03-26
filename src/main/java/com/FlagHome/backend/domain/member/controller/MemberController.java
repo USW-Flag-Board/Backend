@@ -3,7 +3,6 @@ package com.FlagHome.backend.domain.member.controller;
 import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.MyProfileResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
-import com.FlagHome.backend.domain.member.avatar.dto.UpdateProfileImageRequest;
 import com.FlagHome.backend.domain.member.avatar.entity.Avatar;
 import com.FlagHome.backend.domain.member.controller.dto.*;
 import com.FlagHome.backend.domain.member.mapper.MemberMapper;
@@ -123,7 +122,7 @@ public class MemberController {
     })
     @ResponseStatus(OK)
     @PostMapping("/avatar/image")
-    public ApplicationResponse updateProfileImage(@RequestPart("profile-Image") MultipartFile profileImage) {
+    public ApplicationResponse updateProfileImage(@RequestPart(value = "file") MultipartFile profileImage) {
         memberService.updateProfileImage(SecurityUtils.getMemberId(), profileImage);
         return new ApplicationResponse<>();
     }

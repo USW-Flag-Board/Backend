@@ -3,7 +3,8 @@ spring:
     include:
       - db
       - jwt
-      - aws
+      - s3
+      - ses
 
   mvc:
     pathmatch:

@@ -107,7 +107,6 @@ public class MemberServiceTest {
             Member saveMember =  memberRepository.saveAndFlush(Member.builder()
                             .loginId(loginId)
                             .password(passwordEncoder.encode(password))
-                            .status(Status.GENERAL)
                             .build());
 
             assertThatExceptionOfType(CustomException.class)
@@ -228,8 +227,6 @@ public class MemberServiceTest {
 
         Member member = memberRepository.save(Member.builder()
                 .loginId(loginId)
-                .lastLoginTime(lastLoginTime)
-                .status(status)
                 .build());
 
         //when

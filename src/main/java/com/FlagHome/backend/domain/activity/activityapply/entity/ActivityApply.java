@@ -2,19 +2,14 @@ package com.FlagHome.backend.domain.activity.activityapply.entity;
 
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.member.Member;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ActivityApply {
     @Id
     @Column(name = "activity_apply_id")
@@ -31,4 +26,11 @@ public class ActivityApply {
 
     @Column
     private LocalDateTime applyTime;
+
+    @Builder
+    public ActivityApply(Member member, Activity activity, LocalDateTime applyTime) {
+        this.member = member;
+        this.activity = activity;
+        this.applyTime = applyTime;
+    }
 }

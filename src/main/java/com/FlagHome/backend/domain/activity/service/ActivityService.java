@@ -78,13 +78,14 @@ public class ActivityService {
         if (checkApply(memberId, activityId)) {
             throw new CustomException(ErrorCode.ALREADY_APPLIED);
         }
+        Member member = memberService.findById(memberId);
         Activity activity = findById(activityId);
-        return activityApplyService.apply(memberId, activity);
+        return activityApplyService.apply(member, activity);
     }
 
     @Transactional
-    public Activity create(long memberId, Activity activity) {
-        Member member = Member.builder().id(memberId).build();
+    public Activity create(Long memberId, Activity activity) {
+        Member member = memberService.findById(memberId);
         activity.updateLeader(member);
         return activityRepository.save(activity);
     }

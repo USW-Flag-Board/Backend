@@ -22,9 +22,9 @@ public class ActivityApplyService {
     }
 
     @Transactional
-    public ActivityApply apply(long memberId, Activity activity) {
+    public ActivityApply apply(Member member, Activity activity) {
         ActivityApply activityApply = ActivityApply.builder()
-                .member(Member.builder().id(memberId).build())
+                .member(member)
                 .activity(activity)
                 .applyTime(LocalDateTime.now())
                 .build();

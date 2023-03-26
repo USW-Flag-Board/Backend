@@ -12,9 +12,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Member extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,6 +51,20 @@ public class Member extends BaseEntity {
 
     @Column(name = "last_login_time")
     private LocalDateTime lastLoginTime;
+
+    @Builder
+    public Member(String loginId, String password, String email, String name, String studentId, Major major, String phoneNumber, Role role) {
+        this.loginId = loginId;
+        this.password = password;
+        this.email = email;
+        this.name = name;
+        this.studentId = studentId;
+        this.major = major;
+        this.phoneNumber = phoneNumber;
+        this.role = role;
+        this.status = Status.GENERAL;
+        this.lastLoginTime = LocalDateTime.now();
+    }
 
     public void updatePassword(String password, PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(password);
@@ -94,8 +106,6 @@ public class Member extends BaseEntity {
                 .studentId(authInformation.getStudentId())
                 .phoneNumber(authInformation.getPhoneNumber())
                 .role(Role.from(authInformation.getJoinType()))
-                .status(Status.GENERAL)
-                .lastLoginTime(null)
                 .build();
     }
 }

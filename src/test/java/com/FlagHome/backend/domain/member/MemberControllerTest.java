@@ -78,7 +78,6 @@ public class MemberControllerTest {
                 .email("gmlwh124@suwon.ac.kr")
                 .name("문희조")
                 .password(passwordEncoder.encode("qwer1234!"))
-                .status(Status.GENERAL)
                 .role(Role.ROLE_USER)
                 .major(Major.컴퓨터SW)
                 .phoneNumber("01040380540")

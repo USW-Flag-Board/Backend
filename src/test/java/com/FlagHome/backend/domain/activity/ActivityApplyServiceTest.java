@@ -6,6 +6,7 @@ import com.FlagHome.backend.domain.activity.activityapply.repository.ActivityApp
 import com.FlagHome.backend.domain.activity.activityapply.service.ActivityApplyService;
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.Study;
+import com.FlagHome.backend.domain.member.Member;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,14 +52,14 @@ public class ActivityApplyServiceTest {
     @DisplayName("활동 신청하기 테스트")
     void applyActivityTest() {
         // given
-        long testId = 1L;
         Activity activity = Study.builder().semester(LocalDateTime.now().getMonthValue()).build();
         ActivityApply apply = ActivityApply.builder().build();
+        Member member = Member.builder().build();
 
         given(activityApplyRepository.save(any())).willReturn(apply);
 
         // when
-        activityApplyService.apply(testId, activity);
+        activityApplyService.apply(member, activity);
 
         // then
         then(activityApplyRepository).should(times(1)).save(any());
