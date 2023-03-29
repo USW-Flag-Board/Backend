@@ -1,24 +1,23 @@
 package com.FlagHome.backend.domain.post.entity;
 
-import com.FlagHome.backend.global.common.BaseEntity;
-import com.FlagHome.backend.global.common.Status;
 import com.FlagHome.backend.domain.board.entity.Board;
-import com.FlagHome.backend.domain.like.entity.Like;
-import com.FlagHome.backend.domain.member.Member;
-import com.FlagHome.backend.domain.reply.entity.Reply;
-import lombok.*;
+import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.global.common.BaseEntity;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Getter
-@Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends BaseEntity {
-    @Id
+    /**
+     * Version 1
+     */
+    /* @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -53,5 +52,52 @@ public class Post extends BaseEntity {
     private Status status;
 
     @Column
-    private Long viewCount;
+    private Long viewCount; */
+
+    /**
+     * Version 2
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "board_id")
+    private Board board;
+
+    @Column
+    private String title;
+
+    @Column
+    private String content;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private PostStatus status;
+
+    @Column
+    private int viewCount;
+
+    @Builder
+    public Post(Member member, Board board, String title, String content) {
+        this.member = member;
+        this.board = board;
+        this.title = title;
+        this.content = content;
+        this.status = PostStatus.NORMAL;
+        this.viewCount = 0;
+    }
+
+    public static Post of(Member member, Post post, Board board) {
+        return Post.builder()
+                .member(member)
+                .title(post.getTitle())
+                .content(post.getContent())
+                .board(board)
+                .build();
+    }
 }

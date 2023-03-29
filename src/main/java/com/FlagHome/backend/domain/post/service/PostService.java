@@ -1,33 +1,27 @@
 package com.FlagHome.backend.domain.post.service;
 
 import com.FlagHome.backend.domain.board.entity.Board;
-import com.FlagHome.backend.domain.board.repository.BoardRepository;
-import com.FlagHome.backend.global.common.Status;
-import com.FlagHome.backend.domain.member.Member;
-import com.FlagHome.backend.domain.member.repository.MemberRepository;
-import com.FlagHome.backend.domain.post.controller.dto.CreatePostRequest;
-import com.FlagHome.backend.domain.post.controller.dto.GetPostResponse;
-import com.FlagHome.backend.domain.post.controller.dto.LightPostDto;
+import com.FlagHome.backend.domain.board.service.BoardService;
+import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
-import com.FlagHome.backend.global.exception.CustomException;
-import com.FlagHome.backend.global.exception.ErrorCode;
-import com.FlagHome.backend.global.utility.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class PostService {
-    private final MemberRepository memberRepository;
     private final PostRepository postRepository;
-    private final BoardRepository boardRepository;
+    private final MemberService memberService;
+    private final BoardService boardService;
 
-    @Transactional
+    /**
+     * Version 1
+     */
+    /* @Transactional
     public long createPost(CreatePostRequest postDto) {
         Member memberEntity = memberRepository.findById(postDto.getUserId()).orElse(null);
         if(memberEntity == null)
@@ -38,7 +32,7 @@ public class PostService {
 
         Board boardEntity = boardRepository.findById(postDto.getBoardId()).orElse(null);
         if(boardEntity == null)
-            throw new CustomException(ErrorCode.BOARD_NOT_EXISTS);
+            throw new CustomException(ErrorCode.BOARD_NOT_FOUND);
 
         Post post = postRepository.save(Post.builder()
                 .member(memberEntity)
@@ -81,7 +75,7 @@ public class PostService {
 
         Board boardEntity = boardRepository.findById(postDto.getBoardId()).orElse(null);
         if(boardEntity == null)
-            throw new CustomException(ErrorCode.BOARD_NOT_EXISTS);
+            throw new CustomException(ErrorCode.BOARD_NOT_FOUND);
 
         postEntity.setTitle(postDto.getTitle());
         postEntity.setContent(postDto.getContent());
@@ -105,5 +99,28 @@ public class PostService {
     @Transactional
     public List<LightPostDto> getTopNPostListByDateAndLike(int postCount) {
         return postRepository.findTopNPostListByDateAndLike(postCount);
+    } */
+
+    @Transactional(readOnly = true)
+    public void getAllPosts(String boardName) {
+
+    }
+
+    public void getPost(Long postId) {
+
+    }
+
+    public Post create(Long memberId, Post post, String boardName) {
+        Member member = memberService.findById(memberId);
+        Board board = boardService.findByName(boardName);
+        return postRepository.save(Post.of(member, post, board));
+    }
+
+    public Post update(Long memberId, Post post) {
+        return null;
+    }
+
+    public void delete(Long memberId, Long postId) {
+
     }
 }

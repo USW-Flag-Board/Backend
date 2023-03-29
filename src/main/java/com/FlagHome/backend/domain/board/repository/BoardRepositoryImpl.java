@@ -1,13 +1,7 @@
 package com.FlagHome.backend.domain.board.repository;
 
-import com.FlagHome.backend.domain.board.entity.Board;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-
-import java.util.HashSet;
-import java.util.List;
-
-import static com.FlagHome.backend.domain.board.entity.QBoard.board;
 
 
 @RequiredArgsConstructor
@@ -15,7 +9,10 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
-    @Override
+    /**
+     * Version 1
+     */
+    /* @Override
     public List<Board> findAll(){
         return queryFactory
                 .selectFrom(board)
@@ -32,5 +29,9 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
             categoryNameSet.add(eachBoard.getEnglishName());
 
         return categoryNameSet;
-    }
+    } */
+
+    /**
+     * Version 2
+     */
 }

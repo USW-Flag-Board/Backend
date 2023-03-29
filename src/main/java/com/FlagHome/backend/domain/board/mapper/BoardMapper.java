@@ -1,18 +1,19 @@
 package com.FlagHome.backend.domain.board.mapper;
 
-import com.FlagHome.backend.domain.board.dto.BoardPatchDto;
-import com.FlagHome.backend.domain.board.dto.BoardPostDto;
-import com.FlagHome.backend.domain.board.dto.BoardResultDto;
+import com.FlagHome.backend.domain.board.controller.dto.BoardRequest;
 import com.FlagHome.backend.domain.board.entity.Board;
-import com.FlagHome.backend.domain.board.service.BoardService;
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
+import org.mapstruct.ReportingPolicy;
 
-import java.util.List;
-
-@Mapper(componentModel = "spring")
+@Mapper(
+        componentModel = "spring",
+        unmappedTargetPolicy = ReportingPolicy.WARN
+)
 public interface BoardMapper {
-    BoardResultDto BoardToBoardResultDto(Board board);
+    /**
+     * Version 1
+     */
+    /* BoardResultDto BoardToBoardResultDto(Board board);
     List<BoardResultDto> BoardListToBoardResultDtoList(List<Board> categories);
 
     default Board BoardPostDtoToBoard(BoardPostDto boardPostDto, BoardService boardService) {
@@ -58,5 +59,9 @@ public interface BoardMapper {
         board.setId(boardPatchDto.getId());
 
         return board;
-    }
+    } */
+    /**
+     * Version 2
+     */
+    Board toEntity(BoardRequest boardRequest);
 }

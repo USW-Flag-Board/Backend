@@ -1,32 +1,18 @@
 package com.FlagHome.backend.domain.reply.service;
 
-import com.FlagHome.backend.global.exception.CustomException;
-import com.FlagHome.backend.global.exception.ErrorCode;
-import com.FlagHome.backend.global.common.Status;
-import com.FlagHome.backend.domain.member.Member;
-import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
-import com.FlagHome.backend.domain.reply.dto.ReplyDto;
-import com.FlagHome.backend.domain.reply.entity.Reply;
-import com.FlagHome.backend.domain.reply.repository.ReplyRepository;
-import com.FlagHome.backend.domain.member.repository.MemberRepository;
-import com.FlagHome.backend.global.utility.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ReplyService {
     private final PostRepository postRepository;
-    private final MemberRepository memberRepository;
-    private final ReplyRepository replyRepository;
 
-    @Transactional
+    /**
+     * Version 1
+     */
+    /* @Transactional
     public ReplyDto createReply(ReplyDto replyDto) {
         Post foundPost = postRepository.findById(replyDto.getPostId()).orElse(null);
         if(foundPost == null)
@@ -133,5 +119,9 @@ public class ReplyService {
         }
 
         return replyDto;
-    }
+    } */
+
+    /**
+     * Version 2
+     */
 }

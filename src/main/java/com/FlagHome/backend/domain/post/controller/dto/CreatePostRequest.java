@@ -1,37 +1,33 @@
 package com.FlagHome.backend.domain.post.controller.dto;
 
-import com.FlagHome.backend.global.common.Status;
-import com.FlagHome.backend.domain.post.entity.Post;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.*;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode
-@JsonNaming(PropertyNamingStrategies.LowerCamelCaseStrategy.class)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CreatePostRequest {
-    private long id;
-    private long userId;
+    @Schema(name = "게시글 이름")
+    @NotEmpty @NotNull
     private String title;
+
+    @Schema(name = "게시글 내용")
+    @NotEmpty @NotNull
     private String content;
-    private String imgUrl;
-    private String fileUrl;
-    private long boardId;
-    private Status status;
 
+    @Schema(name = "게시판 이름", description = "게시글이 작성될 게시판의 이름")
+    @NotEmpty @NotNull
+    private String boardName;
 
-    public CreatePostRequest(Post postEntity) {
-        this.id = postEntity.getId();
-        this.userId = postEntity.getMember().getId();
-        this.title = postEntity.getTitle();
-        this.content = postEntity.getContent();
-        this.imgUrl = postEntity.getImgUrl();
-        this.fileUrl = postEntity.getFileUrl();
-        this.boardId = postEntity.getBoard().getId();
-        this.status = postEntity.getStatus();
+    @Builder
+    public CreatePostRequest(String title, String content, String boardName) {
+        this.title = title;
+        this.content = content;
+        this.boardName = boardName;
     }
 }
-
