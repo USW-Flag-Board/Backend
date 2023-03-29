@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.member.avatar.dto;
 
-import com.FlagHome.backend.domain.member.Major;
+import com.FlagHome.backend.domain.member.entity.enums.Major;
 import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;

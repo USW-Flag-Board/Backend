@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.member.avatar.entity;
 
 
-import com.FlagHome.backend.domain.member.Member;
+import com.FlagHome.backend.domain.member.entity.Member;
 import lombok.*;
 
 import javax.persistence.*;

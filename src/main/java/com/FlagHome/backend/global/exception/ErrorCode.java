@@ -35,7 +35,7 @@ public enum ErrorCode {
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 게시물입니다."),
     REPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다."),
     AUTH_INFORMATION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 가입정보입니다."),
-    BOARD_NOT_EXISTS(HttpStatus.NOT_FOUND, "존재하지 않는 게시판입니다."),
+    BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 게시판입니다."),
     SEARCH_CODE_NOT_EXISTS(HttpStatus.NOT_FOUND, "존재하지 않는 검색 타입입니다."),
     APPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하는 신청 내역이 없습니다."),
     ACTIVITY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 활동입니다."),

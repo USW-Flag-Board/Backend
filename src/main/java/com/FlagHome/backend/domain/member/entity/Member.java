@@ -1,7 +1,9 @@
-package com.FlagHome.backend.domain.member;
+package com.FlagHome.backend.domain.member.entity;
 
+import com.FlagHome.backend.domain.member.entity.enums.Major;
+import com.FlagHome.backend.domain.member.entity.enums.MemberStatus;
+import com.FlagHome.backend.domain.member.entity.enums.Role;
 import com.FlagHome.backend.global.common.BaseEntity;
-import com.FlagHome.backend.global.common.Status;
 import com.FlagHome.backend.domain.auth.AuthInformation;
 import com.FlagHome.backend.domain.member.sleeping.entity.Sleeping;
 import lombok.*;
@@ -12,9 +14,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Member extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,23 +36,41 @@ public class Member extends BaseEntity {
     @Column(name = "student_id")
     private String studentId;
 
+    @Column
     @Enumerated(EnumType.STRING)
-    @Column(name = "major")
     private Major major;
 
     @Column(name = "phone_number")
     private String phoneNumber;
 
+    @Column
     @Enumerated(EnumType.STRING)
-    @Column(name = "role")
     private Role role;
 
+    @Column
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private Status status;
+    private MemberStatus status;
 
-    @Column(name = "last_login_time")
+    @Column(name = "last_login")
     private LocalDateTime lastLoginTime;
+
+    @Builder
+    public Member(String loginId, String password, String email, String name, String studentId, Major major, String phoneNumber, Role role) {
+        this.loginId = loginId;
+        this.password = password;
+        this.email = email;
+        this.name = name;
+        this.studentId = studentId;
+        this.major = major;
+        this.phoneNumber = phoneNumber;
+        this.role = role;
+        this.status = MemberStatus.NORMAL;
+        this.lastLoginTime = LocalDateTime.now();
+    }
+
+    public void withdraw() {
+        this.status = MemberStatus.WITHDRAW;
+    }
 
     public void updatePassword(String password, PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(password);
@@ -70,11 +88,11 @@ public class Member extends BaseEntity {
         this.studentId = sleeping.getStudentId();
         this.major = sleeping.getMember().getMajor();
         this.phoneNumber = sleeping.getPhoneNumber();
-        this.status = Status.GENERAL;
+        this.status = MemberStatus.NORMAL;
     }
 
     public void changeToSleep() {
-        this.status = Status.SLEEPING;
+        this.status = MemberStatus.SLEEPING;
         this.loginId = null;
         this.password = null;
         this.email = null;
@@ -94,8 +112,6 @@ public class Member extends BaseEntity {
                 .studentId(authInformation.getStudentId())
                 .phoneNumber(authInformation.getPhoneNumber())
                 .role(Role.from(authInformation.getJoinType()))
-                .status(Status.GENERAL)
-                .lastLoginTime(null)
                 .build();
     }
 }

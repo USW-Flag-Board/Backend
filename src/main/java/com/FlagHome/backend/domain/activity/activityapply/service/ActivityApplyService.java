@@ -4,7 +4,7 @@ import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyRespo
 import com.FlagHome.backend.domain.activity.activityapply.entity.ActivityApply;
 import com.FlagHome.backend.domain.activity.activityapply.repository.ActivityApplyRepository;
 import com.FlagHome.backend.domain.activity.entity.Activity;
-import com.FlagHome.backend.domain.member.Member;
+import com.FlagHome.backend.domain.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,9 +22,9 @@ public class ActivityApplyService {
     }
 
     @Transactional
-    public ActivityApply apply(long memberId, Activity activity) {
+    public ActivityApply apply(Member member, Activity activity) {
         ActivityApply activityApply = ActivityApply.builder()
-                .member(Member.builder().id(memberId).build())
+                .member(member)
                 .activity(activity)
                 .applyTime(LocalDateTime.now())
                 .build();

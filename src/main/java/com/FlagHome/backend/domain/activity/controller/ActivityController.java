@@ -137,8 +137,8 @@ public class ActivityController {
     @PostMapping
     public ApplicationResponse<URI> createActivity(@RequestBody ActivityRequest activityRequest) {
         Activity activity = activityMapper.toActivity(activityRequest);
-        long id = activityService.create(SecurityUtils.getMemberId(), activity).getId();
-        URI uri = UriCreator.createUri(DEFAULT_URL, id);
+        Long id = activityService.create(SecurityUtils.getMemberId(), activity).getId();
+        URI uri = UriCreator.createURI(DEFAULT_URL, id);
         return new ApplicationResponse(uri);
     }
 
@@ -167,7 +167,7 @@ public class ActivityController {
     public ApplicationResponse<URI> updateProject(@PathVariable("id") long activityId,
                                                   @RequestBody ActivityRequest activityRequest) {
         activityService.updateProject(SecurityUtils.getMemberId(), activityId, activityRequest);
-        URI uri = UriCreator.createUri(DEFAULT_URL, activityId);
+        URI uri = UriCreator.createURI(DEFAULT_URL, activityId);
         return new ApplicationResponse(uri);
     }
 
@@ -183,7 +183,7 @@ public class ActivityController {
     public ApplicationResponse<URI> updateMentoring(@PathVariable("id") long activityId,
                                                     @RequestBody ActivityRequest activityRequest) {
         activityService.updateMentoring(SecurityUtils.getMemberId(), activityId, activityRequest);
-        URI uri = UriCreator.createUri(DEFAULT_URL, activityId);
+        URI uri = UriCreator.createURI(DEFAULT_URL, activityId);
         return new ApplicationResponse(uri);
     }
 
@@ -199,7 +199,7 @@ public class ActivityController {
     public ApplicationResponse<URI> updateStudy(@PathVariable("id") long activityId,
                                                 @RequestBody ActivityRequest activityRequest) {
         activityService.updateStudy(SecurityUtils.getMemberId(), activityId, activityRequest);
-        URI uri = UriCreator.createUri(DEFAULT_URL, activityId);
+        URI uri = UriCreator.createURI(DEFAULT_URL, activityId);
         return new ApplicationResponse(uri);
     }
 
@@ -215,7 +215,7 @@ public class ActivityController {
     public ApplicationResponse<URI> updateLeader(@PathVariable("id") long activityId,
                                                  @RequestBody ChangeLeaderRequest changeLeaderRequest) {
         activityService.changeLeader(SecurityUtils.getMemberId(), activityId, changeLeaderRequest.getLoginId());
-        URI uri = UriCreator.createUri(DEFAULT_URL, activityId);
+        URI uri = UriCreator.createURI(DEFAULT_URL, activityId);
         return new ApplicationResponse(uri);
     }
 
@@ -229,7 +229,7 @@ public class ActivityController {
     public ApplicationResponse<URI> closeRecruitment(@PathVariable("id") long activityId,
                                                     @RequestBody CloseRecruitRequest closeRecruitRequest) {
         activityService.closeRecruitment(SecurityUtils.getMemberId(), activityId, closeRecruitRequest.getLoginIdList());
-        URI uri = UriCreator.createUri(DEFAULT_URL, activityId);
+        URI uri = UriCreator.createURI(DEFAULT_URL, activityId);
         return new ApplicationResponse(uri);
     }
 
@@ -243,7 +243,7 @@ public class ActivityController {
     @PostMapping("/{id}/reopen")
     public ApplicationResponse<URI> reopenRecruitment(@PathVariable("id") long activityId) {
         activityService.reopenRecruitment(SecurityUtils.getMemberId(), activityId);
-        URI uri = UriCreator.createUri(DEFAULT_URL, activityId);
+        URI uri = UriCreator.createURI(DEFAULT_URL, activityId);
         return new ApplicationResponse(uri);
     }
 
@@ -257,7 +257,7 @@ public class ActivityController {
     @PatchMapping("/{id}/finish")
     public ApplicationResponse<URI> finishActivity(@PathVariable("id") long activityId) {
         activityService.finishActivity(SecurityUtils.getMemberId(), activityId);
-        URI uri = UriCreator.createUri(DEFAULT_URL, activityId);
+        URI uri = UriCreator.createURI(DEFAULT_URL, activityId);
         return new ApplicationResponse(uri);
     }
 

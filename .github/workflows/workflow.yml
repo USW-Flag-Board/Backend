@@ -37,10 +37,12 @@ jobs:
     - name: make application.yml
       run: |
         cd ./src/main/resources
-        touch ./application-aws.yml
         touch ./application-db.yml
-        echo ">> application-aws.yml, application-db.yml 값 입력"
-        echo "${{ secrets.AWS }}" >> ./application-aws.yml
+        touch ./application-s3.yml
+        touch ./application-ses.yml
+        echo ">> 추가 application.yml 값 입력"
+        echo "${{ secrets.S3 }}" >> ./application-s3.yml
+        echo "${{ secrets.SES }}" >> ./application-ses.yml
         echo "${{ secrets.DB }}" >> ./application-db.yml
 
     - name: Grant execute permission for gradlew

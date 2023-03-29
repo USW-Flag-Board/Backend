@@ -5,7 +5,7 @@ import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
 import com.FlagHome.backend.domain.activity.entity.enums.BookUsage;
 import com.FlagHome.backend.domain.activity.entity.enums.Proceed;
 import com.FlagHome.backend.domain.activity.controller.dto.ActivityRequest;
-import com.FlagHome.backend.domain.member.Member;
+import com.FlagHome.backend.domain.member.entity.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

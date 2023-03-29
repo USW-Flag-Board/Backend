@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.auth;
 
 import com.FlagHome.backend.domain.auth.controller.dto.JoinRequest;
-import com.FlagHome.backend.domain.member.Major;
+import com.FlagHome.backend.domain.member.entity.enums.Major;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import lombok.*;

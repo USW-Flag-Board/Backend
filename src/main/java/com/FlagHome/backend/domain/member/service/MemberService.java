@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.member.service;
 
 import com.FlagHome.backend.domain.auth.AuthInformation;
-import com.FlagHome.backend.domain.member.Member;
+import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.MyProfileResponse;
 import com.FlagHome.backend.domain.member.avatar.entity.Avatar;
@@ -52,7 +52,6 @@ public class MemberService {
         return Boolean.FALSE;
     }
 
-    // 멤버 삭제 고민하기 : 보관할 것인가?
     @Transactional
     public void withdraw(Long memberId, String password) {
         validateMemberPassword(memberId, password);

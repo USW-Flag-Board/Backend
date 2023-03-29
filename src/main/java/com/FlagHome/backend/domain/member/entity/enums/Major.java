@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain.member;
+package com.FlagHome.backend.domain.member.entity.enums;
 
 import lombok.Getter;
 

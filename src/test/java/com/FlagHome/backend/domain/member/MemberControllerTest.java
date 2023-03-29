@@ -1,6 +1,8 @@
 package com.FlagHome.backend.domain.member;
 
-import com.FlagHome.backend.global.common.Status;
+import com.FlagHome.backend.domain.member.entity.enums.Major;
+import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.member.entity.enums.Role;
 import com.FlagHome.backend.domain.member.avatar.entity.Avatar;
 import com.FlagHome.backend.domain.member.avatar.repository.AvatarRepository;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
@@ -12,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,10 +30,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @SpringBootTest
@@ -78,7 +76,6 @@ public class MemberControllerTest {
                 .email("gmlwh124@suwon.ac.kr")
                 .name("문희조")
                 .password(passwordEncoder.encode("qwer1234!"))
-                .status(Status.GENERAL)
                 .role(Role.ROLE_USER)
                 .major(Major.컴퓨터SW)
                 .phoneNumber("01040380540")

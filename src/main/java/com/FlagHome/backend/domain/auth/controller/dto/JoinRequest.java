@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.auth.controller.dto;
 
 import com.FlagHome.backend.domain.auth.JoinType;
-import com.FlagHome.backend.domain.member.Major;
+import com.FlagHome.backend.domain.member.entity.enums.Major;
 import com.FlagHome.backend.global.annotation.PasswordFormat;
 import com.FlagHome.backend.global.annotation.USWEmailFormat;
 import io.swagger.v3.oas.annotations.media.Schema;

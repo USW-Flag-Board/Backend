@@ -29,3 +29,10 @@ cloud:
       static: ap-northeast-2
     stack:
       auto: false
+
+  ses:
+    credentials:
+      accessKey: abcd
+      secretKey: abcdefg
+    region:
+      static: ap-northeast-2

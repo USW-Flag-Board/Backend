@@ -1,25 +1,22 @@
 package com.FlagHome.backend.domain.post.controller;
 
-import com.FlagHome.backend.domain.like.entity.LikeDto;
-import com.FlagHome.backend.domain.like.enums.LikeType;
-import com.FlagHome.backend.domain.like.service.LikeService;
 import com.FlagHome.backend.domain.post.controller.dto.CreatePostRequest;
-import com.FlagHome.backend.domain.post.controller.dto.LightPostDto;
+import com.FlagHome.backend.domain.post.controller.dto.AllPostResponse;
+import com.FlagHome.backend.domain.post.entity.Post;
+import com.FlagHome.backend.domain.post.mapper.PostMapper;
 import com.FlagHome.backend.domain.post.service.PostService;
 import com.FlagHome.backend.global.common.ApplicationResponse;
+import com.FlagHome.backend.global.utility.SecurityUtils;
 import com.FlagHome.backend.global.utility.UriCreator;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-import java.util.List;
+import javax.validation.Valid;
 
+import java.net.URI;
+
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 @Tag(name = "post", description = "게시글 API")
@@ -27,11 +24,14 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/posts")
 @RequiredArgsConstructor
 public class PostController {
-    private final PostService postService;
-    private final LikeService likeService;
     private final static String BASE_URL = "/posts";
+    private final PostService postService;
+    private final PostMapper postMapper;
 
-    @Tag(name = "post")
+    /**
+     * Version 1
+     */
+    /* @Tag(name = "post")
     @Operation(summary = "게시글 생성")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "게시글 생성에 성공 하였습니다."),
@@ -40,7 +40,7 @@ public class PostController {
     @PostMapping
     public ResponseEntity<ApplicationResponse> createPost(@RequestBody CreatePostRequest postPostDto) {
         long id = postService.createPost(postPostDto);
-        URI uri = UriCreator.createUri(BASE_URL, id);
+        URI uri = UriCreator.createURI(BASE_URL, id);
         ApplicationResponse apiResponse = ApplicationResponse.of(uri, HttpStatus.CREATED, "게시글 생성에 성공 하였습니다.");
         return ResponseEntity.ok(apiResponse);
     }
@@ -126,5 +126,28 @@ public class PostController {
     public ResponseEntity<ApplicationResponse> getTopNPostListByDateAndLike(@RequestParam(value = "post-count") int postCount) {
         String message = "상위 " + postCount + "개의 게시글을 가져왔습니다.";
         return ResponseEntity.ok(ApplicationResponse.of(postService.getTopNPostListByDateAndLike(postCount), OK, message));
+    } */
+    /**
+     * Version 2
+     */
+    @ResponseStatus(OK)
+    @GetMapping
+    public ApplicationResponse<AllPostResponse> getPost() {
+        return new ApplicationResponse();
+    }
+
+    @ResponseStatus(OK)
+    @GetMapping("/{id}")
+    public ApplicationResponse<AllPostResponse> getPost(@PathVariable("id") @Valid long postId) {
+        return new ApplicationResponse();
+    }
+
+    @ResponseStatus(CREATED)
+    @PostMapping
+    public ApplicationResponse<URI> create(@RequestBody @Valid CreatePostRequest createPostRequest) {
+        Post post = postMapper.CreateRequestToEntity(createPostRequest);
+        postService.create(SecurityUtils.getMemberId(), post, createPostRequest.getBoardName());
+        URI uri = UriCreator.createURI(BASE_URL, post.getId());
+        return new ApplicationResponse(uri);
     }
 }

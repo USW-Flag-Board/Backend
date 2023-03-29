@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.member.sleeping.entity;
 
-import com.FlagHome.backend.domain.member.Major;
-import com.FlagHome.backend.domain.member.Member;
+import com.FlagHome.backend.domain.member.entity.enums.Major;
+import com.FlagHome.backend.domain.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

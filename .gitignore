@@ -4,7 +4,7 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-/src/main/resources/application-aws.yml
+/src/main/resources/application-s3.yml
 /src/main/resources/application-ses.yml
 /src/main/resources/application-db.yml
 

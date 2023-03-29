@@ -1,13 +1,13 @@
 package com.FlagHome.backend.domain.member.avatar.service;
 
-import com.FlagHome.backend.domain.member.Member;
+import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.MyProfileResponse;
 import com.FlagHome.backend.domain.member.avatar.entity.Avatar;
 import com.FlagHome.backend.domain.member.avatar.repository.AvatarRepository;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
-import com.FlagHome.backend.global.infra.aws.s3.AwsS3Service;
+import com.FlagHome.backend.global.infra.aws.s3.service.AwsS3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

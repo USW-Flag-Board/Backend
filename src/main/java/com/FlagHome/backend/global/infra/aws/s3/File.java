@@ -2,7 +2,6 @@ package com.FlagHome.backend.global.infra.aws.s3;
 
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.global.common.BaseEntity;
-import com.FlagHome.backend.global.common.Status;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,10 +26,10 @@ public class File extends BaseEntity {
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private FileStatus status;
 
     @Builder
-    public File(Post post, String link, Status status) {
+    public File(Post post, String link, FileStatus status) {
         this.post = post;
         this.link = link;
         this.status = status;

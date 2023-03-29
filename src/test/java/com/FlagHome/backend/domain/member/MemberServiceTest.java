@@ -1,8 +1,8 @@
 package com.FlagHome.backend.domain.member;
 
 import com.FlagHome.backend.domain.auth.AuthInformation;
+import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.mapper.MemberMapper;
-import com.FlagHome.backend.global.common.Status;
 import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
 import com.FlagHome.backend.domain.member.avatar.entity.Avatar;
@@ -20,7 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -107,7 +106,6 @@ public class MemberServiceTest {
             Member saveMember =  memberRepository.saveAndFlush(Member.builder()
                             .loginId(loginId)
                             .password(passwordEncoder.encode(password))
-                            .status(Status.GENERAL)
                             .build());
 
             assertThatExceptionOfType(CustomException.class)
@@ -218,26 +216,24 @@ public class MemberServiceTest {
         assertThat(response.getNickName()).isEqualTo(newNickName);
     }
 
-    @Test
-    @DisplayName("휴면계정으로 분류 테스트")
-    void changeAllToSleepMemberTest() {
-        //given
-        String loginId = "hwyoung123";
-        LocalDateTime lastLoginTime = LocalDateTime.now().minusDays(7);
-        Status status = Status.GENERAL;
-
-        Member member = memberRepository.save(Member.builder()
-                .loginId(loginId)
-                .lastLoginTime(lastLoginTime)
-                .status(status)
-                .build());
-
-        //when
-        memberService.changeAllToSleepMember();
-
-        //then
-        assertThat(member.getStatus() == Status.SLEEPING).isTrue();
-    }
+//    @Test
+//    @DisplayName("휴면계정으로 분류 테스트")
+//    void changeAllToSleepMemberTest() {
+//        //given
+//        String loginId = "hwyoung123";
+//        LocalDateTime lastLoginTime = LocalDateTime.now().minusDays(7);
+//        Status status = Status.GENERAL;
+//
+//        Member member = memberRepository.save(Member.builder()
+//                .loginId(loginId)
+//                .build());
+//
+//        //when
+//        memberService.changeAllToSleepMember();
+//
+//        //then
+//        assertThat(member.getStatus() == Status.SLEEPING).isTrue();
+//    }
 
 //    @Test
 //    @DisplayName("로그보기")

@@ -1,23 +1,17 @@
 package com.FlagHome.backend.domain.post.repository;
 
-import com.FlagHome.backend.domain.board.enums.SearchType;
-import com.FlagHome.backend.domain.post.controller.dto.LightPostDto;
-import com.FlagHome.backend.domain.post.controller.dto.PostDto;
-import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
-
-import static com.FlagHome.backend.domain.post.entity.QPost.post;
 
 
 @RequiredArgsConstructor
 public class PostRepositoryImpl implements PostRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
-    @Override
+    /**
+     * Version 1
+     */
+    /* @Override
     public List<LightPostDto> findMyPostList(String loginId) {
         return jpaQueryFactory
                 .select(Projections.constructor(LightPostDto.class,
@@ -124,5 +118,9 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
             return null;
 
         return post.member.loginId.eq(searchWord);
-    }
+    } */
+
+    /**
+     * Version 2
+     */
 }

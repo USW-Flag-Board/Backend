@@ -1,26 +1,21 @@
 package com.FlagHome.backend.domain.board.service;
 
 import com.FlagHome.backend.domain.board.entity.Board;
-import com.FlagHome.backend.domain.board.enums.SearchType;
 import com.FlagHome.backend.domain.board.repository.BoardRepository;
-import com.FlagHome.backend.domain.post.controller.dto.PostDto;
-import com.FlagHome.backend.domain.post.repository.PostRepository;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
-import com.FlagHome.backend.global.utility.CustomBeanUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
-    private final PostRepository postRepository;
-    private final CustomBeanUtils<Board> beanUtil;
 
+    /**
+     * Version 1
+     */
+    /*
     @Transactional
     public Board createBoard(Board board) {
 
@@ -37,7 +32,7 @@ public class BoardService {
     public List<PostDto> getPostListUsingBoardName(String boardName) {
         HashSet<String> boardsNameSet = boardRepository.findHashSetOfBoardsName();
         if(!boardsNameSet.contains(boardName))
-            throw new CustomException(ErrorCode.BOARD_NOT_EXISTS);
+            throw new CustomException(ErrorCode.BOARD_NOT_FOUND);
 
         return postRepository.findBoardWithCondition(boardName, null, null);
     }
@@ -76,6 +71,30 @@ public class BoardService {
 
     public Board findVerifiedBoard(long boardId) {
         return boardRepository.findById(boardId)
-                .orElseThrow(()-> new CustomException(ErrorCode.BOARD_NOT_EXISTS));
+                .orElseThrow(()-> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+    } */
+
+    /**
+     * Version 2
+     */
+    public void searchByCondition() {
+    }
+
+    public void create(Board board) {
+        boardRepository.save(board);
+    }
+
+    public void update(Board board) {
+        Board findBoard = findByName(board.getName());
+        findBoard.updateBoard(board);
+    }
+
+    public void delete(Board board) {
+        boardRepository.delete(board);
+    }
+
+    public Board findByName(String name) {
+        return boardRepository.findByName(name)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
     }
 }
