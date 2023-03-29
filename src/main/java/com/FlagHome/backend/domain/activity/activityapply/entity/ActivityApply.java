@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.activity.activityapply.entity;
 
 import com.FlagHome.backend.domain.activity.entity.Activity;
-import com.FlagHome.backend.domain.member.Member;
+import com.FlagHome.backend.domain.member.entity.Member;
 import lombok.*;
 
 import javax.persistence.*;

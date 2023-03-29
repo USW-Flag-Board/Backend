@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.report.controller.dto;
 
 
-import com.FlagHome.backend.domain.member.Member;
+import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.report.ReportType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;

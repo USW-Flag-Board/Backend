@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.member.repository;
 
 import com.FlagHome.backend.domain.member.controller.dto.LoginLogResponse;
-import com.FlagHome.backend.domain.member.Member;
+import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.controller.dto.SearchMemberResponse;
 import org.springframework.stereotype.Repository;
 

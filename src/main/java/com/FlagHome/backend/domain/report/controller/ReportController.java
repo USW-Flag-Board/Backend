@@ -37,7 +37,7 @@ public class ReportController {
     @PostMapping
     public ApplicationResponse<URI> report(@RequestBody ReportRequest reportRequest) {
         long id = reportService.create(SecurityUtils.getMemberId(), Report.from(reportRequest));
-        URI location = UriCreator.createUri(DEFAULT_URL, id);
+        URI location = UriCreator.createURI(DEFAULT_URL, id);
         return new ApplicationResponse(location);
     }
 

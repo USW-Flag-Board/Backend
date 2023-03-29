@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.activity.memberactivity.dto;
 
-import com.FlagHome.backend.domain.member.Major;
+import com.FlagHome.backend.domain.member.entity.enums.Major;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AccessLevel;
 import lombok.Builder;

@@ -16,10 +16,10 @@ import java.util.Arrays;
 )
 public interface ActivityMapper {
     default Activity toActivity(ActivityRequest activityRequest) {
-        return Arrays.stream(ActivityType.values())
+        ActivityType matchingType = Arrays.stream(ActivityType.values())
                 .filter(type -> type == activityRequest.getActivityType())
                 .findFirst()
-                .map(type -> type.toEntity(activityRequest))
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_SUPPORT_ACTIVITY));
+        return matchingType.toEntity(activityRequest);
     }
 }

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.FlagHome.backend.domain.member.QMember.member;
+import static com.FlagHome.backend.domain.member.entity.QMember.member;
 import static com.FlagHome.backend.domain.report.QReport.report;
 
 @Repository

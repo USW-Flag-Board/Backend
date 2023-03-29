@@ -4,7 +4,7 @@ import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantRespon
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.QParticipantResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.QParticipateResponse;
-import com.FlagHome.backend.domain.member.Member;
+import com.FlagHome.backend.domain.member.entity.Member;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -13,7 +13,7 @@ import java.util.List;
 
 import static com.FlagHome.backend.domain.activity.entity.QActivity.activity;
 import static com.FlagHome.backend.domain.activity.memberactivity.entity.QMemberActivity.memberActivity;
-import static com.FlagHome.backend.domain.member.QMember.member;
+import static com.FlagHome.backend.domain.member.entity.QMember.member;
 
 
 @Repository

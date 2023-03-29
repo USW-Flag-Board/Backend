@@ -137,7 +137,7 @@ public class ActivityController {
     @PostMapping
     public ApplicationResponse<URI> createActivity(@RequestBody ActivityRequest activityRequest) {
         Activity activity = activityMapper.toActivity(activityRequest);
-        long id = activityService.create(SecurityUtils.getMemberId(), activity).getId();
+        Long id = activityService.create(SecurityUtils.getMemberId(), activity).getId();
         URI uri = UriCreator.createURI(DEFAULT_URL, id);
         return new ApplicationResponse(uri);
     }

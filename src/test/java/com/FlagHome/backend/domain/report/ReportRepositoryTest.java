@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.report;
 
-import com.FlagHome.backend.domain.member.Member;
+import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.report.controller.dto.ReportResponse;
 import com.FlagHome.backend.domain.report.repository.ReportRepository;

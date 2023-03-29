@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.member.sleeping.service;
 
-import com.FlagHome.backend.domain.member.Member;
+import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.sleeping.entity.Sleeping;
 import com.FlagHome.backend.domain.member.sleeping.repository.SleepingRepository;
 import lombok.RequiredArgsConstructor;
