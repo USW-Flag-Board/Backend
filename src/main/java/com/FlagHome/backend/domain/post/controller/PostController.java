@@ -130,18 +130,21 @@ public class PostController {
     /**
      * Version 2
      */
+    @Tag(name = "post")
     @ResponseStatus(OK)
     @GetMapping
     public ApplicationResponse<AllPostResponse> getPost() {
         return new ApplicationResponse();
     }
 
+    @Tag(name = "post")
     @ResponseStatus(OK)
     @GetMapping("/{id}")
     public ApplicationResponse<AllPostResponse> getPost(@PathVariable("id") @Valid long postId) {
         return new ApplicationResponse();
     }
 
+    @Tag(name = "post")
     @ResponseStatus(CREATED)
     @PostMapping
     public ApplicationResponse<URI> create(@RequestBody @Valid CreatePostRequest createPostRequest) {

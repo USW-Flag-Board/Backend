@@ -1,19 +1,54 @@
 package com.FlagHome.backend.domain.activity;
 
 
+import com.FlagHome.backend.domain.activity.controller.dto.ActivityRequest;
+import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
+import com.FlagHome.backend.domain.activity.entity.enums.BookUsage;
+import com.FlagHome.backend.domain.activity.entity.enums.Proceed;
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.member.entity.enums.Role;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
+import com.FlagHome.backend.global.utility.UriCreator;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 
-import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
 @SpringBootTest
+@WithMockUser
+@AutoConfigureMockMvc
+@RunWith(SpringRunner.class)
+@Ignore
 public class ActivityControllerTest {
+    private static final String BASE_URL = "/activities";
+
     @Autowired
     private ActivityRepository activityRepository;
 
@@ -21,61 +56,57 @@ public class ActivityControllerTest {
     private MemberRepository memberRepository;
 
     @Autowired
-    private EntityManager entityManager;
+    private ObjectMapper objectMapper;
 
-    private Member dummyMember1;
+    @Autowired
+    private MockMvc mockMvc;
 
+    @Autowired
+    private WebApplicationContext webApplicationContext;
 
+    private Member member;
 
     @BeforeEach
-    public void testSetting() {
-        dummyMember1 = memberRepository.save(Member.builder()
-                .loginId("gogun1")
-                .password("1234")
-                //.email("yabueng@suwon.ac.kr")
-                .studentId("1").build());
+    void setUp() {
+        final String loginId = "gmlwh124";
+        final String password = "qwer1234!";
+        final String email = "gmlwh124@suwon.ac.kr";
+        final Role role = Role.ROLE_CREW;
+
+        member = memberRepository.save(Member.builder()
+                .loginId(loginId)
+                .password(password)
+                .email(email)
+                .role(role)
+                .build());
+
+        setJwtInformation(member);
     }
 
-/*
-        @Nested
-        @DisplayName("활동 삭제 테스트")
-        class deleteActivityTest {
-            @Test
-            @DisplayName("활동 삭제 성공")
-            void deleteActivitySuccessTest() {
-                //given
-                Activity deletedactivity = activityRepository.save(Activity.builder()
-                                .name("삭제될 활동 제목")
-                                .description("삭제될 활동 내용")
-                                .leader(dummyMember1)
-                                .build());
+    @Test
+    @DisplayName("활동 생성 테스트")
+    void createActivityTest() throws Exception {
+        // given
+        ActivityRequest request = ActivityRequest.builder()
+                .name("name")
+                .description("description")
+                .activityType(ActivityType.PROJECT)
+                .proceed(Proceed.OFFLINE)
+                .bookUsage(BookUsage.NOT_USE)
+                .build();
 
-                Long deleteActivityId = deletedactivity.getId();
+        mockMvc.perform(post(BASE_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andDo(print());
+    }
 
-                //when
-                activityService.deleteActivity(deleteActivityId);
-                entityManager.clear();
+    private void setJwtInformation(Member member) {
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add((GrantedAuthority) () -> String.valueOf(member.getRole()));
 
-                //then : 정상적으로 삭제되어 찾을수 없는지
-                deletedactivity = activityRepository.findById(deleteActivityId).orElse(null);
-                assert deletedactivity == null;
-
-
-            }
-
-            @Test
-            @DisplayName("해당 활동의 리더가 아닌 사람이 활동 삭제시 실패")
-            void deleteActivityFailTest() {
-                Activity activity = activityRepository.save(Activity.builder()
-                        .name("삭제될 활동 제목")
-                        .description("삭제될 활동 내용")
-                        .leader(dummyMember1)
-                        .build());
-
-                long deleteActivityId = activity.getId()
-
-
-                assertThat(member.getId()).isEqualTo(dummyMember1.getId());
-
-            }*/
+        UserDetails principal = new User(String.valueOf(member.getId()), "", authorities);
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(principal, "", authorities));
+    }
 }

@@ -104,6 +104,7 @@ public class BoardController {
 //        return new ApplicationResponse<>();
 //    }
 
+    @Tag(name = "board")
     @ResponseStatus(CREATED)
     @PostMapping
     public ApplicationResponse create(@RequestBody @Valid BoardRequest boardRequest) {
@@ -111,6 +112,7 @@ public class BoardController {
         return new ApplicationResponse<>();
     }
 
+    @Tag(name = "board")
     @ResponseStatus(OK)
     @PutMapping
     public ApplicationResponse update(@RequestBody @Valid BoardRequest boardRequest) {

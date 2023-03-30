@@ -268,7 +268,7 @@ public class ActivityController {
             @ApiResponse(responseCode = "401", description = "활동장이 아닙니다.")
     })
     @ResponseStatus(OK)
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ApplicationResponse deleteActivity(@PathVariable("id") long activityId) {
         activityService.delete(SecurityUtils.getMemberId(), activityId);
         return new ApplicationResponse();
