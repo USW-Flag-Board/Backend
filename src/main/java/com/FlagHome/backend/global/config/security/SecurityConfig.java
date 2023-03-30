@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -19,6 +18,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
+
+import static com.FlagHome.backend.domain.member.entity.enums.Role.*;
 
 @Configuration
 @EnableWebSecurity
@@ -48,12 +49,12 @@ public class SecurityConfig {
         return source;
     }
 
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.ignoring()
-                .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**")
-                .antMatchers("/favicon.ico");
-    }
+//    @Bean
+//    public WebSecurityCustomizer webSecurityCustomizer() {
+//        return web -> web.ignoring()
+//                .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**")
+//                .antMatchers("/favicon.ico");
+//    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -61,39 +62,24 @@ public class SecurityConfig {
             .csrf().disable()
             .httpBasic().disable()
             .formLogin().disable()
+            .logout().disable()
+            .headers().frameOptions().disable()
+            .and()
             .cors().configurationSource(corsConfigurationSource())
             .and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http
-            .exceptionHandling()
+        http.exceptionHandling()
             .accessDeniedHandler(jwtAccessDeniedHandler)
             .authenticationEntryPoint(jwtAuthenticationEntryPoint);
 
         http.authorizeRequests()
-            .antMatchers("/auth/**").permitAll()
-
-            .antMatchers(HttpMethod.GET, "/activities", "/activities/{id}", "/activities/{loginId}/profile").permitAll()
-            .antMatchers("/activities/**").hasRole("CREW")
-
-            .antMatchers(HttpMethod.GET, "/boards/**").permitAll()
-            .antMatchers("/boards/**").hasRole("ADMIN")
-
-            .antMatchers(HttpMethod.GET, "/members/{loginId}", "/members/search").permitAll()
-            .antMatchers(HttpMethod.PUT, "/members/find/password").permitAll()
-            .antMatchers(HttpMethod.POST, "/members/find/password", "/members/certification", "/members/find/id").permitAll()
-            .antMatchers("/members/**").hasAnyRole("USER", "CREW")
-
-            .antMatchers(HttpMethod.GET, "/posts/**").permitAll()
-            .antMatchers("/posts/**").hasAnyRole("USER", "CREW")
-
-            .antMatchers(HttpMethod.GET, "/replies/**").permitAll()
-            .antMatchers("/replies/**").hasAnyRole("USER", "CREW")
-
-            .antMatchers(HttpMethod.POST, "api/reports/**").hasAnyRole("USER", "CREW")
-            .antMatchers("api/reports/**").hasRole("ADMIN")
-
-            .antMatchers("/admin/**").hasRole("ADMIN")
+            .antMatchers("/auth/**", "/members/find/password", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**", "/favicon.ico").permitAll()
+            .antMatchers(HttpMethod.GET, "/activities", "/activities/{loginId}/profile", "/members/{loginId}", "/members/search", "/posts/**", "/replies/**").permitAll()
+            .antMatchers(HttpMethod.POST, "/members/certification", "/members/find/id").permitAll()
+            .antMatchers("/activities/**").hasRole(ROLE_CREW.getRole())
+            .antMatchers("/posts/**", "/members/**", "/replies/**", "/reports/tmp").hasAnyRole(ROLE_USER.getRole(), ROLE_CREW.getRole())
+            .antMatchers("/reports/**", "/boards/**", "/admin/**").hasRole(ROLE_ADMIN.getRole())
             .anyRequest().authenticated();
 
         http

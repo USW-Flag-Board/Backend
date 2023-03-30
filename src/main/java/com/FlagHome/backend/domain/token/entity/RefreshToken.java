@@ -18,8 +18,8 @@ public class RefreshToken extends Token {
         return RefreshToken.builder()
                 .key(key)
                 .value(value)
-//                .expiredAt(LocalDateTime.now().plusWeeks(1)) 
-                .expiredAt(LocalDateTime.now().plusMinutes(5)) // 테스트용
+                .expiredAt(LocalDateTime.now().plusWeeks(1))
+//                .expiredAt(LocalDateTime.now().plusMinutes(5)) // 테스트용
                 .build();
     }
 }

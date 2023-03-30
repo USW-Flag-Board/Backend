@@ -41,7 +41,7 @@ public class RefreshTokenService implements TokenService {
         }
 
         TokenResponse tokenResponse = jwtUtilizer.generateTokenDto(authentication);
-        findRefreshToken.renewValue(tokenResponse.getRefreshToken(), LocalDateTime.now().plusMinutes(5)); // 테스트용 시간
+        findRefreshToken.renewValue(tokenResponse.getRefreshToken(), LocalDateTime.now().plusWeeks(1));
 
         return tokenResponse;
     }

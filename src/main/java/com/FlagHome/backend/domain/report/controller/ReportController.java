@@ -34,7 +34,7 @@ public class ReportController {
             @ApiResponse(responseCode = "409", description = "이미 신고한 대상입니다")
     })
     @ResponseStatus(OK)
-    @PostMapping
+    @PostMapping("/tmp")
     public ApplicationResponse<URI> report(@RequestBody ReportRequest reportRequest) {
         long id = reportService.create(SecurityUtils.getMemberId(), Report.from(reportRequest));
         URI location = UriCreator.createURI(DEFAULT_URL, id);
