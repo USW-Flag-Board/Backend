@@ -52,6 +52,7 @@ public class MemberService {
         return Boolean.FALSE;
     }
 
+    // db 무결성 오류 발생 -> 상태 변경으로 관리할 예정
     @Transactional
     public void withdraw(Long memberId, String password) {
         validateMemberPassword(memberId, password);

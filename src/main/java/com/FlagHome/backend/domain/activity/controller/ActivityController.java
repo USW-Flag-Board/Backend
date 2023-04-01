@@ -130,7 +130,7 @@ public class ActivityController {
     @Tag(name = "activity")
     @Operation(summary = "활동 만들기", description = "[토큰필요] 활동 만들기는 동아리원만 가능하다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "스터디 내용이 성공적으로 수정되었습니다."),
+            @ApiResponse(responseCode = "201", description = "만들기 성공"),
             @ApiResponse(responseCode = "401", description = "일반 유저가 만들려고한 경우")
     })
     @ResponseStatus(CREATED)
