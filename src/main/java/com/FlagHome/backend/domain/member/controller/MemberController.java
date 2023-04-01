@@ -46,7 +46,7 @@ public class MemberController {
 
     @Tag(name = "member")
     @Operation(summary = "내 상세정보 보기", description = "[토큰 필요] 내 상세정보 보기.\n" +
-            "프로필 정보와 개인 정보를 가져온다. (프로필 정보란, 개인 정보가 아닌 가변적인 정보")
+            "프로필 정보와 개인 정보를 가져온다. (프로필 정보란, 개인 정보가 아닌 가변적인 정보)")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "내 정보를 가져왔습니다."),
             @ApiResponse(responseCode = "401", description = "토큰을 넣지 않으면 401 발생")

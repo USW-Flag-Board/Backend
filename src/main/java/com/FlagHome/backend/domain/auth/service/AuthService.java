@@ -42,6 +42,10 @@ public class AuthService {
 
     @Transactional
     public JoinResponse join(JoinRequest joinRequest) {
+        if (validateDuplicateLoginId(joinRequest.getLoginId()) || validateEmail(joinRequest.getEmail())) {
+            throw new CustomException(ErrorCode.VALIDATE_NOT_PROCEED);
+        }
+
         String certificationNumber = RandomGenerator.getRandomNumber();
 
         authRepository.save(AuthInformation.of(joinRequest, certificationNumber));

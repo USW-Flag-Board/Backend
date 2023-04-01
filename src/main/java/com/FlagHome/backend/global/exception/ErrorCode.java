@@ -11,12 +11,13 @@ public enum ErrorCode {
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않는 토큰입니다."),
     EXPIRED_AUTH_INFORMATION(HttpStatus.BAD_REQUEST, "가입 시간이 만료되었습니다."),
+    VALIDATE_NOT_PROCEED(HttpStatus.BAD_REQUEST, "중복검사를 진행하지 않았습니다."),
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
     NOT_SUPPORT_ACTIVITY(HttpStatus.BAD_REQUEST, "지원하는 활동이 아닙니다."),
     NOT_SUPPORT_LIKE(HttpStatus.BAD_REQUEST, "지원하는 좋아요 형식이 아닙니다."),
     ALREADY_EXISTS_LIKE(HttpStatus.BAD_REQUEST, "이미 좋아요를 눌렀습니다."),
     NOT_EXISTS_LIKE(HttpStatus.BAD_REQUEST, "이미 좋아요 취소를 하였습니다."),
-    INVALID_MONTH_RANGE(HttpStatus.BAD_REQUEST, "월의 입력범위에 벗어났습니다."),
+    INVALID_MONTH_RANGE(HttpStatus.BAD_REQUEST, "입력범위에 벗어났습니다."),
 
     /** 401 - UNAUTHORIZED  */
     UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, "로그인이 필요한 기능입니다."),
