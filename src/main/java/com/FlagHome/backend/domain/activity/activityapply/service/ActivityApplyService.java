@@ -17,7 +17,7 @@ import java.util.List;
 public class ActivityApplyService {
     private final ActivityApplyRepository activityApplyRepository;
 
-    public Boolean checkApply(long memberId, long activityId) {
+    public Boolean checkApply(Long memberId, Long activityId) {
         return activityApplyRepository.checkApply(memberId, activityId);
     }
 
@@ -33,17 +33,17 @@ public class ActivityApplyService {
     }
 
     @Transactional(readOnly = true)
-    public List<ActivityApplyResponse> getAllApplies(long activityId) {
+    public List<ActivityApplyResponse> getAllApplies(Long activityId) {
         return activityApplyRepository.getAllApplies(activityId);
     }
 
     @Transactional
-    public void cancelApply(long memberId, long activityId) {
+    public void cancelApply(Long memberId, Long activityId) {
         activityApplyRepository.deleteByMemberIdAndActivityId(memberId, activityId);
     }
 
     @Transactional
-    public void deleteAllApplies(long activityId) {
+    public void deleteAllApplies(Long activityId) {
         activityApplyRepository.deleteAllApplies(activityId);
     }
 }

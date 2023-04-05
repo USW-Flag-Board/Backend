@@ -11,6 +11,7 @@ public enum ErrorCode {
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않는 토큰입니다."),
     EXPIRED_AUTH_INFORMATION(HttpStatus.BAD_REQUEST, "가입 시간이 만료되었습니다."),
+    UNAVAILABLE_ACCOUNT(HttpStatus.BAD_REQUEST, "사용할 수 없는 계정입니다."),
     VALIDATE_NOT_PROCEED(HttpStatus.BAD_REQUEST, "중복검사를 진행하지 않았습니다."),
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
     NOT_SUPPORT_ACTIVITY(HttpStatus.BAD_REQUEST, "지원하는 활동이 아닙니다."),
@@ -20,10 +21,8 @@ public enum ErrorCode {
     INVALID_MONTH_RANGE(HttpStatus.BAD_REQUEST, "입력범위에 벗어났습니다."),
 
     /** 401 - UNAUTHORIZED  */
-    UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, "로그인이 필요한 기능입니다."),
     NONE_AUTHORIZATION_TOKEN(HttpStatus.UNAUTHORIZED, "권한 정보가 없는 토큰입니다."),
     NOT_ACTIVITY_LEADER(HttpStatus.UNAUTHORIZED, "활동장이 아닙니다."),
-    HAVE_NO_AUTHORITY(HttpStatus.UNAUTHORIZED, "권한이 없습니다."),
     INVALID_JWT_SIGNATURE_EXCEPTION(HttpStatus.UNAUTHORIZED, "잘못된 JWT 서명입니다."),
     INVALID_JWT_TOKEN_EXCEPTION(HttpStatus.UNAUTHORIZED, "잘못된 JWT 토큰입니다."),
     EXPIRED_JWT_TOKEN_EXCEPTION(HttpStatus.UNAUTHORIZED, "만료된 JWT 토큰입니다."),

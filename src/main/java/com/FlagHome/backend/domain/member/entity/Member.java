@@ -68,8 +68,13 @@ public class Member extends BaseEntity {
         this.lastLoginTime = LocalDateTime.now();
     }
 
+
     public void withdraw() {
         this.status = MemberStatus.WITHDRAW;
+    }
+
+    public boolean isNotActivated() {
+        return this.status == MemberStatus.WITHDRAW || this.status == MemberStatus.BANNED;
     }
 
     public void updatePassword(String password, PasswordEncoder passwordEncoder) {

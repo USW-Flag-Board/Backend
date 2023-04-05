@@ -52,17 +52,10 @@ public class MemberService {
         return Boolean.FALSE;
     }
 
-    // db 무결성 오류 발생 -> 상태 변경으로 관리할 예정
     @Transactional
     public void withdraw(Long memberId, String password) {
-        validateMemberPassword(memberId, password);
-        avatarService.deleteAvatar(memberId);
-        deleteMemberById(memberId);
-    }
-
-    @Transactional
-    public void deleteMemberById(long memberId) {
-        memberRepository.deleteById(memberId);
+        Member member = validatePasswordAndReturn(memberId, password);
+        member.withdraw();
     }
 
     public FindResponse findId(String name, String email) {
@@ -99,7 +92,7 @@ public class MemberService {
 
     @Transactional // 비밀번호를 유저가 변경하는 경우
     public void updatePassword(Long memberId, String currentPassword, String newPassword) {
-        Member member = validateMemberPassword(memberId, currentPassword);
+        Member member = validatePasswordAndReturn(memberId, currentPassword);
 
         if (passwordEncoder.matches(newPassword, member.getPassword())) {
             throw new CustomException(ErrorCode.PASSWORD_IS_SAME);
@@ -127,15 +120,21 @@ public class MemberService {
     }
 
     public AvatarResponse getAvatar(String loginId) {
+        Member member = findByLoginId(loginId);
+
+        if (member.isNotActivated()) {
+            throw new CustomException(ErrorCode.UNAVAILABLE_ACCOUNT);
+        }
+
         return avatarService.getAvatar(loginId);
     }
 
-    public MyProfileResponse getMyProfile(long memberId) {
+    public MyProfileResponse getMyProfile(Long memberId) {
         return avatarService.getMyProfile(memberId);
     }
 
     @Transactional
-    public void updateAvatar(long memberId, Avatar avatar) {
+    public void updateAvatar(Long memberId, Avatar avatar) {
         avatarService.updateAvatar(memberId, avatar);
     }
 
@@ -151,7 +150,7 @@ public class MemberService {
         List<Sleeping> sleepingList = sleepingMembers.stream()
                         .map(Sleeping::of)
                         .collect(Collectors.toList());
-        sleepingService.saveAllSleepings(sleepingList);
+        sleepingService.saveAllSleeping(sleepingList);
         emptyAllMembers(sleepingMembers);
     }
 
@@ -191,7 +190,7 @@ public class MemberService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
-    private Member validateMemberPassword(Long memberId, String password) {
+    private Member validatePasswordAndReturn(Long memberId, String password) {
         Member member = findById(memberId);
 
         if (!passwordEncoder.matches(password, member.getPassword())) {

@@ -73,6 +73,10 @@ public class AuthService {
     public TokenResponse login(String loginId, String password) {
         Member member = memberService.convertSleepingIfExist(loginId);
 
+        if (member.isNotActivated()) {
+            throw new CustomException(ErrorCode.UNAVAILABLE_ACCOUNT);
+        }
+
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginId, password);
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 

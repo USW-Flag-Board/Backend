@@ -49,7 +49,7 @@ public class Avatar {
                 .member(member)
                 .nickName(nickName)
                 .bio("")
-                .profileImage("default")
+                .profileImage("https://flaground-s3.s3.ap-northeast-2.amazonaws.com/avatar/default_image.jpg") // todo: 어디에 둘지
                 .build();
     }
 }

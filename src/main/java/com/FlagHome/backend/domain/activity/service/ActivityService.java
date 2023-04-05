@@ -37,12 +37,12 @@ public class ActivityService {
     private final MemberActivityService memberActivityService;
     private final MemberService memberService;
 
-    public ActivityResponse getActivity(long activityId) {
+    public ActivityResponse getActivity(Long activityId) {
         return activityRepository.getActivity(activityId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ACTIVITY_NOT_FOUND));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true) // 수정 요망
     public GetAllActivitiesResponse getAllActivities() {
         List<ActivityResponse> activityResponseList = activityRepository.getAllActivities();
 
@@ -54,13 +54,13 @@ public class ActivityService {
     }
 
     @Transactional
-    public List<ActivityApplyResponse> getAllActivityApplies(long memberId, long activityId) {
+    public List<ActivityApplyResponse> getAllActivityApplies(Long memberId, Long activityId) {
         Activity activity = validateLeaderAndReturn(memberId, activityId);
         return activityApplyService.getAllApplies(activity.getId());
     }
 
     @Transactional
-    public List<ParticipantResponse> getAllParticipants(long memberId, long activityId) {
+    public List<ParticipantResponse> getAllParticipants(Long memberId, Long activityId) {
         validateLeaderAndReturn(memberId, activityId);
         return memberActivityService.getAllParticipants(activityId);
     }
@@ -69,12 +69,12 @@ public class ActivityService {
         return memberActivityService.getAllActivitiesOfMember(loginId);
     }
 
-    public Boolean checkApply(long memberId, long activityId) {
+    public Boolean checkApply(Long memberId, Long activityId) {
         return activityApplyService.checkApply(memberId, activityId);
     }
 
     @Transactional
-    public ActivityApply applyActivity(long memberId, long activityId) {
+    public ActivityApply applyActivity(Long memberId, Long activityId) {
         if (checkApply(memberId, activityId)) {
             throw new CustomException(ErrorCode.ALREADY_APPLIED);
         }
@@ -91,25 +91,25 @@ public class ActivityService {
     }
 
     @Transactional
-    public void updateMentoring(long memberId, long activityId, ActivityRequest activityRequest) {
+    public void updateMentoring(Long memberId, Long activityId, ActivityRequest activityRequest) {
         Mentoring mentoring = (Mentoring) validateLeaderAndReturn(memberId, activityId);
         mentoring.updateMentoring(activityRequest);
     }
 
     @Transactional
-    public void updateProject(long memberId, long activityId, ActivityRequest activityRequest) {
+    public void updateProject(Long memberId, Long activityId, ActivityRequest activityRequest) {
         Project project = (Project) validateLeaderAndReturn(memberId, activityId);
         project.updateProject(activityRequest);
     }
 
     @Transactional
-    public void updateStudy(long memberId, long activityId, ActivityRequest activityRequest) {
+    public void updateStudy(Long memberId, Long activityId, ActivityRequest activityRequest) {
         Study study = (Study) validateLeaderAndReturn(memberId, activityId);
         study.updateStudy(activityRequest);
     }
 
     @Transactional
-    public void changeLeader(long memberId, long activityId, String loginId) {
+    public void changeLeader(Long memberId, Long activityId, String loginId) {
         Activity activity = validateLeaderAndReturn(memberId, activityId);
         Member newLeader = memberActivityService.findMemberOfActivity(activityId, loginId);
         if (newLeader == null) {
@@ -120,7 +120,7 @@ public class ActivityService {
     }
 
     @Transactional
-    public void closeRecruitment(long memberId, long activityId, List<String> loginIdList) {
+    public void closeRecruitment(Long memberId, Long activityId, List<String> loginIdList) {
         Activity activity = validateLeaderAndReturn(memberId, activityId);
         List<Member> memberList = memberService.getMembersByLoginId(loginIdList);
 
@@ -130,7 +130,7 @@ public class ActivityService {
     }
 
     @Transactional
-    public void reopenRecruitment(long memberId, long activityId) {
+    public void reopenRecruitment(Long memberId, Long activityId) {
         Activity activity = validateLeaderAndReturn(memberId, activityId);
 
         memberActivityService.deleteAllByActivity(activity.getId());
@@ -138,13 +138,13 @@ public class ActivityService {
     }
 
     @Transactional
-    public void finishActivity(long memberId, long activityId) {
+    public void finishActivity(Long memberId, Long activityId) {
         Activity activity = validateLeaderAndReturn(memberId, activityId);
         activity.finishActivity();
     }
 
     @Transactional
-    public void delete(long memberId, long activityId) {
+    public void delete(Long memberId, Long activityId) {
         Activity activity = validateLeaderAndReturn(memberId, activityId);
 
         activityApplyService.deleteAllApplies(activityId);
@@ -152,14 +152,14 @@ public class ActivityService {
     }
 
     @Transactional
-    public void cancelApply(long memberId, long activityId) {
+    public void cancelApply(Long memberId, Long activityId) {
         if (!checkApply(memberId, activityId)) {
             throw new CustomException(ErrorCode.APPLY_NOT_FOUND);
         }
         activityApplyService.cancelApply(memberId, activityId);
     }
 
-    private Activity validateLeaderAndReturn(long memberId, long activityId) {
+    private Activity validateLeaderAndReturn(Long memberId, Long activityId) {
         Activity activity = findById(activityId);
 
         if (memberId != activity.getLeader().getId()) {
@@ -169,7 +169,7 @@ public class ActivityService {
         return activity;
     }
 
-    private Activity findById(long activityId) {
+    private Activity findById(Long activityId) {
         return activityRepository.findById(activityId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ACTIVITY_NOT_FOUND));
     }

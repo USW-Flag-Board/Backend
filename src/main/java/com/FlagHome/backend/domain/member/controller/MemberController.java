@@ -178,9 +178,9 @@ public class MemberController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다.")
     })
     @ResponseStatus(OK)
-    @DeleteMapping
+    @PutMapping("/withdraw")
     public ApplicationResponse withdraw(@RequestBody @Valid WithdrawRequest withdrawRequest) {
         memberService.withdraw(SecurityUtils.getMemberId(), withdrawRequest.getCurrentPassword());
-        return new ApplicationResponse();
+        return new ApplicationResponse<>();
     }
 }

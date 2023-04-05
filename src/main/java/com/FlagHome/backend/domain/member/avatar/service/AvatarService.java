@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @RequiredArgsConstructor
 public class AvatarService {
-    private static final String AWS_S3_DIRECTORY = "/avatar";
+    private static final String PROFILE_IMAGE_DIRECTORY = "/avatar";
     private final AvatarRepository avatarRepository;
     private final AwsS3Service awsS3Service;
 
@@ -31,7 +31,7 @@ public class AvatarService {
     }
 
     @Transactional(readOnly = true)
-    public MyProfileResponse getMyProfile(long memberId) {
+    public MyProfileResponse getMyProfile(Long memberId) {
         return avatarRepository.getMyProfile(memberId);
     }
 
@@ -43,13 +43,13 @@ public class AvatarService {
 
     @Transactional
     public void updateProfileImage(Long memberId, MultipartFile file) {
-        String profileImageUrl =  awsS3Service.upload(file, AWS_S3_DIRECTORY);
+        String profileImageUrl =  awsS3Service.upload(file, PROFILE_IMAGE_DIRECTORY);
         Avatar avatar = findByMemberId(memberId);
         avatar.changeProfileImage(profileImageUrl);
     }
 
     @Transactional
-    public void deleteAvatar(long memberId) {
+    public void deleteAvatar(Long memberId) {
         avatarRepository.deleteByMemberId(memberId);
     }
 
