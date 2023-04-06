@@ -1,4 +1,4 @@
-package com.FlagHome.backend.global.infra.aws.ses.dto;
+package com.FlagHome.backend.infra.aws.ses.dto;
 
 import com.amazonaws.services.simpleemail.model.*;
 import lombok.AccessLevel;

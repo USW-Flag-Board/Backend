@@ -1,12 +1,13 @@
 package com.FlagHome.backend.domain.member;
 
 import com.FlagHome.backend.domain.auth.AuthInformation;
-import com.FlagHome.backend.domain.member.entity.Member;
-import com.FlagHome.backend.domain.member.mapper.MemberMapper;
 import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
 import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
 import com.FlagHome.backend.domain.member.avatar.entity.Avatar;
 import com.FlagHome.backend.domain.member.avatar.repository.AvatarRepository;
+import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.member.entity.enums.MemberStatus;
+import com.FlagHome.backend.domain.member.mapper.MemberMapper;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.global.exception.CustomException;
@@ -80,6 +81,7 @@ public class MemberServiceTest {
             // given
             String loginId = "gmlwh124";
             String password = "1234";
+            MemberStatus withdraw = MemberStatus.WITHDRAW;
 
             Member savedMember = memberRepository.saveAndFlush(Member.builder()
                             .loginId(loginId)
@@ -90,10 +92,11 @@ public class MemberServiceTest {
             memberService.withdraw(savedMember.getId(), password);
             entityManager.flush();
 
-            // then : 정상적으로 탈퇴되어 멤버 정보가 레포에 없는지
-            assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> memberRepository.findById(savedMember.getId())
-                            .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND)));
+            // then
+            Member findMember = memberRepository.findById(savedMember.getId()).get();
+            boolean notActivate = findMember.isNotActivated();
+            assertThat(findMember.getStatus()).isEqualTo(withdraw);
+            assertThat(notActivate).isTrue();
         }
 
         @Test

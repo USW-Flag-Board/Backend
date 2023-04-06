@@ -1,4 +1,4 @@
-package com.FlagHome.backend.global.infra.aws.s3.service;
+package com.FlagHome.backend.infra.aws.s3.service;
 
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;

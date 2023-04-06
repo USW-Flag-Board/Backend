@@ -9,7 +9,7 @@ import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.domain.token.entity.FindRequestToken;
 import com.FlagHome.backend.domain.token.entity.Token;
 import com.FlagHome.backend.domain.token.service.FindRequestTokenService;
-import com.FlagHome.backend.global.infra.aws.ses.service.MailService;
+import com.FlagHome.backend.infra.aws.ses.service.MailService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

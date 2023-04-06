@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -162,7 +163,7 @@ public class ActivityService {
     private Activity validateLeaderAndReturn(Long memberId, Long activityId) {
         Activity activity = findById(activityId);
 
-        if (memberId != activity.getLeader().getId()) {
+        if (!Objects.equals(memberId, activity.getLeader().getId())) {
             throw new CustomException(ErrorCode.NOT_ACTIVITY_LEADER);
         }
 

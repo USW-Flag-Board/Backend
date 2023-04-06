@@ -1,7 +1,7 @@
-package com.FlagHome.backend.global.infra.aws.ses.service;
+package com.FlagHome.backend.infra.aws.ses.service;
 
-import com.FlagHome.backend.global.infra.aws.ses.MailType;
-import com.FlagHome.backend.global.infra.aws.ses.dto.MailRequest;
+import com.FlagHome.backend.infra.aws.ses.MailType;
+import com.FlagHome.backend.infra.aws.ses.dto.MailRequest;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

@@ -1,4 +1,4 @@
-package com.FlagHome.backend.global.infra.aws.ses;
+package com.FlagHome.backend.infra.aws.ses;
 
 import lombok.RequiredArgsConstructor;
 

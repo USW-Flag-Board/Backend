@@ -71,7 +71,7 @@ public class ActivityControllerTest {
                 .role(role)
                 .build());
 
-        setJwtInformation(member);
+        setSecurityContext(member);
     }
 
     @Test
@@ -93,7 +93,7 @@ public class ActivityControllerTest {
                 .andDo(print());
     }
 
-    private void setJwtInformation(Member member) {
+    private void setSecurityContext(Member member) {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add((GrantedAuthority) () -> String.valueOf(member.getRole()));
 

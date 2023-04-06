@@ -1,4 +1,4 @@
-package com.FlagHome.backend.global.infra.aws.s3;
+package com.FlagHome.backend.infra.aws.s3;
 
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.global.common.BaseEntity;
