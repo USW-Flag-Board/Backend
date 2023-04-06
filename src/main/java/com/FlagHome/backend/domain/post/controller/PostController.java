@@ -1,7 +1,6 @@
 package com.FlagHome.backend.domain.post.controller;
 
 import com.FlagHome.backend.domain.post.controller.dto.CreatePostRequest;
-import com.FlagHome.backend.domain.post.controller.dto.AllPostResponse;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.mapper.PostMapper;
 import com.FlagHome.backend.domain.post.service.PostService;
@@ -130,19 +129,19 @@ public class PostController {
     /**
      * Version 2
      */
-    @Tag(name = "post")
-    @ResponseStatus(OK)
-    @GetMapping
-    public ApplicationResponse<AllPostResponse> getPost() {
-        return new ApplicationResponse();
-    }
-
-    @Tag(name = "post")
-    @ResponseStatus(OK)
-    @GetMapping("/{id}")
-    public ApplicationResponse<AllPostResponse> getPost(@PathVariable("id") @Valid long postId) {
-        return new ApplicationResponse();
-    }
+//    @Tag(name = "post")
+//    @ResponseStatus(OK)
+//    @GetMapping
+//    public ApplicationResponse<> getPost() {
+//        return new ApplicationResponse();
+//    }
+//
+//    @Tag(name = "post")
+//    @ResponseStatus(OK)
+//    @GetMapping("/{id}")
+//    public ApplicationResponse<> getPost(@PathVariable("id") @Valid long postId) {
+//        return new ApplicationResponse();
+//    }
 
     @Tag(name = "post")
     @ResponseStatus(CREATED)

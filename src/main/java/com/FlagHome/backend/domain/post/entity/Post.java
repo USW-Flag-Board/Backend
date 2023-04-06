@@ -2,6 +2,7 @@ package com.FlagHome.backend.domain.post.entity;
 
 import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.reply.entity.Reply;
 import com.FlagHome.backend.global.common.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -9,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -61,7 +64,7 @@ public class Post extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
@@ -74,6 +77,9 @@ public class Post extends BaseEntity {
 
     @Column(columnDefinition = "TEXT")
     private String content;
+
+    @OneToMany(mappedBy = "post" ,cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Reply> replyList;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -88,6 +94,7 @@ public class Post extends BaseEntity {
         this.board = board;
         this.title = title;
         this.content = content;
+        this.replyList = new ArrayList<>();
         this.status = PostStatus.NORMAL;
         this.viewCount = 0;
     }
@@ -99,5 +106,9 @@ public class Post extends BaseEntity {
                 .content(post.getContent())
                 .board(board)
                 .build();
+    }
+
+    public void increaseViewCount() {
+        this.viewCount++;
     }
 }

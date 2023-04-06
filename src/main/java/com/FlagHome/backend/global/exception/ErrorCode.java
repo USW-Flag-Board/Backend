@@ -15,6 +15,8 @@ public enum ErrorCode {
     VALIDATE_NOT_PROCEED(HttpStatus.BAD_REQUEST, "중복검사를 진행하지 않았습니다."),
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
     NOT_SUPPORT_ACTIVITY(HttpStatus.BAD_REQUEST, "지원하는 활동이 아닙니다."),
+    NOT_ACTIVITY_LEADER(HttpStatus.BAD_REQUEST, "활동장이 아닙니다."),
+    NOT_AUTHOR(HttpStatus.BAD_REQUEST, "작성자가 아닙니다."),
     NOT_SUPPORT_LIKE(HttpStatus.BAD_REQUEST, "지원하는 좋아요 형식이 아닙니다."),
     ALREADY_EXISTS_LIKE(HttpStatus.BAD_REQUEST, "이미 좋아요를 눌렀습니다."),
     NOT_EXISTS_LIKE(HttpStatus.BAD_REQUEST, "이미 좋아요 취소를 하였습니다."),
@@ -22,7 +24,6 @@ public enum ErrorCode {
 
     /** 401 - UNAUTHORIZED  */
     NONE_AUTHORIZATION_TOKEN(HttpStatus.UNAUTHORIZED, "권한 정보가 없는 토큰입니다."),
-    NOT_ACTIVITY_LEADER(HttpStatus.UNAUTHORIZED, "활동장이 아닙니다."),
     INVALID_JWT_SIGNATURE_EXCEPTION(HttpStatus.UNAUTHORIZED, "잘못된 JWT 서명입니다."),
     INVALID_JWT_TOKEN_EXCEPTION(HttpStatus.UNAUTHORIZED, "잘못된 JWT 토큰입니다."),
     EXPIRED_JWT_TOKEN_EXCEPTION(HttpStatus.UNAUTHORIZED, "만료된 JWT 토큰입니다."),

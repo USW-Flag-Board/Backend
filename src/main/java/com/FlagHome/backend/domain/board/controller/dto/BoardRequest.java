@@ -7,18 +7,17 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BoardRequest {
     @Schema(name = "게시판 이름")
-    @NotNull @NotEmpty
+    @NotBlank
     private String name;
 
     @Schema(name = "게시판 타입")
-    @NotNull @NotEmpty
+    @NotBlank
     private BoardType boardType;
 
     @Builder
