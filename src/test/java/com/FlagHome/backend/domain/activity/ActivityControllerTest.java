@@ -1,32 +1,24 @@
 package com.FlagHome.backend.domain.activity;
 
 
+import com.FlagHome.backend.common.IntegrationTest;
 import com.FlagHome.backend.domain.activity.controller.dto.ActivityRequest;
 import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
 import com.FlagHome.backend.domain.activity.entity.enums.BookUsage;
 import com.FlagHome.backend.domain.activity.entity.enums.Proceed;
-import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.entity.enums.Role;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,25 +27,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Transactional
-@SpringBootTest
-@AutoConfigureMockMvc
-@ExtendWith(SpringExtension.class)
-@Ignore
-public class ActivityControllerTest {
+public class ActivityControllerTest extends IntegrationTest {
     private static final String BASE_URL = "/activities";
 
     @Autowired
-    private ActivityRepository activityRepository;
-
-    @Autowired
     private MemberRepository memberRepository;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private MockMvc mockMvc;
 
     private Member member;
 

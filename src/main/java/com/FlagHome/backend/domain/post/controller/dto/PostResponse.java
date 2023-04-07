@@ -1,5 +1,6 @@
 package com.FlagHome.backend.domain.post.controller.dto;
 
+import com.FlagHome.backend.domain.post.entity.Post;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,20 +13,36 @@ import java.time.LocalDateTime;
 public class PostResponse {
     private Long id;
     private String title;
-    private String writer;
+    private String author;
     private LocalDateTime createdAt;
     private int viewCount;
     private int replyCount;
     private int likeCount;
+    private boolean isEdited;
 
     @Builder
-    public PostResponse(Long id, String title, String writer, LocalDateTime createdAt, int viewCount, int replyCount, int likeCount) {
+    public PostResponse(Long id, String title, String author, LocalDateTime createdAt, int viewCount, int replyCount,
+                        int likeCount, boolean isEdited) {
         this.id = id;
         this.title = title;
-        this.writer = writer;
+        this.author = author;
         this.createdAt = createdAt;
         this.viewCount = viewCount;
         this.replyCount = replyCount;
         this.likeCount = likeCount;
+        this.isEdited = isEdited;
+    }
+
+    public static PostResponse from(Post post) {
+        return PostResponse.builder()
+                .id(post.getId())
+                .title(post.getTitle())
+                .author(post.getMember().getAvatar().getNickname())
+                .createdAt(post.getCreatedAt())
+                .viewCount(post.getViewCount())
+                .replyCount(post.getReplyList().size())
+                .likeCount(0) // 반영하기
+                .isEdited(post.isEdited())
+                .build();
     }
 }

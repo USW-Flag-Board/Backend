@@ -56,13 +56,13 @@ public class ActivityService {
 
     @Transactional
     public List<ActivityApplyResponse> getAllActivityApplies(Long memberId, Long activityId) {
-        Activity activity = validateLeaderAndReturn(memberId, activityId);
+        Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
         return activityApplyService.getAllApplies(activity.getId());
     }
 
     @Transactional
     public List<ParticipantResponse> getAllParticipants(Long memberId, Long activityId) {
-        validateLeaderAndReturn(memberId, activityId);
+        validateLeaderAndReturnActivity(memberId, activityId);
         return memberActivityService.getAllParticipants(activityId);
     }
 
@@ -93,25 +93,25 @@ public class ActivityService {
 
     @Transactional
     public void updateMentoring(Long memberId, Long activityId, ActivityRequest activityRequest) {
-        Mentoring mentoring = (Mentoring) validateLeaderAndReturn(memberId, activityId);
+        Mentoring mentoring = (Mentoring) validateLeaderAndReturnActivity(memberId, activityId);
         mentoring.updateMentoring(activityRequest);
     }
 
     @Transactional
     public void updateProject(Long memberId, Long activityId, ActivityRequest activityRequest) {
-        Project project = (Project) validateLeaderAndReturn(memberId, activityId);
+        Project project = (Project) validateLeaderAndReturnActivity(memberId, activityId);
         project.updateProject(activityRequest);
     }
 
     @Transactional
     public void updateStudy(Long memberId, Long activityId, ActivityRequest activityRequest) {
-        Study study = (Study) validateLeaderAndReturn(memberId, activityId);
+        Study study = (Study) validateLeaderAndReturnActivity(memberId, activityId);
         study.updateStudy(activityRequest);
     }
 
     @Transactional
     public void changeLeader(Long memberId, Long activityId, String loginId) {
-        Activity activity = validateLeaderAndReturn(memberId, activityId);
+        Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
         Member newLeader = memberActivityService.findMemberOfActivity(activityId, loginId);
         if (newLeader == null) {
             throw new CustomException(ErrorCode.NOT_ACTIVITY_MEMBER);
@@ -122,7 +122,7 @@ public class ActivityService {
 
     @Transactional
     public void closeRecruitment(Long memberId, Long activityId, List<String> loginIdList) {
-        Activity activity = validateLeaderAndReturn(memberId, activityId);
+        Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
         List<Member> memberList = memberService.getMembersByLoginId(loginIdList);
 
         activityApplyService.deleteAllApplies(activityId);
@@ -132,7 +132,7 @@ public class ActivityService {
 
     @Transactional
     public void reopenRecruitment(Long memberId, Long activityId) {
-        Activity activity = validateLeaderAndReturn(memberId, activityId);
+        Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
 
         memberActivityService.deleteAllByActivity(activity.getId());
         activity.reopenRecruitment();
@@ -140,13 +140,13 @@ public class ActivityService {
 
     @Transactional
     public void finishActivity(Long memberId, Long activityId) {
-        Activity activity = validateLeaderAndReturn(memberId, activityId);
+        Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
         activity.finishActivity();
     }
 
     @Transactional
     public void delete(Long memberId, Long activityId) {
-        Activity activity = validateLeaderAndReturn(memberId, activityId);
+        Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
 
         activityApplyService.deleteAllApplies(activityId);
         activityRepository.delete(activity);
@@ -160,7 +160,7 @@ public class ActivityService {
         activityApplyService.cancelApply(memberId, activityId);
     }
 
-    private Activity validateLeaderAndReturn(Long memberId, Long activityId) {
+    private Activity validateLeaderAndReturnActivity(Long memberId, Long activityId) {
         Activity activity = findById(activityId);
 
         if (!Objects.equals(memberId, activity.getLeader().getId())) {

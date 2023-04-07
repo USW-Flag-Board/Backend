@@ -11,4 +11,5 @@ public interface PostRepositoryCustom {
     /**
      * Version 2
      */
+    
 }

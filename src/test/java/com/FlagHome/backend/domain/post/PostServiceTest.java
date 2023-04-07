@@ -5,7 +5,7 @@ import com.FlagHome.backend.domain.board.entity.enums.BoardType;
 import com.FlagHome.backend.domain.board.repository.BoardRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
-import com.FlagHome.backend.domain.post.controller.dto.CreatePostRequest;
+import com.FlagHome.backend.domain.post.controller.dto.PostRequest;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.mapper.PostMapper;
 import com.FlagHome.backend.domain.post.service.PostService;
@@ -14,9 +14,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Transactional
 @SpringBootTest
 public class PostServiceTest {
     @Autowired
@@ -36,7 +38,7 @@ public class PostServiceTest {
     private Board board;
 
     @BeforeEach
-    void init() {
+    public void testSetup() {
         final String name = "hejow";
         final String email = "gmlwh124@suwon.ac.kr";
 
@@ -55,27 +57,27 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("게시글 생성 테스트")
-    void createPostTest() {
+    public void 게시글_생성_테스트() {
         // given
         final String email = "gmlwh124@suwon.ac.kr";
         final String title = "title";
         final String content = "content";
         final String boardName = "자유 게시판";
 
-        CreatePostRequest request = CreatePostRequest.builder()
+        PostRequest request = PostRequest.builder()
                 .title(title)
                 .content(content)
                 .boardName(boardName)
                 .build();
 
-        Post post = postMapper.CreateRequestToEntity(request);
+        Post post = postMapper.toEntity(request);
         Long memberId = memberRepository.findByEmail(email).get().getId();
 
         // when
-        Post savedPost = postService.create(memberId, post, boardName);
+        Long postId = postService.create(memberId, post, boardName);
 
         // then
+        Post savedPost = postService.findById(postId);
         assertThat(savedPost.getTitle()).isEqualTo(title);
         assertThat(savedPost.getContent()).isEqualTo(content);
         assertThat(savedPost.getBoard().getName()).isEqualTo(boardName);

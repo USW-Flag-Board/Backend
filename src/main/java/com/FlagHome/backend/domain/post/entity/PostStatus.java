@@ -6,10 +6,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public enum PostStatus {
-    NORMAL("정상"), REPORTED("신고"), BANNED("제재");
+    NORMAL("정상"),
+    REPORTED("신고"),
+    BANNED("제재"),
+    DELETED("삭제");
 
     private String status;
 }

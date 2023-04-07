@@ -17,7 +17,6 @@ public class AvatarResponse {
 
     private String profileImg;
 
-    @Builder
     @QueryProjection
     public AvatarResponse(String loginId, String nickName, String bio, String profileImg) {
         this.loginId = loginId;

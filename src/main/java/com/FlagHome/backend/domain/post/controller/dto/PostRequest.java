@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CreatePostRequest {
+public class PostRequest {
     @Schema(name = "게시글 이름")
     @NotBlank
     private String title;
@@ -24,7 +24,7 @@ public class CreatePostRequest {
     private String boardName;
 
     @Builder
-    public CreatePostRequest(String title, String content, String boardName) {
+    public PostRequest(String title, String content, String boardName) {
         this.title = title;
         this.content = content;
         this.boardName = boardName;

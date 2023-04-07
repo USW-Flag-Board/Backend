@@ -10,11 +10,11 @@ import com.FlagHome.backend.domain.reply.repository.ReplyRepository;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -153,21 +153,21 @@ public class ReplyService {
     @Transactional
     public void update(Long memberId, Long replyId, String content ) {
         Member member = memberService.findById(memberId);
-        Reply reply = validateAuthorAndReturn(member, replyId);
+        Reply reply = validateAuthorAndReturnReply(member, replyId);
         reply.renewContent(content);
     }
 
     @Transactional
     public void delete(Long memberId, Long replyId) {
         Member member = memberService.findById(memberId);
-        Reply reply = validateAuthorAndReturn(member, replyId);
+        Reply reply = validateAuthorAndReturnReply(member, replyId);
         replyRepository.delete(reply);
     }
 
-    private Reply validateAuthorAndReturn(Member member, Long replyId) {
+    private Reply validateAuthorAndReturnReply(Member member, Long replyId) {
         Reply reply = findById(replyId);
 
-        if (!StringUtils.equals(member.getEmail(), reply.getMember().getEmail())) {
+        if (!Objects.equals(member.getId(), reply.getMember().getId())) {
             throw new CustomException(ErrorCode.NOT_AUTHOR);
         }
 
