@@ -2,6 +2,7 @@ package com.FlagHome.backend.domain.reply.repository;
 
 import com.FlagHome.backend.domain.reply.controller.dto.QReplyResponse;
 import com.FlagHome.backend.domain.reply.controller.dto.ReplyResponse;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
@@ -41,7 +42,18 @@ public class ReplyRepositoryImpl implements ReplyRepositoryCustom{
      */
     @Override
     public List<ReplyResponse> getAllReplies(Long postId) {
-        return null;
-
+        return queryFactory
+                .select(new QReplyResponse(
+                        reply.id,
+                        member.avatar.nickname,
+                        member.avatar.profileImage,
+                        reply.content,
+                        reply.createdAt,
+                        reply.createdAt.ne(reply.updatedAt)))
+                .from(reply)
+                .innerJoin(reply.member, member)
+                .where(reply.post.id.eq(postId))
+                .orderBy(reply.createdAt.asc())
+                .fetch();
     }
 }

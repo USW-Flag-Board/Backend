@@ -1,8 +1,7 @@
 package com.FlagHome.backend.domain.member.sleeping.entity;
 
-import com.FlagHome.backend.domain.member.entity.enums.Major;
 import com.FlagHome.backend.domain.member.entity.Member;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,9 +11,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Sleeping {
 
     @Id
@@ -24,9 +21,6 @@ public class Sleeping {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
-
-    @Column(name = "expired_at")
-    private LocalDateTime expiredAt;
 
     @Column(name = "login_id")
     private String loginId;
@@ -40,14 +34,18 @@ public class Sleeping {
     @Column
     private String name;
 
-    @Column(name = "student_id")
-    private String studentId;
+    @Column(name = "expired_at")
+    private LocalDateTime expiredAt;
 
-    @Column
-    private Major major;
-
-    @Column(name = "phone_number")
-    private String phoneNumber;
+    @Builder
+    public Sleeping(Member member, String loginId, String password, String email, String name) {
+        this.member = member;
+        this.loginId = loginId;
+        this.password = password;
+        this.email = email;
+        this.name = name;
+        this.expiredAt = LocalDateTime.now().plusDays(60);
+    }
 
     public static Sleeping of(Member member){
         return Sleeping.builder()
@@ -56,10 +54,6 @@ public class Sleeping {
                 .password(member.getPassword())
                 .email(member.getEmail())
                 .name(member.getName())
-                .studentId(member.getStudentId())
-                .major(member.getMajor())
-                .phoneNumber(member.getPhoneNumber())
-                .expiredAt(LocalDateTime.now().plusDays(60))
                 .build();
     }
 

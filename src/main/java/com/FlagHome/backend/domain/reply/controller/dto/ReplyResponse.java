@@ -3,7 +3,6 @@ package com.FlagHome.backend.domain.reply.controller.dto;
 import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -27,13 +26,16 @@ public class ReplyResponse {
     @Schema(name = "작성 시간")
     private LocalDateTime createdAt;
 
-    @Builder
+    @Schema(name = "수정 여부")
+    private boolean isEdited;
+
     @QueryProjection
-    public ReplyResponse(long id, String nickname, String profileImage, String content, LocalDateTime createdAt) {
+    public ReplyResponse(long id, String nickname, String profileImage, String content, LocalDateTime createdAt, boolean isEdited) {
         this.id = id;
         this.nickname = nickname;
         this.profileImage = profileImage;
         this.content = content;
         this.createdAt = createdAt;
+        this.isEdited = isEdited;
     }
 }

@@ -63,7 +63,7 @@ public class Reply extends BaseEntity {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @Column
+    @Column(length = 300)
     private String content;
 
     @Column
