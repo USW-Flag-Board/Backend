@@ -1,4 +1,4 @@
-package com.FlagHome.backend.infra.aws.s3;
+package com.FlagHome.backend.infra.aws.s3.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

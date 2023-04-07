@@ -1,16 +1,12 @@
 package com.FlagHome.backend.domain.token;
 
+import com.FlagHome.backend.common.RepositoryTest;
 import com.FlagHome.backend.domain.token.entity.FindRequestToken;
 import com.FlagHome.backend.domain.token.entity.Token;
 import com.FlagHome.backend.domain.token.repository.TokenRepository;
-import com.FlagHome.backend.global.config.QueryDslConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -18,10 +14,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
-@DataJpaTest
-@Import(QueryDslConfig.class)
-public class TokenRepositoryTest {
+public class TokenRepositoryTest extends RepositoryTest {
     @Autowired
     private TokenRepository tokenRepository;
 

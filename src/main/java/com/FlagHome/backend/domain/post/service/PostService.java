@@ -14,9 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
@@ -106,9 +106,16 @@ public class PostService {
         return postRepository.findTopNPostListByDateAndLike(postCount);
     } */
 
-    @Transactional(readOnly = true)
-    public void getPost(Long postId) {
+    @Transactional
+    public PostResponse getPost(Long postId) {
+        Post post = findById(postId);
 
+        if (post.isNotAccessible()) {
+            throw new CustomException(ErrorCode.INACCESSIBLE_POST);
+        }
+
+        post.increaseViewCount();
+        return PostResponse.from(post);
     }
 
     @Transactional(readOnly = true)
@@ -116,22 +123,37 @@ public class PostService {
         return null;
     }
 
-    public Post create(Long memberId, Post post, String boardName) {
+    @Transactional
+    public Long create(Long memberId, Post post, String boardName) {
         Member member = memberService.findById(memberId);
         Board board = boardService.findByName(boardName);
-        return postRepository.save(Post.of(member, post, board));
+        return postRepository.save(Post.of(member, board, post)).getId();
     }
 
-    public Post update(Long memberId, Post post) {
-        return null;
+    @Transactional
+    public void updatePost(Long memberId, Long postId, Post newPost) {
+        Post post = validateAuthorAndReturnPost(memberId, postId);
+        post.updatePost(newPost);
     }
 
-    public void delete(Long memberId, Long postId) {
-
+    @Transactional
+    public void deletePost(Long memberId, Long postId) {
+        Post post = validateAuthorAndReturnPost(memberId, postId);
+        post.delete();
     }
 
     public Post findById(Long postId) {
         return postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
+    }
+
+    private Post validateAuthorAndReturnPost(Long memberId, Long postId) {
+        Post post = findById(postId);
+
+        if (!Objects.equals(memberId, post.getMember().getId())) {
+            throw new CustomException(ErrorCode.NOT_AUTHOR);
+        }
+
+        return post;
     }
 }

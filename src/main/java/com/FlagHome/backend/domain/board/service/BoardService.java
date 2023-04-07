@@ -77,8 +77,7 @@ public class BoardService {
     /**
      * Version 2
      */
-    public void searchByCondition() {
-    }
+    public void searchByCondition() {    }
 
     public void create(Board board) {
         boardRepository.save(board);

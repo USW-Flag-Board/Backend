@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.post.mapper;
 
 import com.FlagHome.backend.domain.post.entity.Post;
-import com.FlagHome.backend.domain.post.controller.dto.CreatePostRequest;
+import com.FlagHome.backend.domain.post.controller.dto.PostRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
@@ -10,10 +10,10 @@ import org.mapstruct.ReportingPolicy;
         unmappedTargetPolicy = ReportingPolicy.WARN
 )
 public interface PostMapper {
-    default Post CreateRequestToEntity(CreatePostRequest createPostRequest) {
+    default Post toEntity(PostRequest postRequest) {
         return Post.builder()
-                .title(createPostRequest.getTitle())
-                .content(createPostRequest.getContent())
+                .title(postRequest.getTitle())
+                .content(postRequest.getContent())
                 .build();
     }
 }

@@ -88,6 +88,9 @@ public class Post extends BaseEntity {
     @Column
     private int viewCount;
 
+    @Column(name = "is_edited")
+    private boolean isEdited;
+
     @Builder
     public Post(Member member, Board board, String title, String content) {
         this.member = member;
@@ -97,9 +100,10 @@ public class Post extends BaseEntity {
         this.replyList = new ArrayList<>();
         this.status = PostStatus.NORMAL;
         this.viewCount = 0;
+        this.isEdited = false;
     }
 
-    public static Post of(Member member, Post post, Board board) {
+    public static Post of(Member member, Board board, Post post) {
         return Post.builder()
                 .member(member)
                 .title(post.getTitle())
@@ -110,5 +114,20 @@ public class Post extends BaseEntity {
 
     public void increaseViewCount() {
         this.viewCount++;
+    }
+
+    public void updatePost(Post post) {
+        this.board = post.getBoard();
+        this.title = post.getTitle();
+        this.content = post.getContent();
+        this.isEdited = true;
+    }
+
+    public void delete() {
+        this.status = PostStatus.DELETED;
+    }
+
+    public boolean isNotAccessible() {
+        return this.status == PostStatus.BANNED || this.status == PostStatus.DELETED;
     }
 }

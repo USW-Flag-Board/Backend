@@ -1,28 +1,21 @@
 package com.FlagHome.backend.domain.report;
 
+import com.FlagHome.backend.common.RepositoryTest;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.report.controller.dto.ReportResponse;
 import com.FlagHome.backend.domain.report.repository.ReportRepository;
-import com.FlagHome.backend.global.config.QueryDslConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
-@Import(QueryDslConfig.class)
-@DataJpaTest
-public class ReportRepositoryTest {
+public class ReportRepositoryTest extends RepositoryTest {
     @Autowired
     private ReportRepository reportRepository;
 

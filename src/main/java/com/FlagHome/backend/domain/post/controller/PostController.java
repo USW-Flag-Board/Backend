@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.post.controller;
 
-import com.FlagHome.backend.domain.post.controller.dto.CreatePostRequest;
-import com.FlagHome.backend.domain.post.entity.Post;
+import com.FlagHome.backend.domain.post.controller.dto.PostRequest;
+import com.FlagHome.backend.domain.post.controller.dto.PostResponse;
 import com.FlagHome.backend.domain.post.mapper.PostMapper;
 import com.FlagHome.backend.domain.post.service.PostService;
 import com.FlagHome.backend.global.common.ApplicationResponse;
@@ -129,27 +129,36 @@ public class PostController {
     /**
      * Version 2
      */
-//    @Tag(name = "post")
-//    @ResponseStatus(OK)
-//    @GetMapping
-//    public ApplicationResponse<> getPost() {
-//        return new ApplicationResponse();
-//    }
-//
-//    @Tag(name = "post")
-//    @ResponseStatus(OK)
-//    @GetMapping("/{id}")
-//    public ApplicationResponse<> getPost(@PathVariable("id") @Valid long postId) {
-//        return new ApplicationResponse();
-//    }
+    @Tag(name = "post")
+    @ResponseStatus(OK)
+    @GetMapping("/{id}")
+    public ApplicationResponse<PostResponse> getPost(@PathVariable Long id) {
+        PostResponse response = postService.getPost(id);
+        return new ApplicationResponse(response);
+    }
 
     @Tag(name = "post")
     @ResponseStatus(CREATED)
     @PostMapping
-    public ApplicationResponse<URI> create(@RequestBody @Valid CreatePostRequest createPostRequest) {
-        Post post = postMapper.CreateRequestToEntity(createPostRequest);
-        postService.create(SecurityUtils.getMemberId(), post, createPostRequest.getBoardName());
-        URI uri = UriCreator.createURI(BASE_URL, post.getId());
+    public ApplicationResponse<URI> create(@RequestBody @Valid PostRequest request) {
+        Long id = postService.create(SecurityUtils.getMemberId(), postMapper.toEntity(request), request.getBoardName());
+        URI uri = UriCreator.createURI(BASE_URL, id);
         return new ApplicationResponse(uri);
+    }
+
+    @Tag(name = "post")
+    @ResponseStatus(OK)
+    @PutMapping("/{id}")
+    public ApplicationResponse update(@PathVariable Long id, @RequestBody @Valid PostRequest request) {
+        postService.updatePost(SecurityUtils.getMemberId(), id, postMapper.toEntity(request));
+        return new ApplicationResponse();
+    }
+
+    @Tag(name = "post")
+    @ResponseStatus(OK)
+    @PatchMapping("/{id}")
+    public ApplicationResponse delete(@PathVariable Long id) {
+        postService.deletePost(SecurityUtils.getMemberId(), id);
+        return new ApplicationResponse();
     }
 }
