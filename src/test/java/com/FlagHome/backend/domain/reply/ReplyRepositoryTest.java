@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.reply;
 
-import com.FlagHome.backend.RepositoryTest;
+import com.FlagHome.backend.common.RepositoryTest;
 import com.FlagHome.backend.domain.member.entity.Avatar;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;

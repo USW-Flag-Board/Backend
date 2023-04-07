@@ -1,4 +1,4 @@
-package com.FlagHome.backend;
+package com.FlagHome.backend.common;
 
 import com.FlagHome.backend.global.config.QueryDslConfig;
 import org.junit.jupiter.api.extension.ExtendWith;

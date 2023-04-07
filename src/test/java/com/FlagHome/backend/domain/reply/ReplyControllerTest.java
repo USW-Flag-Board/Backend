@@ -1,5 +1,6 @@
 package com.FlagHome.backend.domain.reply;
 
+import com.FlagHome.backend.common.IntegrationTest;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.entity.enums.Role;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
@@ -10,23 +11,16 @@ import com.FlagHome.backend.domain.reply.controller.dto.UpdateReplyRequest;
 import com.FlagHome.backend.domain.reply.entity.Reply;
 import com.FlagHome.backend.domain.reply.repository.ReplyRepository;
 import com.FlagHome.backend.global.exception.ErrorCode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.ArrayList;
@@ -38,18 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Ignore
-@ExtendWith(SpringExtension.class)
-@AutoConfigureMockMvc
-@SpringBootTest
-public class ReplyControllerTest {
+public class ReplyControllerTest extends IntegrationTest {
     private static final String BASE_URL = "/replies";
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Autowired
     private MemberRepository memberRepository;
@@ -161,7 +145,6 @@ public class ReplyControllerTest {
     public void 댓글_삭제_테스트() throws Exception {
         // given
         final String content = "content";
-
         Reply reply = replyRepository.save(Reply.of(member, post, content));
         String url = BASE_URL + "/" + reply.getId();
 
