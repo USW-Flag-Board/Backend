@@ -3,18 +3,13 @@ package com.FlagHome.backend.domain.activity.memberactivity.entity;
 import com.FlagHome.backend.global.common.BaseEntity;
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.member.entity.Member;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberActivity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +22,12 @@ public class MemberActivity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "activity_id")
     private Activity activity;
+
+    @Builder
+    public MemberActivity(Member member, Activity activity) {
+        this.member = member;
+        this.activity = activity;
+    }
 
     public static MemberActivity of(Member member, Activity activity) {
         return MemberActivity.builder()

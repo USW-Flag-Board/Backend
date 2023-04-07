@@ -1,6 +1,8 @@
 package com.FlagHome.backend.domain.member.repository;
 
+import com.FlagHome.backend.domain.member.controller.dto.AvatarResponse;
 import com.FlagHome.backend.domain.member.controller.dto.LoginLogResponse;
+import com.FlagHome.backend.domain.member.controller.dto.MyProfileResponse;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.controller.dto.SearchMemberResponse;
 import org.springframework.stereotype.Repository;
@@ -14,6 +16,10 @@ public interface MemberRepositoryCustom {
     List<Member> getMembersByLoginIdList(List<String> loginIdList);
 
     List<String> getAllBeforeSleepEmails();
+
+    AvatarResponse getAvatar(String loginId);
+
+    MyProfileResponse getMyProfile(Long memberId);
 
     List<LoginLogResponse> getAllLoginLogs();
 

@@ -6,9 +6,9 @@ on:
 
 env:
   AWS_REGION: ap-northeast-2
-  S3_BUCKET_NAME: flag-s3
-  CODE_DEPLOY_APPLICATION_NAME: flag-codedeploy
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: flag-codedeploy-deployment-group
+  S3_BUCKET_NAME: flaground-s3
+  CODE_DEPLOY_APPLICATION_NAME: flaground-codeDeploy
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: flaground-codeDeploy-deployment-group
 
 jobs:
   build:

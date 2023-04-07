@@ -24,13 +24,13 @@ public class SleepingService {
     }
 
     @Transactional
-    public void saveAllSleepings(List<Sleeping> sleepingList) {
+    public void saveAllSleeping(List<Sleeping> sleepingList) {
         sleepingRepository.saveAll(sleepingList);
     }
 
     @Transactional
     public void convertSleepToMember(Member member, Sleeping sleeping) {
-        member.sleepToMember(sleeping);
+        member.reactivate(sleeping);
         sleepingRepository.delete(sleeping);
     }
 

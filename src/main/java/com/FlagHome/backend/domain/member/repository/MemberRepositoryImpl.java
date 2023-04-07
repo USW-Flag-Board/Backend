@@ -1,10 +1,7 @@
 package com.FlagHome.backend.domain.member.repository;
 
+import com.FlagHome.backend.domain.member.controller.dto.*;
 import com.FlagHome.backend.domain.member.entity.Member;
-import com.FlagHome.backend.domain.member.controller.dto.LoginLogResponse;
-import com.FlagHome.backend.domain.member.controller.dto.QLoginLogResponse;
-import com.FlagHome.backend.domain.member.controller.dto.QSearchMemberResponse;
-import com.FlagHome.backend.domain.member.controller.dto.SearchMemberResponse;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -27,7 +24,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
         return queryFactory
                 .selectFrom(member)
-                .where(member.lastLoginTime.before(limit))
+                .where(member.updatedAt.before(limit))
                 .fetch();
     }
 
@@ -38,7 +35,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
         return queryFactory
                 .select(member.email)
                 .from(member)
-                .where(member.lastLoginTime.before(limit))
+                .where(member.updatedAt.before(limit))
                 .fetch();
     }
 
@@ -51,12 +48,41 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
     }
 
     @Override
+    public AvatarResponse getAvatar(String loginId) {
+        return queryFactory
+                .select(new QAvatarResponse(
+                        asString(loginId).as(member.loginId),
+                        member.avatar.nickname,
+                        member.avatar.bio,
+                        member.avatar.profileImage))
+                .from(member)
+                .where(member.loginId.eq(loginId))
+                .fetchOne();
+    }
+
+    @Override
+    public MyProfileResponse getMyProfile(Long memberId) {
+        return queryFactory
+                .select(new QMyProfileResponse(
+                        member.avatar.nickname,
+                        member.avatar.bio,
+                        member.avatar.profileImage,
+                        member.name,
+                        member.email,
+                        member.avatar.major,
+                        member.avatar.studentId))
+                .from(member)
+                .where(member.id.eq(memberId))
+                .fetchOne();
+    }
+
+    @Override
     public List<LoginLogResponse> getAllLoginLogs() {
         return queryFactory
                 .select(new QLoginLogResponse(
                         member.id,
                         member.name,
-                        member.lastLoginTime))
+                        member.updatedAt))
                 .from(member)
                 .fetch();
     }
@@ -66,7 +92,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
         return queryFactory
                 .select(new QSearchMemberResponse(
                         asString(name).as(member.name),
-                        member.major))
+                        member.avatar.major))
                 .from(member)
                 .where(member.name.eq(name))
                 .fetch();

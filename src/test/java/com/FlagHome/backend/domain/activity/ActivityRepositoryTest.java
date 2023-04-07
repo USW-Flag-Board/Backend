@@ -8,25 +8,25 @@ import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.Mentoring;
 import com.FlagHome.backend.domain.activity.entity.Project;
 import com.FlagHome.backend.domain.activity.entity.Study;
-import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
 import com.FlagHome.backend.domain.activity.entity.enums.ActivityStatus;
+import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.entity.MemberActivity;
 import com.FlagHome.backend.domain.activity.memberactivity.repository.MemberActivityRepository;
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
-import com.FlagHome.backend.domain.member.entity.enums.Major;
 import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.member.entity.enums.Major;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.global.config.QueryDslConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
@@ -38,7 +38,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @DataJpaTest
 @Import(QueryDslConfig.class)
 public class ActivityRepositoryTest {
@@ -134,8 +134,8 @@ public class ActivityRepositoryTest {
             Major major = Major.컴퓨터SW;
 
             Member member1 = memberRepository.save(Member.builder().build());
-            Member member2 = memberRepository.save(Member.builder().major(major).build());
-            Member member3 = memberRepository.save(Member.builder().major(major).build());
+            Member member2 = memberRepository.save(Member.builder().build());
+            Member member3 = memberRepository.save(Member.builder().build());
 
             Activity activity = activityRepository.saveAndFlush(Project.builder()
                                                                     .leader(member1)
@@ -153,7 +153,6 @@ public class ActivityRepositoryTest {
             // then
             assertThat(responses.size()).isEqualTo(2);
             assertThat(responses.get(0).getId()).isNotEqualTo(responses.get(1).getId());
-            assertThat(responses.get(0).getMajor()).isEqualTo(major);
         }
 
         @Test
@@ -163,8 +162,8 @@ public class ActivityRepositoryTest {
             Major major = Major.컴퓨터SW;
 
             Member member1 = memberRepository.save(Member.builder().build());
-            Member member2 = memberRepository.save(Member.builder().major(major).build());
-            Member member3 = memberRepository.save(Member.builder().major(major).build());
+            Member member2 = memberRepository.save(Member.builder().build());
+            Member member3 = memberRepository.save(Member.builder().build());
 
             Activity activity = activityRepository.saveAndFlush(Project.builder().leader(member1).semester(LocalDateTime.now().getMonthValue()).build());
 
@@ -314,13 +313,11 @@ public class ActivityRepositoryTest {
             Member participant1 = memberRepository.save(Member.builder()
                             .name("문희조")
                             .loginId("gmlwh124")
-                            .major(Major.컴퓨터SW)
                             .build());
 
             Member participant2 = memberRepository.save(Member.builder()
                     .name("희조문")
                     .loginId("hejow124")
-                    .major(Major.컴퓨터SW)
                     .build());
 
             Activity activity = activityRepository.save(Project.builder()
@@ -350,10 +347,8 @@ public class ActivityRepositoryTest {
             assertThat(participantResponses.size()).isEqualTo(2);
             assertThat(response1.getName()).isNotNull();
             assertThat(response1.getLoginId()).isNotNull();
-            assertThat(response1.getMajor()).isNotNull();
             assertThat(response2.getName()).isNotNull();
             assertThat(response2.getLoginId()).isNotNull();
-            assertThat(response2.getMajor()).isNotNull();
         }
 
         @Test

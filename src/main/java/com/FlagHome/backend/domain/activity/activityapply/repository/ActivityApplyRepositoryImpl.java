@@ -24,7 +24,7 @@ public class ActivityApplyRepositoryImpl implements ActivityApplyRepositoryCusto
                         activityApply.id,
                         member.loginId,
                         member.name,
-                        member.major))
+                        member.avatar.major))
                 .from(activityApply)
                 .where(activityApply.activity.id.eq(activityId))
                 .innerJoin(activityApply.member, member)

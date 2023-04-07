@@ -206,7 +206,7 @@ public class AuthServiceTest {
             Authentication authentication = jwtUtilizer.getAuthentication(accessToken);
             long memberId = Long.parseLong(authentication.getName());
             Member member = memberRepository.findByLoginId(loginId).get();
-            assertThat(savedMember.getLastLoginTime()).isNotEqualTo(member.getLastLoginTime());
+            assertThat(savedMember.getUpdatedAt()).isNotEqualTo(member.getUpdatedAt());
             assertThat(member.getId()).isEqualTo(memberId);
         }
 

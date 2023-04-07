@@ -24,7 +24,7 @@ public class ActivityApply {
     @JoinColumn(name = "activity_id")
     private Activity activity;
 
-    @Column
+    @Column(name = "apply_time")
     private LocalDateTime applyTime;
 
     @Builder

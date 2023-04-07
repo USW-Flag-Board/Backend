@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class MemberActivityService {
     private final MemberActivityRepository memberActivityRepository;
 
-    public Member findMemberOfActivity(long activityId, String loginId) {
+    public Member findMemberOfActivity(Long activityId, String loginId) {
         return memberActivityRepository.findMemberOfActivityByLoginId(activityId, loginId);
     }
 
@@ -37,7 +37,7 @@ public class MemberActivityService {
     }
 
     @Transactional(readOnly = true)
-    public List<ParticipantResponse> getAllParticipants(long activityId) {
+    public List<ParticipantResponse> getAllParticipants(Long activityId) {
         return memberActivityRepository.getAllParticipantByActivityId(activityId);
     }
 

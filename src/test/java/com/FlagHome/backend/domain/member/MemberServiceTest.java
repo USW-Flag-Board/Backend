@@ -1,12 +1,11 @@
 package com.FlagHome.backend.domain.member;
 
 import com.FlagHome.backend.domain.auth.AuthInformation;
+import com.FlagHome.backend.domain.member.controller.dto.UpdateAvatarRequest;
+import com.FlagHome.backend.domain.member.entity.Avatar;
 import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.member.entity.enums.MemberStatus;
 import com.FlagHome.backend.domain.member.mapper.MemberMapper;
-import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
-import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
-import com.FlagHome.backend.domain.member.avatar.entity.Avatar;
-import com.FlagHome.backend.domain.member.avatar.repository.AvatarRepository;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.global.exception.CustomException;
@@ -42,9 +41,6 @@ public class MemberServiceTest {
     @Autowired
     private MemberMapper memberMapper;
 
-    @Autowired
-    private AvatarRepository avatarRepository;
-
     @Test
     @DisplayName("유저 생성 테스트")
     void createMemberTest() {
@@ -66,9 +62,12 @@ public class MemberServiceTest {
 
         // then
         Member member = memberService.findByLoginId(loginId);
-        Avatar avatar = avatarRepository.findByMemberId(member.getId()).orElse(null);
-        assertThat(avatar).isNotNull();
-        assertThat(avatar.getMember().getId()).isEqualTo(member.getId());
+        assertThat(member.getLoginId()).isEqualTo(loginId);
+        assertThat(member.getEmail()).isEqualTo(email);
+        boolean shouldBeTrue = passwordEncoder.matches(password, member.getPassword());
+        assertThat(shouldBeTrue).isTrue();
+        assertThat(member.getAvatar().getNickname()).isEqualTo(nickName);
+
     }
 
     @Nested
@@ -80,6 +79,7 @@ public class MemberServiceTest {
             // given
             String loginId = "gmlwh124";
             String password = "1234";
+            MemberStatus withdraw = MemberStatus.WITHDRAW;
 
             Member savedMember = memberRepository.saveAndFlush(Member.builder()
                             .loginId(loginId)
@@ -90,10 +90,11 @@ public class MemberServiceTest {
             memberService.withdraw(savedMember.getId(), password);
             entityManager.flush();
 
-            // then : 정상적으로 탈퇴되어 멤버 정보가 레포에 없는지
-            assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> memberRepository.findById(savedMember.getId())
-                            .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND)));
+            // then
+            Member findMember = memberRepository.findById(savedMember.getId()).get();
+            boolean notActivate = findMember.isNotAvailable();
+            assertThat(findMember.getStatus()).isEqualTo(withdraw);
+            assertThat(notActivate).isTrue();
         }
 
         @Test
@@ -190,30 +191,30 @@ public class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("아바타 업데이트 테스트")
-    void updateAvatarTest() {
+    public void 아바타_업데이트_테스트() {
         // given
-        String loginId = "gmlwh124";
-        String nickName = "john";
-        String newNickName = "hejow";
+        final String loginId = "gmlwh124";
+        final String nickname = "john";
+        final String studentId = "123";
 
-        Member member = memberRepository.save(Member.builder().loginId(loginId).build());
-        avatarRepository.save(Avatar.builder()
-                .member(member)
-                .nickName(nickName)
-                .build());
+        final String newNickname = "hejow";
+        final String newStudentId = "234";
+
+        Avatar avatar = Avatar.builder().nickname(nickname).studentId(studentId).build();
+        Member member = memberRepository.save(Member.builder().loginId(loginId).avatar(avatar).build());
 
         UpdateAvatarRequest updateAvatarRequest = UpdateAvatarRequest.builder()
-                .nickName(newNickName)
+                .nickName(newNickname)
+                .studentId(newStudentId)
                 .build();
 
         // when
         memberService.updateAvatar(member.getId(), memberMapper.toAvatar(updateAvatarRequest));
 
         // then
-        AvatarResponse response = avatarRepository.getAvatar(loginId);
-        assertThat(response.getLoginId()).isEqualTo(loginId);
-        assertThat(response.getNickName()).isEqualTo(newNickName);
+        Avatar findAvatar = memberRepository.findById(member.getId()).get().getAvatar();
+        assertThat(findAvatar.getNickname()).isEqualTo(newNickname);
+        assertThat(findAvatar.getStudentId()).isEqualTo(newStudentId);
     }
 
 //    @Test

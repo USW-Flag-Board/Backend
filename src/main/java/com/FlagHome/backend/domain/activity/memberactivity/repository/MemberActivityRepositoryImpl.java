@@ -50,7 +50,7 @@ public class MemberActivityRepositoryImpl implements MemberActivityRepositoryCus
                 .select(new QParticipantResponse(
                         member.name,
                         member.loginId,
-                        member.major))
+                        member.avatar.major))
                 .from(memberActivity)
                 .innerJoin(memberActivity.activity, activity)
                 .innerJoin(memberActivity.member, member)

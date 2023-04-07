@@ -1,9 +1,9 @@
 package com.FlagHome.backend.domain.member.controller;
 
-import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
-import com.FlagHome.backend.domain.member.avatar.dto.MyProfileResponse;
-import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
-import com.FlagHome.backend.domain.member.avatar.entity.Avatar;
+import com.FlagHome.backend.domain.member.controller.dto.AvatarResponse;
+import com.FlagHome.backend.domain.member.controller.dto.MyProfileResponse;
+import com.FlagHome.backend.domain.member.controller.dto.UpdateAvatarRequest;
+import com.FlagHome.backend.domain.member.entity.Avatar;
 import com.FlagHome.backend.domain.member.controller.dto.*;
 import com.FlagHome.backend.domain.member.mapper.MemberMapper;
 import com.FlagHome.backend.domain.member.service.MemberService;
@@ -163,7 +163,7 @@ public class MemberController {
     })
     @ResponseStatus(OK)
     @PutMapping("/avatar")
-    public ApplicationResponse updateAvatar(@RequestBody UpdateAvatarRequest updateAvatarRequest) {
+    public ApplicationResponse updateAvatar(@RequestBody @Valid UpdateAvatarRequest updateAvatarRequest) {
         Avatar avatar = memberMapper.toAvatar(updateAvatarRequest);
         memberService.updateAvatar(SecurityUtils.getMemberId(), avatar);
         return new ApplicationResponse<>();
@@ -178,9 +178,9 @@ public class MemberController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다.")
     })
     @ResponseStatus(OK)
-    @DeleteMapping
+    @PutMapping("/withdraw")
     public ApplicationResponse withdraw(@RequestBody @Valid WithdrawRequest withdrawRequest) {
         memberService.withdraw(SecurityUtils.getMemberId(), withdrawRequest.getCurrentPassword());
-        return new ApplicationResponse();
+        return new ApplicationResponse<>();
     }
 }

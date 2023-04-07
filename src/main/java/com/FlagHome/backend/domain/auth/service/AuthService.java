@@ -12,7 +12,7 @@ import com.FlagHome.backend.domain.token.dto.TokenResponse;
 import com.FlagHome.backend.domain.token.service.RefreshTokenService;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
-import com.FlagHome.backend.global.infra.aws.ses.service.MailService;
+import com.FlagHome.backend.infra.aws.ses.service.MailService;
 import com.FlagHome.backend.global.jwt.JwtUtilizer;
 import com.FlagHome.backend.global.utility.RandomGenerator;
 import lombok.RequiredArgsConstructor;
@@ -72,6 +72,10 @@ public class AuthService {
     @Transactional
     public TokenResponse login(String loginId, String password) {
         Member member = memberService.convertSleepingIfExist(loginId);
+
+        if (member.isNotAvailable()) {
+            throw new CustomException(ErrorCode.UNAVAILABLE_ACCOUNT);
+        }
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginId, password);
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);

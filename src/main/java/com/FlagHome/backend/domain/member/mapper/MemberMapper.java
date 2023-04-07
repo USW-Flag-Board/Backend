@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.member.mapper;
 
-import com.FlagHome.backend.domain.member.avatar.dto.UpdateAvatarRequest;
-import com.FlagHome.backend.domain.member.avatar.entity.Avatar;
+import com.FlagHome.backend.domain.member.controller.dto.UpdateAvatarRequest;
+import com.FlagHome.backend.domain.member.entity.Avatar;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
@@ -12,8 +12,9 @@ import org.mapstruct.ReportingPolicy;
 public interface MemberMapper {
     default Avatar toAvatar(UpdateAvatarRequest updateAvatarRequest) {
         return Avatar.builder()
-                .nickName(updateAvatarRequest.getNickName())
-                .bio(updateAvatarRequest.getBio())
+                .nickname(updateAvatarRequest.getNickName())
+                .studentId(updateAvatarRequest.getStudentId())
+                .major(updateAvatarRequest.getMajor())
                 .build();
     }
 }

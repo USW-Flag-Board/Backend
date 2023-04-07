@@ -47,18 +47,18 @@ public class AuthInformation {
     @Enumerated(value = EnumType.STRING)
     private JoinType joinType;
 
-    @Column(name = "authorized")
-    private boolean isAuthorizedCrew;
-
     @Column
     private String certification;
+
+    @Column(name = "authorized")
+    private boolean isAuthorizedCrew;
 
     @Column(name="created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @Builder
     public AuthInformation(String loginId, String password, String name, String email, String nickName,
-                           String phoneNumber, String studentId, Major major, JoinType joinType, boolean isAuthorizedCrew, String certification, LocalDateTime createdAt) {
+                           String phoneNumber, String studentId, Major major, JoinType joinType, String certification) {
         this.loginId = loginId;
         this.password = password;
         this.name = name;
@@ -68,9 +68,9 @@ public class AuthInformation {
         this.studentId = studentId;
         this.major = major;
         this.joinType = joinType;
-        this.isAuthorizedCrew = isAuthorizedCrew;
+        this.isAuthorizedCrew = false;
         this.certification = certification;
-        this.createdAt = createdAt;
+        this.createdAt = LocalDateTime.now();
     }
 
     public static AuthInformation of(JoinRequest joinRequest, String certification) {
@@ -84,9 +84,7 @@ public class AuthInformation {
                 .studentId(joinRequest.getStudentId())
                 .phoneNumber(joinRequest.getPhoneNumber())
                 .joinType(joinRequest.getJoinType())
-                .isAuthorizedCrew(false)
                 .certification(certification)
-                .createdAt(LocalDateTime.now())
                 .build();
     }
 

@@ -4,11 +4,16 @@ import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.board.service.BoardService;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.service.MemberService;
+import com.FlagHome.backend.domain.post.controller.dto.PostResponse;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
+import com.FlagHome.backend.global.exception.CustomException;
+import com.FlagHome.backend.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -102,12 +107,13 @@ public class PostService {
     } */
 
     @Transactional(readOnly = true)
-    public void getAllPosts(String boardName) {
+    public void getPost(Long postId) {
 
     }
 
-    public void getPost(Long postId) {
-
+    @Transactional(readOnly = true)
+    public List<PostResponse> getAllPosts(String boardName) {
+        return null;
     }
 
     public Post create(Long memberId, Post post, String boardName) {
@@ -122,5 +128,10 @@ public class PostService {
 
     public void delete(Long memberId, Long postId) {
 
+    }
+
+    public Post findById(Long postId) {
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
     }
 }

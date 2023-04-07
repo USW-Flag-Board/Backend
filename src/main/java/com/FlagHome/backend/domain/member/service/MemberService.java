@@ -2,10 +2,9 @@ package com.FlagHome.backend.domain.member.service;
 
 import com.FlagHome.backend.domain.auth.AuthInformation;
 import com.FlagHome.backend.domain.member.entity.Member;
-import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
-import com.FlagHome.backend.domain.member.avatar.dto.MyProfileResponse;
-import com.FlagHome.backend.domain.member.avatar.entity.Avatar;
-import com.FlagHome.backend.domain.member.avatar.service.AvatarService;
+import com.FlagHome.backend.domain.member.controller.dto.AvatarResponse;
+import com.FlagHome.backend.domain.member.controller.dto.MyProfileResponse;
+import com.FlagHome.backend.domain.member.entity.Avatar;
 import com.FlagHome.backend.domain.member.controller.dto.FindResponse;
 import com.FlagHome.backend.domain.member.controller.dto.LoginLogResponse;
 import com.FlagHome.backend.domain.member.controller.dto.SearchMemberResponse;
@@ -16,7 +15,8 @@ import com.FlagHome.backend.domain.token.entity.Token;
 import com.FlagHome.backend.domain.token.service.FindRequestTokenService;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
-import com.FlagHome.backend.global.infra.aws.ses.service.MailService;
+import com.FlagHome.backend.infra.aws.s3.service.AwsS3Service;
+import com.FlagHome.backend.infra.aws.ses.service.MailService;
 import com.FlagHome.backend.global.utility.RandomGenerator;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -31,9 +31,10 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class MemberService {
+    private static final String PROFILE_IMAGE_DIRECTORY = "/avatar";
     private final MemberRepository memberRepository;
     private final MailService mailService;
-    private final AvatarService avatarService;
+    private final AwsS3Service awsS3Service;
     private final FindRequestTokenService findRequestTokenService;
     private final PasswordEncoder passwordEncoder;
     private final SleepingService sleepingService;
@@ -52,17 +53,10 @@ public class MemberService {
         return Boolean.FALSE;
     }
 
-    // db 무결성 오류 발생 -> 상태 변경으로 관리할 예정
     @Transactional
     public void withdraw(Long memberId, String password) {
-        validateMemberPassword(memberId, password);
-        avatarService.deleteAvatar(memberId);
-        deleteMemberById(memberId);
-    }
-
-    @Transactional
-    public void deleteMemberById(long memberId) {
-        memberRepository.deleteById(memberId);
+        Member member = validatePasswordAndReturn(memberId, password);
+        member.withdraw();
     }
 
     public FindResponse findId(String name, String email) {
@@ -99,7 +93,7 @@ public class MemberService {
 
     @Transactional // 비밀번호를 유저가 변경하는 경우
     public void updatePassword(Long memberId, String currentPassword, String newPassword) {
-        Member member = validateMemberPassword(memberId, currentPassword);
+        Member member = validatePasswordAndReturn(memberId, currentPassword);
 
         if (passwordEncoder.matches(newPassword, member.getPassword())) {
             throw new CustomException(ErrorCode.PASSWORD_IS_SAME);
@@ -110,8 +104,7 @@ public class MemberService {
 
     @Transactional
     public void initMember(AuthInformation authInformation) {
-        Member member = memberRepository.save(Member.of(authInformation, passwordEncoder));
-        avatarService.initAvatar(member, authInformation.getNickName());
+        memberRepository.save(Member.of(authInformation, passwordEncoder));
     }
 
     @Transactional
@@ -126,38 +119,49 @@ public class MemberService {
         return member;
     }
 
+    @Transactional(readOnly = true)
     public AvatarResponse getAvatar(String loginId) {
-        return avatarService.getAvatar(loginId);
+        Member member = findByLoginId(loginId);
+
+        if (member.isNotAvailable()) {
+            throw new CustomException(ErrorCode.UNAVAILABLE_ACCOUNT);
+        }
+
+        return memberRepository.getAvatar(loginId);
     }
 
-    public MyProfileResponse getMyProfile(long memberId) {
-        return avatarService.getMyProfile(memberId);
+    @Transactional(readOnly = true)
+    public MyProfileResponse getMyProfile(Long memberId) {
+        return memberRepository.getMyProfile(memberId);
     }
 
     @Transactional
-    public void updateAvatar(long memberId, Avatar avatar) {
-        avatarService.updateAvatar(memberId, avatar);
+    public void updateAvatar(Long memberId, Avatar avatar) {
+        Member member = findById(memberId);
+        member.getAvatar().updateAvatar(avatar);
     }
 
     @Transactional
     public void updateProfileImage(Long memberId, MultipartFile file) {
-        avatarService.updateProfileImage(memberId, file);
+        Member member = findById(memberId);
+        String profileImageUrl =  awsS3Service.upload(file, PROFILE_IMAGE_DIRECTORY);
+        member.getAvatar().changeProfileImage(profileImageUrl);
     }
 
     @Transactional
-    //@Scheduled(cron = "000000")  이후에 설정하기
+    //@Scheduled(cron = "000000")
     public void changeAllToSleepMember() {
         List<Member> sleepingMembers = memberRepository.getAllSleepMembers();
         List<Sleeping> sleepingList = sleepingMembers.stream()
                         .map(Sleeping::of)
                         .collect(Collectors.toList());
-        sleepingService.saveAllSleepings(sleepingList);
+        sleepingService.saveAllSleeping(sleepingList);
         emptyAllMembers(sleepingMembers);
     }
 
     @Transactional
     public void emptyAllMembers(List<Member> memberList) {
-        memberList.forEach(Member::changeToSleep);
+        memberList.forEach(Member::deactivate);
     }
 
     //@Scheduled(cron = "000000")
@@ -191,7 +195,7 @@ public class MemberService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
-    private Member validateMemberPassword(Long memberId, String password) {
+    private Member validatePasswordAndReturn(Long memberId, String password) {
         Member member = findById(memberId);
 
         if (!passwordEncoder.matches(password, member.getPassword())) {

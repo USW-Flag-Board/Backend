@@ -1,13 +1,27 @@
 package com.FlagHome.backend.domain.reply.service;
 
-import com.FlagHome.backend.domain.post.repository.PostRepository;
+import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.member.service.MemberService;
+import com.FlagHome.backend.domain.post.entity.Post;
+import com.FlagHome.backend.domain.post.service.PostService;
+import com.FlagHome.backend.domain.reply.controller.dto.ReplyResponse;
+import com.FlagHome.backend.domain.reply.entity.Reply;
+import com.FlagHome.backend.domain.reply.repository.ReplyRepository;
+import com.FlagHome.backend.global.exception.CustomException;
+import com.FlagHome.backend.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ReplyService {
-    private final PostRepository postRepository;
+    private final ReplyRepository replyRepository;
+    private final PostService postService;
+    private final MemberService memberService;
 
     /**
      * Version 1
@@ -124,4 +138,44 @@ public class ReplyService {
     /**
      * Version 2
      */
+    @Transactional(readOnly = true)
+    public List<ReplyResponse> getAllReplies(Long postId) {
+        return replyRepository.getAllReplies(postId);
+    }
+
+    @Transactional
+    public void create(Long memberId, Long postId, String content) {
+        Member member = memberService.findById(memberId);
+        Post post = postService.findById(postId);
+        replyRepository.save(Reply.of(member, post, content));
+    }
+
+    @Transactional
+    public void update(Long memberId, Long replyId, String content ) {
+        Member member = memberService.findById(memberId);
+        Reply reply = validateAuthorAndReturn(member, replyId);
+        reply.renewContent(content);
+    }
+
+    @Transactional
+    public void delete(Long memberId, Long replyId) {
+        Member member = memberService.findById(memberId);
+        Reply reply = validateAuthorAndReturn(member, replyId);
+        replyRepository.delete(reply);
+    }
+
+    private Reply validateAuthorAndReturn(Member member, Long replyId) {
+        Reply reply = findById(replyId);
+
+        if (!StringUtils.equals(member.getEmail(), reply.getMember().getEmail())) {
+            throw new CustomException(ErrorCode.NOT_AUTHOR);
+        }
+
+        return reply;
+    }
+
+    private Reply findById(Long replyId) {
+        return replyRepository.findById(replyId)
+                .orElseThrow(() -> new CustomException(ErrorCode.REPLY_NOT_FOUND));
+    }
 }

@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum MemberStatus {
     NORMAL("일반"),
-    SUSPENDED("활동 정지"),
+    BANNED("정지"),
     WATCHING("감시"),
     WITHDRAW("회원 탈퇴"),
     SLEEPING("휴면계정");
