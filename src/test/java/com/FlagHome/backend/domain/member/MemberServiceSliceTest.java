@@ -1,7 +1,6 @@
 package com.FlagHome.backend.domain.member;
 
-import com.FlagHome.backend.domain.member.avatar.dto.MyProfileResponse;
-import com.FlagHome.backend.domain.member.avatar.service.AvatarService;
+import com.FlagHome.backend.domain.member.controller.dto.MyProfileResponse;
 import com.FlagHome.backend.domain.member.controller.dto.FindResponse;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
@@ -41,9 +40,6 @@ public class MemberServiceSliceTest {
 
     @Mock
     private FindRequestTokenService findRequestTokenService;
-
-    @Mock
-    private AvatarService avatarService;
 
     @Test
     @DisplayName("아이디 찾기 테스트")
@@ -140,29 +136,5 @@ public class MemberServiceSliceTest {
         then(findRequestTokenService).should(times(2)).findToken(anyString());
         assertThat(findRequestToken.getKey()).isEqualTo(findToken.getKey());
         assertThat(findRequestToken.getExpiredAt()).isEqualTo(findToken.getExpiredAt());
-    }
-
-    @Test
-    @DisplayName("내 프로필 가져오기 테스트")
-    void getMyProfileTest() {
-        // given
-        Long id = 1L;
-        String email = "gmlwh124@suwon.ac.kr";
-        String name = "문희조";
-
-        MyProfileResponse myProfileResponse = MyProfileResponse.builder()
-                .name(name)
-                .email(email)
-                .build();
-
-        given(avatarService.getMyProfile(anyLong())).willReturn(myProfileResponse);
-
-        // when
-        MyProfileResponse response = memberService.getMyProfile(id);
-
-        // then
-        then(avatarService).should(times(1)).getMyProfile(anyLong());
-        assertThat(response.getName()).isEqualTo(myProfileResponse.getName());
-        assertThat(response.getEmail()).isEqualTo(myProfileResponse.getEmail());
     }
 }

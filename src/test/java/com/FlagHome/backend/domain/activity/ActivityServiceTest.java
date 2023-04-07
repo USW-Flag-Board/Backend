@@ -20,7 +20,6 @@ import com.FlagHome.backend.domain.activity.memberactivity.repository.MemberActi
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
 import com.FlagHome.backend.domain.activity.service.ActivityService;
 import com.FlagHome.backend.domain.member.entity.Member;
-import com.FlagHome.backend.domain.member.entity.enums.Major;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
@@ -173,13 +172,11 @@ public class ActivityServiceTest {
             Member applier1 = memberRepository.save(Member.builder()
                     .loginId("gmlwh124")
                     .name("문희조")
-                    .major(Major.컴퓨터SW)
                     .build());
 
             Member applier2 = memberRepository.save(Member.builder()
                     .loginId("hejow124")
                     .name("희조문")
-                    .major(Major.경영)
                     .build());
 
             ActivityApply apply1 = ActivityApply.builder()
@@ -203,7 +200,6 @@ public class ActivityServiceTest {
             assertThat(activityApplyResponses.size()).isEqualTo(2);
             assertThat(response.getName()).isNotNull();
             assertThat(response.getLoginId()).isNotNull();
-            assertThat(response.getMajor()).isNotNull();
             assertThat(response.getId()).isNotNull();
         }
         

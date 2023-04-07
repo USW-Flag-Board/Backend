@@ -73,7 +73,7 @@ public class AuthService {
     public TokenResponse login(String loginId, String password) {
         Member member = memberService.convertSleepingIfExist(loginId);
 
-        if (member.isNotActivated()) {
+        if (member.isNotAvailable()) {
             throw new CustomException(ErrorCode.UNAVAILABLE_ACCOUNT);
         }
 

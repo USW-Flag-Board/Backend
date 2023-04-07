@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain.member.avatar.dto;
+package com.FlagHome.backend.domain.member.controller.dto;
 
 import com.FlagHome.backend.domain.member.entity.enums.Major;
 import com.querydsl.core.annotations.QueryProjection;
@@ -32,13 +32,10 @@ public class MyProfileResponse {
     @Schema(name = "학번", example = "19017041")
     private String studentId;
 
-    @Schema(name = "핸드폰 번호", example = "010-1234-5678")
-    private String phoneNumber;
-
     @Builder
     @QueryProjection
     public MyProfileResponse(String nickName, String bio, String profileImg, String name, String email,
-                             Major major, String studentId, String phoneNumber) {
+                             Major major, String studentId) {
         this.nickName = nickName;
         this.bio = bio;
         this.profileImg = profileImg;
@@ -46,6 +43,5 @@ public class MyProfileResponse {
         this.email = email;
         this.major = major;
         this.studentId = studentId;
-        this.phoneNumber = phoneNumber;
     }
 }

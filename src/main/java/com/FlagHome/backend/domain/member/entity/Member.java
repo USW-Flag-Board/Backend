@@ -1,16 +1,17 @@
 package com.FlagHome.backend.domain.member.entity;
 
-import com.FlagHome.backend.domain.member.entity.enums.Major;
+import com.FlagHome.backend.domain.auth.AuthInformation;
 import com.FlagHome.backend.domain.member.entity.enums.MemberStatus;
 import com.FlagHome.backend.domain.member.entity.enums.Role;
-import com.FlagHome.backend.global.common.BaseEntity;
-import com.FlagHome.backend.domain.auth.AuthInformation;
 import com.FlagHome.backend.domain.member.sleeping.entity.Sleeping;
-import lombok.*;
+import com.FlagHome.backend.global.common.BaseEntity;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -27,21 +28,14 @@ public class Member extends BaseEntity {
     @Column
     private String password;
 
-    @Column
+    @Column(unique = true)
     private String email;
 
     @Column
     private String name;
 
-    @Column(name = "student_id")
-    private String studentId;
-
-    @Column
-    @Enumerated(EnumType.STRING)
-    private Major major;
-
-    @Column(name = "phone_number")
-    private String phoneNumber;
+    @Embedded
+    private Avatar avatar;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -51,29 +45,37 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private MemberStatus status;
 
-    @Column(name = "last_login")
-    private LocalDateTime lastLoginTime;
-
     @Builder
-    public Member(String loginId, String password, String email, String name, String studentId, Major major, String phoneNumber, Role role) {
+    public Member(String loginId, String password, String email, String name, Avatar avatar, Role role) {
         this.loginId = loginId;
         this.password = password;
         this.email = email;
         this.name = name;
-        this.studentId = studentId;
-        this.major = major;
-        this.phoneNumber = phoneNumber;
+        this.avatar = avatar;
         this.role = role;
         this.status = MemberStatus.NORMAL;
-        this.lastLoginTime = LocalDateTime.now();
     }
 
+    public static Member of(AuthInformation authInformation, PasswordEncoder passwordEncoder) {
+        Avatar avatar = Avatar.of(authInformation.getNickName(), authInformation.getStudentId(), authInformation.getMajor());
+        String password = passwordEncoder.encode(authInformation.getPassword());
+        Role role = Role.from(authInformation.getJoinType());
+
+        return Member.builder()
+                .loginId(authInformation.getLoginId())
+                .password(password)
+                .name(authInformation.getName())
+                .email(authInformation.getEmail())
+                .avatar(avatar)
+                .role(role)
+                .build();
+    }
 
     public void withdraw() {
         this.status = MemberStatus.WITHDRAW;
     }
 
-    public boolean isNotActivated() {
+    public boolean isNotAvailable() {
         return this.status == MemberStatus.WITHDRAW || this.status == MemberStatus.BANNED;
     }
 
@@ -82,41 +84,22 @@ public class Member extends BaseEntity {
     }
 
     public void renewLoginTime() {
-        this.lastLoginTime = LocalDateTime.now();
+        super.renewLoginTime();
     }
 
-    public void sleepToMember(Sleeping sleeping) {
+    public void reactivate(Sleeping sleeping) {
         this.loginId = sleeping.getLoginId();
         this.password = sleeping.getPassword();
         this.email = sleeping.getEmail();
         this.name = sleeping.getName();
-        this.studentId = sleeping.getStudentId();
-        this.major = sleeping.getMember().getMajor();
-        this.phoneNumber = sleeping.getPhoneNumber();
         this.status = MemberStatus.NORMAL;
     }
 
-    public void changeToSleep() {
+    public void deactivate() {
         this.status = MemberStatus.SLEEPING;
         this.loginId = null;
         this.password = null;
         this.email = null;
         this.name = null;
-        this.studentId = null;
-        this.major = null;
-        this.phoneNumber = null;
-    }
-
-    public static Member of(AuthInformation authInformation, PasswordEncoder passwordEncoder) {
-        return Member.builder()
-                .loginId(authInformation.getLoginId())
-                .password(passwordEncoder.encode(authInformation.getPassword()))
-                .name(authInformation.getName())
-                .email(authInformation.getEmail())
-                .major(authInformation.getMajor())
-                .studentId(authInformation.getStudentId())
-                .phoneNumber(authInformation.getPhoneNumber())
-                .role(Role.from(authInformation.getJoinType()))
-                .build();
     }
 }

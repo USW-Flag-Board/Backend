@@ -2,10 +2,9 @@ package com.FlagHome.backend.domain.member.service;
 
 import com.FlagHome.backend.domain.auth.AuthInformation;
 import com.FlagHome.backend.domain.member.entity.Member;
-import com.FlagHome.backend.domain.member.avatar.dto.AvatarResponse;
-import com.FlagHome.backend.domain.member.avatar.dto.MyProfileResponse;
-import com.FlagHome.backend.domain.member.avatar.entity.Avatar;
-import com.FlagHome.backend.domain.member.avatar.service.AvatarService;
+import com.FlagHome.backend.domain.member.controller.dto.AvatarResponse;
+import com.FlagHome.backend.domain.member.controller.dto.MyProfileResponse;
+import com.FlagHome.backend.domain.member.entity.Avatar;
 import com.FlagHome.backend.domain.member.controller.dto.FindResponse;
 import com.FlagHome.backend.domain.member.controller.dto.LoginLogResponse;
 import com.FlagHome.backend.domain.member.controller.dto.SearchMemberResponse;
@@ -16,6 +15,7 @@ import com.FlagHome.backend.domain.token.entity.Token;
 import com.FlagHome.backend.domain.token.service.FindRequestTokenService;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
+import com.FlagHome.backend.infra.aws.s3.service.AwsS3Service;
 import com.FlagHome.backend.infra.aws.ses.service.MailService;
 import com.FlagHome.backend.global.utility.RandomGenerator;
 import lombok.RequiredArgsConstructor;
@@ -31,9 +31,10 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class MemberService {
+    private static final String PROFILE_IMAGE_DIRECTORY = "/avatar";
     private final MemberRepository memberRepository;
     private final MailService mailService;
-    private final AvatarService avatarService;
+    private final AwsS3Service awsS3Service;
     private final FindRequestTokenService findRequestTokenService;
     private final PasswordEncoder passwordEncoder;
     private final SleepingService sleepingService;
@@ -103,8 +104,7 @@ public class MemberService {
 
     @Transactional
     public void initMember(AuthInformation authInformation) {
-        Member member = memberRepository.save(Member.of(authInformation, passwordEncoder));
-        avatarService.initAvatar(member, authInformation.getNickName());
+        memberRepository.save(Member.of(authInformation, passwordEncoder));
     }
 
     @Transactional
@@ -119,32 +119,37 @@ public class MemberService {
         return member;
     }
 
+    @Transactional(readOnly = true)
     public AvatarResponse getAvatar(String loginId) {
         Member member = findByLoginId(loginId);
 
-        if (member.isNotActivated()) {
+        if (member.isNotAvailable()) {
             throw new CustomException(ErrorCode.UNAVAILABLE_ACCOUNT);
         }
 
-        return avatarService.getAvatar(loginId);
+        return memberRepository.getAvatar(loginId);
     }
 
+    @Transactional(readOnly = true)
     public MyProfileResponse getMyProfile(Long memberId) {
-        return avatarService.getMyProfile(memberId);
+        return memberRepository.getMyProfile(memberId);
     }
 
     @Transactional
     public void updateAvatar(Long memberId, Avatar avatar) {
-        avatarService.updateAvatar(memberId, avatar);
+        Member member = findById(memberId);
+        member.getAvatar().updateAvatar(avatar);
     }
 
     @Transactional
     public void updateProfileImage(Long memberId, MultipartFile file) {
-        avatarService.updateProfileImage(memberId, file);
+        Member member = findById(memberId);
+        String profileImageUrl =  awsS3Service.upload(file, PROFILE_IMAGE_DIRECTORY);
+        member.getAvatar().changeProfileImage(profileImageUrl);
     }
 
     @Transactional
-    //@Scheduled(cron = "000000")  이후에 설정하기
+    //@Scheduled(cron = "000000")
     public void changeAllToSleepMember() {
         List<Member> sleepingMembers = memberRepository.getAllSleepMembers();
         List<Sleeping> sleepingList = sleepingMembers.stream()
@@ -156,7 +161,7 @@ public class MemberService {
 
     @Transactional
     public void emptyAllMembers(List<Member> memberList) {
-        memberList.forEach(Member::changeToSleep);
+        memberList.forEach(Member::deactivate);
     }
 
     //@Scheduled(cron = "000000")

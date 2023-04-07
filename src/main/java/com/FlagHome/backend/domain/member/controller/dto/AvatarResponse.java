@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain.member.avatar.dto;
+package com.FlagHome.backend.domain.member.controller.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AccessLevel;
