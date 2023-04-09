@@ -12,6 +12,7 @@ import com.FlagHome.backend.domain.post.controller.dto.PostRequest;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.entity.PostStatus;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
+import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -28,7 +29,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -217,8 +218,10 @@ public class PostControllerTest extends IntegrationTest {
 
             // then
             Post deletedPost = postRepository.findById(post.getId()).get();
-            assertThat(deletedPost.isNotAccessible()).isTrue();
             assertThat(deletedPost.getStatus()).isEqualTo(PostStatus.DELETED);
+            assertThatExceptionOfType(CustomException.class)
+                    .isThrownBy(deletedPost::isAccessible)
+                    .withMessage(ErrorCode.INACCESSIBLE_POST.getMessage());
         }
 
         @Test

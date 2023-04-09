@@ -82,7 +82,6 @@ public class AuthInformation {
                 .major(joinRequest.getMajor())
                 .nickName(joinRequest.getNickName())
                 .studentId(joinRequest.getStudentId())
-                .phoneNumber(joinRequest.getPhoneNumber())
                 .joinType(joinRequest.getJoinType())
                 .certification(certification)
                 .build();
@@ -90,6 +89,10 @@ public class AuthInformation {
 
     public void authorized() {
         this.isAuthorizedCrew = true;
+    }
+
+    public boolean isCrewJoin() {
+        return this.joinType == JoinType.동아리;
     }
 
     public void validateAuthTime() {
@@ -103,5 +106,10 @@ public class AuthInformation {
         if (!StringUtils.equals(certification, this.certification)) {
             throw new CustomException(ErrorCode.CERTIFICATION_NOT_MATCH);
         }
+    }
+
+    // test용 : 삭제 예정
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

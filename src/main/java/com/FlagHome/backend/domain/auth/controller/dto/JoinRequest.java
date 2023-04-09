@@ -7,12 +7,15 @@ import com.FlagHome.backend.global.annotation.USWEmailFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
+import javax.validation.constraints.NotBlank;
+
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class JoinRequest {
     @Schema(description = "아이디", required = true, example = "gmlwh124")
+    @NotBlank
     private String loginId;
 
     @PasswordFormat
@@ -20,9 +23,11 @@ public class JoinRequest {
     private String password;
 
     @Schema(description = "이름", required = true, example = "문희조")
+    @NotBlank
     private String name;
 
     @Schema(name = "닉네임", required = true, example = "john")
+    @NotBlank
     private String nickName;
 
     @USWEmailFormat
@@ -30,14 +35,14 @@ public class JoinRequest {
     private String email;
 
     @Schema(description = "전공", required = true, example = "컴퓨터SW")
+    @NotBlank
     private Major major;
 
     @Schema(description = "학번", required = true, example = "19017041")
+    @NotBlank
     private String studentId;
 
-    @Schema(name = "핸드폰 번호", required = true, example = "01040380540")
-    private String phoneNumber;
-
     @Schema(description = "가입 구분", required = true, example = "일반 / 동아리")
+    @NotBlank
     private JoinType joinType;
 }

@@ -42,7 +42,7 @@ public class AuthController {
     @ResponseStatus(OK)
     @PostMapping("/check/email")
     public ApplicationResponse<Boolean> checkEmail(@RequestBody @Valid CheckEmailRequest checkEmailRequest) {
-        boolean check = authService.validateEmail(checkEmailRequest.getEmail());
+        boolean check = authService.validateDuplicateEmail(checkEmailRequest.getEmail());
         return new ApplicationResponse<>(check);
     }
 
@@ -71,7 +71,7 @@ public class AuthController {
     })
     @ResponseStatus(OK)
     @PostMapping("/sign-up")
-    public ApplicationResponse<SignUpResponse> signup(@RequestBody SignUpRequest signUpRequest) {
+    public ApplicationResponse<SignUpResponse> signup(@RequestBody @Valid SignUpRequest signUpRequest) {
         SignUpResponse response = authService.signUp(signUpRequest.getEmail(), signUpRequest.getCertification());
         return new ApplicationResponse(response);
     }
@@ -85,7 +85,7 @@ public class AuthController {
     })
     @ResponseStatus(OK)
     @PostMapping("/login")
-    public ApplicationResponse<TokenResponse> login(@RequestBody LoginRequest loginRequest) {
+    public ApplicationResponse<TokenResponse> login(@RequestBody @Valid LoginRequest loginRequest) {
         TokenResponse response = authService.login(loginRequest.getLoginId(), loginRequest.getPassword());
         return new ApplicationResponse(response);
     }
@@ -100,7 +100,7 @@ public class AuthController {
     })
     @ResponseStatus(OK)
     @PostMapping("/reissue")
-    public ApplicationResponse<TokenResponse> reissue(@RequestBody TokenRequest tokenRequest) {
+    public ApplicationResponse<TokenResponse> reissue(@RequestBody @Valid TokenRequest tokenRequest) {
         TokenResponse response = authService.reissueToken(tokenRequest.getAccessToken(), tokenRequest.getRefreshToken());
         return new ApplicationResponse(response);
     }

@@ -4,6 +4,8 @@ import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.reply.entity.Reply;
 import com.FlagHome.backend.global.common.BaseEntity;
+import com.FlagHome.backend.global.exception.CustomException;
+import com.FlagHome.backend.global.exception.ErrorCode;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -127,7 +129,9 @@ public class Post extends BaseEntity {
         this.status = PostStatus.DELETED;
     }
 
-    public boolean isNotAccessible() {
-        return this.status == PostStatus.BANNED || this.status == PostStatus.DELETED;
+    public void isAccessible() {
+        if (this.status == PostStatus.BANNED || this.status == PostStatus.DELETED) {
+            throw new CustomException(ErrorCode.INACCESSIBLE_POST);
+        }
     }
 }

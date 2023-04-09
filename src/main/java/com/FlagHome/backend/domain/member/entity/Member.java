@@ -5,6 +5,8 @@ import com.FlagHome.backend.domain.member.entity.enums.MemberStatus;
 import com.FlagHome.backend.domain.member.entity.enums.Role;
 import com.FlagHome.backend.domain.member.sleeping.entity.Sleeping;
 import com.FlagHome.backend.global.common.BaseEntity;
+import com.FlagHome.backend.global.exception.CustomException;
+import com.FlagHome.backend.global.exception.ErrorCode;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -75,8 +77,10 @@ public class Member extends BaseEntity {
         this.status = MemberStatus.WITHDRAW;
     }
 
-    public boolean isNotAvailable() {
-        return this.status == MemberStatus.WITHDRAW || this.status == MemberStatus.BANNED;
+    public void isAvailable() {
+        if (this.status == MemberStatus.WITHDRAW || this.status == MemberStatus.BANNED) {
+            throw new CustomException(ErrorCode.UNAVAILABLE_ACCOUNT);
+        }
     }
 
     public void updatePassword(String password, PasswordEncoder passwordEncoder) {

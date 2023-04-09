@@ -122,11 +122,7 @@ public class MemberService {
     @Transactional(readOnly = true)
     public AvatarResponse getAvatar(String loginId) {
         Member member = findByLoginId(loginId);
-
-        if (member.isNotAvailable()) {
-            throw new CustomException(ErrorCode.UNAVAILABLE_ACCOUNT);
-        }
-
+        member.isAvailable();
         return memberRepository.getAvatar(loginId);
     }
 

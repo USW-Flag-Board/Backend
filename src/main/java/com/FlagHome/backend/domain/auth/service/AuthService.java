@@ -1,7 +1,6 @@
 package com.FlagHome.backend.domain.auth.service;
 
 import com.FlagHome.backend.domain.auth.AuthInformation;
-import com.FlagHome.backend.domain.auth.JoinType;
 import com.FlagHome.backend.domain.auth.controller.dto.JoinRequest;
 import com.FlagHome.backend.domain.auth.controller.dto.JoinResponse;
 import com.FlagHome.backend.domain.auth.controller.dto.SignUpResponse;
@@ -36,18 +35,17 @@ public class AuthService {
         return memberService.isExistLoginId(loginId);
     }
 
-    public Boolean validateEmail(String email) {
+    public Boolean validateDuplicateEmail(String email) {
         return memberService.isExistEmail(email);
     }
 
     @Transactional
     public JoinResponse join(JoinRequest joinRequest) {
-        if (validateDuplicateLoginId(joinRequest.getLoginId()) || validateEmail(joinRequest.getEmail())) {
+        if (validateDuplicateLoginId(joinRequest.getLoginId()) || validateDuplicateEmail(joinRequest.getEmail())) {
             throw new CustomException(ErrorCode.VALIDATE_NOT_PROCEED);
         }
 
         String certificationNumber = RandomGenerator.getRandomNumber();
-
         authRepository.save(AuthInformation.of(joinRequest, certificationNumber));
         mailService.sendCertification(joinRequest.getEmail(), certificationNumber);
 
@@ -60,7 +58,7 @@ public class AuthService {
         authInformation.validateAuthTime();
         authInformation.validateCertification(certification);
 
-        if (authInformation.getJoinType() == JoinType.동아리) {
+        if (authInformation.isCrewJoin()) {
             authInformation.authorized();
             return SignUpResponse.from(authInformation);
         }
@@ -72,14 +70,9 @@ public class AuthService {
     @Transactional
     public TokenResponse login(String loginId, String password) {
         Member member = memberService.convertSleepingIfExist(loginId);
+        member.isAvailable();
 
-        if (member.isNotAvailable()) {
-            throw new CustomException(ErrorCode.UNAVAILABLE_ACCOUNT);
-        }
-
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginId, password);
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
+        Authentication authentication = authenticate(loginId, password);
         TokenResponse tokenResponse = jwtUtilizer.generateTokenDto(authentication);
         refreshTokenService.issueToken(authentication.getName(), tokenResponse.getRefreshToken());
 
@@ -95,5 +88,10 @@ public class AuthService {
     private AuthInformation findLatestAuthInformationByEmail(String email) {
         return authRepository.findFirstByEmailOrderByCreatedAtDesc(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.AUTH_INFORMATION_NOT_FOUND));
+    }
+
+    private Authentication authenticate(String loginId, String password) {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginId, password);
+        return authenticationManagerBuilder.getObject().authenticate(authenticationToken);
     }
 }
