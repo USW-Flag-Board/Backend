@@ -109,11 +109,7 @@ public class PostService {
     @Transactional
     public PostResponse getPost(Long postId) {
         Post post = findById(postId);
-
-        if (post.isNotAccessible()) {
-            throw new CustomException(ErrorCode.INACCESSIBLE_POST);
-        }
-
+        post.isAccessible();
         post.increaseViewCount();
         return PostResponse.from(post);
     }

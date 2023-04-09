@@ -79,8 +79,8 @@ public class AuthServiceTest {
 
         memberRepository.save(Member.builder().email(email).build());
         // when
-        boolean shouldBeTrue = authService.validateEmail(email);
-        boolean shouldBeFalse = authService.validateEmail(noneEmail);
+        boolean shouldBeTrue = authService.validateDuplicateEmail(email);
+        boolean shouldBeFalse = authService.validateDuplicateEmail(noneEmail);
 
         // then
         assertThat(shouldBeTrue).isTrue();

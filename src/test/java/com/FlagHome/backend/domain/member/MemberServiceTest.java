@@ -92,9 +92,10 @@ public class MemberServiceTest {
 
             // then
             Member findMember = memberRepository.findById(savedMember.getId()).get();
-            boolean notActivate = findMember.isNotAvailable();
             assertThat(findMember.getStatus()).isEqualTo(withdraw);
-            assertThat(notActivate).isTrue();
+            assertThatExceptionOfType(CustomException.class)
+                    .isThrownBy(findMember::isAvailable)
+                    .withMessage(ErrorCode.UNAVAILABLE_ACCOUNT.getMessage());
         }
 
         @Test
