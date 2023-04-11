@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Builder
@@ -35,7 +36,7 @@ public class JoinRequest {
     private String email;
 
     @Schema(description = "전공", required = true, example = "컴퓨터SW")
-    @NotBlank
+    @NotNull
     private Major major;
 
     @Schema(description = "학번", required = true, example = "19017041")
@@ -43,6 +44,6 @@ public class JoinRequest {
     private String studentId;
 
     @Schema(description = "가입 구분", required = true, example = "일반 / 동아리")
-    @NotBlank
+    @NotNull
     private JoinType joinType;
 }

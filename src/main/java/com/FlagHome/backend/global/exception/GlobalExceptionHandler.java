@@ -46,7 +46,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> handleUnexpectedException(Exception e) {
-        log.error("UnexpectedException : {}, {}", e.getCause(), e.getMessage());
+        log.error("UnexpectedException : {}", e.getMessage());
         ErrorResponse errorResponse = new ErrorResponse(INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR.getMessage());
         return ResponseEntity.internalServerError().body(errorResponse);
     }

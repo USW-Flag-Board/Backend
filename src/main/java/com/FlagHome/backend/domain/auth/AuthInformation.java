@@ -92,7 +92,7 @@ public class AuthInformation {
     }
 
     public boolean isCrewJoin() {
-        return this.joinType == JoinType.동아리;
+        return this.joinType == JoinType.CREW;
     }
 
     public void validateAuthTime() {
