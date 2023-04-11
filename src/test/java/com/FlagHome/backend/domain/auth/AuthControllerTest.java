@@ -31,7 +31,7 @@ public class AuthControllerTest extends IntegrationTest {
 
         AuthInformation authInformation = AuthInformation.builder()
                 .email(email)
-                .joinType(JoinType.일반)
+                .joinType(JoinType.NORMAL)
                 .certification(certification)
                 .build();
 
