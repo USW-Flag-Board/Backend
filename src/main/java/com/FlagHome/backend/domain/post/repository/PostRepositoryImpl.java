@@ -1,12 +1,21 @@
 package com.FlagHome.backend.domain.post.repository;
 
+import com.FlagHome.backend.domain.post.controller.dto.PostResponse;
+import com.FlagHome.backend.domain.post.controller.dto.QPostResponse;
+import com.FlagHome.backend.domain.post.entity.PostStatus;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+
+import static com.FlagHome.backend.domain.member.entity.QMember.member;
+import static com.FlagHome.backend.domain.post.entity.QPost.post;
+import static com.querydsl.core.types.dsl.Expressions.asNumber;
 
 
 @RequiredArgsConstructor
 public class PostRepositoryImpl implements PostRepositoryCustom {
-    private final JPAQueryFactory jpaQueryFactory;
+    private final JPAQueryFactory queryFactory;
 
     /**
      * Version 1
@@ -123,4 +132,25 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     /**
      * Version 2
      */
+    @Override
+    public Page<PostResponse> getAllPosts(String boardName) {
+        JPQLQuery<PostResponse> result = queryFactory
+                .select(new QPostResponse(
+                        post.id,
+                        post.title,
+                        member.avatar.nickname,
+                        post.createdAt,
+                        post.viewCount,
+                        post.replyList.size(),
+                        asNumber(0), // 반영하기
+                        post.isEdited))
+                .from(post)
+                .innerJoin(post.member, member)
+                .where(post.board.name.eq(boardName),
+                        post.status.in(PostStatus.NORMAL, PostStatus.REPORTED))
+                .orderBy(post.createdAt.asc())
+                .fetchAll();
+
+        return null;
+    }
 }

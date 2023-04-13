@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ReplyService {
     private final ReplyRepository replyRepository;
@@ -143,35 +144,32 @@ public class ReplyService {
         return replyRepository.getAllReplies(postId);
     }
 
-    @Transactional
     public void create(Long memberId, Long postId, String content) {
         Member member = memberService.findById(memberId);
         Post post = postService.findById(postId);
         replyRepository.save(Reply.of(member, post, content));
     }
 
-    @Transactional
     public void update(Long memberId, Long replyId, String content ) {
-        Member member = memberService.findById(memberId);
-        Reply reply = validateAuthorAndReturnReply(member, replyId);
+        Reply reply = validateAuthorAndReturnReply(memberId, replyId);
         reply.renewContent(content);
     }
 
-    @Transactional
     public void delete(Long memberId, Long replyId) {
-        Member member = memberService.findById(memberId);
-        Reply reply = validateAuthorAndReturnReply(member, replyId);
+        Reply reply = validateAuthorAndReturnReply(memberId, replyId);
         replyRepository.delete(reply);
     }
 
-    private Reply validateAuthorAndReturnReply(Member member, Long replyId) {
+    private Reply validateAuthorAndReturnReply(Long memberId, Long replyId) {
         Reply reply = findById(replyId);
+        validateAuthor(memberId, reply.getMember().getId());
+        return reply;
+    }
 
-        if (!Objects.equals(member.getId(), reply.getMember().getId())) {
+    private void validateAuthor(Long memberId, Long targetId) {
+        if (!Objects.equals(memberId, targetId)) {
             throw new CustomException(ErrorCode.NOT_AUTHOR);
         }
-
-        return reply;
     }
 
     private Reply findById(Long replyId) {

@@ -7,10 +7,6 @@ public class RandomGenerator {
 
     private RandomGenerator() { }
 
-    /**
-     * 이메일 인증에 필요한 6자리 숫자(난수) 생성
-     * @return (String) 6자리 인증번호
-     */
     public static String getRandomNumber() {
         int length = 6;
         int randomNumberStart = 48;
