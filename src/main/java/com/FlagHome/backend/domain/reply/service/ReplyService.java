@@ -144,6 +144,11 @@ public class ReplyService {
         return replyRepository.getAllReplies(postId);
     }
 
+    @Transactional(readOnly = true)
+    public ReplyResponse getBestReply(Long postId) {
+        return replyRepository.getBestReply(postId);
+    }
+
     public void create(Long memberId, Long postId, String content) {
         Member member = memberService.findById(memberId);
         Post post = postService.findById(postId);
@@ -160,6 +165,11 @@ public class ReplyService {
         replyRepository.delete(reply);
     }
 
+    public Reply findById(Long replyId) {
+        return replyRepository.findById(replyId)
+                .orElseThrow(() -> new CustomException(ErrorCode.REPLY_NOT_FOUND));
+    }
+
     private Reply validateAuthorAndReturnReply(Long memberId, Long replyId) {
         Reply reply = findById(replyId);
         validateAuthor(memberId, reply.getMember().getId());
@@ -170,10 +180,5 @@ public class ReplyService {
         if (!Objects.equals(memberId, targetId)) {
             throw new CustomException(ErrorCode.NOT_AUTHOR);
         }
-    }
-
-    private Reply findById(Long replyId) {
-        return replyRepository.findById(replyId)
-                .orElseThrow(() -> new CustomException(ErrorCode.REPLY_NOT_FOUND));
     }
 }

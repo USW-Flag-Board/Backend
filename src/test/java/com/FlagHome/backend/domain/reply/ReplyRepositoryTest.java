@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -56,5 +57,27 @@ public class ReplyRepositoryTest extends RepositoryTest {
         // then
         assertThat(responses.size()).isEqualTo(3);
         assertThat(responses.get(0).getContent()).isEqualTo(content);
+    }
+
+    @Test
+    public void 베스트_댓글_가져오기_테스트() {
+        // given
+        final String content = "content";
+        final int likeCount = 5;
+
+        Reply reply = Reply.of(member, post, content);
+        for (int i = 0 ; i < likeCount ; i++) {
+            reply.increaseLikeCount();
+        }
+
+        replyRepository.save(reply);
+
+        // when
+        ReplyResponse response = replyRepository.getBestReply(post.getId());
+
+        // then
+        assertThat(response).isNotNull();
+        assertThat(response.getLikeCount()).isEqualTo(likeCount);
+        assertThat(response.getContent()).isEqualTo(content);
     }
 }

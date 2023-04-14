@@ -66,6 +66,9 @@ public class Reply extends BaseEntity {
     @Column(length = 300)
     private String content;
 
+    @Column(name = "likes")
+    private int likeCount;
+
     @Column
     @Enumerated(EnumType.STRING)
     private ReplyStatus status;
@@ -75,11 +78,20 @@ public class Reply extends BaseEntity {
         this.member = member;
         this.post = post;
         this.content = content;
+        this.likeCount = 0;
         this.status = ReplyStatus.NORMAL;
     }
 
     public void renewContent(String content) {
         this.content = content;
+    }
+
+    public void increaseLikeCount() {
+        this.likeCount++;
+    }
+
+    public void decreaseLikeCount() {
+        this.likeCount--;
     }
 
     public static Reply of(Member member, Post post, String content) {
