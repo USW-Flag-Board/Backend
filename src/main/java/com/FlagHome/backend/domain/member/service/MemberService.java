@@ -120,7 +120,7 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public AvatarResponse getAvatar(String loginId) {
+    public AvatarResponse getMemberPageAvatar(String loginId) {
         Member member = findByLoginId(loginId);
         member.isAvailable();
         return memberRepository.getAvatar(loginId);

@@ -165,4 +165,22 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
 
         return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchCount);
     }
+
+    @Override
+    public List<PostResponse> getAllPostsByLoginId(String loginId) {
+        return queryFactory
+                .select(new QPostResponse(
+                        post.id,
+                        post.title,
+                        member.avatar.nickname,
+                        post.createdAt,
+                        post.viewCount,
+                        post.replyList.size(),
+                        post.likeCount,
+                        post.isEdited))
+                .from(post)
+                .innerJoin(post.member, member)
+                .where(member.loginId.eq(loginId))
+                .fetch();
+    }
 }

@@ -59,6 +59,27 @@ public class ReplyRepositoryTest extends RepositoryTest {
     }
 
     @Test
+    public void 댓글_가져오기_테스트2() {
+        // given
+        final String content = "content";
+        final String inaccessible = "삭제된 댓글입니다.";
+
+        Reply reply = Reply.of(member, post, content);
+        Reply bannedReply = Reply.of(member, post, content);
+        bannedReply.banReply();
+
+        replyRepository.saveAll(List.of(reply, bannedReply));
+
+        // when
+        List<ReplyResponse> responses = replyRepository.getAllReplies(post.getId());
+
+        // then
+        assertThat(responses.size()).isEqualTo(2);
+        assertThat(responses.get(0).getContent()).isEqualTo(content);
+        assertThat(responses.get(1).getContent()).isEqualTo(inaccessible);
+    }
+
+    @Test
     public void 베스트_댓글_가져오기_테스트() {
         // given
         final String content = "content";

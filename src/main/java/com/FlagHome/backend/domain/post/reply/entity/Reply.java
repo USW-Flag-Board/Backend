@@ -97,6 +97,10 @@ public class Reply extends BaseEntity implements Likeable {
         this.likeCount -= 1;
     }
 
+    public void banReply() {
+        this.status = ReplyStatus.BANNED;
+    }
+
     public static Reply of(Member member, Post post, String content) {
         return Reply.builder()
                 .member(member)

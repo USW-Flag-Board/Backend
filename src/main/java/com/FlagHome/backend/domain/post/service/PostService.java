@@ -132,7 +132,15 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public Page<PostResponse> getAllPostsByBoard(String boardName, Pageable pageable) {
+        boardService.findByName(boardName);
         return postRepository.getAllPostsByBoard(boardName, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostResponse> getMemberPagePosts(String loginId) {
+        Member member = memberService.findByLoginId(loginId);
+        member.isAvailable();
+        return postRepository.getAllPostsByLoginId(loginId);
     }
 
     public Long createPost(Long memberId, Post post, String boardName) {
@@ -171,9 +179,18 @@ public class PostService {
         postLikeService.like(member, post);
     }
 
+    public void likeReply(Long memberId, Long replyId) {
+        Member member = memberService.findById(memberId);
+        replyService.likeReply(member, replyId);
+    }
+
     public void cancelLikePost(Long memberId, Long postId) {
         Post post = findById(postId);
         postLikeService.cancelLike(memberId, post);
+    }
+
+    public void cancelLikeReply(Long memberId, Long replyId) {
+        replyService.cancelLikeReply(memberId, replyId);
     }
 
     private Post findById(Long postId) {

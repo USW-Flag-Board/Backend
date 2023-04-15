@@ -32,15 +32,16 @@ public class MemberController {
     private final MemberMapper memberMapper;
 
     @Tag(name = "member")
-    @Operation(summary = "아바타 정보 가져오기", description = "프로필을 가져온다.")
+    @Operation(summary = "멤버 페이지 정보 가져오기 (아바타)", description = "아바타 정보 가져오기.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "멤버 아바타를 가져왔습니다."),
+            @ApiResponse(responseCode = "200", description = "멤버 아바타 불러오기 성공"),
+            @ApiResponse(responseCode = "400", description = "탈퇴한 유저, 리다이렉트 해줄 것"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
     })
     @ResponseStatus(OK)
     @GetMapping("/{loginId}")
-    public ApplicationResponse<AvatarResponse> getMemberAvatar(@PathVariable("loginId") String loginId) {
-        AvatarResponse response = memberService.getAvatar(loginId);
+    public ApplicationResponse<AvatarResponse> getMemberPageAvatar(@PathVariable String loginId) {
+        AvatarResponse response = memberService.getMemberPageAvatar(loginId);
         return new ApplicationResponse<>(response);
     }
 

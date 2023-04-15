@@ -87,14 +87,16 @@ public class ActivityController {
     }
 
     @Tag(name = "activity")
-    @Operation(summary = "참가한 활동 리스트 가져오기", description = "멤버 프로필 참가 활동 리스트 가져오기")
+    @Operation(summary = "멤버 페이지 정보 가져오기 (활동)", description = "멤버 페이지 참가 활동 리스트 가져오기")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "참가한 활동이 없다면 빈 리스트 리턴")
+            @ApiResponse(responseCode = "200", description = "참가한 활동이 없다면 빈 리스트 리턴"),
+            @ApiResponse(responseCode = "400", description = "탈퇴한 유저, 리다이렉트 해줄 것"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다."),
     })
     @ResponseStatus(OK)
     @GetMapping("/{loginId}/profile")
-    public ApplicationResponse<List<ParticipateResponse>> getAllActivitiesOfMember(@PathVariable String loginId) {
-        List<ParticipateResponse> response = activityService.getAllActivitiesOfMember(loginId);
+    public ApplicationResponse<List<ParticipateResponse>> getMemberPageActivities(@PathVariable String loginId) {
+        List<ParticipateResponse> response = activityService.getMemberPageActivities(loginId);
         return new ApplicationResponse<>(response);
     }
 

@@ -4,6 +4,7 @@ import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.controller.dto.ReplyResponse;
+import com.FlagHome.backend.domain.post.like.service.ReplyLikeService;
 import com.FlagHome.backend.domain.post.reply.entity.Reply;
 import com.FlagHome.backend.domain.post.reply.repository.ReplyRepository;
 import com.FlagHome.backend.global.exception.CustomException;
@@ -20,6 +21,8 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class ReplyService {
     private final ReplyRepository replyRepository;
+
+    private final ReplyLikeService replyLikeService;
 
     /**
      * Version 1
@@ -158,6 +161,16 @@ public class ReplyService {
     public void deleteReply(Long memberId, Long replyId) {
         Reply reply = validateAuthorAndReturnReply(memberId, replyId);
         replyRepository.delete(reply);
+    }
+
+    public void likeReply(Member member, Long replyId) {
+        Reply reply = findById(replyId);
+        replyLikeService.like(member, reply);
+    }
+
+    public void cancelLikeReply(Long memberId, Long replyId) {
+        Reply reply = findById(replyId);
+        replyLikeService.cancelLike(memberId, reply);
     }
 
     private Reply findById(Long replyId) {

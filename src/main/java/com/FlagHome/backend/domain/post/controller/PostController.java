@@ -16,7 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-
 import java.net.URI;
 import java.util.List;
 
@@ -136,6 +135,10 @@ public class PostController {
      */
     @Tag(name = "post")
     @Operation(summary = "게시글 모두 가져오기", description = "게시판 이름에 맞춰서 페이징 처리")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "게시판의 모든 게시글 불러오기 성공"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시판입니다.")
+    })
     @ResponseStatus(OK)
     @GetMapping
     public ApplicationResponse<Page<PostResponse>> getAllPostsByBoard(@RequestParam("board") String boardName, Pageable pageable) {
@@ -144,10 +147,25 @@ public class PostController {
     }
 
     @Tag(name = "post")
+    @Operation(summary = "멤버 페이지 정보 가져오기 (게시글)", description = "멤버 페이지 작성 게시글 리스트 가져오기")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "작성한 게시글 가져오기 성공"),
+            @ApiResponse(responseCode = "400", description = "탈퇴한 유저, 리다이렉트 해줄 것"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다.")
+    })
+    @ResponseStatus(OK)
+    @GetMapping("/{loginId}/profile")
+    public ApplicationResponse<List<PostResponse>> getMemberPagePosts(@PathVariable String loginId) {
+        List<PostResponse> responses = postService.getMemberPagePosts(loginId);
+        return new ApplicationResponse<>(responses);
+    }
+
+    @Tag(name = "post")
     @Operation(summary = "게시글 상세보기")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "상세보기 성공"),
-            @ApiResponse(responseCode = "400", description = "접근할 수 없는 게시글, 리다이렉트 해줄 것")
+            @ApiResponse(responseCode = "400", description = "접근할 수 없는 게시글, 리다이렉트 해줄 것"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시물입니다.")
     })
     @ResponseStatus(OK)
     @GetMapping("/{id}")
@@ -161,18 +179,27 @@ public class PostController {
     @ResponseStatus(OK)
     @GetMapping("/{id}/replies")
     public ApplicationResponse<List<ReplyResponse>> getAllReplies(@PathVariable Long id) {
-        return new ApplicationResponse<>(postService.getAllReplies(id));
+        List<ReplyResponse> responses = postService.getAllReplies(id);
+        return new ApplicationResponse<>(responses);
     }
 
     @Tag(name = "post")
-    @Operation(summary = "게시글 베스트 댓글 가져오기", description = "베스트 댓글을 가져온다. (조건 : 좋아요 5개 이상), 없으면 null 리턴")
+    @Operation(summary = "게시글 베스트 댓글 가져오기", description = "베스트 댓글을 가져온다. (조건 : 좋아요 5개 이상)")
+    @ApiResponse(responseCode = "200", description = "베댓의 최소 조건에 부합하지 않아 아무값도 안 가져올 수 있음 (null)")
     @ResponseStatus(OK)
     @GetMapping("/{id}/replies/best")
     public ApplicationResponse<ReplyResponse> getBestReply(@PathVariable Long id) {
-        return new ApplicationResponse<>(postService.getBestReply(id));
+        ReplyResponse response = postService.getBestReply(id);
+        return new ApplicationResponse<>(response);
     }
 
     @Tag(name = "post")
+    @Operation(summary = "게시글 작성하기", description = "[토큰필요]")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "게시글 작성 성공"),
+            @ApiResponse(responseCode = "401", description = "로그인한 유저만 진행 가능"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시판입니다.")
+    })
     @ResponseStatus(CREATED)
     @PostMapping
     public ApplicationResponse<URI> createPost(@RequestBody @Valid PostRequest request) {
@@ -182,6 +209,12 @@ public class PostController {
     }
 
     @Tag(name = "post")
+    @Operation(summary = "댓글 작성하기", description = "[토큰필요]")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "댓글 작성 성공"),
+            @ApiResponse(responseCode = "401", description = "로그인한 유저만 진행 가능"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시물입니다.")
+    })
     @ResponseStatus(CREATED)
     @PostMapping("/{id}/reply")
     public ApplicationResponse createReply(@PathVariable Long id,
@@ -191,6 +224,13 @@ public class PostController {
     }
 
     @Tag(name = "post")
+    @Operation(summary = "게시글 좋아요", description = "[토큰필요]")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "게시글 좋아요 성공"),
+            @ApiResponse(responseCode = "401", description = "로그인한 유저만 진행 가능"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시물입니다."),
+            @ApiResponse(responseCode = "409", description = "이미 좋아요를 눌렀습니다.")
+    })
     @ResponseStatus(CREATED)
     @PostMapping("/{id}/like")
     public ApplicationResponse likePost(@PathVariable Long id) {
@@ -199,15 +239,42 @@ public class PostController {
     }
 
     @Tag(name = "post")
+    @Operation(summary = "댓글 좋아요", description = "[토큰필요]")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "댓글 좋아요 성공"),
+            @ApiResponse(responseCode = "401", description = "로그인한 유저만 진행 가능"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 댓글입니다."),
+            @ApiResponse(responseCode = "409", description = "이미 좋아요를 눌렀습니다."),
+    })
+    @ResponseStatus(CREATED)
+    @PostMapping("/replies/{id}/like")
+    public ApplicationResponse likeReply(@PathVariable("id") Long replyId) {
+        postService.likeReply(SecurityUtils.getMemberId(), replyId);
+        return new ApplicationResponse<>();
+    }
+
+    @Tag(name = "post")
+    @Operation(summary = "게시글 수정하기", description = "[토큰필요] 작성자만 수정할 수 있다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "게시글 수정 성공"),
+            @ApiResponse(responseCode = "400", description = "작성자가 아닙니다."),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시물입니다.")
+    })
     @ResponseStatus(OK)
     @PutMapping("/{id}")
-    public ApplicationResponse update(@PathVariable Long id,
-                                      @RequestBody @Valid PostRequest request) {
+    public ApplicationResponse updatePost(@PathVariable Long id,
+                                          @RequestBody @Valid PostRequest request) {
         postService.updatePost(SecurityUtils.getMemberId(), id, postMapper.toEntity(request));
         return new ApplicationResponse();
     }
 
     @Tag(name = "post")
+    @Operation(summary = "댓글 수정하기", description = "[토큰필요] 작성자만 수정할 수 있다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "댓글 수정 성공"),
+            @ApiResponse(responseCode = "400", description = "작성자가 아닙니다."),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 댓글입니다.")
+    })
     @ResponseStatus(OK)
     @PutMapping("/replies/{id}")
     public ApplicationResponse updateReply(@PathVariable("id") Long replyId,
@@ -217,6 +284,12 @@ public class PostController {
     }
 
     @Tag(name = "post")
+    @Operation(summary = "게시글 삭제하기", description = "[토큰필요] 작성자만 삭제할 수 있다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "게시글 삭제 성공"),
+            @ApiResponse(responseCode = "400", description = "작성자가 아닙니다."),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시물입니다.")
+    })
     @ResponseStatus(OK)
     @PatchMapping("/{id}")
     public ApplicationResponse deletePost(@PathVariable Long id) {
@@ -225,6 +298,12 @@ public class PostController {
     }
 
     @Tag(name = "post")
+    @Operation(summary = "댓글 삭제하기", description = "[토큰필요] 작성자만 삭제할 수 있다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "댓글 삭제 성공"),
+            @ApiResponse(responseCode = "400", description = "작성자가 아닙니다."),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 댓글입니다.")
+    })
     @ResponseStatus(OK)
     @DeleteMapping("/replies/{id}")
     public ApplicationResponse deleteReply(@PathVariable("id") Long replyId) {
@@ -233,10 +312,30 @@ public class PostController {
     }
 
     @Tag(name = "post")
+    @Operation(summary = "게시글 좋아요 취소하기", description = "[토큰필요] 좋아요한 사람만 취소할 수 있다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "게시글 좋아요 취소 성공"),
+            @ApiResponse(responseCode = "400", description = "좋아요를 하지 않았습니다."),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시물입니다.")
+    })
     @ResponseStatus(OK)
     @DeleteMapping("/{id}/like")
     public ApplicationResponse cancelLikePost(@PathVariable Long id) {
         postService.cancelLikePost(SecurityUtils.getMemberId(), id);
+        return new ApplicationResponse<>();
+    }
+
+    @Tag(name = "post")
+    @Operation(summary = "댓글 좋아요 취소하기", description = "[토큰필요] 좋아요한 사람만 취소할 수 있다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "댓글 좋아요 취소 성공"),
+            @ApiResponse(responseCode = "400", description = "좋아요를 하지 않았습니다."),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 댓글입니다.")
+    })
+    @ResponseStatus(OK)
+    @DeleteMapping("/replies/{id}/like")
+    public ApplicationResponse cancelLikeReply(@PathVariable("id") Long replyId) {
+        postService.cancelLikeReply(SecurityUtils.getMemberId(), replyId);
         return new ApplicationResponse<>();
     }
 }
