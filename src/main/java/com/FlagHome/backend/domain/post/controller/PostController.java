@@ -7,6 +7,9 @@ import com.FlagHome.backend.domain.post.service.PostService;
 import com.FlagHome.backend.global.common.ApplicationResponse;
 import com.FlagHome.backend.global.utility.SecurityUtils;
 import com.FlagHome.backend.global.utility.UriCreator;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -130,6 +133,11 @@ public class PostController {
      * Version 2
      */
     @Tag(name = "post")
+    @Operation(summary = "게시글 상세보기")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "상세보기 성공"),
+            @ApiResponse(responseCode = "400", description = "접근할 수 없는 게시글, 리다이렉트 해줄 것")
+    })
     @ResponseStatus(OK)
     @GetMapping("/{id}")
     public ApplicationResponse<PostResponse> getPost(@PathVariable Long id) {

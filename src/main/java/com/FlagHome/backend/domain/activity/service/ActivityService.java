@@ -87,7 +87,7 @@ public class ActivityService {
     @Transactional
     public Activity create(Long memberId, Activity activity) {
         Member member = memberService.findById(memberId);
-        activity.updateLeader(member);
+        activity.changeLeader(member);
         return activityRepository.save(activity);
     }
 
@@ -117,7 +117,7 @@ public class ActivityService {
             throw new CustomException(ErrorCode.NOT_ACTIVITY_MEMBER);
         }
 
-        activity.updateLeader(newLeader);
+        activity.changeLeader(newLeader);
     }
 
     @Transactional

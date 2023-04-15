@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Arrays;
-import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -16,8 +15,8 @@ public enum Semester {
     FALL_SEMESTER("2학기", new int[]{9, 10, 11}),
     WINTER_VACATION("겨울방학", new int[]{12, 1, 2});
 
-    private final String semester;
-    private final int[] semesterMonth;
+    private String semester;
+    private int[] semesterMonth;
 
     public static Semester findSemester(int month) {
         return Arrays.stream(Semester.values())

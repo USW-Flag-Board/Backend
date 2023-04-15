@@ -59,7 +59,7 @@ public abstract class Activity extends BaseEntity {
         this.semester = Semester.findSemester(semester);
     }
 
-    public void updateLeader(Member member) {
+    public void changeLeader(Member member) {
         this.leader = member;
     }
 

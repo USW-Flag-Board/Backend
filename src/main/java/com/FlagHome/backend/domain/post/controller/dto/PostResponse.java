@@ -1,6 +1,7 @@
 package com.FlagHome.backend.domain.post.controller.dto;
 
 import com.FlagHome.backend.domain.post.entity.Post;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,8 +22,9 @@ public class PostResponse {
     private boolean isEdited;
 
     @Builder
-    public PostResponse(Long id, String title, String author, LocalDateTime createdAt, int viewCount, int replyCount,
-                        int likeCount, boolean isEdited) {
+    @QueryProjection
+    public PostResponse(Long id, String title, String author, LocalDateTime createdAt,
+                        int viewCount, int replyCount, int likeCount, boolean isEdited) {
         this.id = id;
         this.title = title;
         this.author = author;

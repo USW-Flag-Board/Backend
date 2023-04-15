@@ -63,7 +63,6 @@ public class PostService {
         return new GetPostResponse(postEntity);
     }
 
-    // 예외 생각하기
     @Transactional(readOnly = true)
     public List<LightPostDto> getMemberPostByLoginId(String loginId) {
         return postRepository.findMyPostList(loginId);
@@ -145,11 +144,13 @@ public class PostService {
 
     private Post validateAuthorAndReturnPost(Long memberId, Long postId) {
         Post post = findById(postId);
+        validateAuthor(memberId, post.getMember().getId());
+        return post;
+    }
 
-        if (!Objects.equals(memberId, post.getMember().getId())) {
+    private void validateAuthor(Long memberId, Long targetId) {
+        if (!Objects.equals(memberId, targetId)) {
             throw new CustomException(ErrorCode.NOT_AUTHOR);
         }
-
-        return post;
     }
 }

@@ -33,9 +33,6 @@ public class AuthInformation {
     @Column(name = "nick_name")
     private String nickName;
 
-    @Column(name = "phone_number")
-    private String phoneNumber;
-
     @Column(name = "student_id")
     private String studentId;
 
@@ -58,13 +55,12 @@ public class AuthInformation {
 
     @Builder
     public AuthInformation(String loginId, String password, String name, String email, String nickName,
-                           String phoneNumber, String studentId, Major major, JoinType joinType, String certification) {
+                           String studentId, Major major, JoinType joinType, String certification) {
         this.loginId = loginId;
         this.password = password;
         this.name = name;
         this.email = email;
         this.nickName = nickName;
-        this.phoneNumber = phoneNumber;
         this.studentId = studentId;
         this.major = major;
         this.joinType = joinType;

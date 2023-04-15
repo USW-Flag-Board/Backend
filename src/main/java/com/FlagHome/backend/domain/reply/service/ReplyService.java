@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ReplyService {
     private final ReplyRepository replyRepository;
@@ -143,39 +144,41 @@ public class ReplyService {
         return replyRepository.getAllReplies(postId);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
+    public ReplyResponse getBestReply(Long postId) {
+        return replyRepository.getBestReply(postId);
+    }
+
     public void create(Long memberId, Long postId, String content) {
         Member member = memberService.findById(memberId);
         Post post = postService.findById(postId);
         replyRepository.save(Reply.of(member, post, content));
     }
 
-    @Transactional
     public void update(Long memberId, Long replyId, String content ) {
-        Member member = memberService.findById(memberId);
-        Reply reply = validateAuthorAndReturnReply(member, replyId);
+        Reply reply = validateAuthorAndReturnReply(memberId, replyId);
         reply.renewContent(content);
     }
 
-    @Transactional
     public void delete(Long memberId, Long replyId) {
-        Member member = memberService.findById(memberId);
-        Reply reply = validateAuthorAndReturnReply(member, replyId);
+        Reply reply = validateAuthorAndReturnReply(memberId, replyId);
         replyRepository.delete(reply);
     }
 
-    private Reply validateAuthorAndReturnReply(Member member, Long replyId) {
+    public Reply findById(Long replyId) {
+        return replyRepository.findById(replyId)
+                .orElseThrow(() -> new CustomException(ErrorCode.REPLY_NOT_FOUND));
+    }
+
+    private Reply validateAuthorAndReturnReply(Long memberId, Long replyId) {
         Reply reply = findById(replyId);
-
-        if (!Objects.equals(member.getId(), reply.getMember().getId())) {
-            throw new CustomException(ErrorCode.NOT_AUTHOR);
-        }
-
+        validateAuthor(memberId, reply.getMember().getId());
         return reply;
     }
 
-    private Reply findById(Long replyId) {
-        return replyRepository.findById(replyId)
-                .orElseThrow(() -> new CustomException(ErrorCode.REPLY_NOT_FOUND));
+    private void validateAuthor(Long memberId, Long targetId) {
+        if (!Objects.equals(memberId, targetId)) {
+            throw new CustomException(ErrorCode.NOT_AUTHOR);
+        }
     }
 }

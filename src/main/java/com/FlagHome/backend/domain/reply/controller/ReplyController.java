@@ -6,6 +6,7 @@ import com.FlagHome.backend.domain.reply.controller.dto.UpdateReplyRequest;
 import com.FlagHome.backend.domain.reply.service.ReplyService;
 import com.FlagHome.backend.global.common.ApplicationResponse;
 import com.FlagHome.backend.global.utility.SecurityUtils;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -99,6 +100,7 @@ public class ReplyController {
      * Version 2
      */
     @Tag(name = "reply")
+    @Operation(summary = "게시글 댓글 가져오기", description = "<삭제된 게시글>로 보이는 값은 안 보이게 하면 된다.")
     @ResponseStatus(OK)
     @GetMapping
     public ApplicationResponse<List<ReplyResponse>> getAllReplies(@RequestParam("post") Long postId) {

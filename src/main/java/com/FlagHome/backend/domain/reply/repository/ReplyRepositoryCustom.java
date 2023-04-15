@@ -14,4 +14,6 @@ public interface ReplyRepositoryCustom {
      * Version 2
      */
     List<ReplyResponse> getAllReplies(Long postId);
+
+    ReplyResponse getBestReply(Long postId);
 }
