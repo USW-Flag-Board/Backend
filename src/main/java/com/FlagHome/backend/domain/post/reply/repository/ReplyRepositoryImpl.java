@@ -1,15 +1,15 @@
-package com.FlagHome.backend.domain.reply.repository;
+package com.FlagHome.backend.domain.post.reply.repository;
 
-import com.FlagHome.backend.domain.reply.controller.dto.QReplyResponse;
-import com.FlagHome.backend.domain.reply.controller.dto.ReplyResponse;
-import com.FlagHome.backend.domain.reply.entity.ReplyStatus;
+import com.FlagHome.backend.domain.post.controller.dto.QReplyResponse;
+import com.FlagHome.backend.domain.post.controller.dto.ReplyResponse;
+import com.FlagHome.backend.domain.post.reply.entity.ReplyStatus;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
 import static com.FlagHome.backend.domain.member.entity.QMember.member;
-import static com.FlagHome.backend.domain.reply.entity.QReply.reply;
+import static com.FlagHome.backend.domain.post.reply.entity.QReply.reply;
 import static com.querydsl.core.types.dsl.Expressions.cases;
 
 

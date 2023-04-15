@@ -8,9 +8,9 @@ import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.controller.dto.PostRequest;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.mapper.PostMapper;
+import com.FlagHome.backend.domain.post.repository.PostRepository;
 import com.FlagHome.backend.domain.post.service.PostService;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +26,9 @@ public class PostServiceTest {
 
     @Autowired
     public MemberRepository memberRepository;
+
+    @Autowired
+    public PostRepository postRepository;
 
     @Autowired
     public PostMapper postMapper;
@@ -74,10 +77,10 @@ public class PostServiceTest {
         Long memberId = memberRepository.findByEmail(email).get().getId();
 
         // when
-        Long postId = postService.create(memberId, post, boardName);
+        Long postId = postService.createPost(memberId, post, boardName);
 
         // then
-        Post savedPost = postService.findById(postId);
+        Post savedPost = postRepository.findById(postId).get();
         assertThat(savedPost.getTitle()).isEqualTo(title);
         assertThat(savedPost.getContent()).isEqualTo(content);
         assertThat(savedPost.getBoard().getName()).isEqualTo(boardName);

@@ -1,6 +1,6 @@
-package com.FlagHome.backend.domain.reply.repository;
+package com.FlagHome.backend.domain.post.reply.repository;
 
-import com.FlagHome.backend.domain.reply.entity.Reply;
+import com.FlagHome.backend.domain.post.reply.entity.Reply;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ReplyRepository extends JpaRepository<Reply, Long>, ReplyRepositoryCustom {

@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain.reply;
+package com.FlagHome.backend.domain.post;
 
 import com.FlagHome.backend.common.RepositoryTest;
 import com.FlagHome.backend.domain.member.entity.Avatar;
@@ -6,15 +6,14 @@ import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
-import com.FlagHome.backend.domain.reply.controller.dto.ReplyResponse;
-import com.FlagHome.backend.domain.reply.entity.Reply;
-import com.FlagHome.backend.domain.reply.repository.ReplyRepository;
+import com.FlagHome.backend.domain.post.controller.dto.ReplyResponse;
+import com.FlagHome.backend.domain.post.reply.entity.Reply;
+import com.FlagHome.backend.domain.post.reply.repository.ReplyRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -2,7 +2,8 @@ package com.FlagHome.backend.domain.post.entity;
 
 import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.member.entity.Member;
-import com.FlagHome.backend.domain.reply.entity.Reply;
+import com.FlagHome.backend.domain.post.like.Likeable;
+import com.FlagHome.backend.domain.post.reply.entity.Reply;
 import com.FlagHome.backend.global.common.BaseEntity;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
@@ -18,7 +19,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Post extends BaseEntity {
+public class Post extends BaseEntity implements Likeable {
     /**
      * Version 1
      */
@@ -80,15 +81,18 @@ public class Post extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @OneToMany(mappedBy = "post" ,cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reply> replyList;
 
-    @Column
+    @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private PostStatus status;
 
-    @Column
+    @Column(name = "views")
     private int viewCount;
+
+    @Column(name = "likes")
+    private int likeCount;
 
     @Column(name = "is_edited")
     private boolean isEdited;
@@ -102,6 +106,7 @@ public class Post extends BaseEntity {
         this.replyList = new ArrayList<>();
         this.status = PostStatus.NORMAL;
         this.viewCount = 0;
+        this.likeCount = 0;
         this.isEdited = false;
     }
 
@@ -115,7 +120,17 @@ public class Post extends BaseEntity {
     }
 
     public void increaseViewCount() {
-        this.viewCount++;
+        this.viewCount += 1;
+    }
+
+    @Override
+    public void increaseLikeCount() {
+        this.likeCount += 1;
+    }
+
+    @Override
+    public void decreaseLikeCount() {
+        this.likeCount -= 1;
     }
 
     public void updatePost(Post post) {

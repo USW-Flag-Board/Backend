@@ -1,7 +1,6 @@
 package com.FlagHome.backend.domain.post.controller;
 
-import com.FlagHome.backend.domain.post.controller.dto.PostRequest;
-import com.FlagHome.backend.domain.post.controller.dto.PostResponse;
+import com.FlagHome.backend.domain.post.controller.dto.*;
 import com.FlagHome.backend.domain.post.mapper.PostMapper;
 import com.FlagHome.backend.domain.post.service.PostService;
 import com.FlagHome.backend.global.common.ApplicationResponse;
@@ -12,11 +11,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
 import java.net.URI;
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
@@ -133,6 +135,15 @@ public class PostController {
      * Version 2
      */
     @Tag(name = "post")
+    @Operation(summary = "게시글 모두 가져오기", description = "게시판 이름에 맞춰서 페이징 처리")
+    @ResponseStatus(OK)
+    @GetMapping
+    public ApplicationResponse<Page<PostResponse>> getAllPostsByBoard(@RequestParam("board") String boardName, Pageable pageable) {
+        Page<PostResponse> response = postService.getAllPostsByBoard(boardName, pageable);
+        return new ApplicationResponse<>(response);
+    }
+
+    @Tag(name = "post")
     @Operation(summary = "게시글 상세보기")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "상세보기 성공"),
@@ -142,31 +153,90 @@ public class PostController {
     @GetMapping("/{id}")
     public ApplicationResponse<PostResponse> getPost(@PathVariable Long id) {
         PostResponse response = postService.getPost(id);
-        return new ApplicationResponse(response);
+        return new ApplicationResponse<>(response);
+    }
+
+    @Tag(name = "post")
+    @Operation(summary = "게시글 댓글 가져오기", description = "<삭제된 게시글>로 보이는 값은 안 보이게 하면 된다.")
+    @ResponseStatus(OK)
+    @GetMapping("/{id}/replies")
+    public ApplicationResponse<List<ReplyResponse>> getAllReplies(@PathVariable Long id) {
+        return new ApplicationResponse<>(postService.getAllReplies(id));
+    }
+
+    @Tag(name = "post")
+    @Operation(summary = "게시글 베스트 댓글 가져오기", description = "베스트 댓글을 가져온다. (조건 : 좋아요 5개 이상), 없으면 null 리턴")
+    @ResponseStatus(OK)
+    @GetMapping("/{id}/replies/best")
+    public ApplicationResponse<ReplyResponse> getBestReply(@PathVariable Long id) {
+        return new ApplicationResponse<>(postService.getBestReply(id));
     }
 
     @Tag(name = "post")
     @ResponseStatus(CREATED)
     @PostMapping
-    public ApplicationResponse<URI> create(@RequestBody @Valid PostRequest request) {
-        Long id = postService.create(SecurityUtils.getMemberId(), postMapper.toEntity(request), request.getBoardName());
+    public ApplicationResponse<URI> createPost(@RequestBody @Valid PostRequest request) {
+        Long id = postService.createPost(SecurityUtils.getMemberId(), postMapper.toEntity(request), request.getBoardName());
         URI uri = UriCreator.createURI(BASE_URL, id);
-        return new ApplicationResponse(uri);
+        return new ApplicationResponse<>(uri);
+    }
+
+    @Tag(name = "post")
+    @ResponseStatus(CREATED)
+    @PostMapping("/{id}/reply")
+    public ApplicationResponse createReply(@PathVariable Long id,
+                                           @RequestBody @Valid CreateReplyRequest request) {
+        postService.commentReply(SecurityUtils.getMemberId(), id, request.getContent());
+        return new ApplicationResponse<>();
+    }
+
+    @Tag(name = "post")
+    @ResponseStatus(CREATED)
+    @PostMapping("/{id}/like")
+    public ApplicationResponse likePost(@PathVariable Long id) {
+        postService.likePost(SecurityUtils.getMemberId(), id);
+        return new ApplicationResponse<>();
     }
 
     @Tag(name = "post")
     @ResponseStatus(OK)
     @PutMapping("/{id}")
-    public ApplicationResponse update(@PathVariable Long id, @RequestBody @Valid PostRequest request) {
+    public ApplicationResponse update(@PathVariable Long id,
+                                      @RequestBody @Valid PostRequest request) {
         postService.updatePost(SecurityUtils.getMemberId(), id, postMapper.toEntity(request));
         return new ApplicationResponse();
     }
 
     @Tag(name = "post")
     @ResponseStatus(OK)
+    @PutMapping("/replies/{id}")
+    public ApplicationResponse updateReply(@PathVariable("id") Long replyId,
+                                           @RequestBody @Valid UpdateReplyRequest request) {
+        postService.updateReply(SecurityUtils.getMemberId(), replyId, request.getNewContent());
+        return new ApplicationResponse<>();
+    }
+
+    @Tag(name = "post")
+    @ResponseStatus(OK)
     @PatchMapping("/{id}")
-    public ApplicationResponse delete(@PathVariable Long id) {
+    public ApplicationResponse deletePost(@PathVariable Long id) {
         postService.deletePost(SecurityUtils.getMemberId(), id);
-        return new ApplicationResponse();
+        return new ApplicationResponse<>();
+    }
+
+    @Tag(name = "post")
+    @ResponseStatus(OK)
+    @DeleteMapping("/replies/{id}")
+    public ApplicationResponse deleteReply(@PathVariable("id") Long replyId) {
+        postService.deleteReply(SecurityUtils.getMemberId(), replyId);
+        return new ApplicationResponse<>();
+    }
+
+    @Tag(name = "post")
+    @ResponseStatus(OK)
+    @DeleteMapping("/{id}/like")
+    public ApplicationResponse cancelLikePost(@PathVariable Long id) {
+        postService.cancelLikePost(SecurityUtils.getMemberId(), id);
+        return new ApplicationResponse<>();
     }
 }

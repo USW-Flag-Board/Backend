@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain.reply.entity;
+package com.FlagHome.backend.domain.post.reply.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

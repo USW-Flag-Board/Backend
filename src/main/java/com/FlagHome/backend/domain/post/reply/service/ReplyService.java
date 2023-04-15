@@ -1,12 +1,11 @@
-package com.FlagHome.backend.domain.reply.service;
+package com.FlagHome.backend.domain.post.reply.service;
 
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.domain.post.entity.Post;
-import com.FlagHome.backend.domain.post.service.PostService;
-import com.FlagHome.backend.domain.reply.controller.dto.ReplyResponse;
-import com.FlagHome.backend.domain.reply.entity.Reply;
-import com.FlagHome.backend.domain.reply.repository.ReplyRepository;
+import com.FlagHome.backend.domain.post.controller.dto.ReplyResponse;
+import com.FlagHome.backend.domain.post.reply.entity.Reply;
+import com.FlagHome.backend.domain.post.reply.repository.ReplyRepository;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +20,6 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class ReplyService {
     private final ReplyRepository replyRepository;
-    private final PostService postService;
-    private final MemberService memberService;
 
     /**
      * Version 1
@@ -149,23 +146,21 @@ public class ReplyService {
         return replyRepository.getBestReply(postId);
     }
 
-    public void create(Long memberId, Long postId, String content) {
-        Member member = memberService.findById(memberId);
-        Post post = postService.findById(postId);
+    public void commentReply(Member member, Post post, String content) {
         replyRepository.save(Reply.of(member, post, content));
     }
 
-    public void update(Long memberId, Long replyId, String content ) {
+    public void updateReply(Long memberId, Long replyId, String content ) {
         Reply reply = validateAuthorAndReturnReply(memberId, replyId);
         reply.renewContent(content);
     }
 
-    public void delete(Long memberId, Long replyId) {
+    public void deleteReply(Long memberId, Long replyId) {
         Reply reply = validateAuthorAndReturnReply(memberId, replyId);
         replyRepository.delete(reply);
     }
 
-    public Reply findById(Long replyId) {
+    private Reply findById(Long replyId) {
         return replyRepository.findById(replyId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REPLY_NOT_FOUND));
     }

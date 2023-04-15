@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain.reply;
+package com.FlagHome.backend.domain.post;
 
 import com.FlagHome.backend.common.IntegrationTest;
 import com.FlagHome.backend.domain.member.entity.Member;
@@ -6,10 +6,10 @@ import com.FlagHome.backend.domain.member.entity.enums.Role;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
-import com.FlagHome.backend.domain.reply.controller.dto.CreateReplyRequest;
-import com.FlagHome.backend.domain.reply.controller.dto.UpdateReplyRequest;
-import com.FlagHome.backend.domain.reply.entity.Reply;
-import com.FlagHome.backend.domain.reply.repository.ReplyRepository;
+import com.FlagHome.backend.domain.post.controller.dto.CreateReplyRequest;
+import com.FlagHome.backend.domain.post.controller.dto.UpdateReplyRequest;
+import com.FlagHome.backend.domain.post.reply.entity.Reply;
+import com.FlagHome.backend.domain.post.reply.repository.ReplyRepository;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class ReplyControllerTest extends IntegrationTest {
-    private static final String BASE_URL = "/replies";
+    private static final String BASE_URI = "/posts";
 
     @Autowired
     private MemberRepository memberRepository;
@@ -72,12 +72,13 @@ public class ReplyControllerTest extends IntegrationTest {
         final String content = "content";
 
         CreateReplyRequest request = CreateReplyRequest.builder()
-                .postId(post.getId())
                 .content(content)
                 .build();
 
+        String uri = BASE_URI + "/" + post.getId() + "/reply";
+
         // when
-        ResultActions resultActions = mockMvc.perform(post(BASE_URL)
+        ResultActions resultActions = mockMvc.perform(post(uri)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)));
 
@@ -95,10 +96,10 @@ public class ReplyControllerTest extends IntegrationTest {
             Reply reply = replyRepository.save(Reply.of(member, post, content));
 
             UpdateReplyRequest request = new UpdateReplyRequest(newContent);
-            String url = BASE_URL + "/" + reply.getId();
+            String uri = BASE_URI + "/replies/" + reply.getId();
 
             // when
-            mockMvc.perform(put(url)
+            mockMvc.perform(put(uri)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
@@ -125,7 +126,7 @@ public class ReplyControllerTest extends IntegrationTest {
             UpdateReplyRequest request = new UpdateReplyRequest(newContent);
 
             Reply reply = replyRepository.save(Reply.of(stranger, post, content));
-            String url = BASE_URL + "/" + reply.getId();
+            String url = BASE_URI + "/replies/" + reply.getId();
 
             // when
             ResultActions resultActions = mockMvc.perform(put(url)
@@ -146,10 +147,10 @@ public class ReplyControllerTest extends IntegrationTest {
         // given
         final String content = "content";
         Reply reply = replyRepository.save(Reply.of(member, post, content));
-        String url = BASE_URL + "/" + reply.getId();
+        String uri = BASE_URI + "/replies/" + reply.getId();
 
         // when
-        mockMvc.perform(delete(url)
+        mockMvc.perform(delete(uri)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 

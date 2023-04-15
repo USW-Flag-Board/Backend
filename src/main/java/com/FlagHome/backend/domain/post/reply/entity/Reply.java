@@ -1,7 +1,8 @@
-package com.FlagHome.backend.domain.reply.entity;
+package com.FlagHome.backend.domain.post.reply.entity;
 
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.post.entity.Post;
+import com.FlagHome.backend.domain.post.like.Likeable;
 import com.FlagHome.backend.global.common.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -13,7 +14,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Reply extends BaseEntity {
+public class Reply extends BaseEntity implements Likeable {
     /**
      * Version 1
      */
@@ -86,12 +87,14 @@ public class Reply extends BaseEntity {
         this.content = content;
     }
 
+    @Override
     public void increaseLikeCount() {
-        this.likeCount++;
+        this.likeCount += 1;
     }
 
+    @Override
     public void decreaseLikeCount() {
-        this.likeCount--;
+        this.likeCount -= 1;
     }
 
     public static Reply of(Member member, Post post, String content) {

@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain.like.entity;
+package com.FlagHome.backend.domain.post.like.entity;
 
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.post.entity.Post;
@@ -24,5 +24,12 @@ public class PostLike extends Like {
     public PostLike(Member member, Post post) {
         super(member);
         this.post = post;
+    }
+
+    public static PostLike of(Member member, Post post) {
+        return PostLike.builder()
+                .member(member)
+                .post(post)
+                .build();
     }
 }

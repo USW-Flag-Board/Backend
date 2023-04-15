@@ -1,7 +1,7 @@
-package com.FlagHome.backend.domain.like.entity;
+package com.FlagHome.backend.domain.post.like.entity;
 
 import com.FlagHome.backend.domain.member.entity.Member;
-import com.FlagHome.backend.domain.reply.entity.Reply;
+import com.FlagHome.backend.domain.post.reply.entity.Reply;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,5 +24,12 @@ public class ReplyLike extends Like {
     public ReplyLike(Member member, Reply reply) {
         super(member);
         this.reply = reply;
+    }
+
+    public static ReplyLike of(Member member, Reply reply) {
+        return ReplyLike.builder()
+                .member(member)
+                .reply(reply)
+                .build();
     }
 }

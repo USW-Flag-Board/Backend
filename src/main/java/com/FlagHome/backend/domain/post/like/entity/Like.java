@@ -1,7 +1,6 @@
-package com.FlagHome.backend.domain.like.entity;
+package com.FlagHome.backend.domain.post.like.entity;
 
 import com.FlagHome.backend.domain.member.entity.Member;
-import com.FlagHome.backend.global.common.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,7 @@
-package com.FlagHome.backend.domain.like.service;
+package com.FlagHome.backend.domain.post.like.service;
+
+import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.post.like.Likeable;
 
 public interface LikeService {
     /**
@@ -73,10 +76,13 @@ public interface LikeService {
 
         return member;
     }*/
+
     /**
      * Version 2
      */
-    void like(Long memberId, Long targetId);
+    boolean isExist(Long memberId, Long targetId);
 
-    void cancelLike(Long memberId, Long targetId);
+    void like(Member member, Likeable likeable);
+
+    void cancelLike(Long memberId, Likeable likeable);
 }

@@ -11,6 +11,8 @@ import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.controller.dto.PostRequest;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.entity.PostStatus;
+import com.FlagHome.backend.domain.post.like.entity.PostLike;
+import com.FlagHome.backend.domain.post.like.repository.LikeRepository;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
@@ -26,6 +28,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -46,6 +49,9 @@ public class PostControllerTest extends IntegrationTest {
 
     @Autowired
     private PostRepository  postRepository;
+
+    @Autowired
+    private LikeRepository likeRepository;
 
     private Member member;
 
@@ -87,7 +93,7 @@ public class PostControllerTest extends IntegrationTest {
         @Test
         void 게시글_가져오기_성공() throws Exception {
             // given
-            int viewCount = post.getViewCount();
+            final int viewCount = post.getViewCount();
 
             // when
             mockMvc.perform(get(uri)
@@ -240,6 +246,88 @@ public class PostControllerTest extends IntegrationTest {
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("errorCode").value(ErrorCode.NOT_AUTHOR.toString()))
                     .andExpect(jsonPath("message").value(ErrorCode.NOT_AUTHOR.getMessage()))
+                    .andDo(print());
+        }
+    }
+
+    @Nested
+    class 게시글_좋아요_테스트 {
+        private Post post;
+        private String uri;
+
+        @BeforeEach
+        void setup() {
+            post = postRepository.save(Post.builder().build());
+            uri = BASE_URI + "/" + post.getId() + "/like";
+        }
+
+        @Test
+        void 게시글_좋아요_성공() throws Exception {
+            // given
+            final int likesAtFirst = post.getLikeCount();
+
+            // when
+            mockMvc.perform(post(uri)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isCreated())
+                    .andDo(print());
+
+            // then
+            Post findPost = postRepository.findById(post.getId()).get();
+            assertThat(findPost.getLikeCount()).isEqualTo(likesAtFirst + 1);
+            boolean isLiked = likeRepository.isPostLiked(member.getId(), post.getId());
+            assertThat(isLiked).isTrue();
+        }
+
+        @Test
+        void 게시글_좋아요_실패() throws Exception {
+            // given
+            likeRepository.save(PostLike.of(member, post));
+
+            // when
+            ResultActions resultActions = mockMvc.perform(post(uri)
+                    .contentType(MediaType.APPLICATION_JSON));
+
+            // then
+            resultActions
+                    .andExpect(status().isConflict())
+                    .andExpect(jsonPath("errorCode").value(ErrorCode.ALREADY_LIKED.toString()))
+                    .andExpect(jsonPath("message").value(ErrorCode.ALREADY_LIKED.getMessage()))
+                    .andDo(print());
+        }
+
+        @Test
+        void 게시글_좋아요_취소_성공() throws Exception {
+            // given
+            likeRepository.save(PostLike.of(member, post));
+            final int likeCountAtFirst = post.getLikeCount();
+
+            // when
+            mockMvc.perform(delete(uri)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andDo(print());
+
+            // then
+            Post findPost = postRepository.findById(post.getId()).get();
+            assertThat(findPost.getLikeCount()).isEqualTo(likeCountAtFirst - 1);
+            boolean shouldBeFalse = likeRepository.isPostLiked(member.getId(), post.getId());
+            assertThat(shouldBeFalse).isFalse();
+        }
+
+        @Test
+        void 게시글_좋아요_취소_실패() throws Exception {
+            // given
+
+            // when
+            ResultActions resultActions = mockMvc.perform(delete(uri)
+                    .contentType(MediaType.APPLICATION_JSON));
+
+            // then
+            resultActions
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value(ErrorCode.NEVER_LIKED.toString()))
+                    .andExpect(jsonPath("message").value(ErrorCode.NEVER_LIKED.getMessage()))
                     .andDo(print());
         }
     }

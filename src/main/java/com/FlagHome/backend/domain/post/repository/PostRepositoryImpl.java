@@ -2,15 +2,19 @@ package com.FlagHome.backend.domain.post.repository;
 
 import com.FlagHome.backend.domain.post.controller.dto.PostResponse;
 import com.FlagHome.backend.domain.post.controller.dto.QPostResponse;
+import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.entity.PostStatus;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
+
+import java.util.List;
 
 import static com.FlagHome.backend.domain.member.entity.QMember.member;
 import static com.FlagHome.backend.domain.post.entity.QPost.post;
-import static com.querydsl.core.types.dsl.Expressions.asNumber;
 
 
 @RequiredArgsConstructor
@@ -133,8 +137,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
      * Version 2
      */
     @Override
-    public Page<PostResponse> getAllPosts(String boardName) {
-        JPQLQuery<PostResponse> result = queryFactory
+    public Page<PostResponse> getAllPostsByBoard(String boardName, Pageable pageable) {
+        List<PostResponse> result = queryFactory
                 .select(new QPostResponse(
                         post.id,
                         post.title,
@@ -142,15 +146,23 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         post.createdAt,
                         post.viewCount,
                         post.replyList.size(),
-                        asNumber(0), // 반영하기
+                        post.likeCount,
                         post.isEdited))
                 .from(post)
                 .innerJoin(post.member, member)
                 .where(post.board.name.eq(boardName),
                         post.status.in(PostStatus.NORMAL, PostStatus.REPORTED))
                 .orderBy(post.createdAt.asc())
-                .fetchAll();
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
 
-        return null;
+        JPQLQuery<Post> countQuery = queryFactory
+                .selectFrom(post)
+                .innerJoin(post.member, member)
+                .where(post.board.name.eq(boardName),
+                        post.status.in(PostStatus.NORMAL, PostStatus.REPORTED));
+
+        return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchCount);
     }
 }
