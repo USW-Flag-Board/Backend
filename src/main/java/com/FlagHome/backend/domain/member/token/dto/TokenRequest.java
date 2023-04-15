@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain.token.dto;
+package com.FlagHome.backend.domain.member.token.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;

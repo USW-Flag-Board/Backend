@@ -1,6 +1,6 @@
 package com.FlagHome.backend.global.jwt;
 
-import com.FlagHome.backend.domain.token.dto.TokenResponse;
+import com.FlagHome.backend.domain.member.token.dto.TokenResponse;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import io.jsonwebtoken.*;
@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public class JwtUtilizer {
     private static final String AUTHORITIES_KEY = "auth";
@@ -92,17 +93,16 @@ public class JwtUtilizer {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        } catch (SecurityException e) {
-            throw new CustomException(ErrorCode.INVALID_JWT_SIGNATURE_EXCEPTION);
-        } catch (MalformedJwtException e) {
-            throw new CustomException(ErrorCode.INVALID_JWT_TOKEN_EXCEPTION);
+        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            log.info("잘못된 JWT 서명입니다.");
         } catch (ExpiredJwtException e) {
-            throw new CustomException(ErrorCode.EXPIRED_JWT_TOKEN_EXCEPTION);
+            log.info("만료된 JWT 토큰입니다.");
         } catch (UnsupportedJwtException e) {
-            throw new CustomException(ErrorCode.UNSUPPORTED_JWT_TOKEN_EXCEPTION);
+            log.info("지원되지 않는 JWT 토큰입니다.");
         } catch (IllegalArgumentException e) {
-            throw new CustomException(ErrorCode.NOT_FOUND_JWT_CLAIMS_EXCEPTION);
+            log.info("JWT 토큰이 잘못되었습니다.");
         }
+        return false;
     }
 
     private Claims parseClaims(String accessToken) {

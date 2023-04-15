@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain.reply.controller.dto;
+package com.FlagHome.backend.domain.post.controller.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;

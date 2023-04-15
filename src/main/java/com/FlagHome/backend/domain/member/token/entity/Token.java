@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain.token.entity;
+package com.FlagHome.backend.domain.member.token.entity;
 
 
 import com.FlagHome.backend.global.exception.CustomException;

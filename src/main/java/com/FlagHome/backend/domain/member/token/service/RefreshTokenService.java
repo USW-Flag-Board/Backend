@@ -1,12 +1,12 @@
-package com.FlagHome.backend.domain.token.service;
+package com.FlagHome.backend.domain.member.token.service;
 
-import com.FlagHome.backend.domain.token.entity.Token;
+import com.FlagHome.backend.domain.member.token.entity.Token;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.jwt.JwtUtilizer;
-import com.FlagHome.backend.domain.token.dto.TokenResponse;
-import com.FlagHome.backend.domain.token.entity.RefreshToken;
-import com.FlagHome.backend.domain.token.repository.TokenRepository;
+import com.FlagHome.backend.domain.member.token.dto.TokenResponse;
+import com.FlagHome.backend.domain.member.token.entity.RefreshToken;
+import com.FlagHome.backend.domain.member.token.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
