@@ -66,7 +66,10 @@ public class ActivityService {
         return memberActivityService.getAllParticipants(activityId);
     }
 
-    public List<ParticipateResponse> getAllActivitiesOfMember(String loginId) {
+    @Transactional(readOnly = true)
+    public List<ParticipateResponse> getMemberPageActivities(String loginId) {
+        Member member = memberService.findByLoginId(loginId);
+        member.isAvailable();
         return memberActivityService.getAllActivitiesOfMember(loginId);
     }
 

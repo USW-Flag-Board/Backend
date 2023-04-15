@@ -18,7 +18,7 @@ public class ActivityApplyService {
     private final ActivityApplyRepository activityApplyRepository;
 
     public Boolean checkApply(Long memberId, Long activityId) {
-        return activityApplyRepository.checkApply(memberId, activityId);
+        return activityApplyRepository.isApplied(memberId, activityId);
     }
 
     @Transactional

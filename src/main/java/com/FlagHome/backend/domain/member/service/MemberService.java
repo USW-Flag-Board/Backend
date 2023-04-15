@@ -11,8 +11,8 @@ import com.FlagHome.backend.domain.member.controller.dto.SearchMemberResponse;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.sleeping.entity.Sleeping;
 import com.FlagHome.backend.domain.member.sleeping.service.SleepingService;
-import com.FlagHome.backend.domain.token.entity.Token;
-import com.FlagHome.backend.domain.token.service.FindRequestTokenService;
+import com.FlagHome.backend.domain.member.token.entity.Token;
+import com.FlagHome.backend.domain.member.token.service.FindRequestTokenService;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.infra.aws.s3.service.AwsS3Service;
@@ -120,7 +120,7 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public AvatarResponse getAvatar(String loginId) {
+    public AvatarResponse getMemberPageAvatar(String loginId) {
         Member member = findByLoginId(loginId);
         member.isAvailable();
         return memberRepository.getAvatar(loginId);

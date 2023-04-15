@@ -41,7 +41,7 @@ public class ActivityApplyRepositoryImpl implements ActivityApplyRepositoryCusto
     }
 
     @Override
-    public boolean checkApply(long memberId, long activityId) {
+    public boolean isApplied(long memberId, long activityId) {
         return queryFactory
                 .selectFrom(activityApply)
                 .innerJoin(activityApply.member)

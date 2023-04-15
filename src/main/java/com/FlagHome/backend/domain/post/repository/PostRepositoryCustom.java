@@ -2,6 +2,9 @@ package com.FlagHome.backend.domain.post.repository;
 
 import com.FlagHome.backend.domain.post.controller.dto.PostResponse;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 public interface PostRepositoryCustom {
     /**
@@ -14,5 +17,7 @@ public interface PostRepositoryCustom {
     /**
      * Version 2
      */
-    Page<PostResponse> getAllPosts(String boardName);
+    Page<PostResponse> getAllPostsByBoard(String boardName, Pageable pageable);
+
+    List<PostResponse> getAllPostsByLoginId(String loginId);
 }

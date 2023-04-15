@@ -188,8 +188,8 @@ public class ActivityRepositoryTest extends RepositoryTest {
                     .build());
 
             // when
-            boolean check1 = activityApplyRepository.checkApply(member1.getId(), activity.getId());
-            boolean check2 = activityApplyRepository.checkApply(member2.getId(), activity.getId());
+            boolean check1 = activityApplyRepository.isApplied(member1.getId(), activity.getId());
+            boolean check2 = activityApplyRepository.isApplied(member2.getId(), activity.getId());
 
             // then
             assertThat(check1).isFalse();

@@ -38,13 +38,13 @@ public class ActivityApplyServiceTest {
     void checkApplyTest() {
         // given
         long testId = 1L;
-        given(activityApplyRepository.checkApply(any(Long.class), any(Long.class))).willReturn(true);
+        given(activityApplyRepository.isApplied(any(Long.class), any(Long.class))).willReturn(true);
 
         // when
         boolean check = activityApplyService.checkApply(testId, testId);
 
         // then
-        then(activityApplyRepository).should(times(1)).checkApply(any(Long.class), any(Long.class));
+        then(activityApplyRepository).should(times(1)).isApplied(any(Long.class), any(Long.class));
         assertThat(check).isTrue();
     }
 

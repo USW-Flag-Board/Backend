@@ -18,18 +18,11 @@ public enum ErrorCode {
     NOT_SUPPORT_ACTIVITY(HttpStatus.BAD_REQUEST, "지원하는 활동이 아닙니다."),
     NOT_ACTIVITY_LEADER(HttpStatus.BAD_REQUEST, "활동장이 아닙니다."),
     NOT_AUTHOR(HttpStatus.BAD_REQUEST, "작성자가 아닙니다."),
-    NOT_SUPPORT_LIKE(HttpStatus.BAD_REQUEST, "지원하는 좋아요 형식이 아닙니다."),
-    ALREADY_EXISTS_LIKE(HttpStatus.BAD_REQUEST, "이미 좋아요를 눌렀습니다."),
-    NOT_EXISTS_LIKE(HttpStatus.BAD_REQUEST, "이미 좋아요 취소를 하였습니다."),
     INVALID_MONTH_RANGE(HttpStatus.BAD_REQUEST, "입력범위에 벗어났습니다."),
+    NEVER_LIKED(HttpStatus.BAD_REQUEST, "좋아요를 하지 않았습니다."),
 
     /** 401 - UNAUTHORIZED  */
     NONE_AUTHORIZATION_TOKEN(HttpStatus.UNAUTHORIZED, "권한 정보가 없는 토큰입니다."),
-    INVALID_JWT_SIGNATURE_EXCEPTION(HttpStatus.UNAUTHORIZED, "잘못된 JWT 서명입니다."),
-    INVALID_JWT_TOKEN_EXCEPTION(HttpStatus.UNAUTHORIZED, "잘못된 JWT 토큰입니다."),
-    EXPIRED_JWT_TOKEN_EXCEPTION(HttpStatus.UNAUTHORIZED, "만료된 JWT 토큰입니다."),
-    NOT_FOUND_JWT_CLAIMS_EXCEPTION(HttpStatus.UNAUTHORIZED, "JWT 토큰에 클레임이 존재하지 않습니다."),
-    UNSUPPORTED_JWT_TOKEN_EXCEPTION(HttpStatus.UNAUTHORIZED, "지원되지 않는 JWT 토큰입니다."),
 
     /** 404 - NOT_FOUND */
     INVALID_FOUND(HttpStatus.NOT_FOUND, "요청을 찾을 수 없습니다."),
@@ -54,6 +47,7 @@ public enum ErrorCode {
     CERTIFICATION_NOT_MATCH(HttpStatus.CONFLICT, "인증번호가 일치하지 않습니다."),
     ALREADY_REPORTED(HttpStatus.CONFLICT,"이미 신고한 대상입니다"),
     ALREADY_APPLIED(HttpStatus.CONFLICT,"이미 신청한 활동입니다"),
+    ALREADY_LIKED(HttpStatus.CONFLICT,"이미 좋아요를 눌렀습니다."),
     EMAIL_ID_NOT_MATCH(HttpStatus.CONFLICT, "이메일과 아이디가 일치하지 않습니다."),
     EMAIL_NAME_NOT_MATCH(HttpStatus.CONFLICT, "이메일과 이름이 일치하지 않습니다."),
     TOKEN_NOT_MATCH(HttpStatus.CONFLICT, "토큰의 정보가 일치하지 않습니다."),

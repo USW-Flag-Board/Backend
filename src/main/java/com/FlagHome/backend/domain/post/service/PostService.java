@@ -5,11 +5,16 @@ import com.FlagHome.backend.domain.board.service.BoardService;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.domain.post.controller.dto.PostResponse;
+import com.FlagHome.backend.domain.post.controller.dto.ReplyResponse;
 import com.FlagHome.backend.domain.post.entity.Post;
+import com.FlagHome.backend.domain.post.like.service.PostLikeService;
+import com.FlagHome.backend.domain.post.reply.service.ReplyService;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,11 +22,14 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
     private final MemberService memberService;
     private final BoardService boardService;
+    private final ReplyService replyService;
+    private final PostLikeService postLikeService;
 
     /**
      * Version 1
@@ -105,7 +113,6 @@ public class PostService {
         return postRepository.findTopNPostListByDateAndLike(postCount);
     } */
 
-    @Transactional
     public PostResponse getPost(Long postId) {
         Post post = findById(postId);
         post.isAccessible();
@@ -114,30 +121,79 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostResponse> getAllPosts(String boardName) {
-        return null;
+    public List<ReplyResponse> getAllReplies(Long postId) {
+        return replyService.getAllReplies(postId);
     }
 
-    @Transactional
-    public Long create(Long memberId, Post post, String boardName) {
+    @Transactional(readOnly = true)
+    public ReplyResponse getBestReply(Long postId) {
+        return replyService.getBestReply(postId);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PostResponse> getAllPostsByBoard(String boardName, Pageable pageable) {
+        boardService.findByName(boardName);
+        return postRepository.getAllPostsByBoard(boardName, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostResponse> getMemberPagePosts(String loginId) {
+        Member member = memberService.findByLoginId(loginId);
+        member.isAvailable();
+        return postRepository.getAllPostsByLoginId(loginId);
+    }
+
+    public Long createPost(Long memberId, Post post, String boardName) {
         Member member = memberService.findById(memberId);
         Board board = boardService.findByName(boardName);
         return postRepository.save(Post.of(member, board, post)).getId();
     }
 
-    @Transactional
+    public void commentReply(Long memberId, Long postId, String content) {
+        Member member = memberService.findById(memberId);
+        Post post = findById(postId);
+        replyService.commentReply(member, post, content);
+    }
+
     public void updatePost(Long memberId, Long postId, Post newPost) {
         Post post = validateAuthorAndReturnPost(memberId, postId);
         post.updatePost(newPost);
     }
 
-    @Transactional
+    public void updateReply(Long memberId, Long replyId, String content) {
+        replyService.updateReply(memberId, replyId, content);
+    }
+
     public void deletePost(Long memberId, Long postId) {
         Post post = validateAuthorAndReturnPost(memberId, postId);
         post.delete();
     }
 
-    public Post findById(Long postId) {
+    public void deleteReply(Long memberId, Long replyId) {
+        replyService.deleteReply(memberId, replyId);
+    }
+
+    public void likePost(Long memberId, Long postId) {
+        Member member = memberService.findById(memberId);
+        Post post = findById(postId);
+        postLikeService.like(member, post);
+    }
+
+    public void likeReply(Long memberId, Long replyId) {
+        Member member = memberService.findById(memberId);
+        replyService.likeReply(member, replyId);
+    }
+
+    public void cancelLikePost(Long memberId, Long postId) {
+        Post post = findById(postId);
+        postLikeService.cancelLike(memberId, post);
+    }
+
+    public void cancelLikeReply(Long memberId, Long replyId) {
+        replyService.cancelLikeReply(memberId, replyId);
+    }
+
+    private Post findById(Long postId) {
         return postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
     }
