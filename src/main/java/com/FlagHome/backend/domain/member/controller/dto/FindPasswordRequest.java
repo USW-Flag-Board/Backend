@@ -7,11 +7,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class FindPasswordRequest {
     @Schema(description = "아이디", example = "gmlwh124")
+    @NotBlank
     private String loginId;
 
     @USWEmailFormat

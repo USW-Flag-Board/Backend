@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -21,7 +22,7 @@ public class UpdateAvatarRequest {
     private String studentId;
 
     @Schema(name = "전공")
-    @NotBlank
+    @NotNull
     private Major major;
 
     @Schema(name = "자기 소개", example = "안녕하세요? 백엔드 개발자입니다.")

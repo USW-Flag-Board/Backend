@@ -67,6 +67,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
                         member.avatar.nickname,
                         member.avatar.bio,
                         member.avatar.profileImage,
+                        member.loginId,
                         member.name,
                         member.email,
                         member.avatar.major,

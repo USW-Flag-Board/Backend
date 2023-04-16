@@ -20,6 +20,9 @@ public class MyProfileResponse {
     @Schema(name = "프로필 이미지")
     private String profileImg;
 
+    @Schema(name = "로그인 아이디")
+    private String loginId;
+
     @Schema(name = "이름", example = "문희조")
     private String name;
 
@@ -34,11 +37,12 @@ public class MyProfileResponse {
 
     @Builder
     @QueryProjection
-    public MyProfileResponse(String nickName, String bio, String profileImg, String name, String email,
-                             Major major, String studentId) {
+    public MyProfileResponse(String nickName, String bio, String profileImg, String loginId,
+                             String name, String email, Major major, String studentId) {
         this.nickName = nickName;
         this.bio = bio;
         this.profileImg = profileImg;
+        this.loginId = loginId;
         this.name = name;
         this.email = email;
         this.major = major;

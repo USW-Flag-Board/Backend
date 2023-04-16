@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -137,7 +138,7 @@ public class ActivityController {
     })
     @ResponseStatus(CREATED)
     @PostMapping
-    public ApplicationResponse<URI> createActivity(@RequestBody ActivityRequest activityRequest) {
+    public ApplicationResponse<URI> createActivity(@RequestBody @Valid ActivityRequest activityRequest) {
         Activity activity = activityMapper.toActivity(activityRequest);
         Long id = activityService.create(SecurityUtils.getMemberId(), activity).getId();
         URI uri = UriCreator.createURI(DEFAULT_URL, id);
@@ -167,7 +168,7 @@ public class ActivityController {
     @ResponseStatus(OK)
     @PutMapping("/project/{id}")
     public ApplicationResponse<URI> updateProject(@PathVariable("id") long activityId,
-                                                  @RequestBody ActivityRequest activityRequest) {
+                                                  @RequestBody @Valid ActivityRequest activityRequest) {
         activityService.updateProject(SecurityUtils.getMemberId(), activityId, activityRequest);
         URI uri = UriCreator.createURI(DEFAULT_URL, activityId);
         return new ApplicationResponse(uri);
@@ -183,7 +184,7 @@ public class ActivityController {
     @ResponseStatus(OK)
     @PutMapping("/mentoring/{id}")
     public ApplicationResponse<URI> updateMentoring(@PathVariable("id") long activityId,
-                                                    @RequestBody ActivityRequest activityRequest) {
+                                                    @RequestBody @Valid ActivityRequest activityRequest) {
         activityService.updateMentoring(SecurityUtils.getMemberId(), activityId, activityRequest);
         URI uri = UriCreator.createURI(DEFAULT_URL, activityId);
         return new ApplicationResponse(uri);
@@ -199,7 +200,7 @@ public class ActivityController {
     @ResponseStatus(OK)
     @PutMapping("/study/{id}")
     public ApplicationResponse<URI> updateStudy(@PathVariable("id") long activityId,
-                                                @RequestBody ActivityRequest activityRequest) {
+                                                @RequestBody @Valid ActivityRequest activityRequest) {
         activityService.updateStudy(SecurityUtils.getMemberId(), activityId, activityRequest);
         URI uri = UriCreator.createURI(DEFAULT_URL, activityId);
         return new ApplicationResponse(uri);
