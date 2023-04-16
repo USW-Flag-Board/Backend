@@ -4,8 +4,8 @@ import com.FlagHome.backend.common.RepositoryTest;
 import com.FlagHome.backend.domain.member.entity.Avatar;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
+import com.FlagHome.backend.domain.post.controller.dto.PostResponse;
 import com.FlagHome.backend.domain.post.entity.Post;
-import com.FlagHome.backend.domain.post.like.entity.Like;
 import com.FlagHome.backend.domain.post.like.entity.PostLike;
 import com.FlagHome.backend.domain.post.like.entity.ReplyLike;
 import com.FlagHome.backend.domain.post.like.repository.LikeRepository;
@@ -16,6 +16,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,7 +43,7 @@ public class PostRepositoryTest extends RepositoryTest {
         final String nickname = "john";
         Avatar avatar = Avatar.builder().nickname(nickname).build();
         member = memberRepository.save(Member.builder().avatar(avatar).build());
-        post = postRepository.save(Post.builder().build());
+        post = postRepository.save(Post.builder().member(member).build());
     }
 
     @Test
@@ -60,5 +62,46 @@ public class PostRepositoryTest extends RepositoryTest {
         // then
         assertThat(postLiked).isTrue();
         assertThat(replyLiked).isTrue();
+    }
+
+    @Nested
+    class 탑_게시글_가져오기_테스트 {
+        @Test
+        void 핫게시글_가져오기_테스트() {
+            // given
+            final String condition = "like";
+            final int hotPostLikeCount = 5;
+
+            Post notHotPost = postRepository.save(Post.builder().member(member).build());
+
+            for (int i = 0; i < hotPostLikeCount ; i++) {
+                post.increaseLikeCount();
+                if (i > 2) {
+                    notHotPost.increaseLikeCount();
+                }
+            }
+
+            // when
+            List<PostResponse> responses = postRepository.getTopFiveByCondition(condition);
+
+            // then
+            assertThat(responses.size()).isEqualTo(1);
+            assertThat(responses.get(0).getLikeCount()).isEqualTo(hotPostLikeCount);
+        }
+
+        @Test
+        void 최신게시글_가져오기_테스트() {
+            // given
+            final String condition = "latest";
+
+            Post post2 = postRepository.save(Post.builder().member(member).build());
+            Post post3 = postRepository.save(Post.builder().member(member).build());
+
+            // when
+            List<PostResponse> responses = postRepository.getTopFiveByCondition(condition);
+
+            // then
+            assertThat(responses.size()).isEqualTo(3);
+        }
     }
 }

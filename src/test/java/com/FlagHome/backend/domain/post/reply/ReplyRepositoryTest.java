@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain.post;
+package com.FlagHome.backend.domain.post.reply;
 
 import com.FlagHome.backend.common.RepositoryTest;
 import com.FlagHome.backend.domain.member.entity.Avatar;

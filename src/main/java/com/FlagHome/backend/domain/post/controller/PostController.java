@@ -161,6 +161,15 @@ public class PostController {
     }
 
     @Tag(name = "post")
+    @Operation(summary = "홈페이지 전용 Top 게시글 가져오기", description = "Condition(like or latest)에 따라 핫 게시글 또는 최신 게시글 5개를 가져온다.")
+    @ResponseStatus(OK)
+    @GetMapping("/top/{condition}")
+    public ApplicationResponse<List<PostResponse>> getTopFivePostByCondition(@PathVariable String condition) {
+        List<PostResponse> responses = postService.getTopFivePostByCondition(condition);
+        return new ApplicationResponse<>(responses);
+    }
+
+    @Tag(name = "post")
     @Operation(summary = "게시글 상세보기")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "상세보기 성공"),

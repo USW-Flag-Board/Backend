@@ -20,4 +20,6 @@ public interface PostRepositoryCustom {
     Page<PostResponse> getAllPostsByBoard(String boardName, Pageable pageable);
 
     List<PostResponse> getAllPostsByLoginId(String loginId);
+
+    List<PostResponse> getTopFiveByCondition(String condition);
 }

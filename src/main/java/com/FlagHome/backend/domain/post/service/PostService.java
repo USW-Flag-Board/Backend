@@ -143,6 +143,11 @@ public class PostService {
         return postRepository.getAllPostsByLoginId(loginId);
     }
 
+    @Transactional(readOnly = true)
+    public List<PostResponse> getTopFivePostByCondition(String condition) {
+        return postRepository.getTopFiveByCondition(condition);
+    }
+
     public Long createPost(Long memberId, Post post, String boardName) {
         Member member = memberService.findById(memberId);
         Board board = boardService.findByName(boardName);

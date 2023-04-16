@@ -2,6 +2,7 @@ package com.FlagHome.backend.domain.post.entity;
 
 import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.post.entity.enums.PostStatus;
 import com.FlagHome.backend.domain.post.like.Likeable;
 import com.FlagHome.backend.domain.post.reply.entity.Reply;
 import com.FlagHome.backend.global.common.BaseEntity;

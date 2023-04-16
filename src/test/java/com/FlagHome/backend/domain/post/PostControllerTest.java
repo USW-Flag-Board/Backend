@@ -10,7 +10,7 @@ import com.FlagHome.backend.domain.member.entity.enums.Role;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.controller.dto.PostRequest;
 import com.FlagHome.backend.domain.post.entity.Post;
-import com.FlagHome.backend.domain.post.entity.PostStatus;
+import com.FlagHome.backend.domain.post.entity.enums.PostStatus;
 import com.FlagHome.backend.domain.post.like.entity.PostLike;
 import com.FlagHome.backend.domain.post.like.repository.LikeRepository;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
@@ -28,7 +28,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Collection;
 
