@@ -152,11 +152,11 @@ public class MemberService {
                         .map(Sleeping::of)
                         .collect(Collectors.toList());
         sleepingService.saveAllSleeping(sleepingList);
-        emptyAllMembers(sleepingMembers);
+        deactivateMembers(sleepingMembers);
     }
 
     @Transactional
-    public void emptyAllMembers(List<Member> memberList) {
+    public void deactivateMembers(List<Member> memberList) {
         memberList.forEach(Member::deactivate);
     }
 

@@ -127,7 +127,6 @@ public class ActivityService {
     public void closeRecruitment(Long memberId, Long activityId, List<String> loginIdList) {
         Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
         List<Member> memberList = memberService.getMembersByLoginId(loginIdList);
-
         activityApplyService.deleteAllApplies(activityId);
         memberActivityService.registerMembers(activity, memberList);
         activity.closeRecruitment();
@@ -136,7 +135,6 @@ public class ActivityService {
     @Transactional
     public void reopenRecruitment(Long memberId, Long activityId) {
         Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
-
         memberActivityService.deleteAllByActivity(activity.getId());
         activity.reopenRecruitment();
     }

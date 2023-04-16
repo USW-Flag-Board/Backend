@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain.post.entity;
+package com.FlagHome.backend.domain.post.entity.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

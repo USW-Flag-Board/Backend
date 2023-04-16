@@ -23,13 +23,8 @@ public class ActivityApplyService {
 
     @Transactional
     public ActivityApply apply(Member member, Activity activity) {
-        ActivityApply activityApply = ActivityApply.builder()
-                .member(member)
-                .activity(activity)
-                .applyTime(LocalDateTime.now())
-                .build();
-
-        return activityApplyRepository.save(activityApply);
+        ActivityApply apply = ActivityApply.of(member, activity);
+        return activityApplyRepository.save(apply);
     }
 
     @Transactional(readOnly = true)

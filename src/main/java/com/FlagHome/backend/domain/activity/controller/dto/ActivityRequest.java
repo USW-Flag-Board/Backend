@@ -6,19 +6,26 @@ import com.FlagHome.backend.domain.activity.entity.enums.Proceed;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ActivityRequest {
     @Schema(name = "활동 이름", description = "한 문장으로 나타낼 이름", required = true)
+    @NotBlank
     private String name;
 
     @Schema(name = "간단한 설명", description = "어떤 프로젝트인지 나타낼 설명", required = true)
+    @NotBlank
     private String description;
 
     @Schema(name = "진행 방식", description = "대면 / 비대면", required = true)
+    @NotNull
     private Proceed proceed;
 
     @Schema(name = "활동 타입", description = "프로젝트 / 스터디 / 멘토링 중 하나", required = true, example = "PROJECT, STUDY, MENTORING")
+    @NotNull
     private ActivityType activityType;
 
     @Schema(name = "Github Organization URL", description = "보여줄 Github Organization 주소, 수정 가능")

@@ -4,12 +4,15 @@ import com.FlagHome.backend.global.annotation.USWEmailFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
+import javax.validation.constraints.NotBlank;
+
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FindIdRequest {
     @Schema(name = "이름", required = true)
+    @NotBlank
     private String name;
 
     @USWEmailFormat

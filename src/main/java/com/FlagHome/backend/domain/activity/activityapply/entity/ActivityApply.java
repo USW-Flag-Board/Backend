@@ -28,9 +28,16 @@ public class ActivityApply {
     private LocalDateTime applyTime;
 
     @Builder
-    public ActivityApply(Member member, Activity activity, LocalDateTime applyTime) {
+    public ActivityApply(Member member, Activity activity) {
         this.member = member;
         this.activity = activity;
-        this.applyTime = applyTime;
+        this.applyTime = LocalDateTime.now();
+    }
+
+    public static ActivityApply of(Member member, Activity activity) {
+        return ActivityApply.builder()
+                .member(member)
+                .activity(activity)
+                .build();
     }
 }

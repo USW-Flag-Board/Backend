@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain.post;
+package com.FlagHome.backend.domain.post.reply;
 
 import com.FlagHome.backend.common.IntegrationTest;
 import com.FlagHome.backend.domain.member.entity.Member;
@@ -84,6 +84,7 @@ public class ReplyControllerTest extends IntegrationTest {
 
         // then
         resultActions.andExpect(status().isCreated());
+        Post findPost = postRepository.findById(post.getId()).get();
     }
     @Nested
     public class 댓글_수정_테스트 {

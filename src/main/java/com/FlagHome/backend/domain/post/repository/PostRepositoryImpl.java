@@ -3,14 +3,18 @@ package com.FlagHome.backend.domain.post.repository;
 import com.FlagHome.backend.domain.post.controller.dto.PostResponse;
 import com.FlagHome.backend.domain.post.controller.dto.QPostResponse;
 import com.FlagHome.backend.domain.post.entity.Post;
-import com.FlagHome.backend.domain.post.entity.PostStatus;
+import com.FlagHome.backend.domain.post.entity.enums.PostStatus;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.FlagHome.backend.domain.member.entity.QMember.member;
@@ -182,5 +186,38 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .innerJoin(post.member, member)
                 .where(member.loginId.eq(loginId))
                 .fetch();
+    }
+
+    @Override
+    public List<PostResponse> getTopFiveByCondition(String condition) {
+        return queryFactory
+                .select(new QPostResponse(
+                        post.id,
+                        post.title,
+                        member.avatar.nickname,
+                        post.createdAt,
+                        post.viewCount,
+                        post.replyList.size(),
+                        post.likeCount,
+                        post.isEdited))
+                .from(post)
+                .innerJoin(post.member, member)
+                .orderBy(isLikeOrder(condition))
+                .where(isLikeAndLatest(condition),
+                        isLikeAndHotPost(condition))
+                .limit(5)
+                .fetch();
+    }
+
+    private OrderSpecifier<?> isLikeOrder(String condition) {
+        return StringUtils.equals(condition, "like") ? post.likeCount.desc() : post.createdAt.asc();
+    }
+
+    private BooleanExpression isLikeAndLatest(String condition) {
+        return StringUtils.equals(condition, "like") ? post.createdAt.after(LocalDateTime.now().minusWeeks(2)) : null;
+    }
+
+    private BooleanExpression isLikeAndHotPost(String condition) {
+        return StringUtils.equals(condition, "like") ? post.likeCount.goe(5) : null;
     }
 }

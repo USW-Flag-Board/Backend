@@ -43,7 +43,7 @@ public class PostResponse {
                 .createdAt(post.getCreatedAt())
                 .viewCount(post.getViewCount())
                 .replyCount(post.getReplyList().size())
-                .likeCount(0) // 반영하기
+                .likeCount(post.getLikeCount())
                 .isEdited(post.isEdited())
                 .build();
     }

@@ -14,22 +14,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class MemberActivityService {
     private final MemberActivityRepository memberActivityRepository;
-
-    public Member findMemberOfActivity(Long activityId, String loginId) {
-        return memberActivityRepository.findMemberOfActivityByLoginId(activityId, loginId);
-    }
-
-    @Transactional
-    public void registerMembers(Activity activity, List<Member> memberList) {
-        List<MemberActivity> memberActivityList = memberList.stream()
-                        .map(member -> MemberActivity.of(member, activity))
-                        .collect(Collectors.toList());
-
-        memberActivityRepository.saveAll(memberActivityList);
-    }
 
     @Transactional(readOnly = true)
     public List<ParticipateResponse> getAllActivitiesOfMember(String loginId) {
@@ -41,8 +29,19 @@ public class MemberActivityService {
         return memberActivityRepository.getAllParticipantByActivityId(activityId);
     }
 
-    @Transactional
+    public void registerMembers(Activity activity, List<Member> memberList) {
+        List<MemberActivity> memberActivityList = memberList.stream()
+                        .map(member -> MemberActivity.of(member, activity))
+                        .collect(Collectors.toList());
+
+        memberActivityRepository.saveAll(memberActivityList);
+    }
+
     public void deleteAllByActivity(long activityId) {
         memberActivityRepository.deleteAllByActivityId(activityId);
+    }
+
+    public Member findMemberOfActivity(Long activityId, String loginId) {
+        return memberActivityRepository.findMemberOfActivityByLoginId(activityId, loginId);
     }
 }
