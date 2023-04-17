@@ -1,6 +1,13 @@
 package com.FlagHome.backend.domain.post.controller;
 
-import com.FlagHome.backend.domain.post.controller.dto.*;
+import com.FlagHome.backend.domain.post.controller.dto.request.CreateReplyRequest;
+import com.FlagHome.backend.domain.post.controller.dto.request.PostRequest;
+import com.FlagHome.backend.domain.post.controller.dto.request.SearchRequest;
+import com.FlagHome.backend.domain.post.controller.dto.request.UpdateReplyRequest;
+import com.FlagHome.backend.domain.post.controller.dto.response.PostDetailResponse;
+import com.FlagHome.backend.domain.post.controller.dto.response.PostResponse;
+import com.FlagHome.backend.domain.post.controller.dto.response.ReplyResponse;
+import com.FlagHome.backend.domain.post.controller.dto.response.SearchResponse;
 import com.FlagHome.backend.domain.post.entity.enums.TopPostCondition;
 import com.FlagHome.backend.domain.post.mapper.PostMapper;
 import com.FlagHome.backend.domain.post.service.PostService;
@@ -165,8 +172,18 @@ public class PostController {
     @Operation(summary = "홈페이지 전용 Top 게시글 가져오기", description = "Condition(like or latest)에 따라 핫 게시글 또는 최신 게시글 5개를 가져온다.")
     @ResponseStatus(OK)
     @GetMapping("/top/{condition}")
-    public ApplicationResponse<List<PostResponse>> getTopFivePostByCondition(@PathVariable("condition") TopPostCondition condition) {
+    public ApplicationResponse<List<PostResponse>> getTopFivePostByCondition(@PathVariable TopPostCondition condition) {
         List<PostResponse> responses = postService.getTopFivePostByCondition(condition);
+        return new ApplicationResponse<>(responses);
+    }
+
+    @Tag(name = "post")
+    @Operation(summary = "게시글 검색하기", description = "게시판 기준의 검색")
+    @ResponseStatus(OK)
+    @GetMapping("/search")
+    public ApplicationResponse<SearchResponse> searchPostsWithCondition(@ModelAttribute SearchRequest request) {
+        SearchResponse responses = postService
+                .searchPostsWithCondition(request.getBoardName(), request.getKeyword(), request.getPeriod(), request.getOption());
         return new ApplicationResponse<>(responses);
     }
 
@@ -179,8 +196,8 @@ public class PostController {
     })
     @ResponseStatus(OK)
     @GetMapping("/{id}")
-    public ApplicationResponse<PostResponse> getPost(@PathVariable Long id) {
-        PostResponse response = postService.getPost(id);
+    public ApplicationResponse<PostDetailResponse> getPost(@PathVariable Long id) {
+        PostDetailResponse response = postService.getPost(id);
         return new ApplicationResponse<>(response);
     }
 

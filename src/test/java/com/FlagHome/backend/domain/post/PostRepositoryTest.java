@@ -1,11 +1,17 @@
 package com.FlagHome.backend.domain.post;
 
 import com.FlagHome.backend.common.RepositoryTest;
+import com.FlagHome.backend.domain.board.entity.Board;
+import com.FlagHome.backend.domain.board.entity.enums.BoardType;
+import com.FlagHome.backend.domain.board.repository.BoardRepository;
 import com.FlagHome.backend.domain.member.entity.Avatar;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
-import com.FlagHome.backend.domain.post.controller.dto.PostResponse;
+import com.FlagHome.backend.domain.post.controller.dto.response.PostResponse;
+import com.FlagHome.backend.domain.post.controller.dto.response.SearchResponse;
 import com.FlagHome.backend.domain.post.entity.Post;
+import com.FlagHome.backend.domain.post.entity.enums.SearchOption;
+import com.FlagHome.backend.domain.post.entity.enums.SearchPeriod;
 import com.FlagHome.backend.domain.post.entity.enums.TopPostCondition;
 import com.FlagHome.backend.domain.post.like.entity.PostLike;
 import com.FlagHome.backend.domain.post.like.entity.ReplyLike;
@@ -34,6 +40,9 @@ public class PostRepositoryTest extends RepositoryTest {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private BoardRepository boardRepository;
 
     private Member member;
 
@@ -103,6 +112,131 @@ public class PostRepositoryTest extends RepositoryTest {
 
             // then
             assertThat(responses.size()).isEqualTo(3);
+        }
+    }
+
+    @Nested
+    class 게시글_검색_테스트 {
+        private Board board;
+        private final String boardName = "자유게시판";
+        private final SearchPeriod period = SearchPeriod.DEFAULT;
+
+        @BeforeEach
+        void setup() {
+            board = boardRepository.save(Board.builder()
+                    .boardType(BoardType.MAIN)
+                    .name(boardName)
+                    .build());
+        }
+
+        @Test
+        void 게시글_제목_검색_테스트() {
+            // given
+            final String title = "test";
+            final String title2 = "testst";
+            final String title3 = "teest";
+
+            Post post1 = Post.builder().board(board).member(member).title(title).build();
+            Post post2 = Post.builder().board(board).member(member).title(title2).build();
+            Post post3 = Post.builder().board(board).member(member).title(title3).build();
+
+            postRepository.saveAll(List.of(post1, post2, post3));
+
+            final String keyword = "test";
+            final SearchOption option = SearchOption.TITLE;
+
+            // when
+            SearchResponse response = postRepository.searchWithCondition(boardName, keyword, period, option);
+
+            // then
+            assertThat(response).isNotNull();
+            assertThat(response.getResultCount()).isEqualTo(2);
+        }
+
+        @Test
+        void 게시글_내용_검색_테스트() {
+            // given
+            final String content1 = "this is for test";
+            final String content2 = "this istestfor";
+            final String content3 = "this is for teest";
+
+            Post post1 = Post.builder().board(board).member(member).content(content1).build();
+            Post post2 = Post.builder().board(board).member(member).content(content2).build();
+            Post post3 = Post.builder().board(board).member(member).content(content3).build();
+
+            postRepository.saveAll(List.of(post1, post2, post3));
+
+            final String keyword = "test";
+            final SearchOption option = SearchOption.CONTENT;
+
+            // when
+            SearchResponse response = postRepository.searchWithCondition(boardName, keyword, period, option);
+
+            // then
+            assertThat(response).isNotNull();
+            assertThat(response.getResultCount()).isEqualTo(2);
+        }
+
+        @Test
+        void 게시글_댓글_검색_테스트() {
+            // given
+            final String content = "test";
+            Post searchPost = postRepository.save(Post.of(member, board, post));
+
+            Reply reply1 = Reply.of(member, searchPost, content);
+            Reply reply2 = Reply.of(member, searchPost, content);
+
+            replyRepository.saveAll(List.of(reply1, reply2));
+
+            final String keyword = "test";
+            final SearchOption option = SearchOption.REPLY;
+
+            // when
+            SearchResponse response = postRepository.searchWithCondition(boardName, keyword, period, option);
+
+            // then
+            assertThat(response).isNotNull();
+            assertThat(response.getResultCount()).isEqualTo(1);
+        }
+
+        @Test
+        void 게시글_내용_댓글_검색_테스트() {
+            // given
+            final String content = "test";
+            final String content2 = "ttest";
+            Post searchPost = postRepository.save(Post.builder().member(member).board(board).content(content2).build());
+
+            Reply reply1 = Reply.of(member, post, content);
+            Reply reply2 = Reply.of(member, searchPost, content2);
+            Reply reply3 = Reply.of(member, searchPost, content2);
+
+            replyRepository.saveAll(List.of(reply1, reply2, reply3));
+
+            final String keyword = "test";
+            final SearchOption option = SearchOption.CONTENT_AND_REPLY;
+
+            // when
+            SearchResponse response = postRepository.searchWithCondition(boardName, keyword, period, option);
+
+            // then
+            assertThat(response).isNotNull();
+            assertThat(response.getResultCount()).isEqualTo(1);
+        }
+
+        @Test
+        void 게시글_작성자_검색_테스트() {
+            // given
+            postRepository.save(Post.builder().member(member).board(board).build());
+
+            final String keyword = "john";
+            final SearchOption option = SearchOption.AUTHOR;
+
+            // when
+            SearchResponse response = postRepository.searchWithCondition(boardName, keyword, period, option);
+
+            // then
+            assertThat(response).isNotNull();
+            assertThat(response.getResultCount()).isEqualTo(1);
         }
     }
 }

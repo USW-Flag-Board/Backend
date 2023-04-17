@@ -4,9 +4,13 @@ import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.board.service.BoardService;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.service.MemberService;
-import com.FlagHome.backend.domain.post.controller.dto.PostResponse;
-import com.FlagHome.backend.domain.post.controller.dto.ReplyResponse;
+import com.FlagHome.backend.domain.post.controller.dto.response.PostDetailResponse;
+import com.FlagHome.backend.domain.post.controller.dto.response.PostResponse;
+import com.FlagHome.backend.domain.post.controller.dto.response.ReplyResponse;
+import com.FlagHome.backend.domain.post.controller.dto.response.SearchResponse;
 import com.FlagHome.backend.domain.post.entity.Post;
+import com.FlagHome.backend.domain.post.entity.enums.SearchOption;
+import com.FlagHome.backend.domain.post.entity.enums.SearchPeriod;
 import com.FlagHome.backend.domain.post.entity.enums.TopPostCondition;
 import com.FlagHome.backend.domain.post.like.service.PostLikeService;
 import com.FlagHome.backend.domain.post.reply.service.ReplyService;
@@ -114,11 +118,11 @@ public class PostService {
         return postRepository.findTopNPostListByDateAndLike(postCount);
     } */
 
-    public PostResponse getPost(Long postId) {
+    public PostDetailResponse getPost(Long postId) {
         Post post = findById(postId);
         post.isAccessible();
         post.increaseViewCount();
-        return PostResponse.from(post);
+        return PostDetailResponse.from(post);
     }
 
     @Transactional(readOnly = true)
@@ -147,6 +151,12 @@ public class PostService {
     @Transactional(readOnly = true)
     public List<PostResponse> getTopFivePostByCondition(TopPostCondition condition) {
         return postRepository.getTopFiveByCondition(condition);
+    }
+
+    @Transactional(readOnly = true)
+    public SearchResponse searchPostsWithCondition(String boardName, String keyword,
+                                                   SearchPeriod period, SearchOption option) {
+        return postRepository.searchWithCondition(boardName, keyword, period, option);
     }
 
     public Long createPost(Long memberId, Post post, String boardName) {
