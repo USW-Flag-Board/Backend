@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.member;
 
 import com.FlagHome.backend.domain.auth.AuthInformation;
-import com.FlagHome.backend.domain.member.controller.dto.UpdateAvatarRequest;
+import com.FlagHome.backend.domain.member.controller.dto.request.UpdateAvatarRequest;
 import com.FlagHome.backend.domain.member.entity.Avatar;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.entity.enums.MemberStatus;

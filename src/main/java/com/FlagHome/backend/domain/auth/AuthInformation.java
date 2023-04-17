@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.auth;
 
-import com.FlagHome.backend.domain.auth.controller.dto.JoinRequest;
+import com.FlagHome.backend.domain.auth.controller.dto.request.JoinRequest;
 import com.FlagHome.backend.domain.member.entity.enums.Major;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
@@ -94,7 +94,7 @@ public class AuthInformation {
     public void validateAuthTime() {
         final LocalDateTime expireAt = this.createdAt.plusMinutes(10);
         if (expireAt.isBefore(LocalDateTime.now())) {
-            throw new CustomException(ErrorCode.EXPIRED_AUTH_INFORMATION);
+            throw new CustomException(ErrorCode.EXPIRED_AUTHENTICATION_TIME);
         }
     }
 

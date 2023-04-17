@@ -1,9 +1,8 @@
 package com.FlagHome.backend.domain.post.reply.service;
 
 import com.FlagHome.backend.domain.member.entity.Member;
-import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.domain.post.entity.Post;
-import com.FlagHome.backend.domain.post.controller.dto.ReplyResponse;
+import com.FlagHome.backend.domain.post.controller.dto.response.ReplyResponse;
 import com.FlagHome.backend.domain.post.like.service.ReplyLikeService;
 import com.FlagHome.backend.domain.post.reply.entity.Reply;
 import com.FlagHome.backend.domain.post.reply.repository.ReplyRepository;

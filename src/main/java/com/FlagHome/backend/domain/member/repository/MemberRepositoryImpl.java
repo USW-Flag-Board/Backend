@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.member.repository;
 
-import com.FlagHome.backend.domain.member.controller.dto.*;
+import com.FlagHome.backend.domain.member.controller.dto.response.*;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -95,7 +95,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
                         asString(name).as(member.name),
                         member.avatar.major))
                 .from(member)
-                .where(member.name.eq(name))
+                .where(member.name.eq(name)) // 수정하기
                 .fetch();
     }
 }

@@ -5,7 +5,7 @@ import com.FlagHome.backend.domain.board.entity.enums.BoardType;
 import com.FlagHome.backend.domain.board.repository.BoardRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
-import com.FlagHome.backend.domain.post.controller.dto.PostRequest;
+import com.FlagHome.backend.domain.post.controller.dto.request.PostRequest;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.mapper.PostMapper;
 import com.FlagHome.backend.domain.post.repository.PostRepository;

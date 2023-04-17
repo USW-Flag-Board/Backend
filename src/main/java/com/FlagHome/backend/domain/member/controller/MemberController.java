@@ -1,10 +1,8 @@
 package com.FlagHome.backend.domain.member.controller;
 
-import com.FlagHome.backend.domain.member.controller.dto.AvatarResponse;
-import com.FlagHome.backend.domain.member.controller.dto.MyProfileResponse;
-import com.FlagHome.backend.domain.member.controller.dto.UpdateAvatarRequest;
+import com.FlagHome.backend.domain.member.controller.dto.response.*;
+import com.FlagHome.backend.domain.member.controller.dto.request.*;
 import com.FlagHome.backend.domain.member.entity.Avatar;
-import com.FlagHome.backend.domain.member.controller.dto.*;
 import com.FlagHome.backend.domain.member.mapper.MemberMapper;
 import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.global.common.ApplicationResponse;
@@ -101,7 +99,7 @@ public class MemberController {
     }
 
     @Tag(name = "member")
-    @Operation(summary = "인증번호 인증하기", description = "아이디/비밀번호 찾기 이후 인증 단계, 아이디 찾기는 아이디를 리턴한다.")
+    @Operation(summary = "인증번호 인증하기", description = "아이디/비밀번호 찾기 이후 인증 단계, 유저 아이디와 이메일을 리턴한다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "인증에 성공했습니다."),
             @ApiResponse(responseCode = "400", description = "유효하지 않는 토큰입니다."),
@@ -110,9 +108,9 @@ public class MemberController {
     })
     @ResponseStatus(OK)
     @PostMapping("/certification")
-    public ApplicationResponse<String> authCertification(@RequestBody @Valid AuthenticationRequest authenticationRequest) {
-        String loginId = memberService.validateCertification(authenticationRequest.getEmail(), authenticationRequest.getCertification());
-        return new ApplicationResponse<>(loginId);
+    public ApplicationResponse<FindResultResponse> verifyCertification(@RequestBody @Valid AuthenticationRequest authenticationRequest) {
+        FindResultResponse response = memberService.verifyCertification(authenticationRequest.getEmail(), authenticationRequest.getCertification());
+        return new ApplicationResponse<>(response);
     }
 
     @Tag(name = "member")

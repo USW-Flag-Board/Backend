@@ -92,11 +92,7 @@ public class MemberService {
     @Transactional // 비밀번호를 유저가 변경하는 경우
     public void updatePassword(Long memberId, String currentPassword, String newPassword) {
         Member member = validatePasswordAndReturn(memberId, currentPassword);
-
-        if (passwordEncoder.matches(newPassword, member.getPassword())) {
-            throw new CustomException(ErrorCode.PASSWORD_IS_SAME);
-        }
-
+        verifyPassword(member.getPassword(), newPassword);
         member.updatePassword(newPassword, passwordEncoder);
     }
 
@@ -209,5 +205,11 @@ public class MemberService {
     private Member findByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    private void verifyPassword(String currentPassword, String newPassword) {
+        if (passwordEncoder.matches(newPassword, currentPassword)) {
+            throw new CustomException(ErrorCode.PASSWORD_IS_SAME);
+        }
     }
 }

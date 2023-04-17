@@ -4,7 +4,7 @@ import com.FlagHome.backend.common.RepositoryTest;
 import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyResponse;
 import com.FlagHome.backend.domain.activity.activityapply.entity.ActivityApply;
 import com.FlagHome.backend.domain.activity.activityapply.repository.ActivityApplyRepository;
-import com.FlagHome.backend.domain.activity.controller.dto.ActivityResponse;
+import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityResponse;
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.Mentoring;
 import com.FlagHome.backend.domain.activity.entity.Project;

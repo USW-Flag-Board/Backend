@@ -1,7 +1,11 @@
 package com.FlagHome.backend.domain.activity.controller;
 
 import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyResponse;
-import com.FlagHome.backend.domain.activity.controller.dto.*;
+import com.FlagHome.backend.domain.activity.controller.dto.request.ActivityRequest;
+import com.FlagHome.backend.domain.activity.controller.dto.request.ChangeLeaderRequest;
+import com.FlagHome.backend.domain.activity.controller.dto.request.CloseRecruitRequest;
+import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityResponse;
+import com.FlagHome.backend.domain.activity.controller.dto.response.GetAllActivitiesResponse;
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.mapper.ActivityMapper;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantResponse;
@@ -216,7 +220,7 @@ public class ActivityController {
     @ResponseStatus(OK)
     @PatchMapping("/{id}/leader")
     public ApplicationResponse<URI> updateLeader(@PathVariable("id") long activityId,
-                                                 @RequestBody ChangeLeaderRequest changeLeaderRequest) {
+                                                 @RequestBody @Valid ChangeLeaderRequest changeLeaderRequest) {
         activityService.changeLeader(SecurityUtils.getMemberId(), activityId, changeLeaderRequest.getLoginId());
         URI uri = UriCreator.createURI(DEFAULT_URL, activityId);
         return new ApplicationResponse(uri);

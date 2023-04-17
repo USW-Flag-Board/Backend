@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.post.reply.repository;
 
-import com.FlagHome.backend.domain.post.controller.dto.ReplyResponse;
+import com.FlagHome.backend.domain.post.controller.dto.response.ReplyResponse;
 
 import java.util.List;
 

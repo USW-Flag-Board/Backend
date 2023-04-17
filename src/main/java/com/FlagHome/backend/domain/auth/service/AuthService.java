@@ -1,9 +1,9 @@
 package com.FlagHome.backend.domain.auth.service;
 
 import com.FlagHome.backend.domain.auth.AuthInformation;
-import com.FlagHome.backend.domain.auth.controller.dto.JoinRequest;
-import com.FlagHome.backend.domain.auth.controller.dto.JoinResponse;
-import com.FlagHome.backend.domain.auth.controller.dto.SignUpResponse;
+import com.FlagHome.backend.domain.auth.controller.dto.request.JoinRequest;
+import com.FlagHome.backend.domain.auth.controller.dto.response.JoinResponse;
+import com.FlagHome.backend.domain.auth.controller.dto.response.SignUpResponse;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.service.MemberService;
