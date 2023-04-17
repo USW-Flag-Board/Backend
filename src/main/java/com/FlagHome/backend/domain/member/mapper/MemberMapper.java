@@ -15,6 +15,7 @@ public interface MemberMapper {
                 .nickname(updateAvatarRequest.getNickName())
                 .studentId(updateAvatarRequest.getStudentId())
                 .major(updateAvatarRequest.getMajor())
+                .bio(updateAvatarRequest.getBio())
                 .build();
     }
 }

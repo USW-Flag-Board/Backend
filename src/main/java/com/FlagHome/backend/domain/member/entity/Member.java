@@ -59,17 +59,13 @@ public class Member extends BaseEntity {
     }
 
     public static Member of(AuthInformation authInformation, PasswordEncoder passwordEncoder) {
-        Avatar avatar = Avatar.of(authInformation.getNickName(), authInformation.getStudentId(), authInformation.getMajor());
-        String password = passwordEncoder.encode(authInformation.getPassword());
-        Role role = Role.from(authInformation.getJoinType());
-
         return Member.builder()
                 .loginId(authInformation.getLoginId())
-                .password(password)
+                .password(passwordEncoder.encode(authInformation.getPassword()))
                 .name(authInformation.getName())
                 .email(authInformation.getEmail())
-                .avatar(avatar)
-                .role(role)
+                .avatar(Avatar.of(authInformation.getNickName(), authInformation.getStudentId(), authInformation.getMajor()))
+                .role(Role.from(authInformation.getJoinType()))
                 .build();
     }
 
