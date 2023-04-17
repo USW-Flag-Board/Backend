@@ -4,12 +4,12 @@ import com.FlagHome.backend.domain.post.controller.dto.PostResponse;
 import com.FlagHome.backend.domain.post.controller.dto.QPostResponse;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.entity.enums.PostStatus;
+import com.FlagHome.backend.domain.post.entity.enums.TopPostCondition;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -149,7 +149,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         member.avatar.nickname,
                         post.createdAt,
                         post.viewCount,
-                        post.replyList.size(),
+                        post.replyCount,
                         post.likeCount,
                         post.isEdited))
                 .from(post)
@@ -179,7 +179,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         member.avatar.nickname,
                         post.createdAt,
                         post.viewCount,
-                        post.replyList.size(),
+                        post.replyCount,
                         post.likeCount,
                         post.isEdited))
                 .from(post)
@@ -189,7 +189,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     }
 
     @Override
-    public List<PostResponse> getTopFiveByCondition(String condition) {
+    public List<PostResponse> getTopFiveByCondition(TopPostCondition condition) {
         return queryFactory
                 .select(new QPostResponse(
                         post.id,
@@ -197,7 +197,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         member.avatar.nickname,
                         post.createdAt,
                         post.viewCount,
-                        post.replyList.size(),
+                        post.replyCount,
                         post.likeCount,
                         post.isEdited))
                 .from(post)
@@ -209,15 +209,15 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .fetch();
     }
 
-    private OrderSpecifier<?> isLikeOrder(String condition) {
-        return StringUtils.equals(condition, "like") ? post.likeCount.desc() : post.createdAt.asc();
+    private OrderSpecifier<?> isLikeOrder(TopPostCondition condition) {
+        return condition == TopPostCondition.like ? post.likeCount.desc() : post.createdAt.asc();
     }
 
-    private BooleanExpression isLikeAndLatest(String condition) {
-        return StringUtils.equals(condition, "like") ? post.createdAt.after(LocalDateTime.now().minusWeeks(2)) : null;
+    private BooleanExpression isLikeAndLatest(TopPostCondition condition) {
+        return condition == TopPostCondition.like ? post.createdAt.after(LocalDateTime.now().minusWeeks(2)) : null;
     }
 
-    private BooleanExpression isLikeAndHotPost(String condition) {
-        return StringUtils.equals(condition, "like") ? post.likeCount.goe(5) : null;
+    private BooleanExpression isLikeAndHotPost(TopPostCondition condition) {
+        return condition == TopPostCondition.like ? post.likeCount.goe(5) : null;
     }
 }

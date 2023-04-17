@@ -7,6 +7,7 @@ import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.domain.post.controller.dto.PostResponse;
 import com.FlagHome.backend.domain.post.controller.dto.ReplyResponse;
 import com.FlagHome.backend.domain.post.entity.Post;
+import com.FlagHome.backend.domain.post.entity.enums.TopPostCondition;
 import com.FlagHome.backend.domain.post.like.service.PostLikeService;
 import com.FlagHome.backend.domain.post.reply.service.ReplyService;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
@@ -144,7 +145,7 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostResponse> getTopFivePostByCondition(String condition) {
+    public List<PostResponse> getTopFivePostByCondition(TopPostCondition condition) {
         return postRepository.getTopFiveByCondition(condition);
     }
 
@@ -158,6 +159,7 @@ public class PostService {
         Member member = memberService.findById(memberId);
         Post post = findById(postId);
         replyService.commentReply(member, post, content);
+        post.increaseReplyCount();
     }
 
     public void updatePost(Long memberId, Long postId, Post newPost) {
@@ -175,7 +177,9 @@ public class PostService {
     }
 
     public void deleteReply(Long memberId, Long replyId) {
-        replyService.deleteReply(memberId, replyId);
+        Long postId = replyService.deleteReply(memberId, replyId);
+        Post post = findById(postId);
+        post.decreaseReplyCount();
     }
 
     public void likePost(Long memberId, Long postId) {

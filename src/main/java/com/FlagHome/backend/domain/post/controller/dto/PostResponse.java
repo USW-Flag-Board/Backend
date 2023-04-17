@@ -42,7 +42,7 @@ public class PostResponse {
                 .author(post.getMember().getAvatar().getNickname())
                 .createdAt(post.getCreatedAt())
                 .viewCount(post.getViewCount())
-                .replyCount(post.getReplyList().size())
+                .replyCount(post.getReplyCount())
                 .likeCount(post.getLikeCount())
                 .isEdited(post.isEdited())
                 .build();

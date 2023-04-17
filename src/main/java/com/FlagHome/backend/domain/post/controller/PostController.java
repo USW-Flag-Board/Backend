@@ -1,6 +1,7 @@
 package com.FlagHome.backend.domain.post.controller;
 
 import com.FlagHome.backend.domain.post.controller.dto.*;
+import com.FlagHome.backend.domain.post.entity.enums.TopPostCondition;
 import com.FlagHome.backend.domain.post.mapper.PostMapper;
 import com.FlagHome.backend.domain.post.service.PostService;
 import com.FlagHome.backend.global.common.ApplicationResponse;
@@ -164,7 +165,7 @@ public class PostController {
     @Operation(summary = "홈페이지 전용 Top 게시글 가져오기", description = "Condition(like or latest)에 따라 핫 게시글 또는 최신 게시글 5개를 가져온다.")
     @ResponseStatus(OK)
     @GetMapping("/top/{condition}")
-    public ApplicationResponse<List<PostResponse>> getTopFivePostByCondition(@PathVariable String condition) {
+    public ApplicationResponse<List<PostResponse>> getTopFivePostByCondition(@PathVariable("condition") TopPostCondition condition) {
         List<PostResponse> responses = postService.getTopFivePostByCondition(condition);
         return new ApplicationResponse<>(responses);
     }

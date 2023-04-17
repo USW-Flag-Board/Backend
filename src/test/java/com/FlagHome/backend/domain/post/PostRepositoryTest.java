@@ -6,6 +6,7 @@ import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.controller.dto.PostResponse;
 import com.FlagHome.backend.domain.post.entity.Post;
+import com.FlagHome.backend.domain.post.entity.enums.TopPostCondition;
 import com.FlagHome.backend.domain.post.like.entity.PostLike;
 import com.FlagHome.backend.domain.post.like.entity.ReplyLike;
 import com.FlagHome.backend.domain.post.like.repository.LikeRepository;
@@ -69,7 +70,7 @@ public class PostRepositoryTest extends RepositoryTest {
         @Test
         void 핫게시글_가져오기_테스트() {
             // given
-            final String condition = "like";
+            final TopPostCondition condition = TopPostCondition.like;
             final int hotPostLikeCount = 5;
 
             Post notHotPost = postRepository.save(Post.builder().member(member).build());
@@ -92,7 +93,7 @@ public class PostRepositoryTest extends RepositoryTest {
         @Test
         void 최신게시글_가져오기_테스트() {
             // given
-            final String condition = "latest";
+            final TopPostCondition condition = TopPostCondition.latest;
 
             Post post2 = postRepository.save(Post.builder().member(member).build());
             Post post3 = postRepository.save(Post.builder().member(member).build());

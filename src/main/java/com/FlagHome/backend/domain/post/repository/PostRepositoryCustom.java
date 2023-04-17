@@ -1,6 +1,7 @@
 package com.FlagHome.backend.domain.post.repository;
 
 import com.FlagHome.backend.domain.post.controller.dto.PostResponse;
+import com.FlagHome.backend.domain.post.entity.enums.TopPostCondition;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -21,5 +22,5 @@ public interface PostRepositoryCustom {
 
     List<PostResponse> getAllPostsByLoginId(String loginId);
 
-    List<PostResponse> getTopFiveByCondition(String condition);
+    List<PostResponse> getTopFiveByCondition(TopPostCondition condition);
 }

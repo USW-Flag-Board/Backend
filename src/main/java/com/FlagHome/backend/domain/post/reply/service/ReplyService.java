@@ -158,9 +158,10 @@ public class ReplyService {
         reply.renewContent(content);
     }
 
-    public void deleteReply(Long memberId, Long replyId) {
+    public Long deleteReply(Long memberId, Long replyId) {
         Reply reply = validateAuthorAndReturnReply(memberId, replyId);
         replyRepository.delete(reply);
+        return reply.getPost().getId();
     }
 
     public void likeReply(Member member, Long replyId) {
