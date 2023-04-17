@@ -1,13 +1,9 @@
 package com.FlagHome.backend.domain.member.service;
 
 import com.FlagHome.backend.domain.auth.AuthInformation;
+import com.FlagHome.backend.domain.member.controller.dto.response.*;
 import com.FlagHome.backend.domain.member.entity.Member;
-import com.FlagHome.backend.domain.member.controller.dto.AvatarResponse;
-import com.FlagHome.backend.domain.member.controller.dto.MyProfileResponse;
 import com.FlagHome.backend.domain.member.entity.Avatar;
-import com.FlagHome.backend.domain.member.controller.dto.FindResponse;
-import com.FlagHome.backend.domain.member.controller.dto.LoginLogResponse;
-import com.FlagHome.backend.domain.member.controller.dto.SearchMemberResponse;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.sleeping.entity.Sleeping;
 import com.FlagHome.backend.domain.member.sleeping.service.SleepingService;
@@ -78,11 +74,13 @@ public class MemberService {
         return issueTokenAndSendMail(email);
     }
 
-    public String validateCertification(String email, String certification) {
+    public FindResultResponse verifyCertification(String email, String certification) {
         Token findRequestToken = findRequestTokenService.findToken(email);
         findRequestToken.validateExpireTime();
-        findRequestToken.validateValue(certification);
-        return email;
+        findRequestToken.verifyCertification(certification);
+
+        Member member = findByEmail(email);
+        return FindResultResponse.from(member);
     }
 
     @Transactional // 비밀번호를 잊어서 바꾸는 경우
