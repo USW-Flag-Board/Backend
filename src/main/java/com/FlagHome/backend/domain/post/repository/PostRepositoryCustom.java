@@ -1,6 +1,11 @@
 package com.FlagHome.backend.domain.post.repository;
 
-import com.FlagHome.backend.domain.post.controller.dto.PostResponse;
+import com.FlagHome.backend.domain.post.controller.dto.request.SearchRequest;
+import com.FlagHome.backend.domain.post.controller.dto.response.PostResponse;
+import com.FlagHome.backend.domain.post.controller.dto.response.SearchResponse;
+import com.FlagHome.backend.domain.post.entity.enums.SearchOption;
+import com.FlagHome.backend.domain.post.entity.enums.SearchPeriod;
+import com.FlagHome.backend.domain.post.entity.enums.TopPostCondition;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -21,5 +26,9 @@ public interface PostRepositoryCustom {
 
     List<PostResponse> getAllPostsByLoginId(String loginId);
 
-    List<PostResponse> getTopFiveByCondition(String condition);
+    List<PostResponse> getTopFiveByCondition(TopPostCondition condition);
+
+    SearchResponse integrationSearch(String keyword);
+
+    SearchResponse searchWithCondition(String boardName, String keyword, SearchPeriod period, SearchOption option);
 }

@@ -4,7 +4,6 @@ import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.post.entity.enums.PostStatus;
 import com.FlagHome.backend.domain.post.like.Likeable;
-import com.FlagHome.backend.domain.post.reply.entity.Reply;
 import com.FlagHome.backend.global.common.BaseEntity;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
@@ -14,8 +13,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -82,15 +79,15 @@ public class Post extends BaseEntity implements Likeable {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Reply> replyList;
-
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private PostStatus status;
 
     @Column(name = "views")
     private int viewCount;
+
+    @Column(name = "replies")
+    private int replyCount;
 
     @Column(name = "likes")
     private int likeCount;
@@ -104,9 +101,9 @@ public class Post extends BaseEntity implements Likeable {
         this.board = board;
         this.title = title;
         this.content = content;
-        this.replyList = new ArrayList<>();
         this.status = PostStatus.NORMAL;
         this.viewCount = 0;
+        this.replyCount = 0;
         this.likeCount = 0;
         this.isEdited = false;
     }
@@ -122,6 +119,14 @@ public class Post extends BaseEntity implements Likeable {
 
     public void increaseViewCount() {
         this.viewCount += 1;
+    }
+
+    public void increaseReplyCount() {
+        this.replyCount += 1;
+    }
+
+    public void decreaseReplyCount() {
+        this.replyCount -= 1;
     }
 
     @Override

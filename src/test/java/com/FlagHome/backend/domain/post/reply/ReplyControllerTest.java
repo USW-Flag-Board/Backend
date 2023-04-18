@@ -4,12 +4,12 @@ import com.FlagHome.backend.common.IntegrationTest;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.entity.enums.Role;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
+import com.FlagHome.backend.domain.post.controller.dto.request.CreateReplyRequest;
+import com.FlagHome.backend.domain.post.controller.dto.request.UpdateReplyRequest;
 import com.FlagHome.backend.domain.post.entity.Post;
-import com.FlagHome.backend.domain.post.repository.PostRepository;
-import com.FlagHome.backend.domain.post.controller.dto.CreateReplyRequest;
-import com.FlagHome.backend.domain.post.controller.dto.UpdateReplyRequest;
 import com.FlagHome.backend.domain.post.reply.entity.Reply;
 import com.FlagHome.backend.domain.post.reply.repository.ReplyRepository;
+import com.FlagHome.backend.domain.post.repository.PostRepository;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -60,6 +60,7 @@ public class ReplyControllerTest extends IntegrationTest {
                 .build());
 
         post = postRepository.save(Post.builder()
+                        .member(member)
                 .title(title)
                 .build());
 
@@ -70,6 +71,7 @@ public class ReplyControllerTest extends IntegrationTest {
     public void 댓글_생성_테스트() throws Exception {
         // given
         final String content = "content";
+        final int replyCountAtBegin = post.getReplyCount();
 
         CreateReplyRequest request = CreateReplyRequest.builder()
                 .content(content)
@@ -78,14 +80,17 @@ public class ReplyControllerTest extends IntegrationTest {
         String uri = BASE_URI + "/" + post.getId() + "/reply";
 
         // when
-        ResultActions resultActions = mockMvc.perform(post(uri)
+        mockMvc.perform(post(uri)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)));
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andDo(print());
 
         // then
-        resultActions.andExpect(status().isCreated());
         Post findPost = postRepository.findById(post.getId()).get();
+        assertThat(findPost.getReplyCount()).isEqualTo(replyCountAtBegin + 1);
     }
+
     @Nested
     public class 댓글_수정_테스트 {
         @Test
@@ -148,16 +153,22 @@ public class ReplyControllerTest extends IntegrationTest {
         // given
         final String content = "content";
         Reply reply = replyRepository.save(Reply.of(member, post, content));
+        post.increaseReplyCount();
+        final int replyCountAtFirst = post.getReplyCount();
+
         String uri = BASE_URI + "/replies/" + reply.getId();
 
         // when
         mockMvc.perform(delete(uri)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(print());
 
         // then
         Reply findReply = replyRepository.findById(reply.getId()).orElse(null);
+        Post findPost = postRepository.findById(post.getId()).get();
         assertThat(findReply).isNull();
+        assertThat(findPost.getReplyCount()).isEqualTo(replyCountAtFirst - 1);
     }
 
 

@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.member.mapper;
 
-import com.FlagHome.backend.domain.member.controller.dto.UpdateAvatarRequest;
+import com.FlagHome.backend.domain.member.controller.dto.request.UpdateAvatarRequest;
 import com.FlagHome.backend.domain.member.entity.Avatar;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
@@ -15,6 +15,7 @@ public interface MemberMapper {
                 .nickname(updateAvatarRequest.getNickName())
                 .studentId(updateAvatarRequest.getStudentId())
                 .major(updateAvatarRequest.getMajor())
+                .bio(updateAvatarRequest.getBio())
                 .build();
     }
 }

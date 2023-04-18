@@ -2,7 +2,7 @@ package com.FlagHome.backend.domain.activity;
 
 
 import com.FlagHome.backend.common.IntegrationTest;
-import com.FlagHome.backend.domain.activity.controller.dto.ActivityRequest;
+import com.FlagHome.backend.domain.activity.controller.dto.request.ActivityRequest;
 import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
 import com.FlagHome.backend.domain.activity.entity.enums.BookUsage;
 import com.FlagHome.backend.domain.activity.entity.enums.Proceed;

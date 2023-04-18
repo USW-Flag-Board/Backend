@@ -1,9 +1,8 @@
 package com.FlagHome.backend.domain.post.reply.service;
 
 import com.FlagHome.backend.domain.member.entity.Member;
-import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.domain.post.entity.Post;
-import com.FlagHome.backend.domain.post.controller.dto.ReplyResponse;
+import com.FlagHome.backend.domain.post.controller.dto.response.ReplyResponse;
 import com.FlagHome.backend.domain.post.like.service.ReplyLikeService;
 import com.FlagHome.backend.domain.post.reply.entity.Reply;
 import com.FlagHome.backend.domain.post.reply.repository.ReplyRepository;
@@ -158,9 +157,10 @@ public class ReplyService {
         reply.renewContent(content);
     }
 
-    public void deleteReply(Long memberId, Long replyId) {
+    public Long deleteReply(Long memberId, Long replyId) {
         Reply reply = validateAuthorAndReturnReply(memberId, replyId);
         replyRepository.delete(reply);
+        return reply.getPost().getId();
     }
 
     public void likeReply(Member member, Long replyId) {

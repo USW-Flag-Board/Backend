@@ -1,6 +1,7 @@
 package com.FlagHome.backend.domain.member;
 
-import com.FlagHome.backend.domain.member.controller.dto.FindResponse;
+import com.FlagHome.backend.domain.member.controller.dto.response.FindResponse;
+import com.FlagHome.backend.domain.member.controller.dto.response.FindResultResponse;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
@@ -109,30 +110,28 @@ public class MemberServiceSliceTest {
     }
 
     @Test
-    @DisplayName("인증번호 인증 테스트")
-    void validateCertificationTest() {
+    void 아이디_비밀번호_찾기_인증_테스트() {
         // given
-        String email = "gmlwh124@suwon.ac.kr";
-        String certification = "123456";
-        LocalDateTime expireAt = LocalDateTime.now().plusMinutes(5);
+        final String loginId = "gmlwh124";
+        final String email = "gmlwh124@suwon.ac.kr";
+        final String certification = "123456";
 
-        Member member = Member.builder().build();
-
-        Token findRequestToken = FindRequestToken.builder()
-                .key(email)
-                .value(certification)
-                .expiredAt(expireAt)
-                .build();
+        Member member = Member.builder().loginId(loginId).email(email).build();
+        Token findRequestToken = FindRequestToken.of(email, certification);
 
         given(findRequestTokenService.findToken(anyString())).willReturn(findRequestToken);
+        given(memberRepository.findByEmail(anyString())).willReturn(Optional.of(member));
 
         // when
-        memberService.validateCertification(email, certification);
+        FindResultResponse response = memberService.verifyCertification(email, certification);
 
         // then
         Token findToken = findRequestTokenService.findToken(email);
         then(findRequestTokenService).should(times(2)).findToken(anyString());
+        then(memberRepository).should(times(1)).findByEmail(anyString());
         assertThat(findRequestToken.getKey()).isEqualTo(findToken.getKey());
         assertThat(findRequestToken.getExpiredAt()).isEqualTo(findToken.getExpiredAt());
+        assertThat(response.getLoginId()).isEqualTo(loginId);
+        assertThat(response.getEmail()).isEqualTo(email);
     }
 }

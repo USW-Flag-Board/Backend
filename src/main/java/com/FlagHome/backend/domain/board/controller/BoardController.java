@@ -98,12 +98,6 @@ public class BoardController {
     /**
      * Version 2
      */
-//    @ResponseStatus(OK)
-//    @GetMapping
-//    public ApplicationResponse search(@RequestParam("keyword") String keyword) {
-//        return new ApplicationResponse<>();
-//    }
-
     @Tag(name = "board")
     @ResponseStatus(CREATED)
     @PostMapping

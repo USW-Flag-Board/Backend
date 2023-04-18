@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.auth;
 
 import com.FlagHome.backend.common.IntegrationTest;
-import com.FlagHome.backend.domain.auth.controller.dto.SignUpRequest;
+import com.FlagHome.backend.domain.auth.controller.dto.request.SignUpRequest;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.utility.RandomGenerator;
@@ -49,8 +49,8 @@ public class AuthControllerTest extends IntegrationTest {
         // then
         resultActions
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("errorCode").value(ErrorCode.EXPIRED_AUTH_INFORMATION.toString()))
-                .andExpect(jsonPath("message").value(ErrorCode.EXPIRED_AUTH_INFORMATION.getMessage()))
+                .andExpect(jsonPath("errorCode").value(ErrorCode.EXPIRED_AUTHENTICATION_TIME.toString()))
+                .andExpect(jsonPath("message").value(ErrorCode.EXPIRED_AUTHENTICATION_TIME.getMessage()))
                 .andDo(print());
     }
 }

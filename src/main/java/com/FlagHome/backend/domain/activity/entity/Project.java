@@ -3,7 +3,7 @@ package com.FlagHome.backend.domain.activity.entity;
 import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
 import com.FlagHome.backend.domain.activity.entity.enums.Proceed;
 import com.FlagHome.backend.domain.activity.entity.enums.ActivityStatus;
-import com.FlagHome.backend.domain.activity.controller.dto.ActivityRequest;
+import com.FlagHome.backend.domain.activity.controller.dto.request.ActivityRequest;
 import com.FlagHome.backend.domain.member.entity.Member;
 import lombok.AccessLevel;
 import lombok.Builder;

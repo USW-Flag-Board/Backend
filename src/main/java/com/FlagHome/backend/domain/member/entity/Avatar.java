@@ -44,11 +44,11 @@ public class Avatar {
     }
 
     @Builder
-    public Avatar(String nickname, String studentId, Major major) {
+    public Avatar(String nickname, String studentId, Major major, String bio) {
         this.nickname = nickname;
         this.studentId = studentId;
         this.major = major;
-        this.bio = "";
+        this.bio = bio;
         this.profileImage = "https://flaground-s3.s3.ap-northeast-2.amazonaws.com/avatar/default_image.jpg";
     }
 
@@ -57,6 +57,7 @@ public class Avatar {
                 .nickname(nickName)
                 .studentId(studentId)
                 .major(major)
+                .bio(" ")
                 .build();
     }
 }

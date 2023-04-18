@@ -1,8 +1,8 @@
 package com.FlagHome.backend.domain.auth.repository;
 
+import com.FlagHome.backend.domain.admin.controller.dto.QApproveSignUpResponse;
 import com.FlagHome.backend.domain.auth.AuthInformation;
-import com.FlagHome.backend.domain.auth.controller.dto.ApproveSignUpResponse;
-import com.FlagHome.backend.domain.auth.controller.dto.QApproveSignUpResponse;
+import com.FlagHome.backend.domain.admin.controller.dto.ApproveSignUpResponse;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

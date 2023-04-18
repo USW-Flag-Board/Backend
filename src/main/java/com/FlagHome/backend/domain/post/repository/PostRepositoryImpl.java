@@ -1,15 +1,18 @@
 package com.FlagHome.backend.domain.post.repository;
 
-import com.FlagHome.backend.domain.post.controller.dto.PostResponse;
-import com.FlagHome.backend.domain.post.controller.dto.QPostResponse;
+import com.FlagHome.backend.domain.post.controller.dto.response.PostResponse;
+import com.FlagHome.backend.domain.post.controller.dto.response.QPostResponse;
+import com.FlagHome.backend.domain.post.controller.dto.response.SearchResponse;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.entity.enums.PostStatus;
-import com.querydsl.core.types.OrderSpecifier;
+import com.FlagHome.backend.domain.post.entity.enums.SearchOption;
+import com.FlagHome.backend.domain.post.entity.enums.SearchPeriod;
+import com.FlagHome.backend.domain.post.entity.enums.TopPostCondition;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -17,8 +20,10 @@ import org.springframework.data.support.PageableExecutionUtils;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.FlagHome.backend.domain.board.entity.QBoard.board;
 import static com.FlagHome.backend.domain.member.entity.QMember.member;
 import static com.FlagHome.backend.domain.post.entity.QPost.post;
+import static com.FlagHome.backend.domain.post.reply.entity.QReply.reply;
 
 
 @RequiredArgsConstructor
@@ -149,14 +154,13 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         member.avatar.nickname,
                         post.createdAt,
                         post.viewCount,
-                        post.replyList.size(),
-                        post.likeCount,
-                        post.isEdited))
+                        post.replyCount,
+                        post.likeCount))
                 .from(post)
                 .innerJoin(post.member, member)
                 .where(post.board.name.eq(boardName),
                         post.status.in(PostStatus.NORMAL, PostStatus.REPORTED))
-                .orderBy(post.createdAt.asc())
+                .orderBy(post.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -179,17 +183,17 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         member.avatar.nickname,
                         post.createdAt,
                         post.viewCount,
-                        post.replyList.size(),
-                        post.likeCount,
-                        post.isEdited))
+                        post.replyCount,
+                        post.likeCount))
                 .from(post)
                 .innerJoin(post.member, member)
                 .where(member.loginId.eq(loginId))
+                .orderBy(post.createdAt.desc())
                 .fetch();
     }
 
     @Override
-    public List<PostResponse> getTopFiveByCondition(String condition) {
+    public List<PostResponse> getTopFiveByCondition(TopPostCondition condition) {
         return queryFactory
                 .select(new QPostResponse(
                         post.id,
@@ -197,27 +201,69 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         member.avatar.nickname,
                         post.createdAt,
                         post.viewCount,
-                        post.replyList.size(),
-                        post.likeCount,
-                        post.isEdited))
+                        post.replyCount,
+                        post.likeCount))
                 .from(post)
                 .innerJoin(post.member, member)
-                .orderBy(isLikeOrder(condition))
+                .orderBy(condition.getOrder())
                 .where(isLikeAndLatest(condition),
                         isLikeAndHotPost(condition))
                 .limit(5)
                 .fetch();
     }
 
-    private OrderSpecifier<?> isLikeOrder(String condition) {
-        return StringUtils.equals(condition, "like") ? post.likeCount.desc() : post.createdAt.asc();
+    @Override
+    public SearchResponse integrationSearch(String keyword) {
+        List<PostResponse> result = queryFactory
+                .selectDistinct(new QPostResponse(
+                        post.id,
+                        post.title,
+                        member.avatar.nickname,
+                        post.createdAt,
+                        post.viewCount,
+                        post.replyCount,
+                        post.likeCount))
+                .from(post)
+                .innerJoin(post.member, member)
+                .where(post.content.contains(keyword)
+                        .or(post.title.contains(keyword)))
+                .orderBy(post.createdAt.desc())
+                .fetch();
+
+        return SearchResponse.from(result);
     }
 
-    private BooleanExpression isLikeAndLatest(String condition) {
-        return StringUtils.equals(condition, "like") ? post.createdAt.after(LocalDateTime.now().minusWeeks(2)) : null;
+    @Override
+    public SearchResponse searchWithCondition(String boardName, String keyword, SearchPeriod period, SearchOption option) {
+        JPAQuery<PostResponse> query = queryFactory
+                .selectDistinct(new QPostResponse(
+                        post.id,
+                        post.title,
+                        member.avatar.nickname,
+                        post.createdAt,
+                        post.viewCount,
+                        post.replyCount,
+                        post.likeCount))
+                .from(post)
+                .innerJoin(post.member, member)
+                .innerJoin(post.board, board)
+                .where(board.name.eq(boardName),
+                        period.getExpression(),
+                        option.getExpression(keyword))
+                .orderBy(post.createdAt.desc());
+
+        if (option.isContainsReply()) {
+            query.leftJoin(reply).on(reply.content.contains(keyword)).distinct();
+        }
+
+        return SearchResponse.from(query.fetch());
     }
 
-    private BooleanExpression isLikeAndHotPost(String condition) {
-        return StringUtils.equals(condition, "like") ? post.likeCount.goe(5) : null;
+    private BooleanExpression isLikeAndLatest(TopPostCondition condition) {
+        return condition == TopPostCondition.like ? post.createdAt.after(LocalDateTime.now().minusWeeks(2)) : null;
+    }
+
+    private BooleanExpression isLikeAndHotPost(TopPostCondition condition) {
+        return condition == TopPostCondition.like ? post.likeCount.goe(5) : null;
     }
 }

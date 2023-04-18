@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.member;
 
 import com.FlagHome.backend.domain.auth.AuthInformation;
-import com.FlagHome.backend.domain.member.controller.dto.UpdateAvatarRequest;
+import com.FlagHome.backend.domain.member.controller.dto.request.UpdateAvatarRequest;
 import com.FlagHome.backend.domain.member.entity.Avatar;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.entity.enums.MemberStatus;
@@ -200,6 +200,7 @@ public class MemberServiceTest {
 
         final String newNickname = "hejow";
         final String newStudentId = "234";
+        final String newBio = "test";
 
         Avatar avatar = Avatar.builder().nickname(nickname).studentId(studentId).build();
         Member member = memberRepository.save(Member.builder().loginId(loginId).avatar(avatar).build());
@@ -207,6 +208,7 @@ public class MemberServiceTest {
         UpdateAvatarRequest updateAvatarRequest = UpdateAvatarRequest.builder()
                 .nickName(newNickname)
                 .studentId(newStudentId)
+                .bio(newBio)
                 .build();
 
         // when
@@ -216,6 +218,7 @@ public class MemberServiceTest {
         Avatar findAvatar = memberRepository.findById(member.getId()).get().getAvatar();
         assertThat(findAvatar.getNickname()).isEqualTo(newNickname);
         assertThat(findAvatar.getStudentId()).isEqualTo(newStudentId);
+        assertThat(findAvatar.getBio()).isEqualTo(newBio);
     }
 
 //    @Test
@@ -260,42 +263,5 @@ public class MemberServiceTest {
 //        assertThat(testMember.getId()).isEqualTo(member.getId());
 //        assertThat(testMember.getName()).isEqualTo(member.getName());
 //        assertThat(testMember.getLastLoginTime()).isEqualTo(member.getLastLoginTime());
-//    }
-
-//    @Nested
-//    @DisplayName("프로필 가져오기 테스트")
-//    class getProfileTest {
-//        @Test
-//        @DisplayName("유저 정보가 없어서 실패")
-//        void getProfileFailTest() {
-//            // given
-//            String wrongLoginId = "hejow124";
-//
-//            assertThatExceptionOfType(CustomException.class)
-//                    .isThrownBy(() -> memberService.getMemberProfile(wrongLoginId))
-//                    .withMessage(ErrorCode.USER_NOT_FOUND.getMessage());
-//        }
-//
-//        @Test
-//        @DisplayName("프로필 가져오기 성공")
-//        void getProfileSuccessTest() {
-//            // given
-//            String loginId = "gmlwh124";
-//            String bio = "안녕하세요";
-//            String profileImg = "url";
-//
-//            Member member = memberRepository.saveAndFlush(Member.builder()
-//                            .loginId(loginId)
-//                            .bio(bio)
-//                            .profileImg(profileImg)
-//                            .build());
-//
-//            // when
-//            MyPageResponse profileResponse = memberService.getMyPage(loginId);
-//
-//            // then
-//            assertThat(profileResponse.getBio()).isEqualTo(bio);
-//            assertThat(profileResponse.getProfileImg()).isEqualTo(profileImg);
-//        }
 //    }
 }

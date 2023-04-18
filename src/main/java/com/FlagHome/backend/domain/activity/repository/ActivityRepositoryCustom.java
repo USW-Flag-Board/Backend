@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.activity.repository;
 
-import com.FlagHome.backend.domain.activity.controller.dto.ActivityResponse;
+import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityResponse;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

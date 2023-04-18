@@ -6,8 +6,10 @@ import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
@@ -77,8 +79,6 @@ public class BoardService {
     /**
      * Version 2
      */
-    public void searchByCondition() {    }
-
     public void create(Board board) {
         boardRepository.save(board);
     }

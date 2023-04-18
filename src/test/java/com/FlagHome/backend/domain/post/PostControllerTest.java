@@ -8,7 +8,7 @@ import com.FlagHome.backend.domain.member.entity.Avatar;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.entity.enums.Role;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
-import com.FlagHome.backend.domain.post.controller.dto.PostRequest;
+import com.FlagHome.backend.domain.post.controller.dto.request.PostRequest;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.entity.enums.PostStatus;
 import com.FlagHome.backend.domain.post.like.entity.PostLike;

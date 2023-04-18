@@ -6,7 +6,7 @@ import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
-import com.FlagHome.backend.domain.post.controller.dto.ReplyResponse;
+import com.FlagHome.backend.domain.post.controller.dto.response.ReplyResponse;
 import com.FlagHome.backend.domain.post.reply.entity.Reply;
 import com.FlagHome.backend.domain.post.reply.repository.ReplyRepository;
 import org.junit.jupiter.api.BeforeEach;

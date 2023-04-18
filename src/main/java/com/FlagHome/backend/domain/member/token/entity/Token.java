@@ -47,11 +47,11 @@ public abstract class Token {
 
     public void validateExpireTime() {
         if (this.expiredAt.isBefore(LocalDateTime.now())) {
-            throw new CustomException(ErrorCode.INVALID_TOKEN);
+            throw new CustomException(ErrorCode.EXPIRED_AUTHENTICATION_TIME);
         }
     }
 
-    public void validateValue(String certification) {
+    public void verifyCertification(String certification) {
         if (!StringUtils.equals(certification, this.value)) {
             throw new CustomException(ErrorCode.CERTIFICATION_NOT_MATCH);
         }

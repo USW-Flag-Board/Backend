@@ -4,9 +4,14 @@ import com.FlagHome.backend.domain.board.entity.Board;
 import com.FlagHome.backend.domain.board.service.BoardService;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.service.MemberService;
-import com.FlagHome.backend.domain.post.controller.dto.PostResponse;
-import com.FlagHome.backend.domain.post.controller.dto.ReplyResponse;
+import com.FlagHome.backend.domain.post.controller.dto.response.PostDetailResponse;
+import com.FlagHome.backend.domain.post.controller.dto.response.PostResponse;
+import com.FlagHome.backend.domain.post.controller.dto.response.ReplyResponse;
+import com.FlagHome.backend.domain.post.controller.dto.response.SearchResponse;
 import com.FlagHome.backend.domain.post.entity.Post;
+import com.FlagHome.backend.domain.post.entity.enums.SearchOption;
+import com.FlagHome.backend.domain.post.entity.enums.SearchPeriod;
+import com.FlagHome.backend.domain.post.entity.enums.TopPostCondition;
 import com.FlagHome.backend.domain.post.like.service.PostLikeService;
 import com.FlagHome.backend.domain.post.reply.service.ReplyService;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
@@ -113,39 +118,53 @@ public class PostService {
         return postRepository.findTopNPostListByDateAndLike(postCount);
     } */
 
-    public PostResponse getPost(Long postId) {
+    public PostDetailResponse getPost(Long postId) {
         Post post = findById(postId);
         post.isAccessible();
         post.increaseViewCount();
-        return PostResponse.from(post);
+        return PostDetailResponse.from(post);
     }
 
     @Transactional(readOnly = true)
     public List<ReplyResponse> getAllReplies(Long postId) {
+        // 유효성 검사?
         return replyService.getAllReplies(postId);
     }
 
     @Transactional(readOnly = true)
     public ReplyResponse getBestReply(Long postId) {
+        // 유효성 검사?
         return replyService.getBestReply(postId);
     }
 
     @Transactional(readOnly = true)
     public Page<PostResponse> getAllPostsByBoard(String boardName, Pageable pageable) {
-        boardService.findByName(boardName);
+        boardService.findByName(boardName); // 좀 다르게 검사
         return postRepository.getAllPostsByBoard(boardName, pageable);
     }
 
     @Transactional(readOnly = true)
     public List<PostResponse> getMemberPagePosts(String loginId) {
         Member member = memberService.findByLoginId(loginId);
-        member.isAvailable();
+        member.isAvailable(); // 이것도 한줄로 줄이기
         return postRepository.getAllPostsByLoginId(loginId);
     }
 
     @Transactional(readOnly = true)
-    public List<PostResponse> getTopFivePostByCondition(String condition) {
+    public List<PostResponse> getTopFivePostByCondition(TopPostCondition condition) {
         return postRepository.getTopFiveByCondition(condition);
+    }
+
+    @Transactional(readOnly = true)
+    public SearchResponse searchPostsWithCondition(String boardName, String keyword,
+                                                   SearchPeriod period, SearchOption option) {
+        // 게시판 유효성 검사
+        return postRepository.searchWithCondition(boardName, keyword, period, option);
+    }
+
+    @Transactional(readOnly = true)
+    public SearchResponse integrationSearch(String keyword) {
+        return postRepository.integrationSearch(keyword);
     }
 
     public Long createPost(Long memberId, Post post, String boardName) {
@@ -158,6 +177,7 @@ public class PostService {
         Member member = memberService.findById(memberId);
         Post post = findById(postId);
         replyService.commentReply(member, post, content);
+        post.increaseReplyCount();
     }
 
     public void updatePost(Long memberId, Long postId, Post newPost) {
@@ -175,7 +195,9 @@ public class PostService {
     }
 
     public void deleteReply(Long memberId, Long replyId) {
-        replyService.deleteReply(memberId, replyId);
+        Long postId = replyService.deleteReply(memberId, replyId);
+        Post post = findById(postId);
+        post.decreaseReplyCount();
     }
 
     public void likePost(Long memberId, Long postId) {

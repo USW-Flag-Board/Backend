@@ -1,10 +1,10 @@
 package com.FlagHome.backend.domain.member.repository;
 
-import com.FlagHome.backend.domain.member.controller.dto.AvatarResponse;
-import com.FlagHome.backend.domain.member.controller.dto.LoginLogResponse;
-import com.FlagHome.backend.domain.member.controller.dto.MyProfileResponse;
+import com.FlagHome.backend.domain.member.controller.dto.response.AvatarResponse;
+import com.FlagHome.backend.domain.member.controller.dto.response.LoginLogResponse;
+import com.FlagHome.backend.domain.member.controller.dto.response.MyProfileResponse;
 import com.FlagHome.backend.domain.member.entity.Member;
-import com.FlagHome.backend.domain.member.controller.dto.SearchMemberResponse;
+import com.FlagHome.backend.domain.member.controller.dto.response.SearchMemberResponse;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
