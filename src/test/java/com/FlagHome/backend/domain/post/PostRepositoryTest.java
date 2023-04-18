@@ -119,7 +119,7 @@ public class PostRepositoryTest extends RepositoryTest {
     class 게시글_검색_테스트 {
         private Board board;
         private final String boardName = "자유게시판";
-        private final SearchPeriod period = SearchPeriod.DEFAULT;
+        private final SearchPeriod period = SearchPeriod.all;
 
         @BeforeEach
         void setup() {
@@ -143,7 +143,7 @@ public class PostRepositoryTest extends RepositoryTest {
             postRepository.saveAll(List.of(post1, post2, post3));
 
             final String keyword = "test";
-            final SearchOption option = SearchOption.TITLE;
+            final SearchOption option = SearchOption.title;
 
             // when
             SearchResponse response = postRepository.searchWithCondition(boardName, keyword, period, option);
@@ -167,7 +167,7 @@ public class PostRepositoryTest extends RepositoryTest {
             postRepository.saveAll(List.of(post1, post2, post3));
 
             final String keyword = "test";
-            final SearchOption option = SearchOption.CONTENT;
+            final SearchOption option = SearchOption.content;
 
             // when
             SearchResponse response = postRepository.searchWithCondition(boardName, keyword, period, option);
@@ -189,7 +189,7 @@ public class PostRepositoryTest extends RepositoryTest {
             replyRepository.saveAll(List.of(reply1, reply2));
 
             final String keyword = "test";
-            final SearchOption option = SearchOption.REPLY;
+            final SearchOption option = SearchOption.reply;
 
             // when
             SearchResponse response = postRepository.searchWithCondition(boardName, keyword, period, option);
@@ -204,23 +204,26 @@ public class PostRepositoryTest extends RepositoryTest {
             // given
             final String content = "test";
             final String content2 = "ttest";
-            Post searchPost = postRepository.save(Post.builder().member(member).board(board).content(content2).build());
 
-            Reply reply1 = Reply.of(member, post, content);
-            Reply reply2 = Reply.of(member, searchPost, content2);
-            Reply reply3 = Reply.of(member, searchPost, content2);
+            Post searchPost = Post.builder().member(member).board(board).content(content).build();
+            Post searchPost2 = Post.builder().member(member).board(board).content(content2).build();
 
+            Reply reply1 = Reply.of(member, post, content); // 검색X : 게시판 정보가 없음
+            Reply reply2 = Reply.of(member, searchPost, content2); // 중복
+            Reply reply3 = Reply.of(member, searchPost, content2); // 중복
+
+            postRepository.saveAll(List.of(searchPost, searchPost2));
             replyRepository.saveAll(List.of(reply1, reply2, reply3));
 
             final String keyword = "test";
-            final SearchOption option = SearchOption.CONTENT_AND_REPLY;
+            final SearchOption option = SearchOption.content_and_reply;
 
             // when
             SearchResponse response = postRepository.searchWithCondition(boardName, keyword, period, option);
 
             // then
             assertThat(response).isNotNull();
-            assertThat(response.getResultCount()).isEqualTo(1);
+            assertThat(response.getResultCount()).isEqualTo(2);
         }
 
         @Test
@@ -229,7 +232,7 @@ public class PostRepositoryTest extends RepositoryTest {
             postRepository.save(Post.builder().member(member).board(board).build());
 
             final String keyword = "john";
-            final SearchOption option = SearchOption.AUTHOR;
+            final SearchOption option = SearchOption.author;
 
             // when
             SearchResponse response = postRepository.searchWithCondition(boardName, keyword, period, option);
@@ -238,5 +241,25 @@ public class PostRepositoryTest extends RepositoryTest {
             assertThat(response).isNotNull();
             assertThat(response.getResultCount()).isEqualTo(1);
         }
+    }
+
+    @Test
+    void 게시글_통합_검색_테스트() {
+        // given
+        final String title = "is this test?";
+        final String content = "this is testtest content";
+
+        postRepository.save(Post.builder().member(member).title(title).build());
+        Post testPost = postRepository.save(Post.builder().member(member).content(content).build());
+        replyRepository.save(Reply.of(member, testPost, content));
+
+        final String keyword = "test";
+
+        // when
+        SearchResponse response = postRepository.integrationSearch(keyword);
+
+        // then
+        assertThat(response).isNotNull();
+        assertThat(response.getResultCount()).isEqualTo(2);
     }
 }

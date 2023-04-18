@@ -11,12 +11,12 @@ import static com.FlagHome.backend.domain.post.entity.QPost.post;
 @Getter
 @RequiredArgsConstructor
 public enum SearchPeriod {
-    DEFAULT("전체기간", null),
-    ONE_DAY("1일", post.createdAt.before(LocalDateTime.now().minusDays(1))),
-    ONE_WEEK("1주일", post.createdAt.before(LocalDateTime.now().minusWeeks(1))),
-    ONE_MONTH("1개월", post.createdAt.before(LocalDateTime.now().minusMonths(1))),
-    HALF_YEAR("6개월", post.createdAt.before(LocalDateTime.now().minusMonths(6))),
-    ONE_YEAR("1년", post.createdAt.before(LocalDateTime.now().minusYears(1)));
+    all("전체기간", null),
+    one_day("1일", post.createdAt.before(LocalDateTime.now().minusDays(1))),
+    one_week("1주일", post.createdAt.before(LocalDateTime.now().minusWeeks(1))),
+    one_month("1개월", post.createdAt.before(LocalDateTime.now().minusMonths(1))),
+    half_month("6개월", post.createdAt.before(LocalDateTime.now().minusMonths(6))),
+    one_year("1년", post.createdAt.before(LocalDateTime.now().minusYears(1)));
 
     private final String period;
     private final BooleanExpression expression;

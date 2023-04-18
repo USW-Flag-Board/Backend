@@ -160,7 +160,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .innerJoin(post.member, member)
                 .where(post.board.name.eq(boardName),
                         post.status.in(PostStatus.NORMAL, PostStatus.REPORTED))
-                .orderBy(post.createdAt.asc())
+                .orderBy(post.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -188,6 +188,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .from(post)
                 .innerJoin(post.member, member)
                 .where(member.loginId.eq(loginId))
+                .orderBy(post.createdAt.desc())
                 .fetch();
     }
 
@@ -209,6 +210,27 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         isLikeAndHotPost(condition))
                 .limit(5)
                 .fetch();
+    }
+
+    @Override
+    public SearchResponse integrationSearch(String keyword) {
+        List<PostResponse> result = queryFactory
+                .selectDistinct(new QPostResponse(
+                        post.id,
+                        post.title,
+                        member.avatar.nickname,
+                        post.createdAt,
+                        post.viewCount,
+                        post.replyCount,
+                        post.likeCount))
+                .from(post)
+                .innerJoin(post.member, member)
+                .where(post.content.contains(keyword)
+                        .or(post.title.contains(keyword)))
+                .orderBy(post.createdAt.desc())
+                .fetch();
+
+        return SearchResponse.from(result);
     }
 
     @Override

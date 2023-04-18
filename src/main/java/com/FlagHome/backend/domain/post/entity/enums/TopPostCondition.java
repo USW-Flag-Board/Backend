@@ -10,7 +10,7 @@ import static com.FlagHome.backend.domain.post.entity.QPost.post;
 @RequiredArgsConstructor
 public enum TopPostCondition {
     like(post.likeCount.desc()),
-    latest(post.createdAt.asc());
+    latest(post.createdAt.desc());
 
     private final OrderSpecifier<?> order;
 }

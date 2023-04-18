@@ -14,13 +14,13 @@ import javax.validation.constraints.NotNull;
 public class SearchRequest {
     @Schema(name = "게시판 이름")
     @NotBlank
-    private String boardName;
+    private String board;
 
     @Schema(name = "키워드")
     @NotBlank
     private String keyword;
 
-    @Schema(name = "검색 기간")
+    @Schema(name = "검색 기간", defaultValue = "all")
     @NotNull
     private SearchPeriod period;
 
@@ -29,8 +29,8 @@ public class SearchRequest {
     private SearchOption option;
 
     @Builder
-    public SearchRequest(String boardName, String keyword, SearchPeriod period, SearchOption option) {
-        this.boardName = boardName;
+    public SearchRequest(String board, String keyword, SearchPeriod period, SearchOption option) {
+        this.board = board;
         this.keyword = keyword;
         this.period = period;
         this.option = option;

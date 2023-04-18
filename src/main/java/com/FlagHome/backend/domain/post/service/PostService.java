@@ -127,24 +127,26 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public List<ReplyResponse> getAllReplies(Long postId) {
+        // 유효성 검사?
         return replyService.getAllReplies(postId);
     }
 
     @Transactional(readOnly = true)
     public ReplyResponse getBestReply(Long postId) {
+        // 유효성 검사?
         return replyService.getBestReply(postId);
     }
 
     @Transactional(readOnly = true)
     public Page<PostResponse> getAllPostsByBoard(String boardName, Pageable pageable) {
-        boardService.findByName(boardName);
+        boardService.findByName(boardName); // 좀 다르게 검사
         return postRepository.getAllPostsByBoard(boardName, pageable);
     }
 
     @Transactional(readOnly = true)
     public List<PostResponse> getMemberPagePosts(String loginId) {
         Member member = memberService.findByLoginId(loginId);
-        member.isAvailable();
+        member.isAvailable(); // 이것도 한줄로 줄이기
         return postRepository.getAllPostsByLoginId(loginId);
     }
 
@@ -156,7 +158,13 @@ public class PostService {
     @Transactional(readOnly = true)
     public SearchResponse searchPostsWithCondition(String boardName, String keyword,
                                                    SearchPeriod period, SearchOption option) {
+        // 게시판 유효성 검사
         return postRepository.searchWithCondition(boardName, keyword, period, option);
+    }
+
+    @Transactional(readOnly = true)
+    public SearchResponse integrationSearch(String keyword) {
+        return postRepository.integrationSearch(keyword);
     }
 
     public Long createPost(Long memberId, Post post, String boardName) {

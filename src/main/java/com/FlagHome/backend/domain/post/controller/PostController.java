@@ -142,6 +142,20 @@ public class PostController {
      * Version 2
      */
     @Tag(name = "post")
+    @Operation(summary = "게시글 상세보기")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "상세보기 성공"),
+            @ApiResponse(responseCode = "400", description = "접근할 수 없는 게시글, 리다이렉트 해줄 것"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시물입니다.")
+    })
+    @ResponseStatus(OK)
+    @GetMapping("/{id}")
+    public ApplicationResponse<PostDetailResponse> getPost(@PathVariable Long id) {
+        PostDetailResponse response = postService.getPost(id);
+        return new ApplicationResponse<>(response);
+    }
+
+    @Tag(name = "post")
     @Operation(summary = "게시글 모두 가져오기", description = "게시판 이름에 맞춰서 페이징 처리")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "게시판의 모든 게시글 불러오기 성공"),
@@ -178,26 +192,21 @@ public class PostController {
     }
 
     @Tag(name = "post")
-    @Operation(summary = "게시글 검색하기", description = "게시판 기준의 검색")
+    @Operation(summary = "게시판 검색", description = "게시판 검색, 게시판을 기준으로 조건에 맞춰서 검색한다.")
     @ResponseStatus(OK)
     @GetMapping("/search")
-    public ApplicationResponse<SearchResponse> searchPostsWithCondition(@ModelAttribute SearchRequest request) {
+    public ApplicationResponse<SearchResponse> searchPostsWithCondition(@ModelAttribute @Valid SearchRequest request) {
         SearchResponse responses = postService
-                .searchPostsWithCondition(request.getBoardName(), request.getKeyword(), request.getPeriod(), request.getOption());
+                .searchPostsWithCondition(request.getBoard(), request.getKeyword(), request.getPeriod(), request.getOption());
         return new ApplicationResponse<>(responses);
     }
 
     @Tag(name = "post")
-    @Operation(summary = "게시글 상세보기")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "상세보기 성공"),
-            @ApiResponse(responseCode = "400", description = "접근할 수 없는 게시글, 리다이렉트 해줄 것"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시물입니다.")
-    })
+    @Operation(summary = "통합 검색", description = "통합 검색, 게시판 상관 없이 제목+내용으로 검색한다.")
     @ResponseStatus(OK)
-    @GetMapping("/{id}")
-    public ApplicationResponse<PostDetailResponse> getPost(@PathVariable Long id) {
-        PostDetailResponse response = postService.getPost(id);
+    @GetMapping("/integration-search")
+    public ApplicationResponse<SearchResponse> integrationSearch(@RequestParam("keyword") String keyword) {
+        SearchResponse response = postService.integrationSearch(keyword);
         return new ApplicationResponse<>(response);
     }
 

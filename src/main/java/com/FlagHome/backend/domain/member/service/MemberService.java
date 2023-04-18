@@ -104,7 +104,7 @@ public class MemberService {
     @Transactional
     public Member convertSleepingIfExist(String loginId) {
         Sleeping sleeping = sleepingService.findByLoginId(loginId);
-        Member member = findByLoginId(loginId);
+        Member member = findByLoginId(loginId); // 에러
 
         if (sleeping != null) {
             sleepingService.convertSleepToMember(member, sleeping);
