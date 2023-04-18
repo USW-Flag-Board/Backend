@@ -2,6 +2,7 @@ package com.FlagHome.backend.infra.aws.s3.entity;
 
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.global.common.BaseEntity;
+import com.FlagHome.backend.infra.aws.s3.entity.enums.FileStatus;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,16 +23,16 @@ public class File extends BaseEntity {
     private Post post;
 
     @Column
-    private String link;
+    private String url;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private FileStatus status;
 
     @Builder
-    public File(Post post, String link, FileStatus status) {
+    public File(Post post, String url, FileStatus status) {
         this.post = post;
-        this.link = link;
+        this.url = url;
         this.status = status;
     }
 }

@@ -106,6 +106,15 @@ public class ActivityController {
     }
 
     @Tag(name = "activity")
+    @Operation(summary = "모집 중인 활동 가져오기", description = "홈페이지 전용 기능, 모집 중인 활동을 가져온다.")
+    @ResponseStatus(OK)
+    @GetMapping("/recruit")
+    public ApplicationResponse<List<ActivityResponse>> getRecruitActivities() {
+        List<ActivityResponse> response = activityService.getRecruitActivities();
+        return new ApplicationResponse<>(response);
+    }
+
+    @Tag(name = "activity")
     @Operation(summary = "활동 신청여부 확인하기", description = "[토큰필요] 한 멤버가 한 활동에 한번만 신청할 수 있다.\n\n" +
             "False : 미신청, True : 신청")
     @ApiResponses({
@@ -131,7 +140,7 @@ public class ActivityController {
     @PostMapping("/{id}/apply")
     public ApplicationResponse applyActivity(@PathVariable("id") long activityId) {
         activityService.applyActivity(SecurityUtils.getMemberId(), activityId);
-        return new ApplicationResponse();
+        return new ApplicationResponse<>();
     }
 
     @Tag(name = "activity")

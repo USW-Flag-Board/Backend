@@ -7,6 +7,7 @@ import com.FlagHome.backend.domain.activity.entity.enums.Proceed;
 import com.FlagHome.backend.domain.activity.entity.enums.Semester;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.global.common.BaseEntity;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,7 +15,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class Activity extends BaseEntity {
     @Id
@@ -42,20 +43,20 @@ public abstract class Activity extends BaseEntity {
 
     @Column
     @Enumerated(EnumType.STRING)
-    private ActivityStatus activityStatus;
+    private ActivityStatus status;
 
     @Column
     @Enumerated(EnumType.STRING)
     private Semester semester;
 
     public Activity(String name, String description, Member leader, ActivityType activityType,
-                    Proceed proceed, ActivityStatus activityStatus, int semester) {
+                    Proceed proceed, ActivityStatus status, int semester) {
         this.name = name;
         this.description = description;
         this.leader = leader;
         this.activityType = activityType;
         this.proceed = proceed;
-        this.activityStatus = activityStatus;
+        this.status = status;
         this.semester = Semester.findSemester(semester);
     }
 
@@ -64,15 +65,15 @@ public abstract class Activity extends BaseEntity {
     }
 
     public void closeRecruitment() {
-        this.activityStatus = ActivityStatus.ON;
+        this.status = ActivityStatus.ON;
     }
 
     public void reopenRecruitment() {
-        this.activityStatus = ActivityStatus.RECRUIT;
+        this.status = ActivityStatus.RECRUIT;
     }
 
     public void finishActivity() {
-        this.activityStatus = ActivityStatus.OFF;
+        this.status = ActivityStatus.OFF;
     }
 
     public void update(ActivityRequest activityRequest) {

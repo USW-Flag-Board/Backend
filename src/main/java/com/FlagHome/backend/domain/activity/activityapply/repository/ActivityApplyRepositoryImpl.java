@@ -28,7 +28,7 @@ public class ActivityApplyRepositoryImpl implements ActivityApplyRepositoryCusto
                 .from(activityApply)
                 .where(activityApply.activity.id.eq(activityId))
                 .innerJoin(activityApply.member, member)
-                .orderBy(activityApply.applyTime.asc())
+                .orderBy(activityApply.applyTime.desc())
                 .fetch();
     }
 

@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface ActivityRepositoryCustom {
     Optional<ActivityResponse> getActivity(long activityId);
     List<ActivityResponse> getAllActivities();
+    List<ActivityResponse> getRecruitActivities();
 }

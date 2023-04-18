@@ -78,7 +78,7 @@ public class ActivityServiceTest {
             Activity activity = activityRepository.saveAndFlush(Project.builder()
                     .leader(member)
                     .activityType(project)
-                    .activityStatus(activityStatus)
+                    .status(activityStatus)
                     .semester(LocalDateTime.now().getMonthValue())
                     .build());
 
@@ -578,7 +578,7 @@ public class ActivityServiceTest {
             activity = activityRepository.save(Study.builder()
                             .leader(member)
                             .semester(LocalDateTime.now().getMonthValue())
-                            .activityStatus(ActivityStatus.RECRUIT)
+                            .status(ActivityStatus.RECRUIT)
                             .build());
         }
 
@@ -614,7 +614,7 @@ public class ActivityServiceTest {
             assertThat(allActivityApplies.isEmpty()).isTrue();
             assertThat(participantResponses.size()).isEqualTo(2);
             assertThat(findActivity).isNotNull();
-            assertThat(findActivity.getActivityStatus()).isEqualTo(ActivityStatus.ON);
+            assertThat(findActivity.getStatus()).isEqualTo(ActivityStatus.ON);
         }
 
         @Test
@@ -641,7 +641,7 @@ public class ActivityServiceTest {
             activity = activityRepository.save(Study.builder()
                     .leader(member)
                     .semester(LocalDateTime.now().getMonthValue())
-                    .activityStatus(ActivityStatus.RECRUIT)
+                    .status(ActivityStatus.RECRUIT)
                     .build());
         }
 
@@ -662,7 +662,7 @@ public class ActivityServiceTest {
             Activity findActivity = activityRepository.findById(activity.getId()).get();
             assertThat(responses.isEmpty()).isTrue();
             assertThat(findActivity).isNotNull();
-            assertThat(findActivity.getActivityStatus()).isEqualTo(ActivityStatus.RECRUIT);
+            assertThat(findActivity.getStatus()).isEqualTo(ActivityStatus.RECRUIT);
         }
 
         @Test
@@ -688,7 +688,7 @@ public class ActivityServiceTest {
             activity = activityRepository.save(Study.builder()
                     .leader(member)
                     .semester(LocalDateTime.now().getMonthValue())
-                    .activityStatus(ActivityStatus.RECRUIT)
+                    .status(ActivityStatus.RECRUIT)
                     .build());
         }
 
@@ -703,7 +703,7 @@ public class ActivityServiceTest {
             // then
             Activity findActivity = activityRepository.findById(activity.getId()).get();
             assertThat(findActivity).isNotNull();
-            assertThat(findActivity.getActivityStatus()).isEqualTo(ActivityStatus.OFF);
+            assertThat(findActivity.getStatus()).isEqualTo(ActivityStatus.OFF);
         }
 
         @Test
@@ -729,7 +729,7 @@ public class ActivityServiceTest {
             activity = activityRepository.save(Study.builder()
                     .leader(member)
                     .semester(LocalDateTime.now().getMonthValue())
-                    .activityStatus(ActivityStatus.RECRUIT)
+                    .status(ActivityStatus.RECRUIT)
                     .build());
         }
 

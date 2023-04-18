@@ -251,19 +251,19 @@ public class ActivityRepositoryTest extends RepositoryTest {
             Activity project = Project.builder()
                     .name("project")
                     .semester(LocalDateTime.now().getMonthValue())
-                    .activityStatus(ActivityStatus.ON)
+                    .status(ActivityStatus.ON)
                     .build();
 
             Activity mentoring = Mentoring.builder()
                     .name("mentoring")
                     .semester(LocalDateTime.now().getMonthValue())
-                    .activityStatus(ActivityStatus.RECRUIT)
+                    .status(ActivityStatus.RECRUIT)
                     .build();
 
             Activity study = Study.builder()
                     .name("study")
                     .semester(LocalDateTime.now().getMonthValue())
-                    .activityStatus(ActivityStatus.OFF)
+                    .status(ActivityStatus.OFF)
                     .build();
 
             activityRepository.saveAll(Arrays.asList(project, mentoring, study));
@@ -370,5 +370,23 @@ public class ActivityRepositoryTest extends RepositoryTest {
             assertThat(foundMember).isNotNull();
             assertThat(foundMember.getLoginId()).isEqualTo(loginId);
         }
+    }
+
+    @Test
+    void 모집_중인_활동_가져오기_테스트() {
+        // given
+        Member member = memberRepository.save(Member.builder().build());
+        activityRepository.save(Project.builder()
+                .leader(member)
+                .semester(LocalDateTime.now().getMonthValue())
+                .status(ActivityStatus.RECRUIT)
+                .build());
+
+        // when
+        List<ActivityResponse> response = activityRepository.getRecruitActivities();
+
+        // then
+        assertThat(response).isNotNull();
+        assertThat(response.size()).isEqualTo(1);
     }
 }
