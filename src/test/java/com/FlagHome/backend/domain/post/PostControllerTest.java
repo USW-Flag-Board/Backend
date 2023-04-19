@@ -9,8 +9,11 @@ import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.entity.enums.Role;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.post.controller.dto.request.PostRequest;
+import com.FlagHome.backend.domain.post.controller.dto.request.SearchRequest;
 import com.FlagHome.backend.domain.post.entity.Post;
 import com.FlagHome.backend.domain.post.entity.enums.PostStatus;
+import com.FlagHome.backend.domain.post.entity.enums.SearchOption;
+import com.FlagHome.backend.domain.post.entity.enums.SearchPeriod;
 import com.FlagHome.backend.domain.post.like.entity.PostLike;
 import com.FlagHome.backend.domain.post.like.repository.LikeRepository;
 import com.FlagHome.backend.domain.post.repository.PostRepository;
@@ -32,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -329,6 +333,40 @@ public class PostControllerTest extends IntegrationTest {
                     .andExpect(jsonPath("message").value(ErrorCode.NEVER_LIKED.getMessage()))
                     .andDo(print());
         }
+    }
+
+    @Test
+    public void 게시판_검색_테스트() throws Exception {
+        // given
+        final String boardName = "자유 게시판";
+        final String keyword = "test";
+
+        Post post = Post.builder().title("test").build();
+        postRepository.save(Post.of(member, board, post));
+
+        SearchRequest request = SearchRequest.builder()
+                .board(boardName)
+                .keyword(keyword)
+                .option(SearchOption.title)
+                .period(SearchPeriod.all)
+                .build();
+
+        final String uri = BASE_URI + "/search";
+
+        // when
+        ResultActions resultActions = mockMvc.perform(get(uri)
+                .param("board", request.getBoard())
+                .param("keyword", request.getKeyword())
+                .param("period", String.valueOf(request.getPeriod()))
+                .param("option", String.valueOf(request.getOption()))
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.payload.resultCount", is(1)))
+                .andExpect(jsonPath("$.payload.searchResults[0].title", is(keyword)))
+                .andDo(print());
     }
 
     private void setSecurityContext(Member member) {

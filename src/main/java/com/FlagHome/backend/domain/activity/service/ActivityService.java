@@ -131,7 +131,7 @@ public class ActivityService {
     @Transactional
     public void closeRecruitment(Long memberId, Long activityId, List<String> loginIdList) {
         Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
-        List<Member> memberList = memberService.getMembersByLoginId(loginIdList);
+        List<Member> memberList = memberService.getMembersByLoginIds(loginIdList);
         activityApplyService.deleteAllApplies(activityId);
         memberActivityService.registerMembers(activity, memberList);
         activity.closeRecruitment();

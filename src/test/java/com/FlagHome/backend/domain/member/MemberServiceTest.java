@@ -8,6 +8,8 @@ import com.FlagHome.backend.domain.member.entity.enums.MemberStatus;
 import com.FlagHome.backend.domain.member.mapper.MemberMapper;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.service.MemberService;
+import com.FlagHome.backend.domain.member.sleeping.entity.Sleeping;
+import com.FlagHome.backend.domain.member.sleeping.repository.SleepingRepository;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import org.junit.jupiter.api.DisplayName;
@@ -27,19 +29,17 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 @SpringBootTest
 public class MemberServiceTest {
     @Autowired
-    private MemberRepository memberRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
     private MemberService memberService;
-
     @Autowired
-    private EntityManager entityManager;
-
+    private MemberRepository memberRepository;
     @Autowired
     private MemberMapper memberMapper;
+    @Autowired
+    private SleepingRepository sleepingRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private EntityManager entityManager;
 
     @Test
     @DisplayName("유저 생성 테스트")
@@ -175,8 +175,7 @@ public class MemberServiceTest {
         }
 
         @Test
-        @DisplayName("비밀번호 변경 중 같은 비밀번호로 실패")
-        void updatePasswordFailTeset() {
+        void 비밀번호_변경_실패() {
             String loginId = "gmlwh124";
             String password = "qwer1234!";
 
@@ -219,6 +218,25 @@ public class MemberServiceTest {
         assertThat(findAvatar.getNickname()).isEqualTo(newNickname);
         assertThat(findAvatar.getStudentId()).isEqualTo(newStudentId);
         assertThat(findAvatar.getBio()).isEqualTo(newBio);
+    }
+
+    @Test
+    void 휴면계정_활성화_테스트() {
+        // given
+        final String loginId = "gmlwh124";
+
+        Member member = memberRepository.save(Member.builder().loginId(loginId).build());
+        sleepingRepository.save(Sleeping.of(member));
+        member.deactivate();
+
+        // when
+        Member reactivateMember = memberService.reactivateIfSleeping(loginId);
+
+        // then
+        Sleeping sleeping = sleepingRepository.findByLoginId(loginId).orElse(null);
+        assertThat(reactivateMember.getStatus()).isEqualTo(MemberStatus.NORMAL);
+        assertThat(reactivateMember.getLoginId()).isEqualTo(loginId);
+        assertThat(sleeping).isNull();
     }
 
 //    @Test

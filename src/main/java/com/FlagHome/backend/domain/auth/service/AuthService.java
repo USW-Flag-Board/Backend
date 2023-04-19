@@ -69,7 +69,7 @@ public class AuthService {
 
     @Transactional
     public TokenResponse login(String loginId, String password) {
-        Member member = memberService.convertSleepingIfExist(loginId);
+        Member member = memberService.reactivateIfSleeping(loginId);
         member.isAvailable();
 
         Authentication authentication = authenticate(loginId, password);

@@ -9,7 +9,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Getter
-@Setter // @ModelAttribute 때문에
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SearchRequest {
     @Schema(name = "게시판 이름")

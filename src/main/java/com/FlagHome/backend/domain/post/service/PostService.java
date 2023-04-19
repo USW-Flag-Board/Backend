@@ -146,7 +146,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public List<PostResponse> getMemberPagePosts(String loginId) {
         Member member = memberService.findByLoginId(loginId);
-        member.isAvailable(); // 이것도 한줄로 줄이기
+        member.isAvailable();
         return postRepository.getAllPostsByLoginId(loginId);
     }
 

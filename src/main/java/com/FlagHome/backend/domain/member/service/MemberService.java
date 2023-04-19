@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
@@ -34,6 +35,28 @@ public class MemberService {
     private final FindRequestTokenService findRequestTokenService;
     private final PasswordEncoder passwordEncoder;
     private final SleepingService sleepingService;
+
+    @Transactional(readOnly = true)
+    public AvatarResponse getMemberPageAvatar(String loginId) {
+        Member member = findByLoginId(loginId);
+        member.isAvailable();
+        return memberRepository.getAvatar(loginId);
+    }
+
+    @Transactional(readOnly = true)
+    public MyProfileResponse getMyProfile(Long memberId) {
+        return memberRepository.getMyProfile(memberId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<LoginLogResponse> getAllLoginLogs() {
+        return memberRepository.getAllLoginLogs();
+    }
+
+    @Transactional(readOnly = true)
+    public List<SearchMemberResponse> searchByMemberName(String name) {
+        return memberRepository.searchMemberByName(name);
+    }
 
     public Boolean isExistLoginId(String loginId) {
         if (memberRepository.existsByLoginId(loginId) || sleepingService.existsByLoginId(loginId)) {
@@ -49,28 +72,20 @@ public class MemberService {
         return Boolean.FALSE;
     }
 
-    @Transactional
     public void withdraw(Long memberId, String password) {
-        Member member = validatePasswordAndReturn(memberId, password);
+        Member member = verifyPasswordAndReturn(memberId, password);
         member.withdraw();
     }
 
     public FindResponse findId(String name, String email) {
         Member member = findByEmail(email);
-        if (!StringUtils.equals(member.getName(), name)) {
-            throw new CustomException(ErrorCode.EMAIL_NAME_NOT_MATCH);
-        }
-
+        validateMemberName(member.getName(), name);
         return issueTokenAndSendMail(email);
     }
 
     public FindResponse findPassword(String loginId, String email) {
         Member member = findByEmail(email);
-
-        if (!StringUtils.equals(loginId, member.getLoginId())) {
-            throw new CustomException(ErrorCode.EMAIL_ID_NOT_MATCH);
-        }
-
+        validateMemberLoginId(member.getLoginId(), loginId);
         return issueTokenAndSendMail(email);
     }
 
@@ -78,67 +93,48 @@ public class MemberService {
         Token findRequestToken = findRequestTokenService.findToken(email);
         findRequestToken.validateExpireTime();
         findRequestToken.verifyCertification(certification);
-
         Member member = findByEmail(email);
         return FindResultResponse.from(member);
     }
 
-    @Transactional // 비밀번호를 잊어서 바꾸는 경우
     public void changePassword(String email, String newPassword) {
         Member member = findByEmail(email);
         member.updatePassword(newPassword, passwordEncoder);
     }
 
-    @Transactional // 비밀번호를 유저가 변경하는 경우
     public void updatePassword(Long memberId, String currentPassword, String newPassword) {
-        Member member = validatePasswordAndReturn(memberId, currentPassword);
-        verifyPassword(member.getPassword(), newPassword);
+        Member member = verifyPasswordAndReturn(memberId, currentPassword);
+        validatePassword(newPassword, member.getPassword());
         member.updatePassword(newPassword, passwordEncoder);
     }
 
-    @Transactional
     public void initMember(AuthInformation authInformation) {
         memberRepository.save(Member.of(authInformation, passwordEncoder));
     }
 
-    @Transactional
-    public Member convertSleepingIfExist(String loginId) {
+    public Member reactivateIfSleeping(String loginId) {
         Sleeping sleeping = sleepingService.findByLoginId(loginId);
-        Member member = findByLoginId(loginId); // 에러
 
         if (sleeping != null) {
-            sleepingService.convertSleepToMember(member, sleeping);
+            Member member = findById(sleeping.getMember().getId());
+            sleepingService.reactivateMember(member, sleeping);
+            return member;
         }
 
-        return member;
+        return findByLoginId(loginId);
     }
 
-    @Transactional(readOnly = true)
-    public AvatarResponse getMemberPageAvatar(String loginId) {
-        Member member = findByLoginId(loginId);
-        member.isAvailable();
-        return memberRepository.getAvatar(loginId);
-    }
-
-    @Transactional(readOnly = true)
-    public MyProfileResponse getMyProfile(Long memberId) {
-        return memberRepository.getMyProfile(memberId);
-    }
-
-    @Transactional
     public void updateAvatar(Long memberId, Avatar avatar) {
         Member member = findById(memberId);
         member.getAvatar().updateAvatar(avatar);
     }
 
-    @Transactional
     public void updateProfileImage(Long memberId, MultipartFile file) {
         Member member = findById(memberId);
-        String profileImageUrl =  awsS3Service.upload(file, FileDirectory.PROFILE.getDirectory());
+        String profileImageUrl = awsS3Service.upload(file, FileDirectory.PROFILE.getDirectory());
         member.getAvatar().changeProfileImage(profileImageUrl);
     }
 
-    @Transactional
     //@Scheduled(cron = "000000")
     public void changeAllToSleepMember() {
         List<Member> sleepingMembers = memberRepository.getAllSleepMembers();
@@ -149,30 +145,18 @@ public class MemberService {
         deactivateMembers(sleepingMembers);
     }
 
-    @Transactional
     public void deactivateMembers(List<Member> memberList) {
         memberList.forEach(Member::deactivate);
+    }
+
+    public List<Member> getMembersByLoginIds(List<String> loginIdList) {
+        return memberRepository.getMembersByLoginIds(loginIdList);
     }
 
     //@Scheduled(cron = "000000")
     public void beforeSleep() {
         List<String> emailLists = memberRepository.getAllBeforeSleepEmails();
         emailLists.forEach(mailService::sendChangeSleep);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Member> getMembersByLoginId(List<String> loginIdList) {
-        return memberRepository.getMembersByLoginIdList(loginIdList);
-    }
-
-    @Transactional(readOnly = true)
-    public List<LoginLogResponse> getAllLoginLogs() {
-        return memberRepository.getAllLoginLogs();
-    }
-
-    @Transactional(readOnly = true)
-    public List<SearchMemberResponse> searchByMemberName(String name) {
-        return memberRepository.getSearchResultsByName(name);
     }
 
     public Member findByLoginId(String loginId) {
@@ -185,13 +169,9 @@ public class MemberService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
-    private Member validatePasswordAndReturn(Long memberId, String password) {
+    private Member verifyPasswordAndReturn(Long memberId, String password) {
         Member member = findById(memberId);
-
-        if (!passwordEncoder.matches(password, member.getPassword())) {
-            throw new CustomException(ErrorCode.PASSWORD_NOT_MATCH);
-        }
-
+        verifyPassword(password, member.getPassword());
         return member;
     }
 
@@ -207,9 +187,31 @@ public class MemberService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
-    private void verifyPassword(String currentPassword, String newPassword) {
-        if (passwordEncoder.matches(newPassword, currentPassword)) {
+    private boolean isPasswordMatches(String input, String saved) {
+        return passwordEncoder.matches(input, saved);
+    }
+
+    private void verifyPassword(String input, String saved) {
+        if (!isPasswordMatches(input, saved)) {
+            throw new CustomException(ErrorCode.PASSWORD_NOT_MATCH);
+        }
+    }
+
+    private void validatePassword(String newPassword, String currentPassword) {
+        if (isPasswordMatches(newPassword, currentPassword)) {
             throw new CustomException(ErrorCode.PASSWORD_IS_SAME);
+        }
+    }
+
+    private void validateMemberName(String saved, String input) {
+        if (!StringUtils.equals(saved, input)) {
+            throw new CustomException(ErrorCode.EMAIL_NAME_NOT_MATCH);
+        }
+    }
+
+    private void validateMemberLoginId(String saved, String input) {
+        if (!StringUtils.equals(saved, input)) {
+            throw new CustomException(ErrorCode.EMAIL_ID_NOT_MATCH);
         }
     }
 }
