@@ -1,10 +1,10 @@
 package com.FlagHome.backend.domain.activity.entity.enums;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public enum BookUsage {
     USE("사용"),
     NOT_USE("미사용");

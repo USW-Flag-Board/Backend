@@ -13,7 +13,7 @@ import java.util.List;
 public interface MemberRepositoryCustom {
     List<Member> getAllSleepMembers();
 
-    List<Member> getMembersByLoginIdList(List<String> loginIdList);
+    List<Member> getMembersByLoginIds(List<String> loginIdList);
 
     List<String> getAllBeforeSleepEmails();
 
@@ -23,5 +23,5 @@ public interface MemberRepositoryCustom {
 
     List<LoginLogResponse> getAllLoginLogs();
 
-    List<SearchMemberResponse> getSearchResultsByName(String name);
+    List<SearchMemberResponse> searchMemberByName(String name);
 }

@@ -29,7 +29,7 @@ public class SleepingService {
     }
 
     @Transactional
-    public void convertSleepToMember(Member member, Sleeping sleeping) {
+    public void reactivateMember(Member member, Sleeping sleeping) {
         member.reactivate(sleeping);
         sleepingRepository.delete(sleeping);
     }

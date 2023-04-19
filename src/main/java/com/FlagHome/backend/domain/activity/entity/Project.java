@@ -23,8 +23,8 @@ public class Project extends Activity {
 
     @Builder
     public Project(String name, String description, Member leader, ActivityType activityType,
-                   Proceed proceed, ActivityStatus status, int semester, String githubLink) {
-        super(name, description, leader, activityType, proceed, status, semester);
+                   Proceed proceed, int semester, String githubLink) {
+        super(name, description, leader, activityType, proceed, semester);
         this.githubLink = githubLink;
     }
 
@@ -40,7 +40,6 @@ public class Project extends Activity {
                 .proceed(activityRequest.getProceed())
                 .githubLink(activityRequest.getGithubLink())
                 .activityType(ActivityType.PROJECT)
-                .status(ActivityStatus.RECRUIT)
                 .semester(LocalDateTime.now().getMonthValue())
                 .build();
     }

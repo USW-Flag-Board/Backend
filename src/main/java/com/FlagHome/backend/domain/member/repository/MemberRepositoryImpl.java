@@ -2,6 +2,7 @@ package com.FlagHome.backend.domain.member.repository;
 
 import com.FlagHome.backend.domain.member.controller.dto.response.*;
 import com.FlagHome.backend.domain.member.entity.Member;
+import com.FlagHome.backend.domain.member.entity.enums.MemberStatus;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -40,7 +41,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
     }
 
     @Override
-    public List<Member> getMembersByLoginIdList(List<String> loginIdList) {
+    public List<Member> getMembersByLoginIds(List<String> loginIdList) {
         return queryFactory
                 .selectFrom(member)
                 .where(member.loginId.in(loginIdList))
@@ -89,13 +90,13 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
     }
 
     @Override
-    public List<SearchMemberResponse> getSearchResultsByName(String name) {
+    public List<SearchMemberResponse> searchMemberByName(String name) {
         return queryFactory
                 .select(new QSearchMemberResponse(
                         asString(name).as(member.name),
                         member.avatar.major))
                 .from(member)
-                .where(member.name.eq(name)) // 수정하기
+                .where(member.name.contains(name))
                 .fetch();
     }
 }

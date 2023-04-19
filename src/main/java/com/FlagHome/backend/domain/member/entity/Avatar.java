@@ -60,4 +60,6 @@ public class Avatar {
                 .bio(" ")
                 .build();
     }
+    
+    // 비활성화 고려하기
 }

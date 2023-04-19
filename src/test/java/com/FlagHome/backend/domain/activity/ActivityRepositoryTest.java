@@ -251,19 +251,16 @@ public class ActivityRepositoryTest extends RepositoryTest {
             Activity project = Project.builder()
                     .name("project")
                     .semester(LocalDateTime.now().getMonthValue())
-                    .status(ActivityStatus.ON)
                     .build();
 
             Activity mentoring = Mentoring.builder()
                     .name("mentoring")
                     .semester(LocalDateTime.now().getMonthValue())
-                    .status(ActivityStatus.RECRUIT)
                     .build();
 
             Activity study = Study.builder()
                     .name("study")
                     .semester(LocalDateTime.now().getMonthValue())
-                    .status(ActivityStatus.OFF)
                     .build();
 
             activityRepository.saveAll(Arrays.asList(project, mentoring, study));
@@ -379,7 +376,6 @@ public class ActivityRepositoryTest extends RepositoryTest {
         activityRepository.save(Project.builder()
                 .leader(member)
                 .semester(LocalDateTime.now().getMonthValue())
-                .status(ActivityStatus.RECRUIT)
                 .build());
 
         // when

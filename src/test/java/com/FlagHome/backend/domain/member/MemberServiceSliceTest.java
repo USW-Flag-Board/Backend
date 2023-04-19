@@ -8,6 +8,7 @@ import com.FlagHome.backend.domain.member.service.MemberService;
 import com.FlagHome.backend.domain.member.token.entity.FindRequestToken;
 import com.FlagHome.backend.domain.member.token.entity.Token;
 import com.FlagHome.backend.domain.member.token.service.FindRequestTokenService;
+import com.FlagHome.backend.global.utility.RandomGenerator;
 import com.FlagHome.backend.infra.aws.ses.service.MailService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,24 +42,18 @@ public class MemberServiceSliceTest {
     private FindRequestTokenService findRequestTokenService;
 
     @Test
-    @DisplayName("아이디 찾기 테스트")
-    void findIdTest() {
+    void 아이디_찾기_테스트() {
         // given
-        String name = "문희조";
-        String email = "gmlwh124@suwon.ac.kr";
-        String certification = "123456";
-        LocalDateTime expireAt = LocalDateTime.now();
-        
+        final String name = "문희조";
+        final String email = "gmlwh124@suwon.ac.kr";
+        final String certification = RandomGenerator.getRandomNumber();
+
         Member member = Member.builder()
                 .name(name)
                 .email(email)
                 .build();
-        
-        Token findRequestToken = FindRequestToken.builder()
-                .key(email)
-                .value(certification)
-                .expiredAt(expireAt)
-                .build();
+
+        Token findRequestToken = FindRequestToken.of(email, certification);
 
         given(memberRepository.findByEmail(email)).willReturn(Optional.of(member));
         given(findRequestTokenService.issueToken(anyString(), anyString())).willReturn(findRequestToken);
@@ -71,7 +66,7 @@ public class MemberServiceSliceTest {
         then(findRequestTokenService).should(times(1)).issueToken(anyString(), anyString());
         then(mailService).should(times(1)).sendFindCertification(anyString(), anyString());
         assertThat(findResponse.getEmail()).isEqualTo(email);
-        assertThat(findResponse.getDeadLine()).isEqualTo(expireAt);
+        assertThat(findResponse.getDeadLine()).isEqualTo(findRequestToken.getExpiredAt());
     }
 
     @Test

@@ -5,6 +5,7 @@ import com.FlagHome.backend.domain.activity.entity.enums.BookUsage;
 import com.FlagHome.backend.domain.activity.entity.enums.Proceed;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -20,7 +21,7 @@ public class ActivityRequest {
     @NotBlank
     private String description;
 
-    @Schema(name = "진행 방식", description = "대면 / 비대면", required = true)
+    @Schema(name = "진행 방식", description = "대면 / 비대면", example = "ONLINE, OFFLINE, BOTH")
     @NotNull
     private Proceed proceed;
 
@@ -29,12 +30,15 @@ public class ActivityRequest {
     private ActivityType activityType;
 
     @Schema(name = "Github Organization URL", description = "보여줄 Github Organization 주소, 수정 가능")
+    @Nullable
     private String githubLink;
 
-    @Schema(name = "책 사용여부", description = "사용 / 미사용")
+    @Schema(name = "책 사용여부", description = "사용 / 미사용", example = "USE, NOT_USE")
+    @Nullable
     private BookUsage bookUsage;
 
     @Schema(name = "사용할 책 이름", description = "사용에 체크했다면 입력 받기")
+    @Nullable
     private String bookName;
 
     @Builder

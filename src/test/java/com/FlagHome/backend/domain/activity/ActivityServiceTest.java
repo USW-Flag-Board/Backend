@@ -72,13 +72,11 @@ public class ActivityServiceTest {
         void getActivitySuccessTest() {
             // given
             final ActivityType project = ActivityType.PROJECT;
-            final ActivityStatus activityStatus = ActivityStatus.RECRUIT;
 
             Member member = memberRepository.save(Member.builder().build());
             Activity activity = activityRepository.saveAndFlush(Project.builder()
                     .leader(member)
                     .activityType(project)
-                    .status(activityStatus)
                     .semester(LocalDateTime.now().getMonthValue())
                     .build());
 
@@ -88,7 +86,7 @@ public class ActivityServiceTest {
             // then
             assertThat(activityResponse.getId()).isEqualTo(activity.getId());
             assertThat(activityResponse.getActivityType()).isEqualTo(project);
-            assertThat(activityResponse.getActivityStatus()).isEqualTo(activityStatus);
+            assertThat(activityResponse.getActivityStatus()).isEqualTo(ActivityStatus.RECRUIT);
         }
 
         @Test
@@ -578,7 +576,6 @@ public class ActivityServiceTest {
             activity = activityRepository.save(Study.builder()
                             .leader(member)
                             .semester(LocalDateTime.now().getMonthValue())
-                            .status(ActivityStatus.RECRUIT)
                             .build());
         }
 
@@ -641,7 +638,6 @@ public class ActivityServiceTest {
             activity = activityRepository.save(Study.builder()
                     .leader(member)
                     .semester(LocalDateTime.now().getMonthValue())
-                    .status(ActivityStatus.RECRUIT)
                     .build());
         }
 
@@ -688,7 +684,6 @@ public class ActivityServiceTest {
             activity = activityRepository.save(Study.builder()
                     .leader(member)
                     .semester(LocalDateTime.now().getMonthValue())
-                    .status(ActivityStatus.RECRUIT)
                     .build());
         }
 
@@ -729,7 +724,6 @@ public class ActivityServiceTest {
             activity = activityRepository.save(Study.builder()
                     .leader(member)
                     .semester(LocalDateTime.now().getMonthValue())
-                    .status(ActivityStatus.RECRUIT)
                     .build());
         }
 
