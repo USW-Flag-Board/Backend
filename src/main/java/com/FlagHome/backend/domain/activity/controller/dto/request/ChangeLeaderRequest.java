@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotBlank;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChangeLeaderRequest {
     @Schema(name = "아이디", description = "로그인 시에 사용되는 아이디", required = true)
     @NotBlank

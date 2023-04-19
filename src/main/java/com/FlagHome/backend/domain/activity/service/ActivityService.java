@@ -73,6 +73,11 @@ public class ActivityService {
         return memberActivityService.getAllActivitiesOfMember(loginId);
     }
 
+    @Transactional(readOnly = true)
+    public List<ActivityResponse> getRecruitActivities() {
+        return activityRepository.getRecruitActivities();
+    }
+
     public Boolean checkApply(Long memberId, Long activityId) {
         return activityApplyService.checkApply(memberId, activityId);
     }

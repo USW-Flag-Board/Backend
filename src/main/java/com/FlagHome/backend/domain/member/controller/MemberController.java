@@ -121,7 +121,7 @@ public class MemberController {
     })
     @ResponseStatus(OK)
     @PostMapping("/avatar/image")
-    public ApplicationResponse updateProfileImage(@RequestPart(value = "file") MultipartFile profileImage) {
+    public ApplicationResponse updateProfileImage(@RequestPart("image") MultipartFile profileImage) {
         memberService.updateProfileImage(SecurityUtils.getMemberId(), profileImage);
         return new ApplicationResponse<>();
     }

@@ -2,8 +2,8 @@ package com.FlagHome.backend.domain.member.service;
 
 import com.FlagHome.backend.domain.auth.AuthInformation;
 import com.FlagHome.backend.domain.member.controller.dto.response.*;
-import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.entity.Avatar;
+import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.sleeping.entity.Sleeping;
 import com.FlagHome.backend.domain.member.sleeping.service.SleepingService;
@@ -11,9 +11,10 @@ import com.FlagHome.backend.domain.member.token.entity.Token;
 import com.FlagHome.backend.domain.member.token.service.FindRequestTokenService;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
+import com.FlagHome.backend.global.utility.RandomGenerator;
+import com.FlagHome.backend.infra.aws.s3.entity.enums.FileDirectory;
 import com.FlagHome.backend.infra.aws.s3.service.AwsS3Service;
 import com.FlagHome.backend.infra.aws.ses.service.MailService;
-import com.FlagHome.backend.global.utility.RandomGenerator;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,7 +28,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class MemberService {
-    private static final String PROFILE_IMAGE_DIRECTORY = "/avatar";
     private final MemberRepository memberRepository;
     private final MailService mailService;
     private final AwsS3Service awsS3Service;
@@ -134,7 +134,7 @@ public class MemberService {
     @Transactional
     public void updateProfileImage(Long memberId, MultipartFile file) {
         Member member = findById(memberId);
-        String profileImageUrl =  awsS3Service.upload(file, PROFILE_IMAGE_DIRECTORY);
+        String profileImageUrl =  awsS3Service.upload(file, FileDirectory.PROFILE.getDirectory());
         member.getAvatar().changeProfileImage(profileImageUrl);
     }
 

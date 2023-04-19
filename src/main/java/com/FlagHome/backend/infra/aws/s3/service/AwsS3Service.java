@@ -51,7 +51,7 @@ public class AwsS3Service {
     }
 
     private String createFileName(MultipartFile file, String directory) {
-        String[] split = Objects.requireNonNull(file.getContentType().split("/"));
+        String[] split = Objects.requireNonNull(Objects.requireNonNull(file.getContentType()).split("/"));
         String extension = split[split.length - 1];
         return directory + "/" + UUID.randomUUID() + "." + extension;
     }

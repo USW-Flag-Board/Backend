@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "auth_information")
 public class AuthInformation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -92,7 +93,7 @@ public class AuthInformation {
     }
 
     public void validateAuthTime() {
-        final LocalDateTime expireAt = this.createdAt.plusMinutes(10);
+        final LocalDateTime expireAt = this.createdAt.plusMinutes(5);
         if (expireAt.isBefore(LocalDateTime.now())) {
             throw new CustomException(ErrorCode.EXPIRED_AUTHENTICATION_TIME);
         }
