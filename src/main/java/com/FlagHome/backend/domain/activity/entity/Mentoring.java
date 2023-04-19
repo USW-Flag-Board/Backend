@@ -27,8 +27,8 @@ public class Mentoring extends Activity {
 
     @Builder
     public Mentoring(String name, String description, Member leader, ActivityType activityType,
-                     Proceed proceed, ActivityStatus status, int semester, BookUsage bookUsage, String bookName) {
-        super(name, description, leader, activityType, proceed, status, semester);
+                     Proceed proceed, int semester, BookUsage bookUsage, String bookName) {
+        super(name, description, leader, activityType, proceed, semester);
         this.bookUsage = bookUsage;
         this.bookName = bookName;
     }
@@ -47,7 +47,6 @@ public class Mentoring extends Activity {
                 .bookUsage(activityRequest.getBookUsage())
                 .bookName(activityRequest.getBookName())
                 .activityType(ActivityType.MENTORING)
-                .status(ActivityStatus.RECRUIT)
                 .semester(LocalDateTime.now().getMonthValue())
                 .build();
     }

@@ -50,13 +50,13 @@ public abstract class Activity extends BaseEntity {
     private Semester semester;
 
     public Activity(String name, String description, Member leader, ActivityType activityType,
-                    Proceed proceed, ActivityStatus status, int semester) {
+                    Proceed proceed, int semester) {
         this.name = name;
         this.description = description;
         this.leader = leader;
         this.activityType = activityType;
         this.proceed = proceed;
-        this.status = status;
+        this.status = ActivityStatus.RECRUIT;
         this.semester = Semester.findSemester(semester);
     }
 
