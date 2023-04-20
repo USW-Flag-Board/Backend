@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.member.service;
 
-import com.FlagHome.backend.domain.auth.AuthInformation;
+import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.member.controller.dto.response.*;
 import com.FlagHome.backend.domain.member.entity.Avatar;
 import com.FlagHome.backend.domain.member.entity.Member;
@@ -136,17 +136,11 @@ public class MemberService {
     }
 
     //@Scheduled(cron = "000000")
-    public void changeAllToSleepMember() {
-        List<Member> sleepingMembers = memberRepository.getAllSleepMembers();
-        List<Sleeping> sleepingList = sleepingMembers.stream()
-                        .map(Sleeping::of)
-                        .collect(Collectors.toList());
-        sleepingService.saveAllSleeping(sleepingList);
-        deactivateMembers(sleepingMembers);
-    }
-
-    public void deactivateMembers(List<Member> memberList) {
-        memberList.forEach(Member::deactivate);
+    public void selectingDeactivateMembers() {
+        List<Member> deactivateMembers = memberRepository.getDeactivateMembers();
+        List<Sleeping> sleepings = convertToSleepings(deactivateMembers);
+        sleepingService.saveAllSleeping(sleepings);
+        deactivateMembers(deactivateMembers);
     }
 
     public List<Member> getMembersByLoginIds(List<String> loginIdList) {
@@ -185,6 +179,16 @@ public class MemberService {
     private Member findByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    private List<Sleeping> convertToSleepings(List<Member> deactivateMembers) {
+        return deactivateMembers.stream()
+                .map(Sleeping::of)
+                .collect(Collectors.toList());
+    }
+
+    private void deactivateMembers(List<Member> memberList) {
+        memberList.forEach(Member::deactivate);
     }
 
     private boolean isPasswordMatches(String input, String saved) {

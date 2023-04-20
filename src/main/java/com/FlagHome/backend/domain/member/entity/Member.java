@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.member.entity;
 
-import com.FlagHome.backend.domain.auth.AuthInformation;
+import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.member.entity.enums.MemberStatus;
 import com.FlagHome.backend.domain.member.entity.enums.Role;
 import com.FlagHome.backend.domain.member.sleeping.entity.Sleeping;
@@ -64,7 +64,7 @@ public class Member extends BaseEntity {
                 .password(passwordEncoder.encode(authInformation.getPassword()))
                 .name(authInformation.getName())
                 .email(authInformation.getEmail())
-                .avatar(Avatar.of(authInformation.getNickName(), authInformation.getStudentId(), authInformation.getMajor()))
+                .avatar(Avatar.of(authInformation.getNickname(), authInformation.getStudentId(), authInformation.getMajor()))
                 .role(Role.from(authInformation.getJoinType()))
                 .build();
     }

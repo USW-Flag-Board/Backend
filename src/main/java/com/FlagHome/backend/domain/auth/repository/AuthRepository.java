@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.auth.repository;
 
-import com.FlagHome.backend.domain.auth.AuthInformation;
+import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
