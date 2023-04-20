@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ActivityApplyService {
     private final ActivityApplyRepository activityApplyRepository;
@@ -21,7 +22,6 @@ public class ActivityApplyService {
         return activityApplyRepository.isApplied(memberId, activityId);
     }
 
-    @Transactional
     public ActivityApply apply(Member member, Activity activity) {
         ActivityApply apply = ActivityApply.of(member, activity);
         return activityApplyRepository.save(apply);
@@ -32,12 +32,10 @@ public class ActivityApplyService {
         return activityApplyRepository.getAllApplies(activityId);
     }
 
-    @Transactional
     public void cancelApply(Long memberId, Long activityId) {
         activityApplyRepository.deleteByMemberIdAndActivityId(memberId, activityId);
     }
 
-    @Transactional
     public void deleteAllApplies(Long activityId) {
         activityApplyRepository.deleteAllApplies(activityId);
     }

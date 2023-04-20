@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.auth.controller.dto.request;
 
-import com.FlagHome.backend.domain.auth.JoinType;
+import com.FlagHome.backend.domain.auth.entity.JoinType;
 import com.FlagHome.backend.domain.member.entity.enums.Major;
 import com.FlagHome.backend.global.annotation.PasswordFormat;
 import com.FlagHome.backend.global.annotation.USWEmailFormat;
@@ -11,9 +11,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class JoinRequest {
     @Schema(description = "아이디", required = true, example = "gmlwh124")
     @NotBlank
@@ -29,7 +27,7 @@ public class JoinRequest {
 
     @Schema(name = "닉네임", required = true, example = "john")
     @NotBlank
-    private String nickName;
+    private String nickname;
 
     @USWEmailFormat
     @Schema(description = "이메일", required = true, example = "gmlwh124@suwon.ac.kr")
@@ -46,4 +44,17 @@ public class JoinRequest {
     @Schema(description = "가입 구분", required = true, example = "일반 / 동아리")
     @NotNull
     private JoinType joinType;
+
+    @Builder
+    public JoinRequest(String loginId, String password, String name, String nickname,
+                       String email, Major major, String studentId, JoinType joinType) {
+        this.loginId = loginId;
+        this.password = password;
+        this.name = name;
+        this.nickname = nickname;
+        this.email = email;
+        this.major = major;
+        this.studentId = studentId;
+        this.joinType = joinType;
+    }
 }

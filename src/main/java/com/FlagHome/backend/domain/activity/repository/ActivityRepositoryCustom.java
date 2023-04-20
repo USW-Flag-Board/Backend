@@ -4,11 +4,9 @@ import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityResp
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface ActivityRepositoryCustom {
-    Optional<ActivityResponse> getActivity(long activityId);
     List<ActivityResponse> getAllActivities();
     List<ActivityResponse> getRecruitActivities();
 }

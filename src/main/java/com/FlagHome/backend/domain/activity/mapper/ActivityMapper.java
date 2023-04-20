@@ -1,11 +1,13 @@
 package com.FlagHome.backend.domain.activity.mapper;
 
 import com.FlagHome.backend.domain.activity.controller.dto.request.ActivityRequest;
+import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityResponse;
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 import java.util.Arrays;
@@ -22,4 +24,7 @@ public interface ActivityMapper {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_SUPPORT_ACTIVITY));
         return matchingType.toEntity(activityRequest);
     }
+
+    @Mapping(source = "activity.leader.name", target = "leader")
+    ActivityResponse toResponse(Activity activity);
 }

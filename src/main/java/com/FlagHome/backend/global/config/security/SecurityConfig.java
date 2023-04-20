@@ -68,7 +68,7 @@ public class SecurityConfig {
 
         http.authorizeRequests()
             .antMatchers("/auth/**", "/members/find/password", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**", "/favicon.ico").permitAll()
-            .antMatchers(HttpMethod.GET, "/activities", "/activities/{loginId}/profile", "/members/{loginId}", "/members/search", "/posts/**", "/replies/**").permitAll()
+            .antMatchers(HttpMethod.GET, "/activities", "/activities/{id}", "/activities/{loginId}/profile", "/members/{loginId}", "/members/search", "/posts/**", "/replies/**").permitAll()
             .antMatchers(HttpMethod.POST, "/members/certification", "/members/find/id").permitAll()
             .antMatchers("/activities/**").hasRole(ROLE_CREW.getRole())
             .antMatchers("/posts/**", "/members/**", "/replies/**", "/reports/tmp").hasAnyRole(ROLE_USER.getRole(), ROLE_CREW.getRole())
