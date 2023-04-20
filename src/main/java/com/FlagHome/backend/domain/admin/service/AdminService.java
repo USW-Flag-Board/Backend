@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.admin.service;
 
 import com.FlagHome.backend.domain.admin.controller.dto.ApproveSignUpResponse;
-import com.FlagHome.backend.domain.auth.AuthInformation;
+import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import com.FlagHome.backend.domain.member.controller.dto.response.LoginLogResponse;
 import com.FlagHome.backend.domain.member.service.MemberService;

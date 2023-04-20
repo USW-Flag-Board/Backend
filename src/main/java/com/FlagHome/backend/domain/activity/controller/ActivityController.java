@@ -40,22 +40,19 @@ public class ActivityController {
     @Tag(name = "activity")
     @Operation(summary = "활동 상세보기", description = "선택한 활동 상세보기")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "활동 상세보기가 정상적으로 처리되었습니다."),
+            @ApiResponse(responseCode = "200", description = "활동 정보 가져오기 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 활동입니다.")
     })
     @ResponseStatus(OK)
     @GetMapping("/{id}")
-    public ApplicationResponse<ActivityResponse> getActivity(@PathVariable("id") long activityId) {
-        ActivityResponse response = activityService.getActivity(activityId);
-        return new ApplicationResponse<>(response);
+    public ApplicationResponse<ActivityResponse> getActivity(@PathVariable Long id) {
+        Activity activity = activityService.getActivity(id);
+        return new ApplicationResponse<>(activityMapper.toResponse(activity));
     }
 
     @Tag(name = "activity")
-    @Operation(summary = "모든 활동 가져오기", description = "동아리 소개에 사용될 API\n\n" +
-                                                          "연도 별로 활동 종류에 따라서 고유번호, 이름, 상태, 시즌을 리턴한다.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "모든 활동들을 가져왔습니다."),
-    })
+    @Operation(summary = "모든 활동 가져오기")
+    @ApiResponse(responseCode = "200", description = "모든 활동들을 가져왔습니다.")
     @ResponseStatus(OK)
     @GetMapping
     public ApplicationResponse<GetAllActivitiesResponse> getAllActivities() {
@@ -72,8 +69,8 @@ public class ActivityController {
     })
     @ResponseStatus(OK)
     @GetMapping("/{id}/apply")
-    public ApplicationResponse<List<ActivityApplyResponse>> getAllActivityApplies(@PathVariable("id") long activityId) {
-        List<ActivityApplyResponse> response = activityService.getAllActivityApplies(SecurityUtils.getMemberId(), activityId);
+    public ApplicationResponse<List<ActivityApplyResponse>> getAllApplies(@PathVariable Long id) {
+        List<ActivityApplyResponse> response = activityService.getAllApplies(SecurityUtils.getMemberId(), id);
         return new ApplicationResponse(response);
     }
 
@@ -86,8 +83,8 @@ public class ActivityController {
     })
     @ResponseStatus(OK)
     @GetMapping("/{id}/participant")
-    public ApplicationResponse<List<ParticipantResponse>> getAllParticipants(@PathVariable("id") long activityId) {
-        List<ParticipantResponse> response = activityService.getAllParticipants(SecurityUtils.getMemberId(), activityId);
+    public ApplicationResponse<List<ParticipantResponse>> getAllParticipants(@PathVariable Long id) {
+        List<ParticipantResponse> response = activityService.getAllParticipants(SecurityUtils.getMemberId(), id);
         return new ApplicationResponse(response);
     }
 
@@ -112,6 +109,21 @@ public class ActivityController {
     public ApplicationResponse<List<ActivityResponse>> getRecruitActivities() {
         List<ActivityResponse> response = activityService.getRecruitActivities();
         return new ApplicationResponse<>(response);
+    }
+
+    @Tag(name = "activity")
+    @Operation(summary = "활동 만들기", description = "[토큰필요] 활동 만들기는 동아리원만 가능하다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "만들기 성공"),
+            @ApiResponse(responseCode = "401", description = "일반 유저가 만들려고한 경우")
+    })
+    @ResponseStatus(CREATED)
+    @PostMapping
+    public ApplicationResponse<URI> createActivity(@RequestBody @Valid ActivityRequest activityRequest) {
+        Activity activity = activityMapper.toActivity(activityRequest);
+        Long id = activityService.create(SecurityUtils.getMemberId(), activity).getId();
+        URI uri = UriCreator.createURI(DEFAULT_URL, id);
+        return new ApplicationResponse(uri);
     }
 
     @Tag(name = "activity")
@@ -141,21 +153,6 @@ public class ActivityController {
     public ApplicationResponse applyActivity(@PathVariable("id") long activityId) {
         activityService.applyActivity(SecurityUtils.getMemberId(), activityId);
         return new ApplicationResponse<>();
-    }
-
-    @Tag(name = "activity")
-    @Operation(summary = "활동 만들기", description = "[토큰필요] 활동 만들기는 동아리원만 가능하다.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "만들기 성공"),
-            @ApiResponse(responseCode = "401", description = "일반 유저가 만들려고한 경우")
-    })
-    @ResponseStatus(CREATED)
-    @PostMapping
-    public ApplicationResponse<URI> createActivity(@RequestBody @Valid ActivityRequest activityRequest) {
-        Activity activity = activityMapper.toActivity(activityRequest);
-        Long id = activityService.create(SecurityUtils.getMemberId(), activity).getId();
-        URI uri = UriCreator.createURI(DEFAULT_URL, id);
-        return new ApplicationResponse(uri);
     }
 
 //    @Tag(name = "activity")

@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public interface MemberRepositoryCustom {
-    List<Member> getAllSleepMembers();
+    List<Member> getDeactivateMembers();
 
     List<Member> getMembersByLoginIds(List<String> loginIdList);
 

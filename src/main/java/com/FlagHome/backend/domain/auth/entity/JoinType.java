@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain.auth;
+package com.FlagHome.backend.domain.auth.entity;
 
 import lombok.Getter;
 

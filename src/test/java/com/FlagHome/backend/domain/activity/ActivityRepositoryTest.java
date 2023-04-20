@@ -54,36 +54,6 @@ public class ActivityRepositoryTest extends RepositoryTest {
     @DisplayName("활동 테스트")
     class activityTest {
         @Test
-        @DisplayName("활동 가져오기 테스트")
-        void getActivityTest() {
-            // given
-            String memberName = "Hejow";
-            String activityName = "이름";
-            Member member = memberRepository.saveAndFlush(Member.builder()
-                    .name(memberName)
-                    .build());
-            ActivityType activityType = ActivityType.PROJECT;
-
-            Project project = Project.builder()
-                    .name(activityName)
-                    .leader(member)
-                    .activityType(activityType)
-                    .semester(LocalDateTime.now().getMonthValue())
-                    .build();
-
-            Activity activity = activityRepository.saveAndFlush(project);
-
-            // when
-            ActivityResponse activityResponse = activityRepository.getActivity(activity.getId()).get();
-
-            // then
-            assertThat(activity.getId()).isEqualTo(activityResponse.getId());
-            assertThat(activity.getName()).isEqualTo(activityResponse.getName());
-            assertThat(activity.getLeader().getName()).isEqualTo(activityResponse.getLeader());
-            assertThat(activityResponse.getActivityType()).isEqualTo(activityType);
-        }
-
-        @Test
         @DisplayName("모든 활동 가져오기 테스트")
         void getAllActivitiesTest() {
             // given

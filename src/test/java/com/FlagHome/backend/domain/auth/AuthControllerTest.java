@@ -2,6 +2,8 @@ package com.FlagHome.backend.domain.auth;
 
 import com.FlagHome.backend.common.IntegrationTest;
 import com.FlagHome.backend.domain.auth.controller.dto.request.SignUpRequest;
+import com.FlagHome.backend.domain.auth.entity.AuthInformation;
+import com.FlagHome.backend.domain.auth.entity.JoinType;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.utility.RandomGenerator;

@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.auth.service;
 
-import com.FlagHome.backend.domain.auth.AuthInformation;
+import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.auth.controller.dto.request.JoinRequest;
 import com.FlagHome.backend.domain.auth.controller.dto.response.JoinResponse;
 import com.FlagHome.backend.domain.auth.controller.dto.response.SignUpResponse;

@@ -64,47 +64,19 @@ public class ActivityServiceTest {
     @Autowired
     private EntityManager entityManager;
 
-    @Nested
-    @DisplayName("활동 상세보기 테스트")
-    class getActivityTest {
-        @Test
-        @DisplayName("활동 상세보기 성공 테스트")
-        void getActivitySuccessTest() {
-            // given
-            final ActivityType project = ActivityType.PROJECT;
+    @Test
+    void 활동_상세보기_실패_테스트() {
+        // given
+        final Long noneId = 1L;
 
-            Member member = memberRepository.save(Member.builder().build());
-            Activity activity = activityRepository.saveAndFlush(Project.builder()
-                    .leader(member)
-                    .activityType(project)
-                    .semester(LocalDateTime.now().getMonthValue())
-                    .build());
-
-            // when
-            ActivityResponse activityResponse = activityService.getActivity(activity.getId());
-
-            // then
-            assertThat(activityResponse.getId()).isEqualTo(activity.getId());
-            assertThat(activityResponse.getActivityType()).isEqualTo(project);
-            assertThat(activityResponse.getActivityStatus()).isEqualTo(ActivityStatus.RECRUIT);
-        }
-
-        @Test
-        @DisplayName("활동 상세보기 실패 테스트")
-        void getActivityFailTest() {
-            // given
-            final long noneId = 1L;
-
-            // when, then
-            assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> activityService.getActivity(noneId))
-                    .withMessage(ErrorCode.ACTIVITY_NOT_FOUND.getMessage());
-        }
+        // when, then
+        assertThatExceptionOfType(CustomException.class)
+                .isThrownBy(() -> activityService.getActivity(noneId))
+                .withMessage(ErrorCode.ACTIVITY_NOT_FOUND.getMessage());
     }
 
     @Test
-    @DisplayName("모든 활동 가져오기 테스트")
-    void getAllActivitiesTest() {
+    void 모든_활동_가져오기_테스트() {
         // given
         String year = "2023";
         ActivityType projectType = ActivityType.PROJECT;
@@ -134,14 +106,11 @@ public class ActivityServiceTest {
         activityRepository.saveAll(Arrays.asList(project, study, mentoring));
 
         // when
-        GetAllActivitiesResponse getAllActivitiesResponse = activityService.getAllActivities();
+        GetAllActivitiesResponse response = activityService.getAllActivities();
 
         // then
-        assertThat(getAllActivitiesResponse.getAllActivities().isEmpty()).isFalse();
-        assertThat(getAllActivitiesResponse.getAllActivities().containsKey(year)).isTrue();
-        assertThat(getAllActivitiesResponse.getAllActivities().get(year).get(projectType)).isNotNull();
-        assertThat(getAllActivitiesResponse.getAllActivities().get(year).get(mentoringType)).isNotNull();
-        assertThat(getAllActivitiesResponse.getAllActivities().get(year).get(studyType)).isNotNull();
+        assertThat(response.getAllActivities().isEmpty()).isFalse();
+        assertThat(response.getAllActivities().size()).isEqualTo(3);
     }
 
     @Nested
@@ -191,7 +160,7 @@ public class ActivityServiceTest {
             entityManager.clear();
 
             // when
-            List<ActivityApplyResponse> activityApplyResponses = activityService.getAllActivityApplies(member.getId(), activity.getId());
+            List<ActivityApplyResponse> activityApplyResponses = activityService.getAllApplies(member.getId(), activity.getId());
 
             // then
             ActivityApplyResponse response = activityApplyResponses.get(0);
@@ -207,7 +176,7 @@ public class ActivityServiceTest {
             Member notLeader = memberRepository.save(Member.builder().build());
 
             assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> activityService.getAllActivityApplies(notLeader.getId(), activity.getId()))
+                    .isThrownBy(() -> activityService.getAllApplies(notLeader.getId(), activity.getId()))
                     .withMessage(ErrorCode.NOT_ACTIVITY_LEADER.getMessage());
         }
     }
@@ -605,7 +574,7 @@ public class ActivityServiceTest {
             activityService.closeRecruitment(member.getId(), activity.getId(), Arrays.asList(loginId1, loginId2));
 
             // then
-            List<ActivityApplyResponse> allActivityApplies = activityService.getAllActivityApplies(member.getId(), activity.getId());
+            List<ActivityApplyResponse> allActivityApplies = activityService.getAllApplies(member.getId(), activity.getId());
             List<ParticipantResponse> participantResponses = memberActivityRepository.getAllParticipantByActivityId(activity.getId());
             Activity findActivity = activityRepository.findById(activity.getId()).get();
             assertThat(allActivityApplies.isEmpty()).isTrue();

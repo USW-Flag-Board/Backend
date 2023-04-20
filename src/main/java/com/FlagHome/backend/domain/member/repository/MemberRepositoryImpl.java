@@ -20,7 +20,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<Member> getAllSleepMembers() {
+    public List<Member> getDeactivateMembers() {
         final LocalDateTime limit = LocalDateTime.now().minusDays(7);
 
         return queryFactory

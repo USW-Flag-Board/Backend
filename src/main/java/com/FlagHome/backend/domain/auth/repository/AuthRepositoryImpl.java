@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.auth.repository;
 
 import com.FlagHome.backend.domain.admin.controller.dto.QApproveSignUpResponse;
-import com.FlagHome.backend.domain.auth.AuthInformation;
+import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.admin.controller.dto.ApproveSignUpResponse;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,8 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.FlagHome.backend.domain.auth.QAuthInformation.authInformation;
+import static com.FlagHome.backend.domain.auth.entity.QAuthInformation.authInformation;
+
 
 @Repository
 @RequiredArgsConstructor

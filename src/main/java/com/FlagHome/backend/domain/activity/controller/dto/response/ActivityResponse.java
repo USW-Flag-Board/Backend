@@ -14,28 +14,24 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ActivityResponse {
-    private long id;
+    private Long id;
     private String name;
     private String leader;
     private ActivityType activityType;
-    private ActivityStatus activityStatus;
+    private ActivityStatus status;
     private Semester semester;
     private LocalDateTime createdAt;
 
     @Builder
     @QueryProjection
-    public ActivityResponse(long id, String name, String leader, ActivityType activityType,
-                            ActivityStatus activityStatus, Semester semester, LocalDateTime createdAt) {
+    public ActivityResponse(Long id, String name, String leader, ActivityType activityType,
+                            ActivityStatus status, Semester semester, LocalDateTime createdAt) {
         this.id = id;
         this.name = name;
         this.leader = leader;
         this.activityType = activityType;
-        this.activityStatus = activityStatus;
+        this.status = status;
         this.semester = semester;
         this.createdAt = createdAt;
-    }
-
-    public String getYear() {
-        return String.valueOf(this.createdAt.getYear());
     }
 }

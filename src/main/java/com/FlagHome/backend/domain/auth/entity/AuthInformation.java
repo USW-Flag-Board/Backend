@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain.auth;
+package com.FlagHome.backend.domain.auth.entity;
 
 import com.FlagHome.backend.domain.auth.controller.dto.request.JoinRequest;
 import com.FlagHome.backend.domain.member.entity.enums.Major;
@@ -31,8 +31,8 @@ public class AuthInformation {
     @Column
     private String email;
 
-    @Column(name = "nick_name")
-    private String nickName;
+    @Column
+    private String nickname;
 
     @Column(name = "student_id")
     private String studentId;
@@ -55,13 +55,13 @@ public class AuthInformation {
     private LocalDateTime createdAt;
 
     @Builder
-    public AuthInformation(String loginId, String password, String name, String email, String nickName,
+    public AuthInformation(String loginId, String password, String name, String email, String nickname,
                            String studentId, Major major, JoinType joinType, String certification) {
         this.loginId = loginId;
         this.password = password;
         this.name = name;
         this.email = email;
-        this.nickName = nickName;
+        this.nickname = nickname;
         this.studentId = studentId;
         this.major = major;
         this.joinType = joinType;
@@ -77,7 +77,7 @@ public class AuthInformation {
                 .name(joinRequest.getName())
                 .email(joinRequest.getEmail())
                 .major(joinRequest.getMajor())
-                .nickName(joinRequest.getNickName())
+                .nickname(joinRequest.getNickname())
                 .studentId(joinRequest.getStudentId())
                 .joinType(joinRequest.getJoinType())
                 .certification(certification)

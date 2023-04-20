@@ -14,16 +14,13 @@ import java.util.Map;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GetAllActivitiesResponse {
     @Schema(name = "모든 활동 정보")
-    private Map<String, Map<ActivityType, List<ActivityResponse>>> allActivities;
+    private List<ActivityResponse> allActivities;
 
-    @Builder
-    public GetAllActivitiesResponse(Map<String, Map<ActivityType, List<ActivityResponse>>> allActivities) {
+    public GetAllActivitiesResponse(List<ActivityResponse> allActivities) {
         this.allActivities = allActivities;
     }
 
-    public static GetAllActivitiesResponse from(Map<String, Map<ActivityType, List<ActivityResponse>>> allActivities) {
-        return GetAllActivitiesResponse.builder()
-                .allActivities(allActivities)
-                .build();
+    public static GetAllActivitiesResponse from(List<ActivityResponse> allActivities) {
+        return new GetAllActivitiesResponse(allActivities);
     }
 }

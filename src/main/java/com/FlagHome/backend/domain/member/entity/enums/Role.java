@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.member.entity.enums;
 
-import com.FlagHome.backend.domain.auth.JoinType;
+import com.FlagHome.backend.domain.auth.entity.JoinType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
