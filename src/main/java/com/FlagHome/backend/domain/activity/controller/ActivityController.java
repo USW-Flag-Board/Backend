@@ -4,6 +4,7 @@ import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyRespo
 import com.FlagHome.backend.domain.activity.controller.dto.request.ActivityRequest;
 import com.FlagHome.backend.domain.activity.controller.dto.request.ChangeLeaderRequest;
 import com.FlagHome.backend.domain.activity.controller.dto.request.CloseRecruitRequest;
+import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityDetailResponse;
 import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityResponse;
 import com.FlagHome.backend.domain.activity.controller.dto.response.GetAllActivitiesResponse;
 import com.FlagHome.backend.domain.activity.entity.Activity;
@@ -45,9 +46,9 @@ public class ActivityController {
     })
     @ResponseStatus(OK)
     @GetMapping("/{id}")
-    public ApplicationResponse<ActivityResponse> getActivity(@PathVariable Long id) {
+    public ApplicationResponse<ActivityDetailResponse> getActivity(@PathVariable Long id) {
         Activity activity = activityService.getActivity(id);
-        return new ApplicationResponse<>(activityMapper.toResponse(activity));
+        return new ApplicationResponse<>(activityMapper.toDetailResponse(activity));
     }
 
     @Tag(name = "activity")

@@ -33,20 +33,17 @@ public class ActivityRequest {
     private ActivityType activityType;
 
     @Schema(name = "Github Organization URL", description = "보여줄 Github Organization 주소, 수정 가능")
-    @Nullable
     private String githubLink;
 
     @Schema(name = "책 사용여부", description = "사용 / 미사용", example = "USE, NOT_USE")
-    @Nullable
     private BookUsage bookUsage;
 
     @Schema(name = "사용할 책 이름", description = "사용에 체크했다면 입력 받기")
-    @Nullable
     private String bookName;
 
     @Builder
     public ActivityRequest(String name, String description, Proceed proceed, ActivityType activityType,
-                           String githubLink, BookUsage bookUsage, String bookName) {
+                           @Nullable String githubLink, @Nullable BookUsage bookUsage, @Nullable String bookName) {
         this.name = name;
         this.description = description;
         this.proceed = proceed;

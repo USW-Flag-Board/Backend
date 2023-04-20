@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.activity.mapper;
 
 import com.FlagHome.backend.domain.activity.controller.dto.request.ActivityRequest;
-import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityResponse;
+import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityDetailResponse;
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
 import com.FlagHome.backend.global.exception.CustomException;
@@ -26,5 +26,5 @@ public interface ActivityMapper {
     }
 
     @Mapping(source = "activity.leader.name", target = "leader")
-    ActivityResponse toResponse(Activity activity);
+    ActivityDetailResponse toDetailResponse(Activity activity);
 }
