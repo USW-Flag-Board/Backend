@@ -5,6 +5,7 @@ import com.FlagHome.backend.common.IntegrationTest;
 import com.FlagHome.backend.domain.activity.controller.dto.request.ActivityRequest;
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.Project;
+import com.FlagHome.backend.domain.activity.entity.Study;
 import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
 import com.FlagHome.backend.domain.activity.entity.enums.Proceed;
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
@@ -22,6 +23,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -30,6 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class ActivityControllerTest extends IntegrationTest {
@@ -122,6 +125,32 @@ public class ActivityControllerTest extends IntegrationTest {
         resultActions
                 .andExpect(status().isOk())
 //                .andExpect(jsonPath("$.payload."))
+                .andDo(print());
+    }
+
+    @Test
+    public void 활동_신청_체크_테스트() throws Exception {
+        // given
+        final Role role = Role.ROLE_CREW;
+        Member applyMember = memberRepository.save(Member.builder().role(role).build());
+        setSecurityContext(applyMember);
+
+        Activity activity = activityRepository.save(Study.builder()
+                .leader(member)
+                .activityType(ActivityType.STUDY)
+                .semester(LocalDateTime.now().getMonthValue())
+                .build());
+
+        final String uri = BASE_URL + "/" + activity.getId() + "/check";
+
+        // when
+        ResultActions resultActions = mockMvc.perform(post(uri)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("payload").value(Boolean.FALSE))
                 .andDo(print());
     }
 

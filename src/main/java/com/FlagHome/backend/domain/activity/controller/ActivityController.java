@@ -124,20 +124,17 @@ public class ActivityController {
         Activity activity = activityMapper.toActivity(activityRequest);
         Long id = activityService.create(SecurityUtils.getMemberId(), activity).getId();
         URI uri = UriCreator.createURI(DEFAULT_URL, id);
-        return new ApplicationResponse(uri);
+        return new ApplicationResponse<>(uri);
     }
 
     @Tag(name = "activity")
     @Operation(summary = "활동 신청여부 확인하기", description = "[토큰필요] 한 멤버가 한 활동에 한번만 신청할 수 있다.\n\n" +
             "False : 미신청, True : 신청")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "신청여부 조회에 성공하였습니다."),
-            @ApiResponse(responseCode = "500", description = "서버 에러입니다. 관리자에게 문의해주세요.")
-    })
+    @ApiResponse(responseCode = "200", description = "신청여부 조회에 성공하였습니다.")
     @ResponseStatus(OK)
     @PostMapping("/{id}/check")
-    public ApplicationResponse<Boolean> checkApply(@PathVariable("id") long activityId) {
-        Boolean check = activityService.checkApply(SecurityUtils.getMemberId(), activityId);
+    public ApplicationResponse<Boolean> checkApply(@PathVariable Long id) {
+        Boolean check = activityService.checkApply(SecurityUtils.getMemberId(), id);
         return new ApplicationResponse<>(check);
     }
 

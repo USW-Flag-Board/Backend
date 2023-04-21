@@ -19,7 +19,7 @@ public class ActivityResponse {
     private String leader;
     private ActivityType activityType;
     private ActivityStatus status;
-    private Semester semester;
+    private String semester;
 
     @QueryProjection
     public ActivityResponse(Long id, String name, String leader, ActivityType activityType,
@@ -29,6 +29,6 @@ public class ActivityResponse {
         this.leader = leader;
         this.activityType = activityType;
         this.status = status;
-        this.semester = semester;
+        this.semester = semester.getSemester();
     }
 }
