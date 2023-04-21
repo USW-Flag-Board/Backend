@@ -52,18 +52,20 @@ public class ActivityService {
         return memberActivityService.getAllActivitiesOfMember(loginId);
     }
 
-    public Activity getActivity(Long activityId) {
-        return findById(activityId);
-    }
-
+    @Transactional(readOnly = true)
     public List<ActivityApplyResponse> getAllApplies(Long memberId, Long activityId) {
         Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
         return activityApplyService.getAllApplies(activity.getId());
     }
 
+    @Transactional(readOnly = true)
     public List<ParticipantResponse> getAllParticipants(Long memberId, Long activityId) {
         validateLeaderAndReturnActivity(memberId, activityId);
         return memberActivityService.getAllParticipants(activityId);
+    }
+
+    public Activity getActivity(Long activityId) {
+        return findById(activityId);
     }
 
     public Boolean checkApply(Long memberId, Long activityId) {
@@ -115,26 +117,21 @@ public class ActivityService {
 
     public void closeRecruitment(Long memberId, Long activityId, List<String> loginIdList) {
         Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
+        activity.isRecruitment();
         List<Member> memberList = memberService.getMembersByLoginIds(loginIdList);
         activityApplyService.deleteAllApplies(activityId);
         memberActivityService.registerMembers(activity, memberList);
         activity.closeRecruitment();
     }
 
-    public void reopenRecruitment(Long memberId, Long activityId) {
-        Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
-        memberActivityService.deleteAllByActivity(activity.getId());
-        activity.reopenRecruitment();
-    }
-
     public void finishActivity(Long memberId, Long activityId) {
         Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
+        activity.isOn();
         activity.finishActivity();
     }
 
     public void delete(Long memberId, Long activityId) {
         Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
-
         activityApplyService.deleteAllApplies(activityId);
         activityRepository.delete(activity);
     }

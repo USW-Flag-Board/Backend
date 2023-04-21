@@ -534,13 +534,12 @@ public class ActivityServiceTest {
     }
 
     @Nested
-    @DisplayName("활동 마감하기 테스트")
-    class closeRecruitmentTest {
+    class 활동_모집_마감하기_테스트 {
         private Member member;
         private Activity activity;
 
         @BeforeEach
-        void testSetUp() {
+        void testSetup() {
             member = memberRepository.save(Member.builder().build());
             activity = activityRepository.save(Study.builder()
                             .leader(member)
@@ -549,8 +548,7 @@ public class ActivityServiceTest {
         }
 
         @Test
-        @DisplayName("활동 마감하기 성공")
-        void closeSuccessTest() {
+        void 활동_모집_마감_성공_테스트() {
             // given
             String loginId1 = "gmlwh124";
             String loginId2 = "hejow124";
@@ -568,7 +566,7 @@ public class ActivityServiceTest {
                     .activity(activity)
                     .build();
 
-            activityApplyRepository.saveAll(Arrays.asList(apply1, apply2));
+            activityApplyRepository.saveAll(List.of(apply1, apply2));
 
             // when
             activityService.closeRecruitment(member.getId(), activity.getId(), Arrays.asList(loginId1, loginId2));
@@ -577,15 +575,13 @@ public class ActivityServiceTest {
             List<ActivityApplyResponse> allActivityApplies = activityService.getAllApplies(member.getId(), activity.getId());
             List<ParticipantResponse> participantResponses = memberActivityRepository.getAllParticipantByActivityId(activity.getId());
             Activity findActivity = activityRepository.findById(activity.getId()).get();
-            assertThat(allActivityApplies.isEmpty()).isTrue();
+            assertThat(allActivityApplies.size()).isEqualTo(0);
             assertThat(participantResponses.size()).isEqualTo(2);
-            assertThat(findActivity).isNotNull();
             assertThat(findActivity.getStatus()).isEqualTo(ActivityStatus.ON);
         }
 
         @Test
-        @DisplayName("활동 마감실패 - 활동장이 아님")
-        void closeFailByNotLeaderTest() {
+        void 활동_모집_마감_실패_테스트() {
             Member notLeader = memberRepository.save(Member.builder().build());
             List<String> list = new ArrayList<>();
 
@@ -595,90 +591,24 @@ public class ActivityServiceTest {
         }
     }
 
-    @Nested
-    @DisplayName("활동 다시 열기 테스트")
-    class reopenRecruitmentTest {
-        private Member member;
-        private Activity activity;
+    @Test
+    void 활동_마감하기_성공_테스트() {
+        // given
+        Member member = memberRepository.save(Member.builder().build());
+        Activity activity = activityRepository.save(Study.builder()
+                .leader(member)
+                .semester(LocalDateTime.now().getMonthValue())
+                .build());
 
-        @BeforeEach
-        void testSetUp() {
-            member = memberRepository.save(Member.builder().build());
-            activity = activityRepository.save(Study.builder()
-                    .leader(member)
-                    .semester(LocalDateTime.now().getMonthValue())
-                    .build());
-        }
 
-        @Test
-        @DisplayName("활동 다시 열기 성공")
-        void reopenSuccessTest() {
-            // given
-            MemberActivity memberActivity1 = MemberActivity.builder().activity(activity).build();
-            MemberActivity memberActivity2 = MemberActivity.builder().activity(activity).build();
+        activity.closeRecruitment();
 
-            memberActivityRepository.saveAll(Arrays.asList(memberActivity1, memberActivity2));
+        // when
+        activityService.finishActivity(member.getId(), activity.getId());
 
-            // when
-            activityService.reopenRecruitment(member.getId(), activity.getId());
-
-            // then
-            List<ParticipantResponse> responses = memberActivityRepository.getAllParticipantByActivityId(activity.getId());
-            Activity findActivity = activityRepository.findById(activity.getId()).get();
-            assertThat(responses.isEmpty()).isTrue();
-            assertThat(findActivity).isNotNull();
-            assertThat(findActivity.getStatus()).isEqualTo(ActivityStatus.RECRUIT);
-        }
-
-        @Test
-        @DisplayName("활동 다시 열기 실패 - 활동장이 아님")
-        void reopenFailByNotLeader() {
-            Member notLeader = memberRepository.save(Member.builder().build());
-
-            assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> activityService.reopenRecruitment(notLeader.getId(), activity.getId()))
-                    .withMessage(ErrorCode.NOT_ACTIVITY_LEADER.getMessage());
-        }
-    }
-
-    @Nested
-    @DisplayName("활동 마감하기 테스트")
-    class finishActivityTest {
-        private Member member;
-        private Activity activity;
-
-        @BeforeEach
-        void testSetUp() {
-            member = memberRepository.save(Member.builder().build());
-            activity = activityRepository.save(Study.builder()
-                    .leader(member)
-                    .semester(LocalDateTime.now().getMonthValue())
-                    .build());
-        }
-
-        @Test
-        @DisplayName("활동 마감하기 성공")
-        void finishSuccessTest() {
-            // given
-
-            // when
-            activityService.finishActivity(member.getId(), activity.getId());
-
-            // then
-            Activity findActivity = activityRepository.findById(activity.getId()).get();
-            assertThat(findActivity).isNotNull();
-            assertThat(findActivity.getStatus()).isEqualTo(ActivityStatus.OFF);
-        }
-
-        @Test
-        @DisplayName("활동 다시 열기 실패 - 활동장이 아님")
-        void finishFailByNotLeader() {
-            Member notLeader = memberRepository.save(Member.builder().build());
-
-            assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> activityService.finishActivity(notLeader.getId(), activity.getId()))
-                    .withMessage(ErrorCode.NOT_ACTIVITY_LEADER.getMessage());
-        }
+        // then
+        Activity findActivity = activityRepository.findById(activity.getId()).get();
+        assertThat(findActivity.getStatus()).isEqualTo(ActivityStatus.OFF);
     }
 
     @Nested

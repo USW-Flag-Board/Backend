@@ -9,8 +9,6 @@ import java.util.List;
 
 @Repository
 public interface MemberActivityRepositoryCustom {
-    void deleteAllByActivityId(long activityId);
-
     List<ParticipateResponse> getAllActivitiesOfMember(String loginId);
 
     List<ParticipantResponse> getAllParticipantByActivityId(long activityId);

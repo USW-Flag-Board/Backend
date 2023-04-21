@@ -22,13 +22,6 @@ public class MemberActivityRepositoryImpl implements MemberActivityRepositoryCus
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public void deleteAllByActivityId(long activityId) {
-        queryFactory.delete(memberActivity)
-                .where(memberActivity.activity.id.eq(activityId))
-                .execute();
-    }
-
-    @Override
     public List<ParticipateResponse> getAllActivitiesOfMember(String loginId) {
         return queryFactory
                 .select(new QParticipateResponse(

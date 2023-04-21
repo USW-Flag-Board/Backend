@@ -234,42 +234,30 @@ public class ActivityController {
     @Operation(summary = "활동 모집 마감하기", description = "[토큰필요] 활동 모집 마감 시 활동장이 같이 활동할 멤버를 정한다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "모집이 마감되었습니다."),
+            @ApiResponse(responseCode = "400", description = "모집 중인 활동이 아닙니다."),
             @ApiResponse(responseCode = "401", description = "활동장이 아닙니다.")
     })
     @PatchMapping("/{id}/close")
-    public ApplicationResponse<URI> closeRecruitment(@PathVariable("id") long activityId,
-                                                    @RequestBody CloseRecruitRequest closeRecruitRequest) {
-        activityService.closeRecruitment(SecurityUtils.getMemberId(), activityId, closeRecruitRequest.getLoginIdList());
-        URI uri = UriCreator.createURI(DEFAULT_URL, activityId);
-        return new ApplicationResponse(uri);
-    }
-
-    @Tag(name = "activity")
-    @Operation(summary = "활동 모집 다시 열기", description = "[토큰필요] 추가적인 활동원을 받기 위해서 상태를 모집중으로 변경한다.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "다시 모집을 시작합니다."),
-            @ApiResponse(responseCode = "401", description = "활동장이 아닙니다.")
-    })
-    @ResponseStatus(OK)
-    @PostMapping("/{id}/reopen")
-    public ApplicationResponse<URI> reopenRecruitment(@PathVariable("id") long activityId) {
-        activityService.reopenRecruitment(SecurityUtils.getMemberId(), activityId);
-        URI uri = UriCreator.createURI(DEFAULT_URL, activityId);
-        return new ApplicationResponse(uri);
+    public ApplicationResponse<URI> closeRecruitment(@PathVariable Long id,
+                                                     @RequestBody @Valid CloseRecruitRequest closeRecruitRequest) {
+        activityService.closeRecruitment(SecurityUtils.getMemberId(), id, closeRecruitRequest.getLoginIdList());
+        URI uri = UriCreator.createURI(DEFAULT_URL, id);
+        return new ApplicationResponse<>(uri);
     }
 
     @Tag(name = "activity")
     @Operation(summary = "활동 마무리하기", description = "[토큰필요] 소기의 목적을 달성하고 활동을 끝낸다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "활동이 종료되었습니다."),
+            @ApiResponse(responseCode = "400", description = "진행 중인 활동이 아닙니다."),
             @ApiResponse(responseCode = "401", description = "활동장이 아닙니다.")
     })
     @ResponseStatus(OK)
     @PatchMapping("/{id}/finish")
-    public ApplicationResponse<URI> finishActivity(@PathVariable("id") long activityId) {
-        activityService.finishActivity(SecurityUtils.getMemberId(), activityId);
-        URI uri = UriCreator.createURI(DEFAULT_URL, activityId);
-        return new ApplicationResponse(uri);
+    public ApplicationResponse<URI> finishActivity(@PathVariable Long id) {
+        activityService.finishActivity(SecurityUtils.getMemberId(), id);
+        URI uri = UriCreator.createURI(DEFAULT_URL, id);
+        return new ApplicationResponse<>(uri);
     }
 
     @Tag(name = "activity")

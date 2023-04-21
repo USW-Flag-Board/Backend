@@ -7,6 +7,8 @@ import com.FlagHome.backend.domain.activity.entity.enums.Proceed;
 import com.FlagHome.backend.domain.activity.entity.enums.Semester;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.global.common.BaseEntity;
+import com.FlagHome.backend.global.exception.CustomException;
+import com.FlagHome.backend.global.exception.ErrorCode;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -64,12 +66,20 @@ public abstract class Activity extends BaseEntity {
         this.leader = member;
     }
 
+    public void isRecruitment() {
+        if (this.status != ActivityStatus.RECRUIT) {
+            throw new CustomException(ErrorCode.NOT_RECRUITMENT_ACTIVITY);
+        }
+    }
+
     public void closeRecruitment() {
         this.status = ActivityStatus.ON;
     }
 
-    public void reopenRecruitment() {
-        this.status = ActivityStatus.RECRUIT;
+    public void isOn() {
+        if (this.status != ActivityStatus.ON) {
+            throw new CustomException(ErrorCode.NOT_ON_ACTIVITY);
+        }
     }
 
     public void finishActivity() {

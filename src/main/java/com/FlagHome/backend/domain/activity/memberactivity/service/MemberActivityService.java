@@ -30,18 +30,17 @@ public class MemberActivityService {
     }
 
     public void registerMembers(Activity activity, List<Member> memberList) {
-        List<MemberActivity> memberActivityList = memberList.stream()
-                        .map(member -> MemberActivity.of(member, activity))
-                        .collect(Collectors.toList());
-
+        List<MemberActivity> memberActivityList = convertToMemberActivity(activity, memberList);
         memberActivityRepository.saveAll(memberActivityList);
-    }
-
-    public void deleteAllByActivity(long activityId) {
-        memberActivityRepository.deleteAllByActivityId(activityId);
     }
 
     public Member findMemberOfActivity(Long activityId, String loginId) {
         return memberActivityRepository.findMemberOfActivityByLoginId(activityId, loginId);
+    }
+
+    private List<MemberActivity> convertToMemberActivity(Activity activity, List<Member> memberList) {
+        return memberList.stream()
+                .map(member -> MemberActivity.of(member, activity))
+                .collect(Collectors.toList());
     }
 }

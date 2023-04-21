@@ -9,7 +9,6 @@ import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.Mentoring;
 import com.FlagHome.backend.domain.activity.entity.Project;
 import com.FlagHome.backend.domain.activity.entity.Study;
-import com.FlagHome.backend.domain.activity.entity.enums.ActivityStatus;
 import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
@@ -28,11 +27,9 @@ import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class ActivityRepositoryTest extends RepositoryTest {
     @Autowired
@@ -191,26 +188,6 @@ public class ActivityRepositoryTest extends RepositoryTest {
     @Nested
     @DisplayName("멤버활동 테스트")
     class memberActivityTest {
-        @Test
-        @DisplayName("활동으로 지우기 테스트")
-        void deleteAllByActivityTest() {
-            // given
-            Activity activity = activityRepository.save(Project.builder().semester(LocalDateTime.now().getMonthValue()).build());
-
-            MemberActivity memberActivity1 = MemberActivity.builder().activity(activity).build();
-            MemberActivity memberActivity2 = MemberActivity.builder().activity(activity).build();
-
-            memberActivityRepository.saveAll(Arrays.asList(memberActivity1, memberActivity2));
-
-            // when
-            memberActivityRepository.deleteAllByActivityId(activity.getId());
-            entityManager.clear();
-
-            // then
-            assertThatExceptionOfType(NoSuchElementException.class)
-                    .isThrownBy(() -> memberActivityRepository.findById(activity.getId()).get());
-        }
-
         @Test
         @DisplayName("멤버 참가활동 가져오기 테스트")
         void getAllParticipateActivityTest() {
