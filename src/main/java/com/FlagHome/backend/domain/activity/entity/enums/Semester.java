@@ -2,7 +2,6 @@ package com.FlagHome.backend.domain.activity.entity.enums;
 
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -21,12 +20,12 @@ public enum Semester {
 
     public static Semester findSemester(int month) {
         return Arrays.stream(Semester.values())
-                .filter(semester -> hasSemesterMonth(semester, month))
+                .filter(semester -> containsMonth(semester, month))
                 .findAny()
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_MONTH_RANGE));
     }
 
-    private static boolean hasSemesterMonth(Semester semester, int targetMonth) {
+    private static boolean containsMonth(Semester semester, int targetMonth) {
         return Arrays.stream(semester.semesterMonth)
                 .anyMatch(month -> month == targetMonth);
     }

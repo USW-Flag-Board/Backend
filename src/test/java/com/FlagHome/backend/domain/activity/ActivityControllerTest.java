@@ -4,10 +4,9 @@ package com.FlagHome.backend.domain.activity;
 import com.FlagHome.backend.common.IntegrationTest;
 import com.FlagHome.backend.domain.activity.controller.dto.request.ActivityRequest;
 import com.FlagHome.backend.domain.activity.entity.Activity;
-import com.FlagHome.backend.domain.activity.entity.Project;
-import com.FlagHome.backend.domain.activity.entity.Study;
 import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
 import com.FlagHome.backend.domain.activity.entity.enums.Proceed;
+import com.FlagHome.backend.domain.activity.mapper.ActivityMapper;
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.entity.enums.Role;
@@ -23,7 +22,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -43,6 +41,9 @@ public class ActivityControllerTest extends IntegrationTest {
 
     @Autowired
     private ActivityRepository activityRepository;
+
+    @Autowired
+    private ActivityMapper activityMapper;
 
     private Member member;
 
@@ -75,7 +76,7 @@ public class ActivityControllerTest extends IntegrationTest {
         ActivityRequest request = ActivityRequest.builder()
                 .name(name)
                 .description(description)
-                .activityType(activityType)
+                .type(activityType)
                 .githubLink(githubLink)
                 .proceed(proceed)
                 .build();
@@ -90,11 +91,12 @@ public class ActivityControllerTest extends IntegrationTest {
         List<Activity> activityList = activityRepository.findAll();
         assertThat(activityList.size()).isEqualTo(1);
 
-        Project project = (Project) activityList.get(0);
-        assertThat(project.getName()).isEqualTo(name);
-        assertThat(project.getDescription()).isEqualTo(description);
-        assertThat(project.getGithubLink()).isEqualTo(githubLink);
-        assertThat(project.getProceed()).isEqualTo(proceed);
+        Activity activity = activityList.get(0);
+        assertThat(activity.getName()).isEqualTo(name);
+        assertThat(activity.getDescription()).isEqualTo(description);
+        assertThat(activity.getInfo().getGithubURL()).isEqualTo(githubLink);
+        assertThat(activity.getInfo().getProceed()).isEqualTo(proceed);
+        assertThat(activity.getInfo().getBookUsage()).isNull();
     }
 
     @Test
@@ -109,13 +111,13 @@ public class ActivityControllerTest extends IntegrationTest {
         ActivityRequest request = ActivityRequest.builder()
                 .name(name)
                 .description(description)
-                .activityType(activityType)
+                .type(activityType)
                 .githubLink(githubLink)
                 .proceed(proceed)
                 .build();
 
-        Project project = activityRepository.save(Project.from(request));
-        final String uri = BASE_URL + "/" + project.getId();
+        Activity activity = activityRepository.save(Activity.of(member, activityMapper.toActivity(request)));
+        final String uri = BASE_URL + "/" + activity.getId();
 
         // when
         ResultActions resultActions = mockMvc.perform(get(uri)
@@ -124,7 +126,6 @@ public class ActivityControllerTest extends IntegrationTest {
         // then
         resultActions
                 .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.payload."))
                 .andDo(print());
     }
 
@@ -135,10 +136,9 @@ public class ActivityControllerTest extends IntegrationTest {
         Member applyMember = memberRepository.save(Member.builder().role(role).build());
         setSecurityContext(applyMember);
 
-        Activity activity = activityRepository.save(Study.builder()
+        Activity activity = activityRepository.save(Activity.builder()
                 .leader(member)
-                .activityType(ActivityType.STUDY)
-                .semester(LocalDateTime.now().getMonthValue())
+                .type(ActivityType.STUDY)
                 .build());
 
         final String uri = BASE_URL + "/" + activity.getId() + "/check";

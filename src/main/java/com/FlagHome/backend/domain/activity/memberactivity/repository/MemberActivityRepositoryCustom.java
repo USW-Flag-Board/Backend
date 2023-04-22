@@ -10,5 +10,5 @@ import java.util.List;
 public interface MemberActivityRepositoryCustom {
     List<ParticipateResponse> getAllActivitiesOfMember(String loginId);
 
-    List<ParticipantResponse> getAllParticipantByActivityId(long activityId);
+    List<ParticipantResponse> getAllParticipantByActivityId(Long activityId);
 }

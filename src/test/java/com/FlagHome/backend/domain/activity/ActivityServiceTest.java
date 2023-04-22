@@ -3,15 +3,12 @@ package com.FlagHome.backend.domain.activity;
 import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyResponse;
 import com.FlagHome.backend.domain.activity.activityapply.entity.ActivityApply;
 import com.FlagHome.backend.domain.activity.activityapply.repository.ActivityApplyRepository;
-import com.FlagHome.backend.domain.activity.controller.dto.request.ActivityRequest;
 import com.FlagHome.backend.domain.activity.controller.dto.response.GetAllActivitiesResponse;
 import com.FlagHome.backend.domain.activity.entity.Activity;
-import com.FlagHome.backend.domain.activity.entity.Mentoring;
-import com.FlagHome.backend.domain.activity.entity.Project;
-import com.FlagHome.backend.domain.activity.entity.Study;
+import com.FlagHome.backend.domain.activity.entity.ActivityInfo;
 import com.FlagHome.backend.domain.activity.entity.enums.ActivityStatus;
 import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
-import com.FlagHome.backend.domain.activity.entity.enums.BookUsage;
+import com.FlagHome.backend.domain.activity.entity.enums.Proceed;
 import com.FlagHome.backend.domain.activity.mapper.ActivityMapper;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.repository.MemberActivityRepository;
@@ -30,7 +27,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -77,30 +73,16 @@ public class ActivityServiceTest {
     @Test
     void 모든_활동_가져오기_테스트() {
         // given
-        String year = "2023";
         ActivityType projectType = ActivityType.PROJECT;
         ActivityType mentoringType = ActivityType.MENTORING;
         ActivityType studyType = ActivityType.STUDY;
+        ActivityInfo info = ActivityInfo.builder().build();
 
         Member member = memberRepository.save(Member.builder().build());
 
-        Activity project = Project.builder()
-                .leader(member)
-                .activityType(projectType)
-                .semester(LocalDateTime.now().getMonthValue())
-                .build();
-
-        Activity study = Study.builder()
-                .leader(member)
-                .activityType(studyType)
-                .semester(LocalDateTime.now().getMonthValue())
-                .build();
-
-        Activity mentoring = Mentoring.builder()
-                .leader(member)
-                .activityType(mentoringType)
-                .semester(LocalDateTime.now().getMonthValue())
-                .build();
+        Activity project = Activity.builder().leader(member).type(projectType).info(info).build();
+        Activity mentoring = Activity.builder().leader(member).type(mentoringType).info(info).build();
+        Activity study = Activity.builder().leader(member).type(studyType).info(info).build();
 
         activityRepository.saveAll(Arrays.asList(project, study, mentoring));
 
@@ -124,10 +106,9 @@ public class ActivityServiceTest {
             ActivityType project = ActivityType.PROJECT;
 
             member = memberRepository.save(Member.builder().build());
-            activity = activityRepository.save(Project.builder()
+            activity = activityRepository.save(Activity.builder()
                             .leader(member)
-                            .activityType(project)
-                            .semester(LocalDateTime.now().getMonthValue())
+                            .type(project)
                             .build());
         }
 
@@ -187,9 +168,7 @@ public class ActivityServiceTest {
         Member applier = memberRepository.save(Member.builder().build());
         Member notApplier = memberRepository.save(Member.builder().build());
 
-        Activity activity = activityRepository.save(Project.builder()
-                                    .semester(LocalDateTime.now().getMonthValue())
-                                    .build());
+        Activity activity = activityRepository.save(Activity.builder().build());
 
         activityApplyRepository.save(ActivityApply.builder()
                                     .member(applier)
@@ -216,7 +195,7 @@ public class ActivityServiceTest {
         void testSetUp() {
             leader = memberRepository.save(Member.builder().build());
             applier = memberRepository.save(Member.builder().build());
-            activity = activityRepository.save(Study.builder().semester(LocalDateTime.now().getMonthValue()).leader(leader).build());
+            activity = activityRepository.save(Activity.builder().leader(leader).build());
         }
 
         @Test
@@ -256,219 +235,15 @@ public class ActivityServiceTest {
         }
     }
 
-    @Nested
-    @DisplayName("활동 만들기 테스트")
-    class createActivityTest {
-        private Member member;
 
-        @BeforeEach
-        void testSetUp() {
-            String loginId = "gmlwh124";
-            String email = "gmlwh124@suwon.ac.kr";
+    @Test
+    void 활동_만들기_테스트() {
 
-            member = memberRepository.save(Member.builder()
-                            .loginId(loginId)
-                            .email(email)
-                            .build());
-        }
-
-        @Test
-        @DisplayName("프로젝트 만들기 테스트")
-        void createProjectTest() {
-            // given
-            ActivityType activityType = ActivityType.PROJECT;
-            String githubLink = "github.com/hejow";
-
-            ActivityRequest activityRequest = ActivityRequest.builder()
-                    .activityType(activityType)
-                    .githubLink(githubLink)
-                    .build();
-
-            Activity activity = activityMapper.toActivity(activityRequest);
-
-            // when
-            Project project = (Project) activityService.create(member.getId(), activity);
-
-            // then
-            assertThat(project.getId()).isNotNull();
-            assertThat(project.getSemester()).isNotNull();
-            assertThat(project.getActivityType()).isEqualTo(activityType);
-            assertThat(project.getGithubLink()).isEqualTo(githubLink);
-        }
-
-        @Test
-        @DisplayName("멘토링 만들기 테스트")
-        void createMentoringTest() {
-            // given
-            ActivityType activityType = ActivityType.MENTORING;
-            BookUsage bookUsage = BookUsage.USE;
-            String bookName = "토비의 스프링";
-
-            ActivityRequest activityRequest = ActivityRequest.builder()
-                    .activityType(activityType)
-                    .bookUsage(bookUsage)
-                    .bookName(bookName)
-                    .build();
-
-            Activity activity = activityMapper.toActivity(activityRequest);
-
-            // when
-            Mentoring mentoring = (Mentoring) activityService.create(member.getId(), activity);
-
-            // then
-            assertThat(mentoring.getId()).isNotNull();
-            assertThat(mentoring.getSemester()).isNotNull();
-            assertThat(mentoring.getActivityType()).isEqualTo(activityType);
-            assertThat(mentoring.getBookUsage()).isEqualTo(bookUsage);
-            assertThat(mentoring.getBookName()).isEqualTo(bookName);
-        }
-
-        @Test
-        @DisplayName("스터디 만들기 테스트")
-        void createStudyTest() {
-            // given
-            ActivityType activityType = ActivityType.STUDY;
-            BookUsage bookUsage = BookUsage.NOT_USE;
-            String bookName = "";
-
-            ActivityRequest activityRequest = ActivityRequest.builder()
-                    .activityType(activityType)
-                    .bookUsage(bookUsage)
-                    .bookName(bookName)
-                    .build();
-
-            Activity activity = activityMapper.toActivity(activityRequest);
-
-            // when
-            Study study = (Study) activityService.create(member.getId(), activity);
-
-            // then
-            assertThat(study.getId()).isNotNull();
-            assertThat(study.getSemester()).isNotNull();
-            assertThat(study.getActivityType()).isEqualTo(activityType);
-            assertThat(study.getBookUsage()).isEqualTo(bookUsage);
-            assertThat(study.getBookName()).isEqualTo(bookName);
-        }
     }
 
-    @Nested
-    @DisplayName("활동 수정하기 테스트")
-    class updateActivityTest {
-        private Member member;
+    @Test
+    void 활동_수정하기_테스트() {
 
-        @BeforeEach
-        void testSetUp() {
-            member = memberRepository.save(Member.builder().build());
-        }
-
-        @Test
-        @DisplayName("프로젝트 수정하기 테스트")
-        void updateProjectTest() {
-            // given
-            String name = "name";
-            String changeName = "changed name";
-
-            String link = "link";
-            String changeLink = "changed link";
-
-            Project project = activityRepository.save(Project.builder()
-                            .leader(member)
-                            .name(name)
-                            .githubLink(link)
-                            .semester(LocalDateTime.now().getMonthValue())
-                            .build());
-
-            ActivityRequest activityRequest = ActivityRequest.builder()
-                    .name(changeName)
-                    .githubLink(changeLink)
-                    .build();
-
-            // when
-            activityService.updateProject(member.getId(), project.getId(), activityRequest);
-            entityManager.clear();
-
-            // then
-            Project updatedProject = (Project) activityRepository.findById(project.getId()).get();
-            assertThat(project.getName()).isNotEqualTo(updatedProject.getName());
-            assertThat(project.getGithubLink()).isNotEqualTo(updatedProject.getGithubLink());
-        }
-
-        @Test
-        @DisplayName("스터디 수정하기 테스트")
-        void updateStudyTest() {
-            // given
-            String name = "name";
-            String changeName = "changed name";
-
-            BookUsage bookUsage = BookUsage.NOT_USE;
-            BookUsage changeBookUsage = BookUsage.USE;
-
-            String bookName = "book";
-            String changeBookName = "changed book";
-
-            Study study = activityRepository.save(Study.builder()
-                            .leader(member)
-                            .name(name)
-                            .bookUsage(bookUsage)
-                            .bookName(bookName)
-                            .semester(LocalDateTime.now().getMonthValue())
-                            .build());
-
-            ActivityRequest activityRequest = ActivityRequest.builder()
-                    .name(changeName)
-                    .bookUsage(changeBookUsage)
-                    .bookName(changeBookName)
-                    .build();
-
-            // when
-            activityService.updateStudy(member.getId(), study.getId(), activityRequest);
-            entityManager.clear();
-
-            // then
-            Study updatedStudy = (Study) activityRepository.findById(study.getId()).get();
-            assertThat(study.getName()).isNotEqualTo(updatedStudy.getName());
-            assertThat(study.getBookUsage()).isNotEqualTo(updatedStudy.getBookUsage());
-            assertThat(study.getBookName()).isNotEqualTo(updatedStudy.getBookName());
-        }
-
-        @Test
-        @DisplayName("멘토링 수정하기 테스트")
-        void updateMentoringTest() {
-            // given
-            String name = "name";
-            String changeName = "changed name";
-
-            BookUsage bookUsage = BookUsage.NOT_USE;
-            BookUsage changeBookUsage = BookUsage.USE;
-
-            String bookName = "book";
-            String changeBookName = "changed book";
-
-            Mentoring mentoring = activityRepository.save(Mentoring.builder()
-                    .leader(member)
-                    .name(name)
-                    .bookUsage(bookUsage)
-                    .bookName(bookName)
-                    .semester(LocalDateTime.now().getMonthValue())
-                    .build());
-
-            ActivityRequest activityRequest = ActivityRequest.builder()
-                    .name(changeName)
-                    .bookUsage(changeBookUsage)
-                    .bookName(changeBookName)
-                    .build();
-
-
-            // when
-            activityService.updateMentoring(member.getId(), mentoring.getId(), activityRequest);
-            entityManager.clear();
-
-            // then
-            Mentoring updateMentoring = (Mentoring) activityRepository.findById(mentoring.getId()).get();
-            assertThat(mentoring.getName()).isNotEqualTo(updateMentoring.getName());
-            assertThat(mentoring.getBookUsage()).isNotEqualTo(updateMentoring.getBookUsage());
-            assertThat(mentoring.getBookName()).isNotEqualTo(updateMentoring.getBookName());
-        }
     }
 
     @Nested
@@ -478,11 +253,19 @@ public class ActivityServiceTest {
 
         @BeforeEach
         void testSetup() {
+            final String githubURL = "URL";
+            final ActivityType type = ActivityType.PROJECT;
+            final ActivityInfo info = ActivityInfo.builder()
+                    .proceed(Proceed.ONLINE)
+                    .githubURL(githubURL)
+                    .build();
+
             member = memberRepository.save(Member.builder().build());
-            activity = activityRepository.save(Study.builder()
-                            .leader(member)
-                            .semester(LocalDateTime.now().getMonthValue())
-                            .build());
+            activity = activityRepository.save(Activity.builder()
+                    .leader(member)
+                    .type(type)
+                    .info(info)
+                    .build());
         }
 
         @Test
@@ -533,11 +316,7 @@ public class ActivityServiceTest {
     void 활동_마감하기_성공_테스트() {
         // given
         Member member = memberRepository.save(Member.builder().build());
-        Activity activity = activityRepository.save(Study.builder()
-                .leader(member)
-                .semester(LocalDateTime.now().getMonthValue())
-                .build());
-
+        Activity activity = activityRepository.save(Activity.builder().leader(member).build());
 
         activity.closeRecruitment();
 
@@ -558,10 +337,7 @@ public class ActivityServiceTest {
         @BeforeEach
         void testSetUp() {
             member = memberRepository.save(Member.builder().build());
-            activity = activityRepository.save(Study.builder()
-                    .leader(member)
-                    .semester(LocalDateTime.now().getMonthValue())
-                    .build());
+            activity = activityRepository.save(Activity.builder().leader(member).build());
         }
 
         @Test
@@ -595,7 +371,7 @@ public class ActivityServiceTest {
     @DisplayName("활동 신청 취소 테스트")
     void cancelApplyTest() {
         // given
-        Activity activity = activityRepository.save(Project.builder().semester(LocalDateTime.now().getMonthValue()).build());
+        Activity activity = activityRepository.save(Activity.builder().build());
         Member member = memberRepository.save(Member.builder().build());
 
         activityService.applyActivity(member.getId(), activity.getId());

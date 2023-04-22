@@ -16,11 +16,11 @@ import javax.validation.constraints.NotNull;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ActivityRequest {
-    @Schema(name = "활동 이름", description = "한 문장으로 나타낼 이름", required = true)
+    @Schema(name = "활동 이름", description = "한 문장으로 나타낼 이름")
     @NotBlank
     private String name;
 
-    @Schema(name = "간단한 설명", description = "어떤 프로젝트인지 나타낼 설명", required = true)
+    @Schema(name = "간단한 설명", description = "어떤 프로젝트인지 나타낼 설명")
     @NotBlank
     private String description;
 
@@ -28,26 +28,29 @@ public class ActivityRequest {
     @NotNull
     private Proceed proceed;
 
-    @Schema(name = "활동 타입", description = "프로젝트 / 스터디 / 멘토링 중 하나", required = true, example = "PROJECT, STUDY, MENTORING")
+    @Schema(name = "활동 타입", description = "프로젝트 / 스터디 / 멘토링 중 하나", example = "PROJECT, STUDY, MENTORING")
     @NotNull
-    private ActivityType activityType;
+    private ActivityType type;
 
-    @Schema(name = "Github Organization URL", description = "보여줄 Github Organization 주소, 수정 가능")
+    @Schema(name = "Github Organization URL", description = "보여줄 Github Organization 주소")
+    @Nullable
     private String githubLink;
 
     @Schema(name = "책 사용여부", description = "사용 / 미사용", example = "USE, NOT_USE")
+    @Nullable
     private BookUsage bookUsage;
 
     @Schema(name = "사용할 책 이름", description = "사용에 체크했다면 입력 받기")
+    @Nullable
     private String bookName;
 
     @Builder
-    public ActivityRequest(String name, String description, Proceed proceed, ActivityType activityType,
+    public ActivityRequest(String name, String description, Proceed proceed, ActivityType type,
                            @Nullable String githubLink, @Nullable BookUsage bookUsage, @Nullable String bookName) {
         this.name = name;
         this.description = description;
         this.proceed = proceed;
-        this.activityType = activityType;
+        this.type = type;
         this.githubLink = githubLink;
         this.bookUsage = bookUsage;
         this.bookName = bookName;

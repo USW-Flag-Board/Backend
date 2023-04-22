@@ -3,13 +3,9 @@ package com.FlagHome.backend.domain.activity.service;
 import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyResponse;
 import com.FlagHome.backend.domain.activity.activityapply.entity.ActivityApply;
 import com.FlagHome.backend.domain.activity.activityapply.service.ActivityApplyService;
-import com.FlagHome.backend.domain.activity.controller.dto.request.ActivityRequest;
 import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityResponse;
 import com.FlagHome.backend.domain.activity.controller.dto.response.GetAllActivitiesResponse;
 import com.FlagHome.backend.domain.activity.entity.Activity;
-import com.FlagHome.backend.domain.activity.entity.Mentoring;
-import com.FlagHome.backend.domain.activity.entity.Project;
-import com.FlagHome.backend.domain.activity.entity.Study;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.service.MemberActivityService;
@@ -86,28 +82,16 @@ public class ActivityService {
 
     public Activity create(Long memberId, Activity activity) {
         Member member = memberService.findById(memberId);
-        activity.changeLeader(member);
-        return activityRepository.save(activity);
+        return activityRepository.save(Activity.of(member, activity));
     }
 
-    public void updateMentoring(Long memberId, Long activityId, ActivityRequest activityRequest) {
-        Mentoring mentoring = (Mentoring) validateLeaderAndReturnActivity(memberId, activityId);
-        mentoring.updateMentoring(activityRequest);
-    }
+    public void update() {
 
-    public void updateProject(Long memberId, Long activityId, ActivityRequest activityRequest) {
-        Project project = (Project) validateLeaderAndReturnActivity(memberId, activityId);
-        project.updateProject(activityRequest);
-    }
-
-    public void updateStudy(Long memberId, Long activityId, ActivityRequest activityRequest) {
-        Study study = (Study) validateLeaderAndReturnActivity(memberId, activityId);
-        study.updateStudy(activityRequest);
     }
 
     public void closeRecruitment(Long memberId, Long activityId, List<String> loginIdList) {
         Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
-        activity.isRecruitment();
+        activity.isRecruiting();
         List<Member> memberList = memberService.getMembersByLoginIds(loginIdList);
         activityApplyService.deleteAllApplies(activityId);
         memberActivityService.registerMembers(activity, memberList);
@@ -116,7 +100,7 @@ public class ActivityService {
 
     public void finishActivity(Long memberId, Long activityId) {
         Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
-        activity.isOn();
+        activity.isInProgress();
         activity.finishActivity();
     }
 

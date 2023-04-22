@@ -147,8 +147,8 @@ public class ActivityController {
     })
     @ResponseStatus(CREATED)
     @PostMapping("/{id}/apply")
-    public ApplicationResponse applyActivity(@PathVariable("id") long activityId) {
-        activityService.applyActivity(SecurityUtils.getMemberId(), activityId);
+    public ApplicationResponse applyActivity(@PathVariable Long id) {
+        activityService.applyActivity(SecurityUtils.getMemberId(), id);
         return new ApplicationResponse<>();
     }
 
@@ -165,53 +165,7 @@ public class ActivityController {
 //        return ResponseEntity.ok(response);
 //    }
 
-    @Tag(name = "activity")
-    @Operation(summary = "프로젝트 내용 수정하기", description = "[토큰필요] 활동장만 수정할 수 있다.\n\n" +
-                                                               "프로젝트는 책 사용여부와 책 이름을 적지 않아도 된다.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "프로젝트 내용이 성공적으로 수정되었습니다."),
-            @ApiResponse(responseCode = "401", description = "활동장이 아닙니다."),
-    })
-    @ResponseStatus(OK)
-    @PutMapping("/project/{id}")
-    public ApplicationResponse<URI> updateProject(@PathVariable("id") long activityId,
-                                                  @RequestBody @Valid ActivityRequest activityRequest) {
-        activityService.updateProject(SecurityUtils.getMemberId(), activityId, activityRequest);
-        URI uri = UriCreator.createURI(DEFAULT_URL, activityId);
-        return new ApplicationResponse(uri);
-    }
-
-    @Tag(name = "activity")
-    @Operation(summary = "멘토링 내용 수정하기", description = "[토큰필요] 활동장만 수정할 수 있다.\n\n" +
-                                                             "멘토링은 깃허브 주소를 적지 않아도 된다.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "멘토링 내용이 성공적으로 수정되었습니다."),
-            @ApiResponse(responseCode = "401", description = "활동장이 아닙니다."),
-    })
-    @ResponseStatus(OK)
-    @PutMapping("/mentoring/{id}")
-    public ApplicationResponse<URI> updateMentoring(@PathVariable("id") long activityId,
-                                                    @RequestBody @Valid ActivityRequest activityRequest) {
-        activityService.updateMentoring(SecurityUtils.getMemberId(), activityId, activityRequest);
-        URI uri = UriCreator.createURI(DEFAULT_URL, activityId);
-        return new ApplicationResponse(uri);
-    }
-
-    @Tag(name = "activity")
-    @Operation(summary = "스터디 내용 수정하기", description = "[토큰필요] 활동장만 수정할 수 있다.\n\n" +
-                                                              "스터디는 깃허브 주소를 적지 않아도 된다.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "스터디 내용이 성공적으로 수정되었습니다."),
-            @ApiResponse(responseCode = "401", description = "활동장이 아닙니다."),
-    })
-    @ResponseStatus(OK)
-    @PutMapping("/study/{id}")
-    public ApplicationResponse<URI> updateStudy(@PathVariable("id") long activityId,
-                                                @RequestBody @Valid ActivityRequest activityRequest) {
-        activityService.updateStudy(SecurityUtils.getMemberId(), activityId, activityRequest);
-        URI uri = UriCreator.createURI(DEFAULT_URL, activityId);
-        return new ApplicationResponse(uri);
-    }
+    // 활동 수정하기
 
     @Tag(name = "activity")
     @Operation(summary = "활동 모집 마감하기", description = "[토큰필요] 활동 모집 마감 시 활동장이 같이 활동할 멤버를 정한다.")
@@ -251,9 +205,9 @@ public class ActivityController {
     })
     @ResponseStatus(OK)
     @DeleteMapping("/{id}")
-    public ApplicationResponse deleteActivity(@PathVariable("id") long activityId) {
-        activityService.delete(SecurityUtils.getMemberId(), activityId);
-        return new ApplicationResponse();
+    public ApplicationResponse deleteActivity(@PathVariable Long id) {
+        activityService.delete(SecurityUtils.getMemberId(), id);
+        return new ApplicationResponse<>();
     }
 
     @Tag(name = "activity")
@@ -264,8 +218,8 @@ public class ActivityController {
     })
     @ResponseStatus(OK)
     @DeleteMapping("/{id}/apply")
-    public ApplicationResponse cancelApply(@PathVariable("id") long activityId) {
-        activityService.cancelApply(SecurityUtils.getMemberId(), activityId);
-        return new ApplicationResponse();
+    public ApplicationResponse cancelApply(@PathVariable Long id) {
+        activityService.cancelApply(SecurityUtils.getMemberId(), id);
+        return new ApplicationResponse<>();
     }
 }

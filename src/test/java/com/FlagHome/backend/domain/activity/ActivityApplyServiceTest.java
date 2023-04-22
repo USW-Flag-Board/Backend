@@ -5,7 +5,6 @@ import com.FlagHome.backend.domain.activity.activityapply.entity.ActivityApply;
 import com.FlagHome.backend.domain.activity.activityapply.repository.ActivityApplyRepository;
 import com.FlagHome.backend.domain.activity.activityapply.service.ActivityApplyService;
 import com.FlagHome.backend.domain.activity.entity.Activity;
-import com.FlagHome.backend.domain.activity.entity.Study;
 import com.FlagHome.backend.domain.member.entity.Member;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,12 +13,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doNothing;
@@ -38,13 +37,13 @@ public class ActivityApplyServiceTest {
     void checkApplyTest() {
         // given
         long testId = 1L;
-        given(activityApplyRepository.isApplied(any(Long.class), any(Long.class))).willReturn(true);
+        given(activityApplyRepository.isApplied(anyLong(), anyLong())).willReturn(true);
 
         // when
         boolean check = activityApplyService.checkApply(testId, testId);
 
         // then
-        then(activityApplyRepository).should(times(1)).isApplied(any(Long.class), any(Long.class));
+        then(activityApplyRepository).should(times(1)).isApplied(anyLong(), anyLong());
         assertThat(check).isTrue();
     }
 
@@ -52,7 +51,7 @@ public class ActivityApplyServiceTest {
     @DisplayName("활동 신청하기 테스트")
     void applyActivityTest() {
         // given
-        Activity activity = Study.builder().semester(LocalDateTime.now().getMonthValue()).build();
+        Activity activity = Activity.builder().build();
         ActivityApply apply = ActivityApply.builder().build();
         Member member = Member.builder().build();
 
@@ -71,13 +70,13 @@ public class ActivityApplyServiceTest {
         // given
         long testId = 1L;
         List<ActivityApplyResponse> activityApplyResponses = new ArrayList<>();
-        given(activityApplyRepository.getAllApplies(any(long.class))).willReturn(activityApplyResponses);
+        given(activityApplyRepository.getAllApplies(anyLong())).willReturn(activityApplyResponses);
 
         // when
         activityApplyService.getAllApplies(testId);
 
         // then
-        then(activityApplyRepository).should(times(1)).getAllApplies(any(long.class));
+        then(activityApplyRepository).should(times(1)).getAllApplies(anyLong());
     }
 
     @Test
