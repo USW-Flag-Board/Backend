@@ -5,11 +5,8 @@ import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
 import com.FlagHome.backend.domain.activity.entity.enums.Semester;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -29,6 +26,6 @@ public class ActivityResponse {
         this.leader = leader;
         this.activityType = activityType;
         this.status = status;
-        this.semester = semester.getSemester();
+        this.semester = semester.toString();
     }
 }

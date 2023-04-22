@@ -1,8 +1,9 @@
 package com.FlagHome.backend.domain.activity.controller;
 
 import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyResponse;
-import com.FlagHome.backend.domain.activity.controller.dto.request.ActivityRequest;
 import com.FlagHome.backend.domain.activity.controller.dto.request.CloseRecruitRequest;
+import com.FlagHome.backend.domain.activity.controller.dto.request.CreateActivityRequest;
+import com.FlagHome.backend.domain.activity.controller.dto.request.UpdateActivityRequest;
 import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityDetailResponse;
 import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityResponse;
 import com.FlagHome.backend.domain.activity.controller.dto.response.GetAllActivitiesResponse;
@@ -119,8 +120,8 @@ public class ActivityController {
     })
     @ResponseStatus(CREATED)
     @PostMapping
-    public ApplicationResponse<URI> createActivity(@RequestBody @Valid ActivityRequest activityRequest) {
-        Activity activity = activityMapper.toActivity(activityRequest);
+    public ApplicationResponse<URI> createActivity(@RequestBody @Valid CreateActivityRequest createActivityRequest) {
+        Activity activity = activityMapper.toActivity(createActivityRequest);
         Long id = activityService.create(SecurityUtils.getMemberId(), activity).getId();
         URI uri = UriCreator.createURI(DEFAULT_URL, id);
         return new ApplicationResponse<>(uri);
@@ -152,27 +153,28 @@ public class ActivityController {
         return new ApplicationResponse<>();
     }
 
-//    @Tag(name = "activity")
-//    @Operation(summary = "활동 전용 게시판 요청하기", description = "활동장 전용 기능. 게시판 생성을 관리자에게 요청한다.")
-//    @ApiResponses({
-//            @ApiResponse(responseCode = "201", description = "활동 게시판 요청 성공"),
-//            @ApiResponse(responseCode = "401", description = "활동장이 아닙니다.")
-//    })
-//    @PostMapping("/{id}/board")
-//    public ResponseEntity<HttpResponse> requestBoard(@PathVariable("id") long activityId) {
-//
-//        HttpResponse response = HttpResponse.ok(null, CREATED, "활동 게시판 요청 성공");
-//        return ResponseEntity.ok(response);
-//    }
+    @Tag(name = "activity")
+    @Operation(summary = "활동 수정하기", description = "[토큰필요] 활동장만 수정 가능")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "수정에 성공했습니다."),
+            @ApiResponse(responseCode = "401", description = "활동장이 아닙니다."),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 활동입니다.")
 
-    // 활동 수정하기
+    })
+    @ResponseStatus(OK)
+    @PutMapping("/{id}")
+    public ApplicationResponse updateActivity(@PathVariable Long id,
+                                              @RequestBody @Valid UpdateActivityRequest updateActivityRequest) {
+        activityService.update(SecurityUtils.getMemberId(), id, activityMapper.toActivity(updateActivityRequest));
+        return new ApplicationResponse<>();
+    }
 
     @Tag(name = "activity")
     @Operation(summary = "활동 모집 마감하기", description = "[토큰필요] 활동 모집 마감 시 활동장이 같이 활동할 멤버를 정한다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "모집이 마감되었습니다."),
             @ApiResponse(responseCode = "400", description = "모집 중인 활동이 아닙니다."),
-            @ApiResponse(responseCode = "401", description = "활동장이 아닙니다.")
+            @ApiResponse(responseCode = "401", description = "활동장이 아닙니다."),
     })
     @PatchMapping("/{id}/close")
     public ApplicationResponse<URI> closeRecruitment(@PathVariable Long id,

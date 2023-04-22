@@ -29,4 +29,10 @@ public enum Semester {
         return Arrays.stream(semester.semesterMonth)
                 .anyMatch(month -> month == targetMonth);
     }
+
+
+    @Override
+    public String toString() {
+        return getSemester();
+    }
 }

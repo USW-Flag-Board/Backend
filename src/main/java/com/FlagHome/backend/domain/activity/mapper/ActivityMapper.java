@@ -1,6 +1,8 @@
 package com.FlagHome.backend.domain.activity.mapper;
 
-import com.FlagHome.backend.domain.activity.controller.dto.request.ActivityRequest;
+import com.FlagHome.backend.domain.activity.controller.dto.request.CreateActivityRequest;
+import com.FlagHome.backend.domain.activity.controller.dto.request.InfoRequest;
+import com.FlagHome.backend.domain.activity.controller.dto.request.UpdateActivityRequest;
 import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityDetailResponse;
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.ActivityInfo;
@@ -12,20 +14,25 @@ import org.mapstruct.*;
         nullValueMappingStrategy = NullValueMappingStrategy.RETURN_NULL
 )
 public interface ActivityMapper {
-    @Mapping(source = "activityRequest", target = "info", qualifiedByName = "toInfo")
+    @Mapping(source = "createActivityRequest", target = "info", qualifiedByName = "toInfo")
     @Mapping(target = "leader", ignore = true)
-    Activity toActivity(ActivityRequest activityRequest);
+    Activity toActivity(CreateActivityRequest createActivityRequest);
+
+    @Mapping(source = "updateActivityRequest", target = "info", qualifiedByName = "toInfo")
+    @Mapping(target = "leader", ignore = true)
+    @Mapping(target = "type", ignore = true)
+    Activity toActivity(UpdateActivityRequest updateActivityRequest);
 
     @Mapping(source = "activity.leader.name", target = "leader")
     ActivityDetailResponse toDetailResponse(Activity activity);
 
     @Named("toInfo")
-    static ActivityInfo toInfo(ActivityRequest activityRequest) {
+    static ActivityInfo toInfo(InfoRequest infoRequest) {
         return ActivityInfo.builder()
-                .proceed(activityRequest.getProceed())
-                .githubURL(activityRequest.getGithubLink())
-                .bookUsage(activityRequest.getBookUsage())
-                .bookName(activityRequest.getName())
+                .proceed(infoRequest.getProceed())
+                .githubURL(infoRequest.getGithubURL())
+                .bookUsage(infoRequest.getBookUsage())
+                .bookName(infoRequest.getBookName())
                 .build();
     }
 }

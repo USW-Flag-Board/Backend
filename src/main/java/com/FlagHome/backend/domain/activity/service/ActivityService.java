@@ -85,8 +85,9 @@ public class ActivityService {
         return activityRepository.save(Activity.of(member, activity));
     }
 
-    public void update() {
-
+    public void update(Long memberId, Long activityId, Activity activity) {
+        Activity savedActivity = validateLeaderAndReturnActivity(memberId, activityId);
+        savedActivity.update(activity);
     }
 
     public void closeRecruitment(Long memberId, Long activityId, List<String> loginIdList) {

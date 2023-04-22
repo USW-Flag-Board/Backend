@@ -48,4 +48,11 @@ public class ActivityInfo {
         this.bookUsage = bookUsage;
         this.bookName = bookName;
     }
+
+    public void updateInfo(Activity activity) {
+        this.proceed = activity.getInfo().getProceed();
+        this.githubURL = activity.getInfo().getGithubURL();
+        this.bookUsage = activity.getInfo().getBookUsage();
+        this.bookName = activity.getInfo().getBookName();
+    }
 }

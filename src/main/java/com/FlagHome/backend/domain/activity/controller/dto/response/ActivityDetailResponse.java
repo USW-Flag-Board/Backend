@@ -1,7 +1,10 @@
 package com.FlagHome.backend.domain.activity.controller.dto.response;
 
 import com.FlagHome.backend.domain.activity.entity.ActivityInfo;
-import com.FlagHome.backend.domain.activity.entity.enums.*;
+import com.FlagHome.backend.domain.activity.entity.enums.ActivityStatus;
+import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
+import com.FlagHome.backend.domain.activity.entity.enums.BookUsage;
+import com.FlagHome.backend.domain.activity.entity.enums.Proceed;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,7 +41,7 @@ public class ActivityDetailResponse {
         this.bookName = info.getBookName();
         this.type = type;
         this.status = status;
-        this.semester = info.getSemester().getSemester();
+        this.semester = info.getSemester().toString();
         this.createdAt = createdAt;
     }
 }

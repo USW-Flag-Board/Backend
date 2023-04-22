@@ -63,6 +63,12 @@ public class Activity extends BaseEntity {
                 .build();
     }
 
+    public void update(Activity activity) {
+        this.name = activity.getName();
+        this.description = activity.getDescription();
+        this.info.updateInfo(activity);
+    }
+
     public void isRecruiting() {
         if (this.status != ActivityStatus.RECRUIT) {
             throw new CustomException(ErrorCode.NOT_RECRUITMENT_ACTIVITY);

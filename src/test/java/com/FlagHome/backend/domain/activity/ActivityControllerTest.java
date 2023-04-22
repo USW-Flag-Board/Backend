@@ -2,7 +2,8 @@ package com.FlagHome.backend.domain.activity;
 
 
 import com.FlagHome.backend.common.IntegrationTest;
-import com.FlagHome.backend.domain.activity.controller.dto.request.ActivityRequest;
+import com.FlagHome.backend.domain.activity.controller.dto.request.CreateActivityRequest;
+import com.FlagHome.backend.domain.activity.controller.dto.request.UpdateActivityRequest;
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
 import com.FlagHome.backend.domain.activity.entity.enums.Proceed;
@@ -27,8 +28,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -46,6 +46,8 @@ public class ActivityControllerTest extends IntegrationTest {
     private ActivityMapper activityMapper;
 
     private Member member;
+
+    private Activity activity;
 
     @BeforeEach
     void setup() {
@@ -69,15 +71,15 @@ public class ActivityControllerTest extends IntegrationTest {
         // given
         final String name = "name";
         final String description = "discription";
-        final String githubLink = "link";
+        final String githubURL = "link";
         final ActivityType activityType = ActivityType.PROJECT;
         final Proceed proceed = Proceed.BOTH;
 
-        ActivityRequest request = ActivityRequest.builder()
+        CreateActivityRequest request = CreateActivityRequest.builder()
                 .name(name)
                 .description(description)
                 .type(activityType)
-                .githubLink(githubLink)
+                .githubURL(githubURL)
                 .proceed(proceed)
                 .build();
 
@@ -94,7 +96,7 @@ public class ActivityControllerTest extends IntegrationTest {
         Activity activity = activityList.get(0);
         assertThat(activity.getName()).isEqualTo(name);
         assertThat(activity.getDescription()).isEqualTo(description);
-        assertThat(activity.getInfo().getGithubURL()).isEqualTo(githubLink);
+        assertThat(activity.getInfo().getGithubURL()).isEqualTo(githubURL);
         assertThat(activity.getInfo().getProceed()).isEqualTo(proceed);
         assertThat(activity.getInfo().getBookUsage()).isNull();
     }
@@ -104,15 +106,15 @@ public class ActivityControllerTest extends IntegrationTest {
         // given
         final String name = "name";
         final String description = "discription";
-        final String githubLink = "link";
+        final String githubURL = "link";
         final ActivityType activityType = ActivityType.PROJECT;
         final Proceed proceed = Proceed.BOTH;
 
-        ActivityRequest request = ActivityRequest.builder()
+        CreateActivityRequest request = CreateActivityRequest.builder()
                 .name(name)
                 .description(description)
                 .type(activityType)
-                .githubLink(githubLink)
+                .githubURL(githubURL)
                 .proceed(proceed)
                 .build();
 
@@ -135,11 +137,7 @@ public class ActivityControllerTest extends IntegrationTest {
         final Role role = Role.ROLE_CREW;
         Member applyMember = memberRepository.save(Member.builder().role(role).build());
         setSecurityContext(applyMember);
-
-        Activity activity = activityRepository.save(Activity.builder()
-                .leader(member)
-                .type(ActivityType.STUDY)
-                .build());
+        setActivity(member);
 
         final String uri = BASE_URL + "/" + activity.getId() + "/check";
 
@@ -154,11 +152,64 @@ public class ActivityControllerTest extends IntegrationTest {
                 .andDo(print());
     }
 
+    @Test
+    public void 활동_수정_테스트() throws Exception {
+        // given
+        setActivity(member);
+
+        final String name = "changed";
+        final String description = "changed";
+        final String githubURL = "changed";
+        final Proceed proceed = Proceed.ONLINE;
+
+        UpdateActivityRequest request = UpdateActivityRequest.builder()
+                .name(name)
+                .description(description)
+                .githubURL(githubURL)
+                .proceed(proceed)
+                .build();
+
+        final String uri = BASE_URL + "/" + activity.getId();
+
+        // when
+        mockMvc.perform(put(uri)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        // then
+        Activity changedActivity = activityRepository.findById(activity.getId()).orElse(null);
+        assertThat(changedActivity).isNotNull();
+        assertThat(changedActivity.getName()).isEqualTo(name);
+        assertThat(changedActivity.getDescription()).isEqualTo(description);
+        assertThat(changedActivity.getInfo().getGithubURL()).isEqualTo(githubURL);
+        assertThat(changedActivity.getInfo().getProceed()).isEqualTo(proceed);
+    }
+
     private void setSecurityContext(Member member) {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add((GrantedAuthority) () -> String.valueOf(member.getRole()));
 
         UserDetails principal = new User(String.valueOf(member.getId()), "", authorities);
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(principal, "", authorities));
+    }
+
+    private void setActivity(Member member) {
+        final String name = "name";
+        final String description = "discription";
+        final String githubURL = "link";
+        final ActivityType activityType = ActivityType.PROJECT;
+        final Proceed proceed = Proceed.BOTH;
+
+        CreateActivityRequest request = CreateActivityRequest.builder()
+                .name(name)
+                .description(description)
+                .type(activityType)
+                .githubURL(githubURL)
+                .proceed(proceed)
+                .build();
+
+        activity = activityRepository.save(Activity.of(member, activityMapper.toActivity(request)));
     }
 }
