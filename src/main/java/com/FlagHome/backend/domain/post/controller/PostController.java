@@ -239,7 +239,7 @@ public class PostController {
     @ResponseStatus(CREATED)
     @PostMapping
     public ApplicationResponse<URI> createPost(@RequestBody @Valid PostRequest request) {
-        Long id = postService.createPost(SecurityUtils.getMemberId(), postMapper.toEntity(request), request.getBoardName());
+        Long id = postService.createPost(SecurityUtils.getMemberId(), postMapper.toEntity(request), request.getBoardName()).getId();
         URI uri = UriCreator.createURI(BASE_URL, id);
         return new ApplicationResponse<>(uri);
     }

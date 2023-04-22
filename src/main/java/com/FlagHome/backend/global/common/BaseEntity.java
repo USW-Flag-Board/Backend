@@ -25,7 +25,7 @@ public abstract class BaseEntity {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "Asia/Seoul")
     private LocalDateTime updatedAt;
 
-    public void renewLoginTime() {
+    public void updateModifiedDate() {
         this.updatedAt = LocalDateTime.now();
     }
 }

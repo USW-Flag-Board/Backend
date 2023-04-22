@@ -83,8 +83,8 @@ public class Member extends BaseEntity {
         this.password = passwordEncoder.encode(password);
     }
 
-    public void renewLoginTime() {
-        super.renewLoginTime();
+    public void updateLoginTime() {
+        super.updateModifiedDate();
     }
 
     public void reactivate(Sleeping sleeping) {

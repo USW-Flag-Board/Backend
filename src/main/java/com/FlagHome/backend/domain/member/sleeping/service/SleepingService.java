@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class SleepingService {
 
@@ -23,18 +24,15 @@ public class SleepingService {
         return sleepingRepository.existsByEmail(email);
     }
 
-    @Transactional
     public void saveAllSleeping(List<Sleeping> sleepingList) {
         sleepingRepository.saveAll(sleepingList);
     }
 
-    @Transactional
     public void reactivateMember(Member member, Sleeping sleeping) {
         member.reactivate(sleeping);
         sleepingRepository.delete(sleeping);
     }
 
-    @Transactional
     //@Scheduled(cron = "000000")
     public void deleteExpiredSleep() {
         List<Sleeping> sleepingList = sleepingRepository.getAllSleeping();

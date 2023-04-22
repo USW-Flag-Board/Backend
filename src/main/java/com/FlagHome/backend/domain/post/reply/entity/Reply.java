@@ -83,6 +83,14 @@ public class Reply extends BaseEntity implements Likeable {
         this.status = ReplyStatus.NORMAL;
     }
 
+    public static Reply of(Member member, Post post, String content) {
+        return Reply.builder()
+                .member(member)
+                .post(post)
+                .content(content)
+                .build();
+    }
+
     public void renewContent(String content) {
         this.content = content;
     }
@@ -99,13 +107,5 @@ public class Reply extends BaseEntity implements Likeable {
 
     public void banReply() {
         this.status = ReplyStatus.BANNED;
-    }
-
-    public static Reply of(Member member, Post post, String content) {
-        return Reply.builder()
-                .member(member)
-                .post(post)
-                .content(content)
-                .build();
     }
 }

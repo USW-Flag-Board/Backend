@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AuthService {
     private final RefreshTokenService refreshTokenService;
@@ -39,11 +40,8 @@ public class AuthService {
         return memberService.isExistEmail(email);
     }
 
-    @Transactional
     public JoinResponse join(JoinRequest joinRequest) {
-        if (validateDuplicateLoginId(joinRequest.getLoginId()) || validateDuplicateEmail(joinRequest.getEmail())) {
-            throw new CustomException(ErrorCode.VALIDATE_NOT_PROCEED);
-        }
+        isDuplicateValidated(joinRequest.getLoginId(), joinRequest.getEmail());
 
         String certificationNumber = RandomGenerator.getRandomNumber();
         authRepository.save(AuthInformation.of(joinRequest, certificationNumber));
@@ -52,7 +50,6 @@ public class AuthService {
         return JoinResponse.from(joinRequest.getEmail());
     }
 
-    @Transactional
     public SignUpResponse signUp(String email, String certification) {
         AuthInformation authInformation = findLatestAuthInformationByEmail(email);
         authInformation.validateAuthTime();
@@ -67,7 +64,6 @@ public class AuthService {
         return SignUpResponse.from(authInformation);
     }
 
-    @Transactional
     public TokenResponse login(String loginId, String password) {
         Member member = memberService.reactivateIfSleeping(loginId);
         member.isAvailable();
@@ -76,13 +72,18 @@ public class AuthService {
         TokenResponse tokenResponse = jwtUtilizer.generateTokenDto(authentication);
         refreshTokenService.issueToken(authentication.getName(), tokenResponse.getRefreshToken());
 
-        member.renewLoginTime();
+        member.updateLoginTime();
         return tokenResponse;
     }
 
-    @Transactional
     public TokenResponse reissueToken(String accessToken, String refreshToken) {
         return refreshTokenService.reissueToken(accessToken, refreshToken);
+    }
+
+    private void isDuplicateValidated(String loginId, String email) {
+        if (validateDuplicateLoginId(loginId) || validateDuplicateEmail(email)) {
+            throw new CustomException(ErrorCode.VALIDATE_NOT_PROCEED);
+        }
     }
 
     private AuthInformation findLatestAuthInformationByEmail(String email) {
