@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -18,6 +17,11 @@ import java.util.List;
 public class ActivityApplyService {
     private final ActivityApplyRepository activityApplyRepository;
 
+    @Transactional(readOnly = true)
+    public List<ActivityApplyResponse> getAllApplies(Long activityId) {
+        return activityApplyRepository.getAllApplies(activityId);
+    }
+
     public Boolean checkApply(Long memberId, Long activityId) {
         return activityApplyRepository.isApplied(memberId, activityId);
     }
@@ -25,11 +29,6 @@ public class ActivityApplyService {
     public ActivityApply apply(Member member, Activity activity) {
         ActivityApply apply = ActivityApply.of(member, activity);
         return activityApplyRepository.save(apply);
-    }
-
-    @Transactional(readOnly = true)
-    public List<ActivityApplyResponse> getAllApplies(Long activityId) {
-        return activityApplyRepository.getAllApplies(activityId);
     }
 
     public void cancelApply(Long memberId, Long activityId) {

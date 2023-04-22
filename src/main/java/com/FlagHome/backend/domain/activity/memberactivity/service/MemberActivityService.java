@@ -34,10 +34,6 @@ public class MemberActivityService {
         memberActivityRepository.saveAll(memberActivityList);
     }
 
-    public Member findMemberOfActivity(Long activityId, String loginId) {
-        return memberActivityRepository.findMemberOfActivityByLoginId(activityId, loginId);
-    }
-
     private List<MemberActivity> convertToMemberActivity(Activity activity, List<Member> memberList) {
         return memberList.stream()
                 .map(member -> MemberActivity.of(member, activity))

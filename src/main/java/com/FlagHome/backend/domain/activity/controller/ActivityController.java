@@ -2,7 +2,6 @@ package com.FlagHome.backend.domain.activity.controller;
 
 import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyResponse;
 import com.FlagHome.backend.domain.activity.controller.dto.request.ActivityRequest;
-import com.FlagHome.backend.domain.activity.controller.dto.request.ChangeLeaderRequest;
 import com.FlagHome.backend.domain.activity.controller.dto.request.CloseRecruitRequest;
 import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityDetailResponse;
 import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityResponse;
@@ -210,22 +209,6 @@ public class ActivityController {
     public ApplicationResponse<URI> updateStudy(@PathVariable("id") long activityId,
                                                 @RequestBody @Valid ActivityRequest activityRequest) {
         activityService.updateStudy(SecurityUtils.getMemberId(), activityId, activityRequest);
-        URI uri = UriCreator.createURI(DEFAULT_URL, activityId);
-        return new ApplicationResponse(uri);
-    }
-
-    @Tag(name = "activity")
-    @Operation(summary = "활동장 권한 넘기기", description = "[토큰필요] 새로운 활동장의 아이디를 받아 권한을 넘긴다.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "권한을 성공적으로 넘겼습니다."),
-            @ApiResponse(responseCode = "401", description = "활동장이 아닙니다."),
-            @ApiResponse(responseCode = "404", description = "이 활동의 멤버가 아닙니다.")
-    })
-    @ResponseStatus(OK)
-    @PatchMapping("/{id}/leader")
-    public ApplicationResponse<URI> updateLeader(@PathVariable("id") long activityId,
-                                                 @RequestBody @Valid ChangeLeaderRequest changeLeaderRequest) {
-        activityService.changeLeader(SecurityUtils.getMemberId(), activityId, changeLeaderRequest.getLoginId());
         URI uri = UriCreator.createURI(DEFAULT_URL, activityId);
         return new ApplicationResponse(uri);
     }

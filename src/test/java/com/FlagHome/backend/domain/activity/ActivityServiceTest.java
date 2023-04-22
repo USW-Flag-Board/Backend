@@ -4,7 +4,6 @@ import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyRespo
 import com.FlagHome.backend.domain.activity.activityapply.entity.ActivityApply;
 import com.FlagHome.backend.domain.activity.activityapply.repository.ActivityApplyRepository;
 import com.FlagHome.backend.domain.activity.controller.dto.request.ActivityRequest;
-import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityResponse;
 import com.FlagHome.backend.domain.activity.controller.dto.response.GetAllActivitiesResponse;
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.Mentoring;
@@ -15,7 +14,6 @@ import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
 import com.FlagHome.backend.domain.activity.entity.enums.BookUsage;
 import com.FlagHome.backend.domain.activity.mapper.ActivityMapper;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantResponse;
-import com.FlagHome.backend.domain.activity.memberactivity.entity.MemberActivity;
 import com.FlagHome.backend.domain.activity.memberactivity.repository.MemberActivityRepository;
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
 import com.FlagHome.backend.domain.activity.service.ActivityService;
@@ -38,7 +36,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @SpringBootTest
 @Transactional
@@ -469,67 +468,6 @@ public class ActivityServiceTest {
             assertThat(mentoring.getName()).isNotEqualTo(updateMentoring.getName());
             assertThat(mentoring.getBookUsage()).isNotEqualTo(updateMentoring.getBookUsage());
             assertThat(mentoring.getBookName()).isNotEqualTo(updateMentoring.getBookName());
-        }
-    }
-
-    @Nested
-    @DisplayName("활동장 변경하기 테스트")
-    class changeLeaderTest {
-        private Member member;
-        private Member notLeader;
-        private Activity activity;
-
-        @BeforeEach
-        void testSetUp() {
-            member = memberRepository.save(Member.builder().build());
-            notLeader = memberRepository.save(Member.builder().build());
-
-            activity = activityRepository.save(Project.builder()
-                    .leader(member)
-                    .semester(LocalDateTime.now().getMonthValue())
-                    .build());
-        }
-
-        @Test
-        @DisplayName("활동장 변경하기 성공")
-        void changeSuccessTest() {
-            // given
-            String loginId = "gmlwh124";
-            Member participant = memberRepository.save(Member.builder().loginId(loginId).build());
-
-            memberActivityRepository.saveAndFlush(MemberActivity.builder()
-                    .member(participant)
-                    .activity(activity)
-                    .build());
-
-            // when
-            activityService.changeLeader(member.getId(), activity.getId(), loginId);
-
-            // then
-            Activity foundActivity = activityRepository.findById(activity.getId()).get();
-            assertThat(foundActivity).isNotNull();
-            assertThat(foundActivity.getLeader().getLoginId()).isNotEqualTo(member.getLoginId());
-            assertThat(foundActivity.getLeader().getLoginId()).isEqualTo(participant.getLoginId());
-        }
-
-        @Test
-        @DisplayName("활동장 변경하기 실패 - 활동장이 아님")
-        void changeFailByNotLeaderTest() {
-            String loginId = "gmlwh124";
-
-            assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> activityService.changeLeader(notLeader.getId(), activity.getId(), loginId))
-                    .withMessage(ErrorCode.NOT_ACTIVITY_LEADER.getMessage());
-        }
-
-        @Test
-        @DisplayName("활동장 변경하기 실패 - 활동원이 아님")
-        void changeFailByNotMemberTest() {
-            String wrongLoginId = "hejow124";
-
-            assertThatThrownBy(() -> activityService.changeLeader(member.getId(), activity.getId(), wrongLoginId))
-                    .isInstanceOf(CustomException.class)
-                    .withFailMessage(ErrorCode.NOT_ACTIVITY_MEMBER.getMessage());
         }
     }
 

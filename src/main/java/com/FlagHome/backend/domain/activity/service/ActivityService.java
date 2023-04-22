@@ -105,16 +105,6 @@ public class ActivityService {
         study.updateStudy(activityRequest);
     }
 
-    public void changeLeader(Long memberId, Long activityId, String loginId) { // 수정하기
-        Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
-        Member newLeader = memberActivityService.findMemberOfActivity(activityId, loginId);
-        if (newLeader == null) {
-            throw new CustomException(ErrorCode.NOT_ACTIVITY_MEMBER);
-        }
-
-        activity.changeLeader(newLeader);
-    }
-
     public void closeRecruitment(Long memberId, Long activityId, List<String> loginIdList) {
         Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
         activity.isRecruitment();
