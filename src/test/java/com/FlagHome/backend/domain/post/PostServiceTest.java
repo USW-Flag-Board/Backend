@@ -77,7 +77,7 @@ public class PostServiceTest {
         Long memberId = memberRepository.findByEmail(email).get().getId();
 
         // when
-        Long postId = postService.createPost(memberId, post, boardName);
+        Long postId = postService.createPost(memberId, post, boardName).getId();
 
         // then
         Post savedPost = postRepository.findById(postId).get();

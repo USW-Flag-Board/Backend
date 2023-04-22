@@ -2,11 +2,12 @@ package com.FlagHome.backend.domain.activity;
 
 
 import com.FlagHome.backend.common.IntegrationTest;
-import com.FlagHome.backend.domain.activity.controller.dto.request.ActivityRequest;
+import com.FlagHome.backend.domain.activity.controller.dto.request.CreateActivityRequest;
+import com.FlagHome.backend.domain.activity.controller.dto.request.UpdateActivityRequest;
 import com.FlagHome.backend.domain.activity.entity.Activity;
-import com.FlagHome.backend.domain.activity.entity.Project;
 import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
 import com.FlagHome.backend.domain.activity.entity.enums.Proceed;
+import com.FlagHome.backend.domain.activity.mapper.ActivityMapper;
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.entity.enums.Role;
@@ -27,9 +28,9 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class ActivityControllerTest extends IntegrationTest {
@@ -41,7 +42,12 @@ public class ActivityControllerTest extends IntegrationTest {
     @Autowired
     private ActivityRepository activityRepository;
 
+    @Autowired
+    private ActivityMapper activityMapper;
+
     private Member member;
+
+    private Activity activity;
 
     @BeforeEach
     void setup() {
@@ -65,15 +71,15 @@ public class ActivityControllerTest extends IntegrationTest {
         // given
         final String name = "name";
         final String description = "discription";
-        final String githubLink = "link";
+        final String githubURL = "link";
         final ActivityType activityType = ActivityType.PROJECT;
         final Proceed proceed = Proceed.BOTH;
 
-        ActivityRequest request = ActivityRequest.builder()
+        CreateActivityRequest request = CreateActivityRequest.builder()
                 .name(name)
                 .description(description)
-                .activityType(activityType)
-                .githubLink(githubLink)
+                .type(activityType)
+                .githubURL(githubURL)
                 .proceed(proceed)
                 .build();
 
@@ -87,11 +93,12 @@ public class ActivityControllerTest extends IntegrationTest {
         List<Activity> activityList = activityRepository.findAll();
         assertThat(activityList.size()).isEqualTo(1);
 
-        Project project = (Project) activityList.get(0);
-        assertThat(project.getName()).isEqualTo(name);
-        assertThat(project.getDescription()).isEqualTo(description);
-        assertThat(project.getGithubLink()).isEqualTo(githubLink);
-        assertThat(project.getProceed()).isEqualTo(proceed);
+        Activity activity = activityList.get(0);
+        assertThat(activity.getName()).isEqualTo(name);
+        assertThat(activity.getDescription()).isEqualTo(description);
+        assertThat(activity.getInfo().getGithubURL()).isEqualTo(githubURL);
+        assertThat(activity.getInfo().getProceed()).isEqualTo(proceed);
+        assertThat(activity.getInfo().getBookUsage()).isNull();
     }
 
     @Test
@@ -99,20 +106,20 @@ public class ActivityControllerTest extends IntegrationTest {
         // given
         final String name = "name";
         final String description = "discription";
-        final String githubLink = "link";
+        final String githubURL = "link";
         final ActivityType activityType = ActivityType.PROJECT;
         final Proceed proceed = Proceed.BOTH;
 
-        ActivityRequest request = ActivityRequest.builder()
+        CreateActivityRequest request = CreateActivityRequest.builder()
                 .name(name)
                 .description(description)
-                .activityType(activityType)
-                .githubLink(githubLink)
+                .type(activityType)
+                .githubURL(githubURL)
                 .proceed(proceed)
                 .build();
 
-        Project project = activityRepository.save(Project.from(request));
-        final String uri = BASE_URL + "/" + project.getId();
+        Activity activity = activityRepository.save(Activity.of(member, activityMapper.toActivity(request)));
+        final String uri = BASE_URL + "/" + activity.getId();
 
         // when
         ResultActions resultActions = mockMvc.perform(get(uri)
@@ -121,8 +128,63 @@ public class ActivityControllerTest extends IntegrationTest {
         // then
         resultActions
                 .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.payload."))
                 .andDo(print());
+    }
+
+    @Test
+    public void 활동_신청_체크_테스트() throws Exception {
+        // given
+        final Role role = Role.ROLE_CREW;
+        Member applyMember = memberRepository.save(Member.builder().role(role).build());
+        setSecurityContext(applyMember);
+        setActivity(member);
+
+        final String uri = BASE_URL + "/" + activity.getId() + "/check";
+
+        // when
+        ResultActions resultActions = mockMvc.perform(post(uri)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("payload").value(Boolean.FALSE))
+                .andDo(print());
+    }
+
+    @Test
+    public void 활동_수정_테스트() throws Exception {
+        // given
+        setActivity(member);
+
+        final String name = "changed";
+        final String description = "changed";
+        final String githubURL = "changed";
+        final Proceed proceed = Proceed.ONLINE;
+
+        UpdateActivityRequest request = UpdateActivityRequest.builder()
+                .name(name)
+                .description(description)
+                .githubURL(githubURL)
+                .proceed(proceed)
+                .build();
+
+        final String uri = BASE_URL + "/" + activity.getId();
+
+        // when
+        mockMvc.perform(put(uri)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        // then
+        Activity changedActivity = activityRepository.findById(activity.getId()).orElse(null);
+        assertThat(changedActivity).isNotNull();
+        assertThat(changedActivity.getName()).isEqualTo(name);
+        assertThat(changedActivity.getDescription()).isEqualTo(description);
+        assertThat(changedActivity.getInfo().getGithubURL()).isEqualTo(githubURL);
+        assertThat(changedActivity.getInfo().getProceed()).isEqualTo(proceed);
     }
 
     private void setSecurityContext(Member member) {
@@ -131,5 +193,23 @@ public class ActivityControllerTest extends IntegrationTest {
 
         UserDetails principal = new User(String.valueOf(member.getId()), "", authorities);
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(principal, "", authorities));
+    }
+
+    private void setActivity(Member member) {
+        final String name = "name";
+        final String description = "discription";
+        final String githubURL = "link";
+        final ActivityType activityType = ActivityType.PROJECT;
+        final Proceed proceed = Proceed.BOTH;
+
+        CreateActivityRequest request = CreateActivityRequest.builder()
+                .name(name)
+                .description(description)
+                .type(activityType)
+                .githubURL(githubURL)
+                .proceed(proceed)
+                .build();
+
+        activity = activityRepository.save(Activity.of(member, activityMapper.toActivity(request)));
     }
 }

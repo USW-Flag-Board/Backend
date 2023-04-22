@@ -36,8 +36,10 @@ public abstract class Token {
         this.expiredAt = expiredAt;
     }
 
-    public boolean isNotEqualTo(String value) {
-        return !StringUtils.equals(this.value, value);
+    public void isSameToken(String value) {
+        if (!StringUtils.equals(this.value, value)) {
+            throw new CustomException(ErrorCode.TOKEN_NOT_MATCH);
+        }
     }
 
     public void renewValue(String value, LocalDateTime expiredAt) {

@@ -4,7 +4,6 @@ import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantRespon
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.QParticipantResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.QParticipateResponse;
-import com.FlagHome.backend.domain.member.entity.Member;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -22,20 +21,13 @@ public class MemberActivityRepositoryImpl implements MemberActivityRepositoryCus
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public void deleteAllByActivityId(long activityId) {
-        queryFactory.delete(memberActivity)
-                .where(memberActivity.activity.id.eq(activityId))
-                .execute();
-    }
-
-    @Override
     public List<ParticipateResponse> getAllActivitiesOfMember(String loginId) {
         return queryFactory
                 .select(new QParticipateResponse(
                         activity.id,
                         activity.name,
-                        activity.createdAt.year(), // Long 타입 해결하기 (메모리 누수)
-                        activity.semester,
+                        activity.createdAt.year(),
+                        activity.info.semester,
                         activity.status))
                 .from(memberActivity)
                 .innerJoin(memberActivity.member, member)
@@ -45,7 +37,7 @@ public class MemberActivityRepositoryImpl implements MemberActivityRepositoryCus
     }
 
     @Override
-    public List<ParticipantResponse> getAllParticipantByActivityId(long activityId) {
+    public List<ParticipantResponse> getAllParticipantByActivityId(Long activityId) {
         return queryFactory
                 .select(new QParticipantResponse(
                         member.name,
@@ -56,15 +48,5 @@ public class MemberActivityRepositoryImpl implements MemberActivityRepositoryCus
                 .innerJoin(memberActivity.member, member)
                 .where(memberActivity.activity.id.eq(activityId))
                 .fetch();
-    }
-
-    @Override
-    public Member findMemberOfActivityByLoginId(long activityId, String loginId) {
-        return queryFactory.select(member)
-                .from(memberActivity)
-                .innerJoin(memberActivity.member, member)
-                .where(member.loginId.eq(loginId),
-                        memberActivity.activity.id.eq(activityId))
-                .fetchOne();
     }
 }

@@ -16,13 +16,15 @@ public enum ErrorCode {
     VALIDATE_NOT_PROCEED(HttpStatus.BAD_REQUEST, "중복검사를 진행하지 않았습니다."),
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
     NOT_SUPPORT_ACTIVITY(HttpStatus.BAD_REQUEST, "지원하는 활동이 아닙니다."),
-    NOT_ACTIVITY_LEADER(HttpStatus.BAD_REQUEST, "활동장이 아닙니다."),
+    NOT_RECRUITMENT_ACTIVITY(HttpStatus.BAD_REQUEST, "모집 중인 활동이 아닙니다."),
+    NOT_ON_ACTIVITY(HttpStatus.BAD_REQUEST, "진행 중인 활동이 아닙니다."),
     NOT_AUTHOR(HttpStatus.BAD_REQUEST, "작성자가 아닙니다."),
     INVALID_MONTH_RANGE(HttpStatus.BAD_REQUEST, "입력범위에 벗어났습니다."),
     NEVER_LIKED(HttpStatus.BAD_REQUEST, "좋아요를 하지 않았습니다."),
 
     /** 401 - UNAUTHORIZED  */
     NONE_AUTHORIZATION_TOKEN(HttpStatus.UNAUTHORIZED, "권한 정보가 없는 토큰입니다."),
+    NOT_ACTIVITY_LEADER(HttpStatus.UNAUTHORIZED, "활동장이 아닙니다."),
 
     /** 404 - NOT_FOUND */
     INVALID_FOUND(HttpStatus.NOT_FOUND, "요청을 찾을 수 없습니다."),

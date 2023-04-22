@@ -24,9 +24,9 @@ public class ActivityRepositoryImpl implements ActivityRepositoryCustom {
                         activity.id,
                         activity.name,
                         member.name,
-                        activity.activityType,
+                        activity.type,
                         activity.status,
-                        activity.semester))
+                        activity.info.semester))
                 .from(activity)
                 .innerJoin(activity.leader, member)
                 .orderBy(activity.id.desc())
@@ -40,9 +40,9 @@ public class ActivityRepositoryImpl implements ActivityRepositoryCustom {
                         activity.id,
                         activity.name,
                         member.name,
-                        activity.activityType,
+                        activity.type,
                         activity.status,
-                        activity.semester))
+                        activity.info.semester))
                 .from(activity)
                 .innerJoin(activity.leader, member)
                 .where(activity.status.eq(ActivityStatus.RECRUIT))

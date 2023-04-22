@@ -6,10 +6,7 @@ import com.FlagHome.backend.domain.activity.activityapply.entity.ActivityApply;
 import com.FlagHome.backend.domain.activity.activityapply.repository.ActivityApplyRepository;
 import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityResponse;
 import com.FlagHome.backend.domain.activity.entity.Activity;
-import com.FlagHome.backend.domain.activity.entity.Mentoring;
-import com.FlagHome.backend.domain.activity.entity.Project;
-import com.FlagHome.backend.domain.activity.entity.Study;
-import com.FlagHome.backend.domain.activity.entity.enums.ActivityStatus;
+import com.FlagHome.backend.domain.activity.entity.ActivityInfo;
 import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
@@ -25,14 +22,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class ActivityRepositoryTest extends RepositoryTest {
     @Autowired
@@ -54,28 +48,14 @@ public class ActivityRepositoryTest extends RepositoryTest {
     @DisplayName("활동 테스트")
     class activityTest {
         @Test
-        @DisplayName("모든 활동 가져오기 테스트")
-        void getAllActivitiesTest() {
+        void 모든_활동_가져오기_테스트() {
             // given
             Member member = memberRepository.save(Member.builder().build());
+            ActivityInfo info = ActivityInfo.builder().build();
 
-            Project project = Project.builder()
-                    .leader(member)
-                    .activityType(ActivityType.PROJECT)
-                    .semester(LocalDateTime.now().getMonthValue())
-                    .build();
-
-            Study study = Study.builder()
-                    .leader(member)
-                    .activityType(ActivityType.STUDY)
-                    .semester(LocalDateTime.now().getMonthValue())
-                    .build();
-
-            Mentoring mentoring = Mentoring.builder()
-                    .leader(member)
-                    .activityType(ActivityType.MENTORING)
-                    .semester(LocalDateTime.now().getMonthValue())
-                    .build();
+            Activity project = Activity.builder().leader(member).type(ActivityType.PROJECT).info(info).build();
+            Activity study = Activity.builder().leader(member).type(ActivityType.STUDY).info(info).build();
+            Activity mentoring = Activity.builder().leader(member).type(ActivityType.MENTORING).info(info).build();
 
             activityRepository.saveAll(Arrays.asList(project, study, mentoring));
 
@@ -91,8 +71,7 @@ public class ActivityRepositoryTest extends RepositoryTest {
     @DisplayName("활동 신청 테스트")
     public class activityApplyTest {
         @Test
-        @DisplayName("모든 활동 신청 가져오기 테스트")
-        void getAllAppliesTest() {
+        void 모든_활동_신청_가져오기_테스트() {
             // given
             Major major = Major.컴퓨터SW;
 
@@ -100,10 +79,7 @@ public class ActivityRepositoryTest extends RepositoryTest {
             Member member2 = memberRepository.save(Member.builder().build());
             Member member3 = memberRepository.save(Member.builder().build());
 
-            Activity activity = activityRepository.saveAndFlush(Project.builder()
-                                                                    .leader(member1)
-                                                                    .semester(LocalDateTime.now().getMonthValue())
-                                                                    .build());
+            Activity activity = activityRepository.saveAndFlush(Activity.builder().leader(member1).build());
 
             ActivityApply activityApply1 = ActivityApply.builder().member(member2).activity(activity).build();
             ActivityApply activityApply2 = ActivityApply.builder().member(member3).activity(activity).build();
@@ -128,7 +104,7 @@ public class ActivityRepositoryTest extends RepositoryTest {
             Member member2 = memberRepository.save(Member.builder().build());
             Member member3 = memberRepository.save(Member.builder().build());
 
-            Activity activity = activityRepository.saveAndFlush(Project.builder().leader(member1).semester(LocalDateTime.now().getMonthValue()).build());
+            Activity activity = activityRepository.saveAndFlush(Activity.builder().leader(member1).build());
 
             ActivityApply activityApply1 = ActivityApply.builder().member(member2).activity(activity).build();
             ActivityApply activityApply2 = ActivityApply.builder().member(member3).activity(activity).build();
@@ -144,13 +120,12 @@ public class ActivityRepositoryTest extends RepositoryTest {
         }
 
         @Test
-        @DisplayName("신청 체크 테스트")
-        void checkApplyTest() {
+        void 신청_체크_테스트() {
             // given
             Member member1 = memberRepository.save(Member.builder().build());
             Member member2 = memberRepository.save(Member.builder().build());
 
-            Activity activity = activityRepository.save(Study.builder().leader(member1).semester(LocalDateTime.now().getMonthValue()).build());
+            Activity activity = activityRepository.save(Activity.builder().leader(member1).build());
 
             activityApplyRepository.save(ActivityApply.builder()
                     .member(member2)
@@ -167,11 +142,10 @@ public class ActivityRepositoryTest extends RepositoryTest {
         }
 
         @Test
-        @DisplayName("활동 신청 정보 지우기 테스트")
-        void findApplyByMemberAndActivityTest() {
+        void 활동_신청_정보_지우기_테스트() {
             // given
             Member member = memberRepository.save(Member.builder().build());
-            Activity activity = activityRepository.save(Mentoring.builder().leader(member).semester(LocalDateTime.now().getMonthValue()).build());
+            Activity activity = activityRepository.save(Activity.builder().leader(member).build());
 
             ActivityApply apply = activityApplyRepository.save(ActivityApply.builder()
                     .member(member)
@@ -192,46 +166,16 @@ public class ActivityRepositoryTest extends RepositoryTest {
     @DisplayName("멤버활동 테스트")
     class memberActivityTest {
         @Test
-        @DisplayName("활동으로 지우기 테스트")
-        void deleteAllByActivityTest() {
-            // given
-            Activity activity = activityRepository.save(Project.builder().semester(LocalDateTime.now().getMonthValue()).build());
-
-            MemberActivity memberActivity1 = MemberActivity.builder().activity(activity).build();
-            MemberActivity memberActivity2 = MemberActivity.builder().activity(activity).build();
-
-            memberActivityRepository.saveAll(Arrays.asList(memberActivity1, memberActivity2));
-
-            // when
-            memberActivityRepository.deleteAllByActivityId(activity.getId());
-            entityManager.clear();
-
-            // then
-            assertThatExceptionOfType(NoSuchElementException.class)
-                    .isThrownBy(() -> memberActivityRepository.findById(activity.getId()).get());
-        }
-
-        @Test
         @DisplayName("멤버 참가활동 가져오기 테스트")
         void getAllParticipateActivityTest() {
             // given
             String loginId = "gmlwh124";
             Member member = memberRepository.save(Member.builder().loginId(loginId).build());
+            ActivityInfo info = ActivityInfo.builder().build();
 
-            Activity project = Project.builder()
-                    .name("project")
-                    .semester(LocalDateTime.now().getMonthValue())
-                    .build();
-
-            Activity mentoring = Mentoring.builder()
-                    .name("mentoring")
-                    .semester(LocalDateTime.now().getMonthValue())
-                    .build();
-
-            Activity study = Study.builder()
-                    .name("study")
-                    .semester(LocalDateTime.now().getMonthValue())
-                    .build();
+            Activity project = Activity.builder().type(ActivityType.PROJECT).info(info).build();
+            Activity study = Activity.builder().type(ActivityType.STUDY).info(info).build();
+            Activity mentoring = Activity.builder().type(ActivityType.MENTORING).info(info).build();
 
             activityRepository.saveAll(Arrays.asList(project, mentoring, study));
 
@@ -280,9 +224,8 @@ public class ActivityRepositoryTest extends RepositoryTest {
                     .loginId("hejow124")
                     .build());
 
-            Activity activity = activityRepository.save(Project.builder()
+            Activity activity = activityRepository.save(Activity.builder()
                             .leader(member)
-                            .semester(LocalDateTime.now().getMonthValue())
                             .build());
 
             MemberActivity memberActivity1 = MemberActivity.builder()
@@ -310,43 +253,14 @@ public class ActivityRepositoryTest extends RepositoryTest {
             assertThat(response2.getName()).isNotNull();
             assertThat(response2.getLoginId()).isNotNull();
         }
-
-        @Test
-        @DisplayName("활동 구성원 체크 테스트")
-        void existMemberOfActivity() {
-            // given
-            String loginId = "gmlwh124";
-
-            Member member = memberRepository.save(Member.builder()
-                            .loginId(loginId)
-                            .build());
-
-            Activity activity = activityRepository.save(Study.builder()
-                    .semester(LocalDateTime.now().getMonthValue())
-                    .build());
-
-            memberActivityRepository.save(MemberActivity.builder()
-                    .member(member)
-                    .activity(activity)
-                    .build());
-
-            // when
-            Member foundMember = memberActivityRepository.findMemberOfActivityByLoginId(activity.getId(), loginId);
-
-            // then
-            assertThat(foundMember).isNotNull();
-            assertThat(foundMember.getLoginId()).isEqualTo(loginId);
-        }
     }
 
     @Test
     void 모집_중인_활동_가져오기_테스트() {
         // given
         Member member = memberRepository.save(Member.builder().build());
-        activityRepository.save(Project.builder()
-                .leader(member)
-                .semester(LocalDateTime.now().getMonthValue())
-                .build());
+        ActivityInfo info = ActivityInfo.builder().build();
+        activityRepository.save(Activity.builder().leader(member).info(info).build());
 
         // when
         List<ActivityResponse> response = activityRepository.getRecruitActivities();

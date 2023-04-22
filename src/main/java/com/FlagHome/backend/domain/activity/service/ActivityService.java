@@ -3,13 +3,9 @@ package com.FlagHome.backend.domain.activity.service;
 import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyResponse;
 import com.FlagHome.backend.domain.activity.activityapply.entity.ActivityApply;
 import com.FlagHome.backend.domain.activity.activityapply.service.ActivityApplyService;
-import com.FlagHome.backend.domain.activity.controller.dto.request.ActivityRequest;
 import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityResponse;
 import com.FlagHome.backend.domain.activity.controller.dto.response.GetAllActivitiesResponse;
 import com.FlagHome.backend.domain.activity.entity.Activity;
-import com.FlagHome.backend.domain.activity.entity.Mentoring;
-import com.FlagHome.backend.domain.activity.entity.Project;
-import com.FlagHome.backend.domain.activity.entity.Study;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.service.MemberActivityService;
@@ -52,18 +48,20 @@ public class ActivityService {
         return memberActivityService.getAllActivitiesOfMember(loginId);
     }
 
-    public Activity getActivity(Long activityId) {
-        return findById(activityId);
-    }
-
+    @Transactional(readOnly = true)
     public List<ActivityApplyResponse> getAllApplies(Long memberId, Long activityId) {
         Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
         return activityApplyService.getAllApplies(activity.getId());
     }
 
+    @Transactional(readOnly = true)
     public List<ParticipantResponse> getAllParticipants(Long memberId, Long activityId) {
         validateLeaderAndReturnActivity(memberId, activityId);
         return memberActivityService.getAllParticipants(activityId);
+    }
+
+    public Activity getActivity(Long activityId) {
+        return findById(activityId);
     }
 
     public Boolean checkApply(Long memberId, Long activityId) {
@@ -84,57 +82,31 @@ public class ActivityService {
 
     public Activity create(Long memberId, Activity activity) {
         Member member = memberService.findById(memberId);
-        activity.changeLeader(member);
-        return activityRepository.save(activity);
+        return activityRepository.save(Activity.of(member, activity));
     }
 
-    public void updateMentoring(Long memberId, Long activityId, ActivityRequest activityRequest) {
-        Mentoring mentoring = (Mentoring) validateLeaderAndReturnActivity(memberId, activityId);
-        mentoring.updateMentoring(activityRequest);
-    }
-
-    public void updateProject(Long memberId, Long activityId, ActivityRequest activityRequest) {
-        Project project = (Project) validateLeaderAndReturnActivity(memberId, activityId);
-        project.updateProject(activityRequest);
-    }
-
-    public void updateStudy(Long memberId, Long activityId, ActivityRequest activityRequest) {
-        Study study = (Study) validateLeaderAndReturnActivity(memberId, activityId);
-        study.updateStudy(activityRequest);
-    }
-
-    public void changeLeader(Long memberId, Long activityId, String loginId) { // 수정하기
-        Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
-        Member newLeader = memberActivityService.findMemberOfActivity(activityId, loginId);
-        if (newLeader == null) {
-            throw new CustomException(ErrorCode.NOT_ACTIVITY_MEMBER);
-        }
-
-        activity.changeLeader(newLeader);
+    public void update(Long memberId, Long activityId, Activity activity) {
+        Activity savedActivity = validateLeaderAndReturnActivity(memberId, activityId);
+        savedActivity.update(activity);
     }
 
     public void closeRecruitment(Long memberId, Long activityId, List<String> loginIdList) {
         Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
+        activity.isRecruiting();
         List<Member> memberList = memberService.getMembersByLoginIds(loginIdList);
         activityApplyService.deleteAllApplies(activityId);
         memberActivityService.registerMembers(activity, memberList);
         activity.closeRecruitment();
     }
 
-    public void reopenRecruitment(Long memberId, Long activityId) {
-        Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
-        memberActivityService.deleteAllByActivity(activity.getId());
-        activity.reopenRecruitment();
-    }
-
     public void finishActivity(Long memberId, Long activityId) {
         Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
+        activity.isInProgress();
         activity.finishActivity();
     }
 
     public void delete(Long memberId, Long activityId) {
         Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
-
         activityApplyService.deleteAllApplies(activityId);
         activityRepository.delete(activity);
     }

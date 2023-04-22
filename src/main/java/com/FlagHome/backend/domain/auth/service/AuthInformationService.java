@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AuthInformationService {
     private final AuthRepository authRepository;
@@ -18,7 +19,6 @@ public class AuthInformationService {
      * 매 정오에 재학생 인증 절차를 진행하지 않은 테이블들을 지운다.
      */
     @Scheduled(cron = "0 0 0 * * *")
-    @Transactional
     public void deleteAllNotProceedAuthInformation() {
         List<AuthInformation> unAuthInformationList = authRepository.getAllNotProceedAuthInformation();
         authRepository.deleteAllInBatch(unAuthInformationList);
