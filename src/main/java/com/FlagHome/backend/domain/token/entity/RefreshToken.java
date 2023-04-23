@@ -1,4 +1,4 @@
-package com.FlagHome.backend.domain.member.token.entity;
+package com.FlagHome.backend.domain.token.entity;
 
 import lombok.*;
 

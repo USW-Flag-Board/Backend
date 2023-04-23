@@ -3,19 +3,21 @@ package com.FlagHome.backend.domain.auth.controller;
 import com.FlagHome.backend.domain.auth.controller.dto.request.*;
 import com.FlagHome.backend.domain.auth.controller.dto.response.JoinResponse;
 import com.FlagHome.backend.domain.auth.controller.dto.response.SignUpResponse;
-import com.FlagHome.backend.global.common.ApplicationResponse;
+import com.FlagHome.backend.domain.auth.mapper.AuthMapper;
 import com.FlagHome.backend.domain.auth.service.AuthService;
-import com.FlagHome.backend.domain.member.token.dto.TokenRequest;
-import com.FlagHome.backend.domain.member.token.dto.TokenResponse;
+import com.FlagHome.backend.domain.token.dto.TokenRequest;
+import com.FlagHome.backend.domain.token.dto.TokenResponse;
+import com.FlagHome.backend.global.common.ApplicationResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 @Tag(name = "auth", description = "인증 API")
@@ -25,14 +27,16 @@ import static org.springframework.http.HttpStatus.OK;
 public class AuthController {
     private final AuthService authService;
 
+    private final AuthMapper authMapper;
+
     @Tag(name = "auth")
     @Operation(summary = "아이디 중복 체크")
     @ApiResponse(responseCode = "200", description = "중복 체크 성공. False : 사용 가능, True : 사용 불가능")
     @ResponseStatus(OK)
     @PostMapping("/check/id")
-    public ApplicationResponse<Boolean> checkId(@RequestBody CheckLoginIdRequest checkLoginIdRequest) {
+    public ApplicationResponse<Boolean> checkId(@RequestBody @Valid CheckLoginIdRequest checkLoginIdRequest) {
         boolean check = authService.validateDuplicateLoginId(checkLoginIdRequest.getLoginId());
-        return new ApplicationResponse(check);
+        return new ApplicationResponse<>(check);
     }
 
     @Tag(name = "auth")
@@ -59,8 +63,8 @@ public class AuthController {
     @ResponseStatus(OK)
     @PostMapping("/join")
     public ApplicationResponse<JoinResponse> join(@RequestBody @Valid JoinRequest joinRequest) {
-        JoinResponse response = authService.join(joinRequest);
-        return new ApplicationResponse(response);
+        JoinResponse response = authService.join(authMapper.toEntity(joinRequest));
+        return new ApplicationResponse<>(response);
     }
 
     @Tag(name = "auth")
@@ -71,11 +75,11 @@ public class AuthController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 가입정보입니다."),
             @ApiResponse(responseCode = "409", description = "인증번호가 일치하지 않습니다."),
     })
-    @ResponseStatus(OK)
+    @ResponseStatus(CREATED)
     @PostMapping("/sign-up")
     public ApplicationResponse<SignUpResponse> signup(@RequestBody @Valid SignUpRequest signUpRequest) {
         SignUpResponse response = authService.signUp(signUpRequest.getEmail(), signUpRequest.getCertification());
-        return new ApplicationResponse(response);
+        return new ApplicationResponse<>(response);
     }
 
     @Tag(name = "auth")

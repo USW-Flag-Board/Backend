@@ -1,14 +1,13 @@
 package com.FlagHome.backend.domain.auth.service;
 
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
-import com.FlagHome.backend.domain.auth.controller.dto.request.JoinRequest;
 import com.FlagHome.backend.domain.auth.controller.dto.response.JoinResponse;
 import com.FlagHome.backend.domain.auth.controller.dto.response.SignUpResponse;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.service.MemberService;
-import com.FlagHome.backend.domain.member.token.dto.TokenResponse;
-import com.FlagHome.backend.domain.member.token.service.RefreshTokenService;
+import com.FlagHome.backend.domain.token.dto.TokenResponse;
+import com.FlagHome.backend.domain.token.service.RefreshTokenService;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.infra.aws.ses.service.MailService;
@@ -25,12 +24,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @RequiredArgsConstructor
 public class AuthService {
+    private final AuthRepository authRepository;
+    private final MemberService memberService;
     private final RefreshTokenService refreshTokenService;
     private final MailService mailService;
-    private final MemberService memberService;
-    private final AuthRepository authRepository;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtUtilizer jwtUtilizer;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     public Boolean validateDuplicateLoginId(String loginId) {
         return memberService.isExistLoginId(loginId);
@@ -40,14 +39,14 @@ public class AuthService {
         return memberService.isExistEmail(email);
     }
 
-    public JoinResponse join(JoinRequest joinRequest) {
-        isDuplicateValidated(joinRequest.getLoginId(), joinRequest.getEmail());
+    public JoinResponse join(AuthInformation authInformation) {
+        isDuplicateValidated(authInformation.getLoginId(), authInformation.getEmail());
 
         String certificationNumber = RandomGenerator.getRandomNumber();
-        authRepository.save(AuthInformation.of(joinRequest, certificationNumber));
-        mailService.sendCertification(joinRequest.getEmail(), certificationNumber);
+        authRepository.save(AuthInformation.of(authInformation, certificationNumber));
+        mailService.sendCertification(authInformation.getEmail(), certificationNumber);
 
-        return JoinResponse.from(joinRequest.getEmail());
+        return JoinResponse.from(authInformation.getEmail());
     }
 
     public SignUpResponse signUp(String email, String certification) {
