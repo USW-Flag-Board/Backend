@@ -148,7 +148,7 @@ public class MemberService {
     }
 
     //@Scheduled(cron = "000000")
-    public void beforeSleep() {
+    public void sendNotificationToDeactivableMembers() {
         List<String> emailLists = memberRepository.getAllBeforeSleepEmails();
         emailLists.forEach(mailService::sendChangeSleep);
     }

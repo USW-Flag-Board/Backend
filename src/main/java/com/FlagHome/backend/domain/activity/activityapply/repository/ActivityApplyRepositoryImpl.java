@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.activity.activityapply.repository;
 
-import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyResponse;
-import com.FlagHome.backend.domain.activity.activityapply.dto.QActivityApplyResponse;
+import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityApplyResponse;
+import com.FlagHome.backend.domain.activity.controller.dto.response.QActivityApplyResponse;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -10,7 +10,6 @@ import java.util.List;
 
 import static com.FlagHome.backend.domain.activity.activityapply.entity.QActivityApply.activityApply;
 import static com.FlagHome.backend.domain.member.entity.QMember.member;
-
 
 @Repository
 @RequiredArgsConstructor

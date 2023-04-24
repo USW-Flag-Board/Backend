@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.activity.activityapply.service;
 
-import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyResponse;
+import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityApplyResponse;
 import com.FlagHome.backend.domain.activity.activityapply.entity.ActivityApply;
 import com.FlagHome.backend.domain.activity.activityapply.repository.ActivityApplyRepository;
 import com.FlagHome.backend.domain.activity.entity.Activity;
