@@ -1,5 +1,7 @@
 package com.FlagHome.backend.global.annotation;
 
+import com.FlagHome.backend.global.annotation.validator.USWEmailValidator;
+
 import javax.validation.Constraint;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

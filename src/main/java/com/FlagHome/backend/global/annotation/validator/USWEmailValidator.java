@@ -1,5 +1,6 @@
-package com.FlagHome.backend.global.annotation;
+package com.FlagHome.backend.global.annotation.validator;
 
+import com.FlagHome.backend.global.annotation.USWEmailFormat;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.ConstraintValidator;
@@ -12,21 +13,22 @@ public class USWEmailValidator implements ConstraintValidator<USWEmailFormat, St
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         int separateIndex = getIndex(value);
-        if (isEmailFormat(separateIndex) && isUSWEmail(value, separateIndex)) {
-            return Boolean.TRUE;
-        }
-        return Boolean.FALSE;
+        return isValidUSWEmail(value, separateIndex);
     }
 
     private int getIndex(String email) {
         return StringUtils.indexOf(email, "@");
     }
 
-    private boolean isUSWEmail(String email, int separateIndex) {
+    private boolean isUSWEmailFormat(String email, int separateIndex) {
         return StringUtils.equals(email.substring(separateIndex), USW_EMAIL);
     }
 
     private boolean isEmailFormat(int index) {
         return index != NOT_EMAIL;
+    }
+
+    private boolean isValidUSWEmail(String value, int separateIndex) {
+        return isEmailFormat(separateIndex) && isUSWEmailFormat(value, separateIndex);
     }
 }

@@ -11,11 +11,11 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class AuthenticationRequest {
+    @Schema(name = "이메일", example = "gmlwh124@suwon.ac.kr")
     @USWEmailFormat
-    @Schema(name = "이메일", required = true, example = "gmlwh124@suwon.ac.kr")
     private String email;
 
-    @Schema(name = "인증 번호", required = true)
+    @Schema(name = "인증 번호", example = "123456")
     @NotBlank
     private String certification;
 }

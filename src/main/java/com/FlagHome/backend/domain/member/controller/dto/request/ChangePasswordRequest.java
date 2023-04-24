@@ -10,11 +10,11 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class ChangePasswordRequest {
+    @Schema(name = "이메일", example = "gmlwh124@suwon.ac.kr")
     @USWEmailFormat
-    @Schema(name = "이메일", required = true, example = "gmlwh124@suwon.ac.kr")
     private String email;
 
+    @Schema(name = "새 비밀번호", example = "qwer1234!")
     @PasswordFormat
-    @Schema(name = "새 비밀번호", required = true, example = "qwer1234!")
     private String newPassword;
 }

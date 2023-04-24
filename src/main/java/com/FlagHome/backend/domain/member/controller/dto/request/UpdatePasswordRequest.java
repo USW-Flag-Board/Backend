@@ -9,11 +9,11 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class UpdatePasswordRequest {
+    @Schema(description = "현재 비밀번호", example = "qwer1234!")
     @PasswordFormat
-    @Schema(description = "현재 비밀번호", required = true, example = "qwer1234!")
     private String currentPassword;
 
+    @Schema(description = "새 비밀번호", example = "qwer1234!")
     @PasswordFormat
-    @Schema(description = "새 비밀번호", required = true, example = "qwer1234!")
     private String newPassword;
 }

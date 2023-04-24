@@ -11,11 +11,11 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FindIdRequest {
-    @Schema(name = "이름", required = true)
+    @Schema(name = "이름")
     @NotBlank
     private String name;
 
+    @Schema(name = "이메일", example = "gmlwh124@suwon.ac.kr")
     @USWEmailFormat
-    @Schema(name = "이메일", required = true, example = "gmlwh124@suwon.ac.kr")
     private String email;
 }
