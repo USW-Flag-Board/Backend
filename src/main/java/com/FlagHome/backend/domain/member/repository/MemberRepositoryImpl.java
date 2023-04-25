@@ -2,7 +2,6 @@ package com.FlagHome.backend.domain.member.repository;
 
 import com.FlagHome.backend.domain.member.controller.dto.response.*;
 import com.FlagHome.backend.domain.member.entity.Member;
-import com.FlagHome.backend.domain.member.entity.enums.MemberStatus;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -12,7 +11,6 @@ import java.util.List;
 
 import static com.FlagHome.backend.domain.member.entity.QMember.member;
 import static com.querydsl.core.types.dsl.Expressions.asString;
-
 
 @Repository
 @RequiredArgsConstructor

@@ -1,9 +1,8 @@
-package com.FlagHome.backend.domain.activity.memberactivity.dto;
+package com.FlagHome.backend.domain.activity.controller.dto.response;
 
 import com.FlagHome.backend.domain.member.entity.enums.Major;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,7 +13,6 @@ public class ParticipantResponse {
     private String loginId;
     private Major major;
 
-    @Builder
     @QueryProjection
     public ParticipantResponse(String name, String loginId, Major major) {
         this.name = name;

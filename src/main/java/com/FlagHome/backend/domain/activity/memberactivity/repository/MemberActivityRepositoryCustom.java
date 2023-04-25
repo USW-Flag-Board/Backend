@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.activity.memberactivity.repository;
 
-import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantResponse;
-import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
+import com.FlagHome.backend.domain.activity.controller.dto.response.ParticipantResponse;
+import com.FlagHome.backend.domain.activity.controller.dto.response.ParticipateResponse;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

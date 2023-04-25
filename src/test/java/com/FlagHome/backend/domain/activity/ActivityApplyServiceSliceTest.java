@@ -1,6 +1,7 @@
 package com.FlagHome.backend.domain.activity;
 
-import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyResponse;
+import com.FlagHome.backend.common.MockServiceTest;
+import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityApplyResponse;
 import com.FlagHome.backend.domain.activity.activityapply.entity.ActivityApply;
 import com.FlagHome.backend.domain.activity.activityapply.repository.ActivityApplyRepository;
 import com.FlagHome.backend.domain.activity.activityapply.service.ActivityApplyService;
@@ -8,10 +9,8 @@ import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.member.entity.Member;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +23,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 
-@ExtendWith(MockitoExtension.class)
-public class ActivityApplyServiceTest {
+public class ActivityApplyServiceSliceTest extends MockServiceTest {
     @InjectMocks
     private ActivityApplyService activityApplyService;
 

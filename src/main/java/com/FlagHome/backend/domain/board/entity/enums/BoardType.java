@@ -1,11 +1,13 @@
 package com.FlagHome.backend.domain.board.entity.enums;
 
-import lombok.AllArgsConstructor;
+import com.FlagHome.backend.global.common.CustomEnumDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
+@JsonDeserialize(using = CustomEnumDeserializer.class)
 public enum BoardType {
     MAIN("메인 게시판"),
     ACTIVITY("활동 게시판");

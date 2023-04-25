@@ -7,8 +7,8 @@ import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
 import com.FlagHome.backend.domain.member.sleeping.entity.Sleeping;
 import com.FlagHome.backend.domain.member.sleeping.service.SleepingService;
-import com.FlagHome.backend.domain.member.token.entity.Token;
-import com.FlagHome.backend.domain.member.token.service.FindRequestTokenService;
+import com.FlagHome.backend.domain.token.entity.Token;
+import com.FlagHome.backend.domain.token.service.FindRequestTokenService;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.utility.RandomGenerator;
@@ -148,7 +148,7 @@ public class MemberService {
     }
 
     //@Scheduled(cron = "000000")
-    public void beforeSleep() {
+    public void sendNotificationToDeactivableMembers() {
         List<String> emailLists = memberRepository.getAllBeforeSleepEmails();
         emailLists.forEach(mailService::sendChangeSleep);
     }

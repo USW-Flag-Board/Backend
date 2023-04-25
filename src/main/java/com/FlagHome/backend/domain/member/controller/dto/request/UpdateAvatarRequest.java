@@ -1,6 +1,7 @@
 package com.FlagHome.backend.domain.member.controller.dto.request;
 
 import com.FlagHome.backend.domain.member.entity.enums.Major;
+import com.FlagHome.backend.global.annotation.EnumFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -8,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -22,7 +22,7 @@ public class UpdateAvatarRequest {
     private String studentId;
 
     @Schema(name = "전공")
-    @NotNull
+    @EnumFormat(enumClass = Major.class)
     private Major major;
 
     @Schema(name = "자기 소개", example = "안녕하세요? 백엔드 개발자입니다.")

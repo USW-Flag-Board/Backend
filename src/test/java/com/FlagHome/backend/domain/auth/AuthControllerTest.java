@@ -25,7 +25,7 @@ public class AuthControllerTest extends IntegrationTest {
     private AuthRepository authRepository;
 
     @Test
-    void 인증시간_만료로_로그인_실패() throws Exception {
+    public void 인증시간_만료로_회원가입_실패() throws Exception {
         // given
         final String email = "gmlwh124@suwon.ac.kr";
         final String certification = RandomGenerator.getRandomNumber();

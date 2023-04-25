@@ -1,8 +1,10 @@
 package com.FlagHome.backend.domain.member.entity.enums;
 
+import com.FlagHome.backend.global.common.CustomEnumDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
 
-@Getter
+@JsonDeserialize(using = CustomEnumDeserializer.class)
 public enum Major {
     // 인문사회대학
     국어국문, 사학, 영어영문학, 프랑스어문학, 러시아어문학, 일어일문, 중어중문, 법, 행정, 미디어커뮤니케이션,

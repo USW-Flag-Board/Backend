@@ -1,4 +1,7 @@
-package com.FlagHome.backend.global.annotation;
+package com.FlagHome.backend.global.annotation.validator;
+
+import com.FlagHome.backend.global.annotation.PasswordFormat;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -11,6 +14,10 @@ public class PasswordFormatValidator implements ConstraintValidator<PasswordForm
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         final Matcher matcher = PASSWORD_PATTERN.matcher(value);
-        return matcher.matches();
+        return isNotNull(value) && matcher.matches();
+    }
+
+    private boolean isNotNull(String value) {
+        return StringUtils.isNotBlank(value);
     }
 }

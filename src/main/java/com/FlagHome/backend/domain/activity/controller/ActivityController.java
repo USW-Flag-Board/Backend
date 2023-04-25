@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.activity.controller;
 
-import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyResponse;
+import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityApplyResponse;
 import com.FlagHome.backend.domain.activity.controller.dto.request.CloseRecruitRequest;
 import com.FlagHome.backend.domain.activity.controller.dto.request.CreateActivityRequest;
 import com.FlagHome.backend.domain.activity.controller.dto.request.UpdateActivityRequest;
@@ -9,8 +9,8 @@ import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityResp
 import com.FlagHome.backend.domain.activity.controller.dto.response.GetAllActivitiesResponse;
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.mapper.ActivityMapper;
-import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantResponse;
-import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
+import com.FlagHome.backend.domain.activity.controller.dto.response.ParticipantResponse;
+import com.FlagHome.backend.domain.activity.controller.dto.response.ParticipateResponse;
 import com.FlagHome.backend.domain.activity.service.ActivityService;
 import com.FlagHome.backend.global.common.ApplicationResponse;
 import com.FlagHome.backend.global.utility.SecurityUtils;

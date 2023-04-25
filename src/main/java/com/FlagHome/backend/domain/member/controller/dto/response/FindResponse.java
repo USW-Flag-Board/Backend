@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.member.controller.dto.response;
 
-import com.FlagHome.backend.domain.member.token.entity.Token;
+import com.FlagHome.backend.domain.token.entity.Token;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 

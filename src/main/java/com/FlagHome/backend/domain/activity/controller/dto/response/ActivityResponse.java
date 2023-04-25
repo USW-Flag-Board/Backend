@@ -14,17 +14,17 @@ public class ActivityResponse {
     private Long id;
     private String name;
     private String leader;
-    private ActivityType activityType;
+    private ActivityType type;
     private ActivityStatus status;
     private String semester;
 
     @QueryProjection
-    public ActivityResponse(Long id, String name, String leader, ActivityType activityType,
+    public ActivityResponse(Long id, String name, String leader, ActivityType type,
                             ActivityStatus status, Semester semester) {
         this.id = id;
         this.name = name;
         this.leader = leader;
-        this.activityType = activityType;
+        this.type = type;
         this.status = status;
         this.semester = semester.toString();
     }

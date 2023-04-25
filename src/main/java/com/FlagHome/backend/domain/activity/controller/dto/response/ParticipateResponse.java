@@ -1,10 +1,9 @@
-package com.FlagHome.backend.domain.activity.memberactivity.dto;
+package com.FlagHome.backend.domain.activity.controller.dto.response;
 
 import com.FlagHome.backend.domain.activity.entity.enums.ActivityStatus;
 import com.FlagHome.backend.domain.activity.entity.enums.Semester;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,7 +20,6 @@ public class ParticipateResponse {
 
     private ActivityStatus activityStatus;
 
-    @Builder
     @QueryProjection
     public ParticipateResponse(Long id, String name, Integer year,
                                Semester semester, ActivityStatus activityStatus) {

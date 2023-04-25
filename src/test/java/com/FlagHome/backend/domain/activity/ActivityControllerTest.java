@@ -6,6 +6,7 @@ import com.FlagHome.backend.domain.activity.controller.dto.request.CreateActivit
 import com.FlagHome.backend.domain.activity.controller.dto.request.UpdateActivityRequest;
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
+import com.FlagHome.backend.domain.activity.entity.enums.BookUsage;
 import com.FlagHome.backend.domain.activity.entity.enums.Proceed;
 import com.FlagHome.backend.domain.activity.mapper.ActivityMapper;
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
@@ -49,6 +50,8 @@ public class ActivityControllerTest extends IntegrationTest {
 
     private Activity activity;
 
+    private CreateActivityRequest createActivityRequest;
+
     @BeforeEach
     void setup() {
         final String loginId = "gmlwh124";
@@ -69,56 +72,31 @@ public class ActivityControllerTest extends IntegrationTest {
     @Test
     public void 활동_생성_테스트() throws Exception {
         // given
-        final String name = "name";
-        final String description = "discription";
-        final String githubURL = "link";
-        final ActivityType activityType = ActivityType.PROJECT;
-        final Proceed proceed = Proceed.BOTH;
-
-        CreateActivityRequest request = CreateActivityRequest.builder()
-                .name(name)
-                .description(description)
-                .type(activityType)
-                .githubURL(githubURL)
-                .proceed(proceed)
-                .build();
+        setCreateActivityRequest();
 
         // when
         mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                        .content(objectMapper.writeValueAsString(createActivityRequest)))
                 .andExpect(status().isCreated())
                 .andDo(print());
+
         // then
         List<Activity> activityList = activityRepository.findAll();
         assertThat(activityList.size()).isEqualTo(1);
 
         Activity activity = activityList.get(0);
-        assertThat(activity.getName()).isEqualTo(name);
-        assertThat(activity.getDescription()).isEqualTo(description);
-        assertThat(activity.getInfo().getGithubURL()).isEqualTo(githubURL);
-        assertThat(activity.getInfo().getProceed()).isEqualTo(proceed);
-        assertThat(activity.getInfo().getBookUsage()).isNull();
+        assertThat(activity.getName()).isEqualTo(createActivityRequest.getName());
+        assertThat(activity.getDescription()).isEqualTo(createActivityRequest.getDescription());
+        assertThat(activity.getInfo().getGithubURL()).isEqualTo(createActivityRequest.getGithubURL());
+        assertThat(activity.getInfo().getProceed()).isEqualTo(createActivityRequest.getProceed());
+        assertThat(activity.getInfo().getBookUsage()).isEqualTo(createActivityRequest.getBookUsage());
     }
 
     @Test
     public void 활동_상세보기_테스트() throws Exception {
         // given
-        final String name = "name";
-        final String description = "discription";
-        final String githubURL = "link";
-        final ActivityType activityType = ActivityType.PROJECT;
-        final Proceed proceed = Proceed.BOTH;
-
-        CreateActivityRequest request = CreateActivityRequest.builder()
-                .name(name)
-                .description(description)
-                .type(activityType)
-                .githubURL(githubURL)
-                .proceed(proceed)
-                .build();
-
-        Activity activity = activityRepository.save(Activity.of(member, activityMapper.toActivity(request)));
+        setActivity(member);
         final String uri = BASE_URL + "/" + activity.getId();
 
         // when
@@ -159,14 +137,17 @@ public class ActivityControllerTest extends IntegrationTest {
 
         final String name = "changed";
         final String description = "changed";
-        final String githubURL = "changed";
         final Proceed proceed = Proceed.ONLINE;
+        final String githubURL = "changed";
+        final BookUsage bookUsage = BookUsage.NOT_USE;
 
         UpdateActivityRequest request = UpdateActivityRequest.builder()
                 .name(name)
                 .description(description)
-                .githubURL(githubURL)
                 .proceed(proceed)
+                .githubURL(githubURL)
+                .bookUsage(bookUsage)
+                .bookName("")
                 .build();
 
         final String uri = BASE_URL + "/" + activity.getId();
@@ -195,21 +176,27 @@ public class ActivityControllerTest extends IntegrationTest {
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(principal, "", authorities));
     }
 
-    private void setActivity(Member member) {
+    private void setCreateActivityRequest() {
         final String name = "name";
-        final String description = "discription";
-        final String githubURL = "link";
-        final ActivityType activityType = ActivityType.PROJECT;
+        final String description = "description";
         final Proceed proceed = Proceed.BOTH;
+        final ActivityType activityType = ActivityType.PROJECT;
+        final String githubURL = "link";
+        final BookUsage bookUsage = BookUsage.NOT_USE;
 
-        CreateActivityRequest request = CreateActivityRequest.builder()
+        createActivityRequest = CreateActivityRequest.builder()
                 .name(name)
                 .description(description)
+                .proceed(proceed)
                 .type(activityType)
                 .githubURL(githubURL)
-                .proceed(proceed)
+                .bookUsage(bookUsage)
+                .bookName("")
                 .build();
+    }
 
-        activity = activityRepository.save(Activity.of(member, activityMapper.toActivity(request)));
+    private void setActivity(Member member) {
+        setCreateActivityRequest();
+        activity = activityRepository.save(Activity.of(member, activityMapper.toActivity(createActivityRequest)));
     }
 }

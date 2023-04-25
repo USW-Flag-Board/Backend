@@ -1,12 +1,15 @@
 package com.FlagHome.backend.domain.post.controller.dto.request;
 
-import com.FlagHome.backend.domain.post.entity.enums.SearchPeriod;
 import com.FlagHome.backend.domain.post.entity.enums.SearchOption;
+import com.FlagHome.backend.domain.post.entity.enums.SearchPeriod;
+import com.FlagHome.backend.global.annotation.EnumFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -20,11 +23,11 @@ public class SearchRequest {
     private String keyword;
 
     @Schema(name = "검색 기간", defaultValue = "all")
-    @NotNull
+    @EnumFormat(enumClass = SearchPeriod.class)
     private SearchPeriod period;
 
     @Schema(name = "검색 옵션")
-    @NotNull
+    @EnumFormat(enumClass = SearchOption.class)
     private SearchOption option;
 
     @Builder

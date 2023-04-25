@@ -7,7 +7,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.lang.Nullable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -27,21 +26,18 @@ public class ActivityInfo {
     @Enumerated(EnumType.STRING)
     private Proceed proceed;
 
-    @Column
-    @Nullable
+    @Column(name = "github_url")
     private String githubURL;
 
-    @Column
+    @Column(name = "book_usage")
     @Enumerated(EnumType.STRING)
-    @Nullable
     private BookUsage bookUsage;
 
-    @Column
-    @Nullable
+    @Column(name = "book_name")
     private String bookName;
 
     @Builder
-    public ActivityInfo(Proceed proceed, @Nullable String githubURL, @Nullable BookUsage bookUsage, @Nullable String bookName) {
+    public ActivityInfo(Proceed proceed, String githubURL, BookUsage bookUsage, String bookName) {
         this.semester = Semester.findSemester(LocalDateTime.now().getMonthValue());
         this.proceed = proceed;
         this.githubURL = githubURL;

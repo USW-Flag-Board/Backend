@@ -1,11 +1,11 @@
 package com.FlagHome.backend.global.exception;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public enum ErrorCode {
     /** 400 - BAD_REQUEST */
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),

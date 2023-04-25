@@ -1,17 +1,18 @@
-package com.FlagHome.backend.domain.activity.activityapply.dto;
+package com.FlagHome.backend.domain.activity.controller.dto.response;
 
 import com.FlagHome.backend.domain.member.entity.enums.Major;
 import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ActivityApplyResponse {
     @Schema(name = "신청 고유번호")
-    private long id;
+    private Long id;
 
     @Schema(name = "아이디", description = "로그인 시 사용되는 아이디", example = "gmlwh124")
     private String loginId;
@@ -24,7 +25,7 @@ public class ActivityApplyResponse {
 
     @Builder
     @QueryProjection
-    public ActivityApplyResponse(long id, String loginId, String name, Major major) {
+    public ActivityApplyResponse(Long id, String loginId, String name, Major major) {
         this.id = id;
         this.loginId = loginId;
         this.name = name;

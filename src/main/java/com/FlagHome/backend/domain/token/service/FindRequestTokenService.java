@@ -1,8 +1,8 @@
-package com.FlagHome.backend.domain.member.token.service;
+package com.FlagHome.backend.domain.token.service;
 
-import com.FlagHome.backend.domain.member.token.entity.FindRequestToken;
-import com.FlagHome.backend.domain.member.token.entity.Token;
-import com.FlagHome.backend.domain.member.token.repository.TokenRepository;
+import com.FlagHome.backend.domain.token.entity.FindRequestToken;
+import com.FlagHome.backend.domain.token.entity.Token;
+import com.FlagHome.backend.domain.token.repository.TokenRepository;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;

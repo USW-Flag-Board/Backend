@@ -4,21 +4,19 @@ import com.FlagHome.backend.domain.auth.controller.dto.request.JoinRequest;
 import com.FlagHome.backend.domain.auth.controller.dto.response.SignUpResponse;
 import com.FlagHome.backend.domain.auth.entity.AuthInformation;
 import com.FlagHome.backend.domain.auth.entity.JoinType;
+import com.FlagHome.backend.domain.auth.mapper.AuthMapper;
 import com.FlagHome.backend.domain.auth.repository.AuthRepository;
 import com.FlagHome.backend.domain.auth.service.AuthService;
 import com.FlagHome.backend.domain.member.entity.Member;
 import com.FlagHome.backend.domain.member.entity.enums.Role;
 import com.FlagHome.backend.domain.member.repository.MemberRepository;
-import com.FlagHome.backend.domain.member.token.dto.TokenResponse;
+import com.FlagHome.backend.domain.token.dto.TokenResponse;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.jwt.JwtUtilizer;
 import com.FlagHome.backend.global.utility.RandomGenerator;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -31,12 +29,17 @@ import javax.persistence.EntityManager;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-@ExtendWith(MockitoExtension.class)
 @SpringBootTest
 @Transactional
 public class AuthServiceTest {
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private AuthRepository authRepository;
+
+    @Autowired
+    private AuthMapper authMapper;
 
     @Autowired
     private MemberRepository memberRepository;
@@ -45,17 +48,13 @@ public class AuthServiceTest {
     private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    private AuthRepository authRepository;
-
-    @Autowired
     private JwtUtilizer jwtUtilizer;
 
     @Autowired
     private EntityManager entityManager;
 
     @Test
-    @DisplayName("아이디 유효성 테스트")
-    void validateLoginIdTest() {
+    void 아이디_유효성_검사_테스트() {
         // given
         String loginId = "gmlwh124";
         String noneLoginId = "hejow124";
@@ -73,13 +72,13 @@ public class AuthServiceTest {
 
 
     @Test
-    @DisplayName("이메일 유효성 감사 성공")
-    void validateEmailSuccessTest() {
+    void 이메일_유효성_검사_테스트() {
         // given
         String email = "gmlwh124@suwon.ac.kr";
         String noneEmail = "hejow124@suwon.ac.kr";
 
         memberRepository.save(Member.builder().email(email).build());
+
         // when
         boolean shouldBeTrue = authService.validateDuplicateEmail(email);
         boolean shouldBeFalse = authService.validateDuplicateEmail(noneEmail);
@@ -90,17 +89,16 @@ public class AuthServiceTest {
     }
 
     @Nested
-    @DisplayName("회원가입 테스트")
-    class signUpTest {
+    class 회원가입_테스트 {
+        private final String loginId = "gmlwh124";
+        private final String password = "qwer1234!";
+        private final String email = "gmlwh124@suwon.ac.kr";
+
         @Test
-        @DisplayName("일반유저 회원가입 성공")
-        void signUpSuccessTest() {
+        void 일반유저_회원가입_테스트() {
             // given
-            String loginId = "gmlwh124";
-            String password = "qwer1234!";
-            String email = "gmlwh124@suwon.ac.kr";
-            JoinType joinType = JoinType.NORMAL;
-            String certification = RandomGenerator.getRandomNumber();
+            final JoinType joinType = JoinType.NORMAL;
+            final String certification = RandomGenerator.getRandomNumber();
 
             JoinRequest joinRequest = JoinRequest.builder()
                     .loginId(loginId)
@@ -109,57 +107,48 @@ public class AuthServiceTest {
                     .joinType(joinType)
                     .build();
 
-            AuthInformation authInformation = AuthInformation.of(joinRequest, certification);
-            authRepository.saveAndFlush(authInformation);
+            authRepository.saveAndFlush(AuthInformation.of(authMapper.toEntity(joinRequest), certification));
 
             // when
             SignUpResponse signUpResponse = authService.signUp(email, certification);
 
             // then
+            Member member = memberRepository.findByLoginId(loginId).orElse(null);
             assertThat(signUpResponse.getEmail()).isEqualTo(email);
-
-            Member member = memberRepository.findByLoginId(loginId).get();
+            assertThat(member).isNotNull();
             assertThat(passwordEncoder.matches(password, member.getPassword())).isTrue();
             assertThat(member.getRole()).isEqualTo(Role.from(joinType));
         }
 
         @Test
-        @DisplayName("동아리회원 회원가입 성공")
-        void crewSignUpSuccessTest() {
+        void 동아리원_회원가입_테스트() {
             // given
-            String loginId = "gmlwh124";
-            String password = "qwer1234!";
-            String email = "gmlwh124@suwon.ac.kr";
-            String certification = RandomGenerator.getRandomNumber();
+            final JoinType joinType = JoinType.CREW;
+            final String certification = RandomGenerator.getRandomNumber();
 
             JoinRequest joinRequest = JoinRequest.builder()
                     .loginId(loginId)
                     .password(password)
                     .email(email)
-                    .joinType(JoinType.CREW)
+                    .joinType(joinType)
                     .build();
 
-            AuthInformation authInformation = AuthInformation.of(joinRequest, certification);
-            authRepository.saveAndFlush(authInformation);
+            authRepository.saveAndFlush(AuthInformation.of(authMapper.toEntity(joinRequest), certification));
 
             // when
             SignUpResponse signUpResponse = authService.signUp(email, certification);
 
             // then
+            AuthInformation signupAuthInformation = authRepository.findFirstByEmailOrderByCreatedAtDesc(email).orElse(null);
             assertThat(signUpResponse.getEmail()).isEqualTo(email);
-
-            AuthInformation signupAuthInformation = authRepository.findByEmail(signUpResponse.getEmail()).get();
+            assertThat(signupAuthInformation).isNotNull();
             assertThat(signupAuthInformation.isAuthorizedCrew()).isTrue();
         }
 
         @Test
-        @DisplayName("회원가입 인증번호 오류로 실패")
-        void signupCertificationFailTest() {
-            String loginId = "gmlwh124";
-            String password = "qwer1234!";
-            String email = "gmlwh124@suwon.ac.kr";
-            String certification = "123456";
-            String wrongCertification = "234567";
+        void 인증번호_오류_테스트() {
+            final String certification = "123456";
+            final String wrongCertification = "234567";
 
             JoinRequest joinRequest = JoinRequest.builder()
                     .loginId(loginId)
@@ -167,7 +156,7 @@ public class AuthServiceTest {
                     .email(email)
                     .build();
 
-            authRepository.saveAndFlush(AuthInformation.of(joinRequest, certification));
+            authRepository.saveAndFlush(AuthInformation.of(authMapper.toEntity(joinRequest), certification));
 
             assertThatExceptionOfType(CustomException.class)
                     .isThrownBy(() -> authService.signUp(email, wrongCertification))
@@ -176,57 +165,55 @@ public class AuthServiceTest {
     }
 
     @Nested
-    @DisplayName("로그인 테스트")
-    class loginTest {
-        @Test
-        @DisplayName("로그인 테스트")
-        void loginSuccessTest() {
-            // given
-            String loginId = "gmlwh124";
-            String password = "1234";
+    class 로그인_테스트 {
+        private final String loginId = "gmlwh124";
+        private final String password = "qwer1234!";
+        private final Role role = Role.ROLE_USER;
 
-            Member savedMember = memberRepository.saveAndFlush(Member.builder()
-                            .loginId(loginId)
-                            .password(passwordEncoder.encode(password))
-                            .role(Role.ROLE_USER)
-                            .build());
+        @Test
+        void 로그인_성공_테스트() {
+            // given
+            Member savedMember = memberRepository.save(Member.builder()
+                    .loginId(loginId)
+                    .password(passwordEncoder.encode(password))
+                    .role(role)
+                    .build());
 
             // when
             TokenResponse tokenResponse = authService.login(loginId, password);
-            entityManager.clear();
+            entityManager.clear(); // update query
 
-            // then : 정상적으로 발급되는 지, 유효한 지, 데이터가 일치하는 지
+            // then
             assertThat(tokenResponse.getAccessToken()).isNotNull();
             assertThat(tokenResponse.getRefreshToken()).isNotNull();
             assertThat(tokenResponse.getAccessTokenExpiresIn()).isNotNull();
             assertThat(tokenResponse.getGrantType()).isEqualTo("Bearer");
 
             String accessToken = tokenResponse.getAccessToken();
-
             assertThat(jwtUtilizer.validateToken(accessToken)).isTrue();
 
             Authentication authentication = jwtUtilizer.getAuthentication(accessToken);
             long memberId = Long.parseLong(authentication.getName());
-            Member member = memberRepository.findByLoginId(loginId).get();
+            Member member = memberRepository.findByLoginId(loginId).orElse(null);
+            assertThat(member).isNotNull();
             assertThat(savedMember.getUpdatedAt()).isNotEqualTo(member.getUpdatedAt());
             assertThat(member.getId()).isEqualTo(memberId);
         }
 
         @Test
-        @DisplayName("로그인 실패 테스트")
-        void loginFailTest() {
-            String loginId = "gmlwh124";
-            String password = "qwer1234!";
-            String wrongPassword = "wert2345@";
+        void 로그인_실패_테스트() {
+            // given
+            final String wrongPassword = "wert2345@";
 
             Member member = Member.builder()
                     .loginId(loginId)
                     .password(passwordEncoder.encode(password))
-                    .role(Role.ROLE_USER)
+                    .role(role)
                     .build();
 
             memberRepository.save(member);
 
+            // when, then
             assertThatExceptionOfType(BadCredentialsException.class)
                     .isThrownBy(() -> authService.login(loginId, wrongPassword));
         }
@@ -234,16 +221,16 @@ public class AuthServiceTest {
 
 
     @Test
-    @DisplayName("토큰 재발급 테스트")
-    void reIssueToken() {
+    void 토큰_재발급_테스트() {
         // given
-        String loginId = "gmlwh124";
-        String password = "1234";
+        final String loginId = "gmlwh124";
+        final String password = "qwer1234!";
+        final Role role = Role.ROLE_USER;
 
-        memberRepository.saveAndFlush(Member.builder()
+        memberRepository.save(Member.builder()
                         .loginId(loginId)
                         .password(passwordEncoder.encode(password))
-                        .role(Role.ROLE_USER)
+                        .role(role)
                         .build());
 
         TokenResponse tokenResponse = authService.login(loginId, password);
@@ -258,42 +245,12 @@ public class AuthServiceTest {
         assertThat(reissueToken.getAccessTokenExpiresIn()).isNotNull();
 
         String accessToken = reissueToken.getAccessToken();
-
         assertThat(jwtUtilizer.validateToken(accessToken)).isTrue();
 
         Authentication authentication = jwtUtilizer.getAuthentication(accessToken);
         long memberId = Long.parseLong(authentication.getName());
-        Member member = memberRepository.findByLoginId(loginId).get();
+        Member member = memberRepository.findByLoginId(loginId).orElse(null);
+        assertThat(member).isNotNull();
         assertThat(member.getId()).isEqualTo(memberId);
     }
-
-//    @Test
-//    @DisplayName("휴면계정 확인 테스트")
-//    void checkSleepingTest() {
-//        //given
-//        String loginId = "hwyoung123";
-//        LocalDateTime lastLoginTime = LocalDateTime.now().minusDays(7);
-//        Status status = Status.GENERAL;
-//
-//        Member member = memberRepository.save(Member.builder()
-//                .loginId(loginId)
-//                .lastLoginTime(lastLoginTime)
-//                .status(status)
-//                .build());
-//
-//        memberService.changeAllToSleepMember();
-//
-////        Sleeping sleeping = sleepingRepository.save(Sleeping.builder()
-////                .loginId(loginId)
-////                .build());
-//
-//        //when
-//
-//        authService.checkSleeping(loginId);
-//
-//        //then
-//        assertThat(member.getStatus()).isEqualTo(Status.GENERAL);
-//
-//
-//    }
 }

@@ -1,15 +1,15 @@
 package com.FlagHome.backend.domain.activity;
 
 import com.FlagHome.backend.common.RepositoryTest;
-import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyResponse;
+import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityApplyResponse;
 import com.FlagHome.backend.domain.activity.activityapply.entity.ActivityApply;
 import com.FlagHome.backend.domain.activity.activityapply.repository.ActivityApplyRepository;
 import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityResponse;
 import com.FlagHome.backend.domain.activity.entity.Activity;
 import com.FlagHome.backend.domain.activity.entity.ActivityInfo;
 import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
-import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantResponse;
-import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
+import com.FlagHome.backend.domain.activity.controller.dto.response.ParticipantResponse;
+import com.FlagHome.backend.domain.activity.controller.dto.response.ParticipateResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.entity.MemberActivity;
 import com.FlagHome.backend.domain.activity.memberactivity.repository.MemberActivityRepository;
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;

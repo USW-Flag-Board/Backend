@@ -1,6 +1,6 @@
 package com.FlagHome.backend.domain.activity;
 
-import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyResponse;
+import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityApplyResponse;
 import com.FlagHome.backend.domain.activity.activityapply.entity.ActivityApply;
 import com.FlagHome.backend.domain.activity.activityapply.repository.ActivityApplyRepository;
 import com.FlagHome.backend.domain.activity.controller.dto.response.GetAllActivitiesResponse;
@@ -10,7 +10,7 @@ import com.FlagHome.backend.domain.activity.entity.enums.ActivityStatus;
 import com.FlagHome.backend.domain.activity.entity.enums.ActivityType;
 import com.FlagHome.backend.domain.activity.entity.enums.Proceed;
 import com.FlagHome.backend.domain.activity.mapper.ActivityMapper;
-import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantResponse;
+import com.FlagHome.backend.domain.activity.controller.dto.response.ParticipantResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.repository.MemberActivityRepository;
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
 import com.FlagHome.backend.domain.activity.service.ActivityService;

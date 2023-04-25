@@ -1,6 +1,7 @@
 package com.FlagHome.backend.domain.board.controller.dto;
 
 import com.FlagHome.backend.domain.board.entity.enums.BoardType;
+import com.FlagHome.backend.global.annotation.EnumFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -8,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -17,8 +17,8 @@ public class BoardRequest {
     @NotBlank
     private String name;
 
-    @Schema(name = "게시판 타입")
-    @NotNull
+    @Schema(name = "게시판 타입", example = "MAIN / ACTIVITY")
+    @EnumFormat(enumClass = BoardType.class)
     private BoardType boardType;
 
     @Builder

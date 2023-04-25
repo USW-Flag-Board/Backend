@@ -1,13 +1,13 @@
 package com.FlagHome.backend.domain.activity.service;
 
-import com.FlagHome.backend.domain.activity.activityapply.dto.ActivityApplyResponse;
+import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityApplyResponse;
 import com.FlagHome.backend.domain.activity.activityapply.entity.ActivityApply;
 import com.FlagHome.backend.domain.activity.activityapply.service.ActivityApplyService;
 import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityResponse;
 import com.FlagHome.backend.domain.activity.controller.dto.response.GetAllActivitiesResponse;
 import com.FlagHome.backend.domain.activity.entity.Activity;
-import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantResponse;
-import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
+import com.FlagHome.backend.domain.activity.controller.dto.response.ParticipantResponse;
+import com.FlagHome.backend.domain.activity.controller.dto.response.ParticipateResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.service.MemberActivityService;
 import com.FlagHome.backend.domain.activity.repository.ActivityRepository;
 import com.FlagHome.backend.domain.member.entity.Member;

@@ -70,16 +70,16 @@ public class AuthInformation {
         this.createdAt = LocalDateTime.now();
     }
 
-    public static AuthInformation of(JoinRequest joinRequest, String certification) {
+    public static AuthInformation of(AuthInformation authInformation, String certification) {
         return AuthInformation.builder()
-                .loginId(joinRequest.getLoginId())
-                .password(joinRequest.getPassword())
-                .name(joinRequest.getName())
-                .email(joinRequest.getEmail())
-                .major(joinRequest.getMajor())
-                .nickname(joinRequest.getNickname())
-                .studentId(joinRequest.getStudentId())
-                .joinType(joinRequest.getJoinType())
+                .loginId(authInformation.getLoginId())
+                .password(authInformation.getPassword())
+                .name(authInformation.getName())
+                .email(authInformation.getEmail())
+                .major(authInformation.getMajor())
+                .nickname(authInformation.getNickname())
+                .studentId(authInformation.getStudentId())
+                .joinType(authInformation.getJoinType())
                 .certification(certification)
                 .build();
     }

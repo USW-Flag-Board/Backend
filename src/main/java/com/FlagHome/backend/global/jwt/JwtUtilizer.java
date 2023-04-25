@@ -1,6 +1,6 @@
 package com.FlagHome.backend.global.jwt;
 
-import com.FlagHome.backend.domain.member.token.dto.TokenResponse;
+import com.FlagHome.backend.domain.token.dto.TokenResponse;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import io.jsonwebtoken.*;

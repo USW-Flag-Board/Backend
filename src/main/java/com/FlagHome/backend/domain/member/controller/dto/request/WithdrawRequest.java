@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class WithdrawRequest {
+    @Schema(name = "현재 비밀번호", example = "qwer1234!")
     @PasswordFormat
-    @Schema(name = "현재 비밀번호", required = true, example = "qwer1234!")
     private String currentPassword;
 }

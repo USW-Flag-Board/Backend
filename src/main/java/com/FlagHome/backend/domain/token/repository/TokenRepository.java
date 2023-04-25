@@ -1,6 +1,6 @@
-package com.FlagHome.backend.domain.member.token.repository;
+package com.FlagHome.backend.domain.token.repository;
 
-import com.FlagHome.backend.domain.member.token.entity.Token;
+import com.FlagHome.backend.domain.token.entity.Token;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

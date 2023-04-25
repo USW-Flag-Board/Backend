@@ -1,5 +1,7 @@
 package com.FlagHome.backend.domain.post.entity.enums;
 
+import com.FlagHome.backend.global.common.CustomEnumDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +12,7 @@ import static com.FlagHome.backend.domain.post.entity.QPost.post;
 
 @Getter
 @RequiredArgsConstructor
+@JsonDeserialize(using = CustomEnumDeserializer.class)
 public enum SearchPeriod {
     all("전체기간", null),
     one_day("1일", post.createdAt.before(LocalDateTime.now().minusDays(1))),

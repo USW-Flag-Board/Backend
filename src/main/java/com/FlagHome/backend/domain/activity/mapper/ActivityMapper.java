@@ -1,7 +1,7 @@
 package com.FlagHome.backend.domain.activity.mapper;
 
 import com.FlagHome.backend.domain.activity.controller.dto.request.CreateActivityRequest;
-import com.FlagHome.backend.domain.activity.controller.dto.request.InfoRequest;
+import com.FlagHome.backend.domain.activity.controller.dto.request.ActivityInfoRequest;
 import com.FlagHome.backend.domain.activity.controller.dto.request.UpdateActivityRequest;
 import com.FlagHome.backend.domain.activity.controller.dto.response.ActivityDetailResponse;
 import com.FlagHome.backend.domain.activity.entity.Activity;
@@ -27,12 +27,12 @@ public interface ActivityMapper {
     ActivityDetailResponse toDetailResponse(Activity activity);
 
     @Named("toInfo")
-    static ActivityInfo toInfo(InfoRequest infoRequest) {
+    static ActivityInfo toInfo(ActivityInfoRequest activityInfoRequest) {
         return ActivityInfo.builder()
-                .proceed(infoRequest.getProceed())
-                .githubURL(infoRequest.getGithubURL())
-                .bookUsage(infoRequest.getBookUsage())
-                .bookName(infoRequest.getBookName())
+                .proceed(activityInfoRequest.getProceed())
+                .githubURL(activityInfoRequest.getGithubURL())
+                .bookUsage(activityInfoRequest.getBookUsage())
+                .bookName(activityInfoRequest.getBookName())
                 .build();
     }
 }

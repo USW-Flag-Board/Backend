@@ -1,8 +1,8 @@
 package com.FlagHome.backend.domain.activity.memberactivity.service;
 
 import com.FlagHome.backend.domain.activity.entity.Activity;
-import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipantResponse;
-import com.FlagHome.backend.domain.activity.memberactivity.dto.ParticipateResponse;
+import com.FlagHome.backend.domain.activity.controller.dto.response.ParticipantResponse;
+import com.FlagHome.backend.domain.activity.controller.dto.response.ParticipateResponse;
 import com.FlagHome.backend.domain.activity.memberactivity.entity.MemberActivity;
 import com.FlagHome.backend.domain.activity.memberactivity.repository.MemberActivityRepository;
 import com.FlagHome.backend.domain.member.entity.Member;
