@@ -1,7 +1,6 @@
 package com.FlagHome.backend.global.annotation.validator;
 
 import com.FlagHome.backend.global.annotation.EnumFormat;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -9,7 +8,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
 public class EnumFormatValidator implements ConstraintValidator<EnumFormat, Enum> {
     private List<Object> enumValues;
 
@@ -25,8 +23,7 @@ public class EnumFormatValidator implements ConstraintValidator<EnumFormat, Enum
 
     private List<Object> getEnumValues(EnumFormat constraintAnnotation) {
         Class<? extends Enum> enumClass = constraintAnnotation.enumClass();
-        return Arrays.stream(enumClass.getEnumConstants())
-                .collect(Collectors.toList());
+        return Arrays.stream(enumClass.getEnumConstants()).collect(Collectors.toList());
     }
 
     private boolean isContainsValue(Enum value) {
