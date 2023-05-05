@@ -23,18 +23,23 @@ public class MailRequest {
     }
 
     public SendEmailRequest toSendRequest() {
-        final Destination destination = new Destination()
-                .withToAddresses(this.to);
-
-        final Message message = new Message()
-                .withSubject(createContent(this.subject))
-                .withBody(new Body()
-                        .withHtml(createContent(this.content)));
+        final Destination destination = createDestination();
+        final Message message = createMessage();
 
         return new SendEmailRequest()
                 .withSource(FROM)
                 .withDestination(destination)
                 .withMessage(message);
+    }
+
+    private Destination createDestination() {
+        return new Destination().withToAddresses(this.to);
+    }
+
+    private Message createMessage() {
+        return new Message()
+                .withSubject(createContent(this.subject))
+                .withBody(new Body().withHtml(createContent(this.content)));
     }
 
     private Content createContent(String text) {

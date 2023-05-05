@@ -19,7 +19,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-import static com.FlagHome.backend.domain.member.entity.enums.Role.*;
+import static com.FlagHome.backend.module.member.domain.enums.Role.*;
 
 @Configuration
 @EnableWebSecurity

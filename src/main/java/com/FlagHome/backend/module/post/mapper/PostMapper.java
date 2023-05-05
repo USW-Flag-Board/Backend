@@ -1,0 +1,19 @@
+package com.FlagHome.backend.module.post.mapper;
+
+import com.FlagHome.backend.module.post.entity.Post;
+import com.FlagHome.backend.module.post.controller.dto.request.PostRequest;
+import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
+
+@Mapper(
+        componentModel = "spring",
+        unmappedTargetPolicy = ReportingPolicy.WARN
+)
+public interface PostMapper {
+    default Post mapFrom(PostRequest postRequest) {
+        return Post.builder()
+                .title(postRequest.getTitle())
+                .content(postRequest.getContent())
+                .build();
+    }
+}

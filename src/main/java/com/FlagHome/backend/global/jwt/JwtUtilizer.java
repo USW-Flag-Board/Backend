@@ -1,6 +1,6 @@
 package com.FlagHome.backend.global.jwt;
 
-import com.FlagHome.backend.domain.token.dto.TokenResponse;
+import com.FlagHome.backend.module.token.dto.TokenResponse;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import io.jsonwebtoken.*;
@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+// Todo : Utilizer 책임 분리하기
 @Slf4j
 @Component
 public class JwtUtilizer {
