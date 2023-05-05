@@ -29,7 +29,7 @@ public class AdminService {
         AuthInformation authInformation = authRepository.findById(authInformationId)
                         .orElseThrow(() -> new CustomException(ErrorCode.AUTH_INFORMATION_NOT_FOUND));
 
-        memberService.initMember(authInformation);
+        memberService.initMember(authInformation.toJoinMember());
         deleteAuthInformation(authInformationId);
     }
 

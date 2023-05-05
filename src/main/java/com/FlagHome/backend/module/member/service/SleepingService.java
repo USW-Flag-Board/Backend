@@ -1,6 +1,5 @@
 package com.FlagHome.backend.module.member.service;
 
-import com.FlagHome.backend.module.member.domain.Member;
 import com.FlagHome.backend.module.member.domain.Sleeping;
 import com.FlagHome.backend.module.member.domain.repository.SleepingRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +12,6 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class SleepingService {
-
     private final SleepingRepository sleepingRepository;
 
     public boolean existsByLoginId(String loginId) {
@@ -24,13 +22,13 @@ public class SleepingService {
         return sleepingRepository.existsByEmail(email);
     }
 
-    public void saveAllSleeping(List<Sleeping> sleepingList) {
+    public void saveAll(List<Sleeping> sleepingList) {
         sleepingRepository.saveAll(sleepingList);
     }
 
-    public void reactivateMember(Member member, Sleeping sleeping) {
-        member.reactivate(sleeping);
-        sleepingRepository.delete(sleeping);
+    public void reactivateMember(String loginId) {
+        reactiveIfPresent(loginId);
+        sleepingRepository.deleteByLoginId(loginId);
     }
 
     //@Scheduled(cron = "000000")
@@ -39,7 +37,8 @@ public class SleepingService {
         sleepingRepository.deleteAllInBatch(sleepingList);
     }
 
-    public Sleeping findByLoginId(String loginId) {
-        return sleepingRepository.findByLoginId(loginId).orElse(null);
+    private void reactiveIfPresent(String loginId) {
+        sleepingRepository.findByLoginId(loginId)
+                .ifPresent(Sleeping::reactivate);
     }
 }

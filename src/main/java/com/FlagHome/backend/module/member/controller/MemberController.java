@@ -3,10 +3,12 @@ package com.FlagHome.backend.module.member.controller;
 import com.FlagHome.backend.module.member.controller.dto.response.*;
 import com.FlagHome.backend.module.member.controller.dto.request.*;
 import com.FlagHome.backend.module.member.domain.Avatar;
-import com.FlagHome.backend.module.member.mapper.MemberMapper;
+import com.FlagHome.backend.module.member.controller.mapper.MemberMapper;
+import com.FlagHome.backend.module.member.domain.Member;
 import com.FlagHome.backend.module.member.service.MemberService;
 import com.FlagHome.backend.global.common.ApplicationResponse;
 import com.FlagHome.backend.global.utility.SecurityUtils;
+import com.FlagHome.backend.module.token.entity.Token;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -78,9 +80,9 @@ public class MemberController {
     })
     @ResponseStatus(CREATED)
     @PostMapping("/find/id")
-    public ApplicationResponse<AccountRecoveryResponse> findId(@RequestBody @Valid FindIdRequest findIdRequest) {
-        AccountRecoveryResponse response = memberService.findId(findIdRequest.getName(), findIdRequest.getEmail());
-        return new ApplicationResponse(response);
+    public ApplicationResponse<RecoveryResponse> findId(@RequestBody @Valid FindIdRequest findIdRequest) {
+        Token token = memberService.findId(findIdRequest.getName(), findIdRequest.getEmail());
+        return new ApplicationResponse<>(memberMapper.toRecoveryResponse(token));
     }
 
     @Tag(name = "member")
@@ -93,9 +95,9 @@ public class MemberController {
     })
     @ResponseStatus(CREATED)
     @PostMapping("/find/password")
-    public ApplicationResponse<AccountRecoveryResponse> findPassword(@RequestBody @Valid FindPasswordRequest findPasswordRequest) {
-        AccountRecoveryResponse response = memberService.findPassword(findPasswordRequest.getLoginId(), findPasswordRequest.getEmail());
-        return new ApplicationResponse(response);
+    public ApplicationResponse<RecoveryResponse> findPassword(@RequestBody @Valid FindPasswordRequest findPasswordRequest) {
+        Token token = memberService.findPassword(findPasswordRequest.getLoginId(), findPasswordRequest.getEmail());
+        return new ApplicationResponse<>(memberMapper.toRecoveryResponse(token));
     }
 
     @Tag(name = "member")
@@ -108,9 +110,9 @@ public class MemberController {
     })
     @ResponseStatus(OK)
     @PostMapping("/certification")
-    public ApplicationResponse<AccountRecoveryResultResponse> verifyCertification(@RequestBody @Valid AuthenticationRequest authenticationRequest) {
-        AccountRecoveryResultResponse response = memberService.verifyCertification(authenticationRequest.getEmail(), authenticationRequest.getCertification());
-        return new ApplicationResponse<>(response);
+    public ApplicationResponse<RecoveryResultResponse> verifyCertification(@RequestBody @Valid AuthenticationRequest authenticationRequest) {
+        Member member = memberService.verifyCertification(authenticationRequest.getEmail(), authenticationRequest.getCertification());
+        return new ApplicationResponse<>(memberMapper.toRecoveryResult(member));
     }
 
     @Tag(name = "member")

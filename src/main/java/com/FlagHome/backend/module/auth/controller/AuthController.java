@@ -1,15 +1,14 @@
 package com.FlagHome.backend.module.auth.controller;
 
-import com.FlagHome.backend.module.auth.mapper.vo.JoinData;
+import com.FlagHome.backend.global.common.ApplicationResponse;
 import com.FlagHome.backend.module.auth.controller.dto.request.*;
 import com.FlagHome.backend.module.auth.controller.dto.response.JoinResponse;
 import com.FlagHome.backend.module.auth.controller.dto.response.SignUpResponse;
 import com.FlagHome.backend.module.auth.domain.AuthInformation;
-import com.FlagHome.backend.module.auth.mapper.AuthMapper;
+import com.FlagHome.backend.module.auth.controller.mapper.AuthMapper;
 import com.FlagHome.backend.module.auth.service.AuthService;
 import com.FlagHome.backend.module.token.dto.TokenRequest;
 import com.FlagHome.backend.module.token.dto.TokenResponse;
-import com.FlagHome.backend.global.common.ApplicationResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -55,8 +54,7 @@ public class AuthController {
     }
 
     @Tag(name = "auth")
-    @Operation(summary = "회원 정보 입력 및 메일 전송", description = "작성한 데이터 검사 후 인증정보 저장 및 메일 전송" +
-            "\n저장한 정보는 관리자만 볼 수 있어서 URI 리턴 없음.")
+    @Operation(summary = "회원 정보 입력 및 메일 전송", description = "작성한 데이터 검사 후 인증정보 저장 및 메일 전송")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "회원정보 입력 성공 및 메일 발송 완료"),
             @ApiResponse(responseCode = "422", description = "사용할 수 없는 비밀번호 입니다. (8~20자 이내 영문, 숫자, 특수문자를 모두 포함)"),
@@ -65,7 +63,7 @@ public class AuthController {
     @ResponseStatus(OK)
     @PostMapping("/join")
     public ApplicationResponse<JoinResponse> join(@RequestBody @Valid JoinRequest joinRequest) {
-        AuthInformation authInformation = authMapper.mapFrom(JoinData.from(joinRequest));
+        AuthInformation authInformation = authMapper.mapFrom(joinRequest);
         String email = authService.join(authInformation);
         return new ApplicationResponse<>(JoinResponse.from(email));
     }
@@ -96,7 +94,7 @@ public class AuthController {
     @PostMapping("/login")
     public ApplicationResponse<TokenResponse> login(@RequestBody @Valid LoginRequest loginRequest) {
         TokenResponse response = authService.login(loginRequest.getLoginId(), loginRequest.getPassword());
-        return new ApplicationResponse(response);
+        return new ApplicationResponse<>(response);
     }
 
     @Tag(name = "auth")
@@ -111,6 +109,6 @@ public class AuthController {
     @PostMapping("/reissue")
     public ApplicationResponse<TokenResponse> reissue(@RequestBody @Valid TokenRequest tokenRequest) {
         TokenResponse response = authService.reissueToken(tokenRequest.getAccessToken(), tokenRequest.getRefreshToken());
-        return new ApplicationResponse(response);
+        return new ApplicationResponse<>(response);
     }
 }

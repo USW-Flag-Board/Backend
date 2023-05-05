@@ -1,17 +1,19 @@
 package com.FlagHome.backend.module.member;
 
-import com.FlagHome.backend.module.auth.domain.AuthInformation;
-import com.FlagHome.backend.module.member.controller.dto.request.UpdateAvatarRequest;
-import com.FlagHome.backend.module.member.domain.Avatar;
-import com.FlagHome.backend.module.member.domain.Member;
-import com.FlagHome.backend.module.member.domain.enums.MemberStatus;
-import com.FlagHome.backend.module.member.mapper.MemberMapper;
-import com.FlagHome.backend.module.member.domain.repository.MemberRepository;
-import com.FlagHome.backend.module.member.service.MemberService;
-import com.FlagHome.backend.module.member.domain.Sleeping;
-import com.FlagHome.backend.module.member.domain.repository.SleepingRepository;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
+import com.FlagHome.backend.module.auth.domain.AuthInformation;
+import com.FlagHome.backend.module.auth.domain.JoinType;
+import com.FlagHome.backend.module.member.controller.dto.request.UpdateAvatarRequest;
+import com.FlagHome.backend.module.member.controller.mapper.MemberMapper;
+import com.FlagHome.backend.module.member.domain.Avatar;
+import com.FlagHome.backend.module.member.domain.Member;
+import com.FlagHome.backend.module.member.domain.Sleeping;
+import com.FlagHome.backend.module.member.domain.enums.Major;
+import com.FlagHome.backend.module.member.domain.enums.MemberStatus;
+import com.FlagHome.backend.module.member.domain.repository.MemberRepository;
+import com.FlagHome.backend.module.member.domain.repository.SleepingRepository;
+import com.FlagHome.backend.module.member.service.MemberService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -41,24 +43,27 @@ public class MemberServiceTest {
     @Autowired
     private EntityManager entityManager;
 
+    private Avatar avatar;
+
     @Test
-    @DisplayName("유저 생성 테스트")
-    void createMemberTest() {
+    public void 유저_생성_테스트() {
         // given
         final String loginId = "gmlwh124";
-        final String nickName = "John";
+        final String nickname = "John";
         final String email = "gmlwh124@suwon.ac.kr";
         final String password = "qwer1234!";
+        final JoinType joinType = JoinType.NORMAL;
 
         AuthInformation authInformation = AuthInformation.builder()
                 .loginId(loginId)
                 .password(password)
                 .email(email)
-                .nickname(nickName)
+                .nickname(nickname)
+                .joinType(joinType)
                 .build();
 
         // when
-        memberService.initMember(authInformation);
+        memberService.initMember(authInformation.toJoinMember());
 
         // then
         Member member = memberService.findByLoginId(loginId);
@@ -66,7 +71,7 @@ public class MemberServiceTest {
         assertThat(member.getEmail()).isEqualTo(email);
         boolean shouldBeTrue = passwordEncoder.matches(password, member.getPassword());
         assertThat(shouldBeTrue).isTrue();
-        assertThat(member.getAvatar().getNickname()).isEqualTo(nickName);
+        assertThat(member.getAvatar().getNickname()).isEqualTo(nickname);
 
     }
 
@@ -194,18 +199,16 @@ public class MemberServiceTest {
     public void 아바타_업데이트_테스트() {
         // given
         final String loginId = "gmlwh124";
-        final String nickname = "john";
-        final String studentId = "123";
 
         final String newNickname = "hejow";
         final String newStudentId = "234";
         final String newBio = "test";
 
-        Avatar avatar = Avatar.builder().nickname(nickname).studentId(studentId).build();
+        initAvatar();
         Member member = memberRepository.save(Member.builder().loginId(loginId).avatar(avatar).build());
 
         UpdateAvatarRequest updateAvatarRequest = UpdateAvatarRequest.builder()
-                .nickName(newNickname)
+                .nickname(newNickname)
                 .studentId(newStudentId)
                 .bio(newBio)
                 .build();
@@ -221,11 +224,12 @@ public class MemberServiceTest {
     }
 
     @Test
-    void 휴면계정_활성화_테스트() {
+    public void 휴면계정_활성화_테스트() {
         // given
         final String loginId = "gmlwh124";
+        initAvatar();
 
-        Member member = memberRepository.save(Member.builder().loginId(loginId).build());
+        Member member = memberRepository.save(Member.builder().loginId(loginId).avatar(avatar).build());
         sleepingRepository.save(Sleeping.of(member));
         member.deactivate();
 
@@ -234,29 +238,12 @@ public class MemberServiceTest {
 
         // then
         Sleeping sleeping = sleepingRepository.findByLoginId(loginId).orElse(null);
+        assertThat(sleeping).isNull();
         assertThat(reactivateMember.getStatus()).isEqualTo(MemberStatus.NORMAL);
         assertThat(reactivateMember.getLoginId()).isEqualTo(loginId);
-        assertThat(sleeping).isNull();
+        assertThat(reactivateMember.getAvatar().getStudentId()).isNull();
+        assertThat(reactivateMember.getAvatar().getMajor()).isNull();
     }
-
-//    @Test
-//    @DisplayName("휴면계정으로 분류 테스트")
-//    void changeAllToSleepMemberTest() {
-//        //given
-//        String loginId = "hwyoung123";
-//        LocalDateTime lastLoginTime = LocalDateTime.now().minusDays(7);
-//        Status status = Status.GENERAL;
-//
-//        Member member = memberRepository.save(Member.builder()
-//                .loginId(loginId)
-//                .build());
-//
-//        //when
-//        memberService.changeAllToSleepMember();
-//
-//        //then
-//        assertThat(member.getStatus() == Status.SLEEPING).isTrue();
-//    }
 
 //    @Test
 //    @DisplayName("로그보기")
@@ -282,4 +269,12 @@ public class MemberServiceTest {
 //        assertThat(testMember.getName()).isEqualTo(member.getName());
 //        assertThat(testMember.getLastLoginTime()).isEqualTo(member.getLastLoginTime());
 //    }
+
+    private void initAvatar() {
+        final String nickname = "john";
+        final Major major = Major.컴퓨터SW;
+        final String studentId = "123";
+
+        avatar = Avatar.builder().nickname(nickname).studentId(studentId).major(major).build();
+    }
 }

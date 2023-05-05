@@ -60,6 +60,8 @@ public class ActivityService {
         return memberActivityService.getAllParticipants(activityId);
     }
 
+    // todo : 활동 검색기능 구현하기
+
     public Activity getActivity(Long activityId) {
         return findById(activityId);
     }

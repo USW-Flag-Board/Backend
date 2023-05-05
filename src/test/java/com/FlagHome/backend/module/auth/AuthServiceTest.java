@@ -1,20 +1,19 @@
 package com.FlagHome.backend.module.auth;
 
+import com.FlagHome.backend.global.exception.CustomException;
+import com.FlagHome.backend.global.exception.ErrorCode;
+import com.FlagHome.backend.global.jwt.JwtUtilizer;
 import com.FlagHome.backend.module.auth.controller.dto.request.JoinRequest;
 import com.FlagHome.backend.module.auth.controller.dto.response.SignUpResponse;
 import com.FlagHome.backend.module.auth.domain.AuthInformation;
 import com.FlagHome.backend.module.auth.domain.JoinType;
-import com.FlagHome.backend.module.auth.mapper.AuthMapper;
 import com.FlagHome.backend.module.auth.domain.repository.AuthRepository;
+import com.FlagHome.backend.module.auth.controller.mapper.AuthMapper;
 import com.FlagHome.backend.module.auth.service.AuthService;
 import com.FlagHome.backend.module.member.domain.Member;
 import com.FlagHome.backend.module.member.domain.enums.Role;
 import com.FlagHome.backend.module.member.domain.repository.MemberRepository;
 import com.FlagHome.backend.module.token.dto.TokenResponse;
-import com.FlagHome.backend.global.exception.CustomException;
-import com.FlagHome.backend.global.exception.ErrorCode;
-import com.FlagHome.backend.global.jwt.JwtUtilizer;
-import com.FlagHome.backend.global.utility.RandomGenerator;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,24 +92,27 @@ public class AuthServiceTest {
         private final String loginId = "gmlwh124";
         private final String password = "qwer1234!";
         private final String email = "gmlwh124@suwon.ac.kr";
+        private JoinRequest joinRequest;
 
-        @Test
-        void 일반유저_회원가입_테스트() {
-            // given
-            final JoinType joinType = JoinType.NORMAL;
-            final String certification = RandomGenerator.getRandomNumber();
-
-            JoinRequest joinRequest = JoinRequest.builder()
+        private void initRequest(JoinType joinType) {
+            joinRequest = JoinRequest.builder()
                     .loginId(loginId)
                     .password(password)
                     .email(email)
                     .joinType(joinType)
                     .build();
+        }
 
-            authRepository.saveAndFlush(AuthInformation.of(authMapper.mapFrom(joinRequest), certification));
+        @Test
+        void 일반유저_회원가입_테스트() {
+            // given
+            final JoinType joinType = JoinType.NORMAL;
+            initRequest(joinType);
+
+            AuthInformation authInformation = authRepository.saveAndFlush(authMapper.mapFrom(joinRequest));
 
             // when
-            SignUpResponse signUpResponse = authService.signUp(email, certification);
+            SignUpResponse signUpResponse = SignUpResponse.from(authService.signUp(email, authInformation.getCertification()));
 
             // then
             Member member = memberRepository.findByLoginId(loginId).orElse(null);
@@ -124,21 +126,15 @@ public class AuthServiceTest {
         void 동아리원_회원가입_테스트() {
             // given
             final JoinType joinType = JoinType.CREW;
-            final String certification = RandomGenerator.getRandomNumber();
+            initRequest(joinType);
 
-            JoinRequest joinRequest = JoinRequest.builder()
-                    .loginId(loginId)
-                    .password(password)
-                    .email(email)
-                    .joinType(joinType)
-                    .build();
-
-            authRepository.saveAndFlush(AuthInformation.of(authMapper.mapFrom(joinRequest), certification));
+            AuthInformation authInformation = authRepository.saveAndFlush(authMapper.mapFrom(joinRequest));
 
             // when
-            SignUpResponse signUpResponse = authService.signUp(email, certification);
+            AuthInformation savedInformation = authService.signUp(email, authInformation.getCertification());
 
             // then
+            SignUpResponse signUpResponse = SignUpResponse.from(savedInformation);
             AuthInformation signupAuthInformation = authRepository.findFirstByEmailOrderByCreatedAtDesc(email).orElse(null);
             assertThat(signUpResponse.getEmail()).isEqualTo(email);
             assertThat(signupAuthInformation).isNotNull();
@@ -147,16 +143,11 @@ public class AuthServiceTest {
 
         @Test
         void 인증번호_오류_테스트() {
-            final String certification = "123456";
-            final String wrongCertification = "234567";
+            final String wrongCertification = "abcdef";
+            final JoinType joinType = JoinType.NORMAL;
+            initRequest(joinType);
 
-            JoinRequest joinRequest = JoinRequest.builder()
-                    .loginId(loginId)
-                    .password(password)
-                    .email(email)
-                    .build();
-
-            authRepository.saveAndFlush(AuthInformation.of(authMapper.mapFrom(joinRequest), certification));
+            authRepository.saveAndFlush(authMapper.mapFrom(joinRequest));
 
             assertThatExceptionOfType(CustomException.class)
                     .isThrownBy(() -> authService.signUp(email, wrongCertification))

@@ -1,7 +1,8 @@
-package com.FlagHome.backend.module.member.domain.repository;
+package com.FlagHome.backend.module.member.domain.repository.implementation;
 
 import com.FlagHome.backend.module.member.controller.dto.response.*;
 import com.FlagHome.backend.module.member.domain.Member;
+import com.FlagHome.backend.module.member.domain.repository.MemberRepositoryCustom;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

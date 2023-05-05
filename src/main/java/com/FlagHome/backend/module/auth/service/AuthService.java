@@ -1,18 +1,15 @@
 package com.FlagHome.backend.module.auth.service;
 
+import com.FlagHome.backend.global.exception.CustomException;
+import com.FlagHome.backend.global.exception.ErrorCode;
+import com.FlagHome.backend.global.jwt.JwtUtilizer;
+import com.FlagHome.backend.infra.aws.ses.service.MailService;
 import com.FlagHome.backend.module.auth.domain.AuthInformation;
-import com.FlagHome.backend.module.auth.controller.dto.response.JoinResponse;
-import com.FlagHome.backend.module.auth.controller.dto.response.SignUpResponse;
 import com.FlagHome.backend.module.auth.domain.repository.AuthRepository;
 import com.FlagHome.backend.module.member.domain.Member;
 import com.FlagHome.backend.module.member.service.MemberService;
 import com.FlagHome.backend.module.token.dto.TokenResponse;
 import com.FlagHome.backend.module.token.service.RefreshTokenService;
-import com.FlagHome.backend.global.exception.CustomException;
-import com.FlagHome.backend.global.exception.ErrorCode;
-import com.FlagHome.backend.infra.aws.ses.service.MailService;
-import com.FlagHome.backend.global.jwt.JwtUtilizer;
-import com.FlagHome.backend.global.utility.RandomGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -40,11 +37,9 @@ public class AuthService {
     }
 
     public String join(AuthInformation authInformation) {
-        isDuplicateValidated(authInformation.getLoginId(), authInformation.getEmail());
-
+        validateDuplication(authInformation.getLoginId(), authInformation.getEmail());
         authRepository.save(authInformation);
         mailService.sendCertification(authInformation.getEmail(), authInformation.getCertification());
-
         return authInformation.getEmail();
     }
 
@@ -58,7 +53,7 @@ public class AuthService {
             return authInformation;
         }
 
-        memberService.initMember(authInformation);
+        memberService.initMember(authInformation.toJoinMember());
         return authInformation;
     }
 
@@ -78,7 +73,7 @@ public class AuthService {
         return refreshTokenService.reissueToken(accessToken, refreshToken);
     }
 
-    private void isDuplicateValidated(String loginId, String email) {
+    private void validateDuplication(String loginId, String email) {
         if (validateDuplicateLoginId(loginId) || validateDuplicateEmail(email)) {
             throw new CustomException(ErrorCode.VALIDATE_NOT_PROCEED);
         }

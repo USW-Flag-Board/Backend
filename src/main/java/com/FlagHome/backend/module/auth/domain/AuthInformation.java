@@ -1,5 +1,6 @@
 package com.FlagHome.backend.module.auth.domain;
 
+import com.FlagHome.backend.module.member.domain.JoinMember;
 import com.FlagHome.backend.module.member.domain.enums.Major;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
@@ -81,8 +82,7 @@ public class AuthInformation {
     }
 
     public void validateAuthTime() {
-        final LocalDateTime expireAt = this.createdAt.plusMinutes(5);
-        if (expireAt.isBefore(LocalDateTime.now())) {
+        if (createdAt.plusMinutes(5).isBefore(LocalDateTime.now())) {
             throw new CustomException(ErrorCode.EXPIRED_AUTHENTICATION_TIME);
         }
     }
@@ -93,8 +93,16 @@ public class AuthInformation {
         }
     }
 
-    // test용 : 삭제 예정
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public JoinMember toJoinMember() {
+        return JoinMember.builder()
+                .loginId(loginId)
+                .password(password)
+                .email(email)
+                .name(name)
+                .nickname(nickname)
+                .studentId(studentId)
+                .major(major)
+                .role(joinType.toRole())
+                .build();
     }
 }

@@ -1,11 +1,10 @@
 package com.FlagHome.backend.module.member.domain;
 
-import com.FlagHome.backend.module.auth.domain.AuthInformation;
-import com.FlagHome.backend.module.member.domain.enums.MemberStatus;
-import com.FlagHome.backend.module.member.domain.enums.Role;
 import com.FlagHome.backend.global.common.BaseEntity;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
+import com.FlagHome.backend.module.member.domain.enums.MemberStatus;
+import com.FlagHome.backend.module.member.domain.enums.Role;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -57,21 +56,6 @@ public class Member extends BaseEntity {
         this.status = MemberStatus.NORMAL;
     }
 
-    public static Member of(AuthInformation authInformation, PasswordEncoder passwordEncoder) {
-        return Member.builder()
-                .loginId(authInformation.getLoginId())
-                .password(passwordEncoder.encode(authInformation.getPassword()))
-                .name(authInformation.getName())
-                .email(authInformation.getEmail())
-                .avatar(Avatar.of(authInformation.getNickname(), authInformation.getStudentId(), authInformation.getMajor()))
-                .role(Role.from(authInformation.getJoinType()))
-                .build();
-    }
-
-    public void withdraw() {
-        this.status = MemberStatus.WITHDRAW;
-    }
-
     public void isAvailable() {
         if (this.status == MemberStatus.WITHDRAW || this.status == MemberStatus.BANNED) {
             throw new CustomException(ErrorCode.UNAVAILABLE_ACCOUNT);
@@ -86,11 +70,11 @@ public class Member extends BaseEntity {
         super.updateModifiedDate();
     }
 
-    public void reactivate(Sleeping sleeping) {
-        this.loginId = sleeping.getLoginId();
-        this.password = sleeping.getPassword();
-        this.email = sleeping.getEmail();
-        this.name = sleeping.getName();
+    public void reactivate(String loginId, String password, String email, String name) {
+        this.loginId = loginId;
+        this.password = password;
+        this.email = email;
+        this.name = name;
         this.status = MemberStatus.NORMAL;
     }
 
@@ -100,5 +84,10 @@ public class Member extends BaseEntity {
         this.password = null;
         this.email = null;
         this.name = null;
+        this.avatar.deactivate();
+    }
+
+    public void withdraw() {
+        this.status = MemberStatus.WITHDRAW;
     }
 }

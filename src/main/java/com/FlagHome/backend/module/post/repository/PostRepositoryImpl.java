@@ -27,7 +27,6 @@ import static com.FlagHome.backend.module.member.domain.QMember.member;
 import static com.FlagHome.backend.module.post.entity.QPost.post;
 import static com.FlagHome.backend.module.post.reply.entity.QReply.reply;
 
-
 @RequiredArgsConstructor
 public class PostRepositoryImpl implements PostRepositoryCustom {
     private final JPAQueryFactory queryFactory;
@@ -147,6 +146,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     /**
      * Version 2
      */
+    // todo: Pageable 말고 다른 객체로 받기
     @Override
     public Page<PostResponse> getAllPostsByBoard(String boardName, Pageable pageable) {
         List<PostResponse> result = queryFactory

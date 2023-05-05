@@ -14,7 +14,6 @@ import static com.FlagHome.backend.module.activity.entity.QActivity.activity;
 import static com.FlagHome.backend.module.activity.memberactivity.entity.QMemberActivity.memberActivity;
 import static com.FlagHome.backend.module.member.domain.QMember.member;
 
-
 @Repository
 @RequiredArgsConstructor
 public class MemberActivityRepositoryImpl implements MemberActivityRepositoryCustom {

@@ -1,19 +1,22 @@
 package com.FlagHome.backend.module.member.service;
 
-import com.FlagHome.backend.module.auth.domain.AuthInformation;
-import com.FlagHome.backend.module.member.controller.dto.response.*;
-import com.FlagHome.backend.module.member.domain.Avatar;
-import com.FlagHome.backend.module.member.domain.Member;
-import com.FlagHome.backend.module.member.domain.repository.MemberRepository;
-import com.FlagHome.backend.module.member.domain.Sleeping;
-import com.FlagHome.backend.module.token.entity.Token;
-import com.FlagHome.backend.module.token.service.FindRequestTokenService;
 import com.FlagHome.backend.global.exception.CustomException;
 import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.global.utility.RandomGenerator;
 import com.FlagHome.backend.infra.aws.s3.entity.enums.FileDirectory;
 import com.FlagHome.backend.infra.aws.s3.service.AwsS3Service;
 import com.FlagHome.backend.infra.aws.ses.service.MailService;
+import com.FlagHome.backend.module.member.controller.dto.response.AvatarResponse;
+import com.FlagHome.backend.module.member.controller.dto.response.LoginLogResponse;
+import com.FlagHome.backend.module.member.controller.dto.response.MyProfileResponse;
+import com.FlagHome.backend.module.member.controller.dto.response.SearchMemberResponse;
+import com.FlagHome.backend.module.member.domain.Avatar;
+import com.FlagHome.backend.module.member.domain.JoinMember;
+import com.FlagHome.backend.module.member.domain.Member;
+import com.FlagHome.backend.module.member.domain.Sleeping;
+import com.FlagHome.backend.module.member.domain.repository.MemberRepository;
+import com.FlagHome.backend.module.token.entity.Token;
+import com.FlagHome.backend.module.token.service.FindRequestTokenService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,11 +32,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final FindRequestTokenService findRequestTokenService;
+    private final SleepingService sleepingService;
     private final MailService mailService;
     private final AwsS3Service awsS3Service;
-    private final FindRequestTokenService findRequestTokenService;
     private final PasswordEncoder passwordEncoder;
-    private final SleepingService sleepingService;
 
     @Transactional(readOnly = true)
     public AvatarResponse getMemberPageAvatar(String loginId) {
@@ -76,24 +79,23 @@ public class MemberService {
         member.withdraw();
     }
 
-    public AccountRecoveryResponse findId(String name, String email) {
+    public Token findId(String name, String email) {
         Member member = findByEmail(email);
         validateMemberName(member.getName(), name);
         return issueTokenAndSendMail(email);
     }
 
-    public AccountRecoveryResponse findPassword(String loginId, String email) {
+    public Token findPassword(String loginId, String email) {
         Member member = findByEmail(email);
         validateMemberLoginId(member.getLoginId(), loginId);
         return issueTokenAndSendMail(email);
     }
 
-    public AccountRecoveryResultResponse verifyCertification(String email, String certification) {
+    public Member verifyCertification(String email, String certification) {
         Token findRequestToken = findRequestTokenService.findToken(email);
         findRequestToken.validateExpireTime();
         findRequestToken.verifyCertification(certification);
-        Member member = findByEmail(email);
-        return AccountRecoveryResultResponse.from(member);
+        return findByEmail(email);
     }
 
     public void changePassword(String email, String newPassword) {
@@ -107,19 +109,12 @@ public class MemberService {
         member.updatePassword(newPassword, passwordEncoder);
     }
 
-    public void initMember(AuthInformation authInformation) {
-        memberRepository.save(Member.of(authInformation, passwordEncoder));
+    public void initMember(JoinMember joinMember) {
+        memberRepository.save(joinMember.toMember(passwordEncoder));
     }
 
     public Member reactivateIfSleeping(String loginId) {
-        Sleeping sleeping = sleepingService.findByLoginId(loginId);
-
-        if (sleeping != null) {
-            Member member = findById(sleeping.getMember().getId());
-            sleepingService.reactivateMember(member, sleeping);
-            return member;
-        }
-
+        sleepingService.reactivateMember(loginId);
         return findByLoginId(loginId);
     }
 
@@ -134,11 +129,13 @@ public class MemberService {
         member.getAvatar().changeProfileImage(profileImageUrl);
     }
 
+    // todo : 기본 이미지로 돌리기 구현
+
     //@Scheduled(cron = "000000")
     public void selectingDeactivateMembers() {
         List<Member> deactivateMembers = memberRepository.getDeactivateMembers();
         List<Sleeping> sleepings = convertToSleepings(deactivateMembers);
-        sleepingService.saveAllSleeping(sleepings);
+        sleepingService.saveAll(sleepings);
         deactivateMembers(deactivateMembers);
     }
 
@@ -168,11 +165,11 @@ public class MemberService {
         return member;
     }
 
-    private AccountRecoveryResponse issueTokenAndSendMail(String email) {
+    private Token issueTokenAndSendMail(String email) {
         String certification = RandomGenerator.getRandomNumber();
         Token findRequestToken = findRequestTokenService.issueToken(email, certification);
         mailService.sendFindCertification(email, certification);
-        return AccountRecoveryResponse.from(findRequestToken);
+        return findRequestToken;
     }
 
     private Member findByEmail(String email) {

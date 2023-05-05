@@ -1,5 +1,6 @@
 package com.FlagHome.backend.module.member.domain;
 
+import com.FlagHome.backend.module.member.domain.enums.MemberStatus;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +13,6 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Sleeping {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -46,6 +46,10 @@ public class Sleeping {
         this.expiredAt = LocalDateTime.now().plusDays(60);
     }
 
+    public void reactivate() {
+        member.reactivate(loginId, password, email, name);
+    }
+
     public static Sleeping of(Member member){
         return Sleeping.builder()
                 .member(member)
@@ -55,5 +59,4 @@ public class Sleeping {
                 .name(member.getName())
                 .build();
     }
-
 }

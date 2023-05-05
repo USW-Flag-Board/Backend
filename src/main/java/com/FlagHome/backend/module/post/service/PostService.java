@@ -160,6 +160,8 @@ public class PostService {
         return postRepository.integrationSearch(keyword);
     }
 
+
+    // todo : 상세보기 시 유저 이미지 가져오기
     public PostDetailResponse getPost(Long postId) {
         Post post = findById(postId);
         post.isAccessible();

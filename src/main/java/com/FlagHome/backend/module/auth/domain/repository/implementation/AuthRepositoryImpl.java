@@ -1,8 +1,9 @@
-package com.FlagHome.backend.module.auth.domain.repository;
+package com.FlagHome.backend.module.auth.domain.repository.implementation;
 
 import com.FlagHome.backend.module.admin.controller.dto.QApproveSignUpResponse;
 import com.FlagHome.backend.module.auth.domain.AuthInformation;
 import com.FlagHome.backend.module.admin.controller.dto.ApproveSignUpResponse;
+import com.FlagHome.backend.module.auth.domain.repository.AuthRepositoryCustom;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -11,7 +12,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.FlagHome.backend.module.auth.domain.QAuthInformation.authInformation;
-
 
 @Repository
 @RequiredArgsConstructor

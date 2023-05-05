@@ -1,6 +1,7 @@
 package com.FlagHome.backend.module.auth;
 
 import com.FlagHome.backend.common.MockServiceTest;
+import com.FlagHome.backend.global.utility.RandomGenerator;
 import com.FlagHome.backend.module.auth.controller.dto.response.JoinResponse;
 import com.FlagHome.backend.module.auth.domain.AuthInformation;
 import com.FlagHome.backend.module.auth.domain.repository.AuthRepository;
@@ -32,13 +33,17 @@ public class AuthServiceSliceTest extends MockServiceTest {
     void 회원가입_정보_입력_테스트() {
         // given
         final String email = "gmlwh124@suwon.ac.kr";
-        AuthInformation authInformation = AuthInformation.builder().email(email).build();
+        final String cetification = RandomGenerator.getRandomNumber();
+        AuthInformation authInformation = AuthInformation.builder()
+                .email(email)
+                .certification(cetification)
+                .build();
 
         given(authRepository.save(any())).willReturn(authInformation);
         willDoNothing().given(mailService).sendCertification(anyString(), anyString());
 
         // when
-        JoinResponse response = authService.join(authInformation);
+        JoinResponse response = JoinResponse.from(authService.join(authInformation));
 
         // then
         then(authRepository).should(times(1)).save(any());

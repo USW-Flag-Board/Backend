@@ -16,6 +16,8 @@ import javax.persistence.Enumerated;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Embeddable
 public class Avatar {
+    private static final String DEFAULT_IMAGE = "https://flaground-s3.s3.ap-northeast-2.amazonaws.com/avatar/default_image.jpg";
+
     @Column(length = 20)
     private String nickname;
 
@@ -49,7 +51,13 @@ public class Avatar {
         this.studentId = studentId;
         this.major = major;
         this.bio = bio;
-        this.profileImage = "https://flaground-s3.s3.ap-northeast-2.amazonaws.com/avatar/default_image.jpg";
+        this.profileImage = DEFAULT_IMAGE;
+    }
+
+    public void deactivate() {
+        this.studentId = null;
+        this.major = null;
+        this.profileImage = DEFAULT_IMAGE;
     }
 
     public static Avatar of(String nickName, String studentId, Major major) {
@@ -60,6 +68,4 @@ public class Avatar {
                 .bio(" ")
                 .build();
     }
-    
-    // 비활성화 고려하기
 }

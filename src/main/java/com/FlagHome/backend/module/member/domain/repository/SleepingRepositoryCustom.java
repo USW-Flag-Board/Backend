@@ -8,4 +8,5 @@ import java.util.List;
 @Repository
 public interface SleepingRepositoryCustom {
     List<Sleeping> getAllSleeping();
+    void deleteByLoginId(String loginId);
 }

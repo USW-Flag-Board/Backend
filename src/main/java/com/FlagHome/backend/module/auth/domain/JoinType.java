@@ -1,6 +1,7 @@
 package com.FlagHome.backend.module.auth.domain;
 
 import com.FlagHome.backend.global.common.CustomEnumDeserializer;
+import com.FlagHome.backend.module.member.domain.enums.Role;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
 
@@ -15,4 +16,8 @@ public enum JoinType {
     }
 
     private String type;
+
+    public Role toRole() {
+        return Role.from(this);
+    }
 }
