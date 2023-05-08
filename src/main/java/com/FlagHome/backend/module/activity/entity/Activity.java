@@ -69,14 +69,18 @@ public class Activity extends BaseEntity {
         this.info.updateInfo(activity);
     }
 
+    public void closeRecruitment() {
+        this.status = ActivityStatus.ON;
+    }
+
+    public void finishActivity() {
+        this.status = ActivityStatus.OFF;
+    }
+
     public void isRecruiting() {
         if (this.status != ActivityStatus.RECRUIT) {
             throw new CustomException(ErrorCode.NOT_RECRUITMENT_ACTIVITY);
         }
-    }
-
-    public void closeRecruitment() {
-        this.status = ActivityStatus.ON;
     }
 
     public void isInProgress() {
@@ -85,7 +89,9 @@ public class Activity extends BaseEntity {
         }
     }
 
-    public void finishActivity() {
-        this.status = ActivityStatus.OFF;
+    public void validateLeader(Long memberId) {
+        if (!leader.getId().equals(memberId)) {
+            throw new CustomException(ErrorCode.NOT_ACTIVITY_LEADER);
+        }
     }
 }

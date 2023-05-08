@@ -1,9 +1,8 @@
 package com.FlagHome.backend.module.post.controller.dto.response;
 
-import com.FlagHome.backend.module.post.entity.Post;
+import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,14 +14,20 @@ public class PostDetailResponse {
     @Schema(name = "게시글 번호")
     private Long id;
 
+    @Schema(name = "작성자 아이디")
+    private String loginId;
+
+    @Schema(name = "게시글 작성자")
+    private String nickname;
+
+    @Schema(name = "작성자 프로필 사진")
+    private String profileImage;
+
     @Schema(name = "게시글 제목")
     private String title;
 
     @Schema(name = "게시글 내용")
     private String content;
-
-    @Schema(name = "게시글 작성자")
-    private String author;
 
     @Schema(name = "게시글 작성시간")
     private LocalDateTime createdAt;
@@ -30,40 +35,24 @@ public class PostDetailResponse {
     @Schema(name = "게시글 조회수")
     private int viewCount;
 
-    @Schema(name = "게시글 댓글 수")
-    private int replyCount;
-
-    @Schema(name = "게시글 좋아요 수")
-    private int likeCount;
+    @Schema(name = "좋아요 응답")
+    private LikeResponse like;
 
     @Schema(name = "게시글 수정 여부")
     private boolean isEdited;
 
-    @Builder
-    public PostDetailResponse(Long id, String title, String content, String author, LocalDateTime createdAt,
-                              int viewCount, int replyCount, int likeCount, boolean isEdited) {
+    @QueryProjection
+    public PostDetailResponse(Long id, String loginId, String nickname, String profileImage, String title, String content,
+                              LocalDateTime createdAt, int viewCount, LikeResponse like, boolean isEdited) {
         this.id = id;
+        this.loginId = loginId;
+        this.nickname = nickname;
+        this.profileImage = profileImage;
         this.title = title;
         this.content = content;
-        this.author = author;
         this.createdAt = createdAt;
         this.viewCount = viewCount;
-        this.replyCount = replyCount;
-        this.likeCount = likeCount;
+        this.like = like;
         this.isEdited = isEdited;
-    }
-
-    public static PostDetailResponse from(Post post) {
-        return PostDetailResponse.builder()
-                .id(post.getId())
-                .title(post.getTitle())
-                .content(post.getContent())
-                .author(post.getMember().getAvatar().getNickname())
-                .createdAt(post.getCreatedAt())
-                .viewCount(post.getViewCount())
-                .replyCount(post.getReplyCount())
-                .likeCount(post.getLikeCount())
-                .isEdited(post.isEdited())
-                .build();
     }
 }

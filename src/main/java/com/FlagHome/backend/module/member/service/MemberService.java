@@ -15,8 +15,8 @@ import com.FlagHome.backend.module.member.domain.JoinMember;
 import com.FlagHome.backend.module.member.domain.Member;
 import com.FlagHome.backend.module.member.domain.Sleeping;
 import com.FlagHome.backend.module.member.domain.repository.MemberRepository;
-import com.FlagHome.backend.module.token.entity.Token;
-import com.FlagHome.backend.module.token.service.FindRequestTokenService;
+import com.FlagHome.backend.module.token.domain.Token;
+import com.FlagHome.backend.module.token.service.RecoveryTokenService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
-    private final FindRequestTokenService findRequestTokenService;
+    private final RecoveryTokenService recoveryTokenService;
     private final SleepingService sleepingService;
     private final MailService mailService;
     private final AwsS3Service awsS3Service;
@@ -92,7 +92,7 @@ public class MemberService {
     }
 
     public Member verifyCertification(String email, String certification) {
-        Token findRequestToken = findRequestTokenService.findToken(email);
+        Token findRequestToken = recoveryTokenService.findToken(email);
         findRequestToken.validateExpireTime();
         findRequestToken.verifyCertification(certification);
         return findByEmail(email);
@@ -167,7 +167,7 @@ public class MemberService {
 
     private Token issueTokenAndSendMail(String email) {
         String certification = RandomGenerator.getRandomNumber();
-        Token findRequestToken = findRequestTokenService.issueToken(email, certification);
+        Token findRequestToken = recoveryTokenService.issueToken(email, certification);
         mailService.sendFindCertification(email, certification);
         return findRequestToken;
     }

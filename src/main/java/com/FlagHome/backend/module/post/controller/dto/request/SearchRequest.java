@@ -1,7 +1,7 @@
 package com.FlagHome.backend.module.post.controller.dto.request;
 
-import com.FlagHome.backend.module.post.entity.enums.SearchOption;
-import com.FlagHome.backend.module.post.entity.enums.SearchPeriod;
+import com.FlagHome.backend.module.post.domain.enums.SearchOption;
+import com.FlagHome.backend.module.post.domain.enums.SearchPeriod;
 import com.FlagHome.backend.global.annotation.EnumFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;

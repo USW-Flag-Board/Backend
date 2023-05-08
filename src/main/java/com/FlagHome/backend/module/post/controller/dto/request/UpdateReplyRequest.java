@@ -15,4 +15,8 @@ public class UpdateReplyRequest {
     @Schema(name = "수정 내용")
     @NotBlank
     private String newContent;
+
+    public static UpdateReplyRequest from(String newContent) {
+        return new UpdateReplyRequest(newContent);
+    }
 }

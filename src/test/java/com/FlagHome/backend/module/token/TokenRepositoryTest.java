@@ -1,9 +1,9 @@
 package com.FlagHome.backend.module.token;
 
 import com.FlagHome.backend.common.RepositoryTest;
-import com.FlagHome.backend.module.token.entity.FindRequestToken;
-import com.FlagHome.backend.module.token.entity.Token;
-import com.FlagHome.backend.module.token.repository.TokenRepository;
+import com.FlagHome.backend.module.token.domain.RecoveryToken;
+import com.FlagHome.backend.module.token.domain.Token;
+import com.FlagHome.backend.module.token.domain.repository.TokenRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +26,12 @@ public class TokenRepositoryTest extends RepositoryTest {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime afterFive = now.plusMinutes(5);
 
-        Token token1 = FindRequestToken.builder()
+        Token token1 = RecoveryToken.builder()
                 .key(email)
                 .expiredAt(now)
                 .build();
 
-        Token token2 = FindRequestToken.builder()
+        Token token2 = RecoveryToken.builder()
                 .key(email)
                 .expiredAt(afterFive)
                 .build();

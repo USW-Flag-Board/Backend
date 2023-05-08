@@ -6,9 +6,9 @@ import com.FlagHome.backend.infra.aws.ses.service.MailService;
 import com.FlagHome.backend.module.member.domain.Member;
 import com.FlagHome.backend.module.member.domain.repository.MemberRepository;
 import com.FlagHome.backend.module.member.service.MemberService;
-import com.FlagHome.backend.module.token.entity.FindRequestToken;
-import com.FlagHome.backend.module.token.entity.Token;
-import com.FlagHome.backend.module.token.service.FindRequestTokenService;
+import com.FlagHome.backend.module.token.domain.RecoveryToken;
+import com.FlagHome.backend.module.token.domain.Token;
+import com.FlagHome.backend.module.token.service.RecoveryTokenService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -33,7 +33,7 @@ public class MemberServiceSliceTest extends MockServiceTest {
     private MemberRepository memberRepository;
 
     @Mock
-    private FindRequestTokenService findRequestTokenService;
+    private RecoveryTokenService recoveryTokenService;
 
     @Test
     void 아이디_찾기_테스트() {
@@ -47,17 +47,17 @@ public class MemberServiceSliceTest extends MockServiceTest {
                 .email(email)
                 .build();
 
-        Token findRequestToken = FindRequestToken.of(email, certification);
+        Token findRequestToken = RecoveryToken.of(email, certification);
 
         given(memberRepository.findByEmail(email)).willReturn(Optional.of(member));
-        given(findRequestTokenService.issueToken(anyString(), anyString())).willReturn(findRequestToken);
+        given(recoveryTokenService.issueToken(anyString(), anyString())).willReturn(findRequestToken);
         doNothing().when(mailService).sendFindCertification(anyString(), anyString());
 
         // when
         Token token = memberService.findId(name, email);
 
         // then
-        then(findRequestTokenService).should(times(1)).issueToken(anyString(), anyString());
+        then(recoveryTokenService).should(times(1)).issueToken(anyString(), anyString());
         then(mailService).should(times(1)).sendFindCertification(anyString(), anyString());
         assertThat(token.getKey()).isEqualTo(email);
         assertThat(token.getExpiredAt()).isEqualTo(findRequestToken.getExpiredAt());
@@ -75,10 +75,10 @@ public class MemberServiceSliceTest extends MockServiceTest {
                 .email(email)
                 .build();
 
-        Token findRequestToken = FindRequestToken.of(email, certification);
+        Token findRequestToken = RecoveryToken.of(email, certification);
 
         given(memberRepository.findByEmail(anyString())).willReturn(Optional.of(member));
-        given(findRequestTokenService.issueToken(anyString(), anyString())).willReturn(findRequestToken);
+        given(recoveryTokenService.issueToken(anyString(), anyString())).willReturn(findRequestToken);
         doNothing().when(mailService).sendFindCertification(anyString(), anyString());
 
         // when
@@ -86,7 +86,7 @@ public class MemberServiceSliceTest extends MockServiceTest {
 
         // then
         then(memberRepository).should(times(1)).findByEmail(anyString());
-        then(findRequestTokenService).should(times(1)).issueToken(anyString(), anyString());
+        then(recoveryTokenService).should(times(1)).issueToken(anyString(), anyString());
         then(mailService).should(times(1)).sendFindCertification(anyString(), anyString());
         assertThat(token.getKey()).isEqualTo(email);
         assertThat(token.getExpiredAt()).isEqualTo(findRequestToken.getExpiredAt());
@@ -100,16 +100,16 @@ public class MemberServiceSliceTest extends MockServiceTest {
         final String certification = RandomGenerator.getRandomNumber();
 
         Member member = Member.builder().loginId(loginId).email(email).build();
-        Token findRequestToken = FindRequestToken.of(email, certification);
+        Token findRequestToken = RecoveryToken.of(email, certification);
 
-        given(findRequestTokenService.findToken(anyString())).willReturn(findRequestToken);
+        given(recoveryTokenService.findToken(anyString())).willReturn(findRequestToken);
         given(memberRepository.findByEmail(anyString())).willReturn(Optional.of(member));
 
         // when
         Member returnMember = memberService.verifyCertification(email, certification);
 
         // then
-        then(findRequestTokenService).should(times(1)).findToken(anyString());
+        then(recoveryTokenService).should(times(1)).findToken(anyString());
         then(memberRepository).should(times(1)).findByEmail(anyString());
         assertThat(returnMember.getLoginId()).isEqualTo(loginId);
         assertThat(returnMember.getEmail()).isEqualTo(email);

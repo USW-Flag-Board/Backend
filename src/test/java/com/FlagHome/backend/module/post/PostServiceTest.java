@@ -6,9 +6,9 @@ import com.FlagHome.backend.module.board.repository.BoardRepository;
 import com.FlagHome.backend.module.member.domain.Member;
 import com.FlagHome.backend.module.member.domain.repository.MemberRepository;
 import com.FlagHome.backend.module.post.controller.dto.request.PostRequest;
-import com.FlagHome.backend.module.post.entity.Post;
-import com.FlagHome.backend.module.post.mapper.PostMapper;
-import com.FlagHome.backend.module.post.repository.PostRepository;
+import com.FlagHome.backend.module.post.domain.Post;
+import com.FlagHome.backend.module.post.controller.mapper.PostMapper;
+import com.FlagHome.backend.module.post.domain.repository.PostRepository;
 import com.FlagHome.backend.module.post.service.PostService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,12 +77,12 @@ public class PostServiceTest {
         Long memberId = memberRepository.findByEmail(email).get().getId();
 
         // when
-        Long postId = postService.createPost(memberId, post, boardName).getId();
+        Long postId = postService.create(memberId, post, boardName).getId();
 
         // then
         Post savedPost = postRepository.findById(postId).get();
         assertThat(savedPost.getTitle()).isEqualTo(title);
         assertThat(savedPost.getContent()).isEqualTo(content);
-        assertThat(savedPost.getBoard().getName()).isEqualTo(boardName);
+        assertThat(savedPost.getBoardName()).isEqualTo(boardName);
     }
 }

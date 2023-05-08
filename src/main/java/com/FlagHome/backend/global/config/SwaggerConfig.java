@@ -13,23 +13,22 @@ import springfox.documentation.spring.web.plugins.Docket;
 @Configuration
 @EnableWebMvc
 public class SwaggerConfig {
-    /** http://localhost:8080/swagger-ui/index.html 에서 API 보기 */
     @Bean
     public Docket swagger() {
         return new Docket(DocumentationType.OAS_30)
                 .useDefaultResponseMessages(false)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.FlagHome.backend.domain"))
+                .apis(RequestHandlerSelectors.basePackage("com.FlagHome.backend.module"))
                 .paths(PathSelectors.any())
                 .build();
     }
 
     public ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("FLAG_BOARD API")
-                .version("0.0.1")
-                .description("FLAG 홈페이지 API Docs 입니다.<br><br>Github Repogitory : https://github.com/USW-Flag-Board/Backend")
+                .title("FLAGROUND API")
+                .version("0.0.2")
+                .description("FLAGROUND API Docs 입니다.<br><br>Github Repogitory : https://github.com/USW-Flag-Board/Backend")
                 .build();
     }
 }
