@@ -3,9 +3,9 @@ package com.Flaground.backend.module.post;
 import com.Flaground.backend.common.IntegrationTest;
 import com.Flaground.backend.global.exception.CustomException;
 import com.Flaground.backend.global.exception.ErrorCode;
-import com.Flaground.backend.module.board.entity.Board;
-import com.Flaground.backend.module.board.entity.enums.BoardType;
-import com.Flaground.backend.module.board.repository.BoardRepository;
+import com.Flaground.backend.module.board.domain.Board;
+import com.Flaground.backend.module.board.domain.BoardType;
+import com.Flaground.backend.module.board.domain.repository.BoardRepository;
 import com.Flaground.backend.module.member.domain.Avatar;
 import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.domain.enums.Role;
@@ -14,6 +14,7 @@ import com.Flaground.backend.module.post.controller.dto.request.PostRequest;
 import com.Flaground.backend.module.post.controller.dto.request.SearchRequest;
 import com.Flaground.backend.module.post.domain.Like;
 import com.Flaground.backend.module.post.domain.Post;
+import com.Flaground.backend.module.post.domain.PostData;
 import com.Flaground.backend.module.post.domain.Reply;
 import com.Flaground.backend.module.post.domain.enums.PostStatus;
 import com.Flaground.backend.module.post.domain.enums.SearchOption;
@@ -63,7 +64,7 @@ public class PostControllerTest extends IntegrationTest {
     private Board board;
 
     @BeforeEach
-    void setUp() {
+    void setup() {
         final String email = "gmlwh124@suwon.ac.kr";
         final String nickname = "john";
         final Role role = Role.ROLE_USER;
@@ -76,7 +77,7 @@ public class PostControllerTest extends IntegrationTest {
                 .role(role)
                 .build());
 
-        board = boardRepository.save(Board.builder().boardType(BoardType.MAIN).name("자유게시판").build());
+        board = boardRepository.save(Board.builder().boardType(BoardType.main).name("자유게시판").build());
 
         setSecurityContext(member);
     }
@@ -389,8 +390,8 @@ public class PostControllerTest extends IntegrationTest {
         final String boardName = "자유게시판";
         final String keyword = "test";
 
-        Post post = Post.builder().title("test").build();
-        postRepository.save(Post.of(member, boardName, post));
+        PostData data = PostData.builder().title(keyword).boardName(boardName).build();
+        postRepository.save(Post.of(member, data));
 
         SearchRequest request = SearchRequest.builder()
                 .board(boardName)

@@ -149,7 +149,6 @@ public class PostService {
         return postRepository.integrationSearch(keyword);
     }
 
-    @Transactional(readOnly = true)
     public GetPostResponse get(Long memberId, Long postId) {
         Post post = findById(postId);
         post.isAccessible();

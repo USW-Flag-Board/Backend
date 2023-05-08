@@ -1,13 +1,14 @@
 package com.Flaground.backend.module.post;
 
-import com.Flaground.backend.module.board.entity.Board;
-import com.Flaground.backend.module.board.entity.enums.BoardType;
-import com.Flaground.backend.module.board.repository.BoardRepository;
+import com.Flaground.backend.module.board.domain.Board;
+import com.Flaground.backend.module.board.domain.BoardType;
+import com.Flaground.backend.module.board.domain.repository.BoardRepository;
 import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.domain.repository.MemberRepository;
 import com.Flaground.backend.module.post.controller.dto.request.PostRequest;
 import com.Flaground.backend.module.post.domain.Post;
 import com.Flaground.backend.module.post.controller.mapper.PostMapper;
+import com.Flaground.backend.module.post.domain.PostData;
 import com.Flaground.backend.module.post.domain.repository.PostRepository;
 import com.Flaground.backend.module.post.service.PostService;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,7 +52,7 @@ public class PostServiceTest {
                 .build());
 
         final String boardName = "자유 게시판";
-        final BoardType boardType = BoardType.MAIN;
+        final BoardType boardType = BoardType.main;
 
         boardRepository.saveAndFlush(Board.builder()
                 .name(boardName)
@@ -73,11 +74,11 @@ public class PostServiceTest {
                 .boardName(boardName)
                 .build();
 
-        Post post = postMapper.toMetaData(request);
+        PostData data = postMapper.toMetaData(request);
         Long memberId = memberRepository.findByEmail(email).get().getId();
 
         // when
-        Long postId = postService.create(memberId, post, boardName).getId();
+        Long postId = postService.create(memberId, data);
 
         // then
         Post savedPost = postRepository.findById(postId).get();

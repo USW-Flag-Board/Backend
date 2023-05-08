@@ -1,6 +1,6 @@
-package com.Flaground.backend.module.board.repository;
+package com.Flaground.backend.module.board.domain.repository;
 
-import com.Flaground.backend.module.board.entity.Board;
+import com.Flaground.backend.module.board.domain.Board;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

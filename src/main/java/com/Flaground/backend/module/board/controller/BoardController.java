@@ -1,14 +1,20 @@
 package com.Flaground.backend.module.board.controller;
 
-import com.Flaground.backend.module.board.controller.dto.BoardRequest;
-import com.Flaground.backend.module.board.mapper.BoardMapper;
-import com.Flaground.backend.module.board.service.BoardService;
+import com.Flaground.backend.global.annotation.EnumFormat;
 import com.Flaground.backend.global.common.ApplicationResponse;
+import com.Flaground.backend.module.board.controller.dto.request.BoardRequest;
+import com.Flaground.backend.module.board.controller.dto.response.BoardInfo;
+import com.Flaground.backend.module.board.controller.dto.response.BoardResponse;
+import com.Flaground.backend.module.board.controller.mapper.BoardMapper;
+import com.Flaground.backend.module.board.domain.BoardType;
+import com.Flaground.backend.module.board.service.BoardService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
@@ -18,7 +24,6 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/boards")
 @RequiredArgsConstructor
 public class BoardController {
-    private final static String DEFAULT_URL = "/boards";
     private final BoardService boardService;
     private final BoardMapper boardMapper;
 
@@ -99,6 +104,15 @@ public class BoardController {
      * Version 2
      */
     @Tag(name = "board")
+    @Operation(summary = "게시판 목록 가져오기", description = "넘어오는 값에 따라 메인 게시판과 활동 게시판 목록을 가져온다.")
+    @ResponseStatus(OK)
+    @GetMapping
+    public ApplicationResponse<BoardResponse> get(@RequestParam("type") @EnumFormat(enumClass = BoardType.class) BoardType boardType) {
+        List<BoardInfo> boards = boardService.get(boardType);
+        return new ApplicationResponse<>(BoardResponse.of(boards, boardType));
+    }
+
+    @Tag(name = "board")
     @ResponseStatus(CREATED)
     @PostMapping
     public ApplicationResponse create(@RequestBody @Valid BoardRequest boardRequest) {
@@ -114,9 +128,10 @@ public class BoardController {
         return new ApplicationResponse<>();
     }
 
-//    @ResponseStatus(OK)
-//    @DeleteMapping
-//    public ApplicationResponse delete() {
-//        return new ApplicationResponse<>();
-//    }
+    @ResponseStatus(OK)
+    @DeleteMapping("/{board}")
+    public ApplicationResponse delete(@PathVariable("board") String boardName) {
+        boardService.delete(boardName);
+        return new ApplicationResponse<>();
+    }
 }

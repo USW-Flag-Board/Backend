@@ -1,14 +1,15 @@
 package com.Flaground.backend.module.post;
 
 import com.Flaground.backend.common.RepositoryTest;
-import com.Flaground.backend.module.board.entity.Board;
-import com.Flaground.backend.module.board.entity.enums.BoardType;
-import com.Flaground.backend.module.board.repository.BoardRepository;
+import com.Flaground.backend.module.board.domain.Board;
+import com.Flaground.backend.module.board.domain.BoardType;
+import com.Flaground.backend.module.board.domain.repository.BoardRepository;
 import com.Flaground.backend.module.member.domain.Avatar;
 import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.domain.repository.MemberRepository;
 import com.Flaground.backend.module.post.controller.dto.response.*;
 import com.Flaground.backend.module.post.domain.Post;
+import com.Flaground.backend.module.post.domain.PostData;
 import com.Flaground.backend.module.post.domain.Reply;
 import com.Flaground.backend.module.post.domain.enums.SearchOption;
 import com.Flaground.backend.module.post.domain.enums.SearchPeriod;
@@ -131,7 +132,7 @@ public class PostRepositoryTest extends RepositoryTest {
         @BeforeEach
         void setup() {
             board = boardRepository.save(Board.builder()
-                    .boardType(BoardType.MAIN)
+                    .boardType(BoardType.main)
                     .name(boardName)
                     .build());
         }
@@ -188,7 +189,8 @@ public class PostRepositoryTest extends RepositoryTest {
         void 게시글_댓글_검색_테스트() {
             // given
             final String content = "test";
-            Post searchPost = postRepository.save(Post.of(member, boardName, post));
+            PostData data = PostData.builder().boardName(boardName).build();
+            Post searchPost = postRepository.save(Post.of(member, data));
 
             Reply reply1 = Reply.of(member, post.getId(), content);
             Reply reply2 = Reply.of(member, post.getId(), content);

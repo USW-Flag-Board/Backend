@@ -1,12 +1,16 @@
 package com.Flaground.backend.module.board.service;
 
-import com.Flaground.backend.module.board.entity.Board;
-import com.Flaground.backend.module.board.repository.BoardRepository;
 import com.Flaground.backend.global.exception.CustomException;
 import com.Flaground.backend.global.exception.ErrorCode;
+import com.Flaground.backend.module.board.controller.dto.response.BoardInfo;
+import com.Flaground.backend.module.board.domain.Board;
+import com.Flaground.backend.module.board.domain.BoardType;
+import com.Flaground.backend.module.board.domain.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -79,24 +83,29 @@ public class BoardService {
     /**
      * Version 2
      */
+    @Transactional(readOnly = true)
+    public List<BoardInfo> get(BoardType boardType) {
+        return boardRepository.getBoards(boardType);
+    }
+
     public void isExistBoard(String boardName) {
         if (isNotExist(boardName)) {
             throw new CustomException(ErrorCode.NOT_CORRECT_BOARD);
         }
     }
 
+    // todo : 중복검사 추가해주기
     public void create(Board board) {
         boardRepository.save(board);
     }
-
-    // todo : 게시판 리스트 넘겨주기
 
     public void update(Board board) {
         Board findBoard = findByName(board.getName());
         findBoard.updateBoard(board);
     }
 
-    public void delete(Board board) {
+    public void delete(String boardName) {
+        Board board = findByName(boardName);
         boardRepository.delete(board);
     }
 

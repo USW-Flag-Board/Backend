@@ -1,7 +1,9 @@
-package com.Flaground.backend.module.board.entity;
+package com.Flaground.backend.module.board.domain;
 
-import com.Flaground.backend.module.board.entity.enums.BoardType;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 

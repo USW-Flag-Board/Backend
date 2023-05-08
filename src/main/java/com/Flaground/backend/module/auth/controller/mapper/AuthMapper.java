@@ -10,6 +10,6 @@ import org.mapstruct.*;
         nullValueMappingStrategy = NullValueMappingStrategy.RETURN_NULL
 )
 public interface AuthMapper {
-    @Mapping(target = "certification", expression = "java(com.FlagHome.backend.global.utility.RandomGenerator.getRandomNumber())")
+    @Mapping(target = "certification", expression = "java(com.Flaground.backend.global.utility.RandomGenerator.getRandomNumber())")
     AuthInformation mapFrom(JoinRequest joinRequest);
 }

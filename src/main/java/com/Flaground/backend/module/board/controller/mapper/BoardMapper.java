@@ -1,7 +1,7 @@
-package com.Flaground.backend.module.board.mapper;
+package com.Flaground.backend.module.board.controller.mapper;
 
-import com.Flaground.backend.module.board.controller.dto.BoardRequest;
-import com.Flaground.backend.module.board.entity.Board;
+import com.Flaground.backend.module.board.controller.dto.request.BoardRequest;
+import com.Flaground.backend.module.board.domain.Board;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
