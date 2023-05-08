@@ -9,6 +9,7 @@ import com.Flaground.backend.module.post.controller.dto.response.GetPostResponse
 import com.Flaground.backend.module.post.controller.dto.response.PostResponse;
 import com.Flaground.backend.module.post.controller.dto.response.SearchResponse;
 import com.Flaground.backend.module.post.domain.Post;
+import com.Flaground.backend.module.post.domain.PostData;
 import com.Flaground.backend.module.post.domain.Reply;
 import com.Flaground.backend.module.post.domain.enums.SearchOption;
 import com.Flaground.backend.module.post.domain.enums.SearchPeriod;
@@ -123,6 +124,7 @@ public class PostService {
         return postRepository.getAllPostsByBoard(boardName, pageable);
     }
 
+    // todo : 일급 객체로 수정하기
     @Transactional(readOnly = true)
     public List<PostResponse> getMemberPagePosts(String loginId) {
         Member member = memberService.findByLoginId(loginId);
@@ -154,10 +156,10 @@ public class PostService {
         return postRepository.getWithReplies(memberId, postId);
     }
 
-    public Post create(Long memberId, Post post, String boardName) {
-        boardService.isExistBoard(boardName);
+    public Long create(Long memberId, PostData postData) {
+        boardService.isExistBoard(postData.getBoardName());
         Member member = memberService.findById(memberId);
-        return postRepository.save(Post.of(member, boardName, post));
+        return postRepository.save(Post.of(member, postData)).getId();
     }
 
     public void commentReply(Long memberId, Long postId, String content) {
@@ -166,10 +168,10 @@ public class PostService {
         post.addReply(Reply.of(member, postId, content));
     }
 
-    public void update(Long memberId, Long postId, Post newPost) {
-        boardService.isExistBoard(newPost.getBoardName());
+    public void update(Long memberId, Long postId, PostData postData) {
+        boardService.isExistBoard(postData.getBoardName());
         Post post = validateAuthorAndReturnPost(memberId, postId);
-        post.updatePost(newPost);
+        post.updatePost(postData);
     }
 
     public void updateReply(Long memberId, Long replyId, String content) {

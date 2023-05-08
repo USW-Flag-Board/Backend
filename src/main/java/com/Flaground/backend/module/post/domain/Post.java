@@ -108,19 +108,19 @@ public class Post extends BaseEntity implements Likeable {
         this.isEdited = false;
     }
 
-    public static Post of(Member member, String boardName, Post post) {
+    public static Post of(Member member, PostData postData) {
         return Post.builder()
                 .member(member)
-                .boardName(boardName)
-                .title(post.getTitle())
-                .content(post.getContent())
+                .boardName(postData.getBoardName())
+                .title(postData.getTitle())
+                .content(postData.getContent())
                 .build();
     }
 
-    public void updatePost(Post post) {
-        this.boardName = post.getBoardName();
-        this.title = post.getTitle();
-        this.content = post.getContent();
+    public void updatePost(PostData postData) {
+        this.boardName = postData.getBoardName();
+        this.title = postData.getTitle();
+        this.content = postData.getContent();
         this.isEdited = true;
     }
 

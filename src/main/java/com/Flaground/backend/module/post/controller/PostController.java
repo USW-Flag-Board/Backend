@@ -217,7 +217,7 @@ public class PostController {
     @ResponseStatus(CREATED)
     @PostMapping
     public ApplicationResponse<URI> createPost(@RequestBody @Valid PostRequest request) {
-        Long id = postService.create(SecurityUtils.getMemberId(), postMapper.mapFrom(request), request.getBoardName()).getId();
+        Long id = postService.create(SecurityUtils.getMemberId(), postMapper.toMetaData(request));
         URI uri = UriCreator.createURI(BASE_URL, id);
         return new ApplicationResponse<>(uri);
     }
@@ -278,7 +278,7 @@ public class PostController {
     @PutMapping("/{id}")
     public ApplicationResponse updatePost(@PathVariable Long id,
                                           @RequestBody @Valid PostRequest request) {
-        postService.update(SecurityUtils.getMemberId(), id, postMapper.mapFrom(request));
+        postService.update(SecurityUtils.getMemberId(), id, postMapper.toMetaData(request));
         return new ApplicationResponse<>();
     }
 

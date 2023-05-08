@@ -73,7 +73,7 @@ public class PostServiceTest {
                 .boardName(boardName)
                 .build();
 
-        Post post = postMapper.mapFrom(request);
+        Post post = postMapper.toMetaData(request);
         Long memberId = memberRepository.findByEmail(email).get().getId();
 
         // when

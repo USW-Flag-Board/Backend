@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RecoveryTokenService implements TokenService {
     private final TokenRepository tokenRepository;
+
     @Override
     public Token issueToken(String key, String value) {
         Token findRequestToken = RecoveryToken.of(key, value);
