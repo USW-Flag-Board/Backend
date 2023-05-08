@@ -325,14 +325,14 @@ public class PostControllerTest extends IntegrationTest {
             // then
             Post findPost = postRepository.findById(post.getId()).get();
             assertThat(findPost.getLikeCount()).isEqualTo(likesAtFirst + 1);
-            boolean isLiked = likeRepository.existsByIds(member.getId(), post.getId());
+            boolean isLiked = likeRepository.existsByIds(member.getId(), post);
             assertThat(isLiked).isTrue();
         }
 
         @Test
         void 게시글_좋아요_실패() throws Exception {
             // given
-            likeRepository.save(Like.from(member.getId(), post.getId()));
+            likeRepository.save(Like.from(member.getId(), post));
 
             // when
             ResultActions resultActions = mockMvc.perform(post(uri)
@@ -349,7 +349,7 @@ public class PostControllerTest extends IntegrationTest {
         @Test
         void 게시글_좋아요_취소_성공() throws Exception {
             // given
-            likeRepository.save(Like.from(member.getId(), post.getId()));
+            likeRepository.save(Like.from(member.getId(), post));
             final int likeCountAtFirst = post.getLikeCount();
 
             // when
@@ -363,7 +363,7 @@ public class PostControllerTest extends IntegrationTest {
             // then
             Post findPost = postRepository.findById(post.getId()).get();
             assertThat(findPost.getLikeCount()).isEqualTo(likeCountAtFirst - 1);
-            boolean shouldBeFalse = likeRepository.existsByIds(member.getId(), post.getId());
+            boolean shouldBeFalse = likeRepository.existsByIds(member.getId(), post);
             assertThat(shouldBeFalse).isFalse();
         }
 

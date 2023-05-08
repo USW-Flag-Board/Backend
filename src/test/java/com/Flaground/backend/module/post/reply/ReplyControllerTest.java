@@ -217,14 +217,14 @@ public class ReplyControllerTest extends IntegrationTest {
             Reply findReply = replyRepository.findById(reply.getId()).orElse(null);
             assertThat(findReply).isNotNull();
             assertThat(findReply.getLikeCount()).isEqualTo(likeCountAtBegin + 1);
-            boolean shouldBeTrue = likeRepository.existsByIds(member.getId(), reply.getId());
+            boolean shouldBeTrue = likeRepository.existsByIds(member.getId(), reply);
             assertThat(shouldBeTrue).isTrue();
         }
 
         @Test
         public void 댓글_좋아요_실패() throws Exception {
             // given
-            likeRepository.save(Like.from(member.getId(), reply.getId()));
+            likeRepository.save(Like.from(member.getId(), reply));
 
             // when
             ResultActions resultActions = mockMvc.perform(post(uri)
@@ -241,7 +241,7 @@ public class ReplyControllerTest extends IntegrationTest {
         @Test
         public void 댓글_좋아요_취소_성공() throws Exception {
             // given
-            likeRepository.save(Like.from(member.getId(), reply.getId()));
+            likeRepository.save(Like.from(member.getId(), reply));
             final int likeCountAtBegin = reply.like();
 
             // when
@@ -256,7 +256,7 @@ public class ReplyControllerTest extends IntegrationTest {
             Reply findReply = replyRepository.findById(reply.getId()).orElse(null);
             assertThat(findReply).isNotNull();
             assertThat(findReply.getLikeCount()).isEqualTo(likeCountAtBegin - 1);
-            boolean shouldBeFalse = likeRepository.existsByIds(member.getId(), reply.getId());
+            boolean shouldBeFalse = likeRepository.existsByIds(member.getId(), reply);
             assertThat(shouldBeFalse).isFalse();
         }
 

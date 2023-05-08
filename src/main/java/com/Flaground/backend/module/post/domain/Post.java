@@ -137,11 +137,6 @@ public class Post extends BaseEntity implements Likeable {
     }
 
     @Override
-    public Long getMemberId() {
-        return member.getId();
-    }
-
-    @Override
     public int like() {
         return ++likeCount;
     }

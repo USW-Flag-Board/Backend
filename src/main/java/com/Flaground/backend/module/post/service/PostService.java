@@ -190,7 +190,7 @@ public class PostService {
 
     public int like(Long memberId, Long postId) {
         Post post = findById(postId);
-        likeService.like(memberId, postId);
+        likeService.like(memberId, post);
         return post.like();
     }
 
@@ -200,7 +200,7 @@ public class PostService {
 
     public int dislike(Long memberId, Long postId) {
         Post post = findById(postId);
-        likeService.dislike(memberId, postId);
+        likeService.dislike(memberId, post);
         return post.dislike();
     }
 

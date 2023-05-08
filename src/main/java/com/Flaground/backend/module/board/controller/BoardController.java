@@ -107,7 +107,8 @@ public class BoardController {
     @Operation(summary = "게시판 목록 가져오기", description = "넘어오는 값에 따라 메인 게시판과 활동 게시판 목록을 가져온다.")
     @ResponseStatus(OK)
     @GetMapping
-    public ApplicationResponse<BoardResponse> get(@RequestParam("type") @EnumFormat(enumClass = BoardType.class) BoardType boardType) {
+    public ApplicationResponse<BoardResponse> get(@RequestParam("type") @Valid
+                                                  @EnumFormat(enumClass = BoardType.class) BoardType boardType) {
         List<BoardInfo> boards = boardService.get(boardType);
         return new ApplicationResponse<>(BoardResponse.of(boards, boardType));
     }

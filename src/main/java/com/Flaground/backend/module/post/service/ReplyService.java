@@ -143,13 +143,13 @@ public class ReplyService {
 
     public int like(Long memberId, Long replyId) {
         Reply reply = findById(replyId);
-        likeService.like(memberId, replyId);
+        likeService.like(memberId, reply);
         return reply.like();
     }
 
     public int dislike(Long memberId, Long replyId) {
         Reply reply = findById(replyId);
-        likeService.dislike(memberId, replyId);
+        likeService.dislike(memberId, reply);
         return reply.dislike();
     }
 

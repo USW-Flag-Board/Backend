@@ -1,12 +1,12 @@
 package com.Flaground.backend.module.post.domain;
 
+import com.Flaground.backend.module.post.domain.enums.LikeType;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -23,20 +23,21 @@ public class Like {
     @Column(name = "likeable_id")
     private Long likeableId;
 
-    @Column(name = "create_at")
-    private LocalDateTime createAt;
+    @Column(name = "like_type")
+    @Enumerated(EnumType.STRING)
+    private LikeType likeType;
 
     @Builder
-    public Like(Long memberId, Long likeableId) {
+    public Like(Long memberId, Likeable likeable) {
         this.memberId = memberId;
-        this.likeableId = likeableId;
-        this.createAt = LocalDateTime.now();
+        this.likeableId = likeable.getId();
+        this.likeType = LikeType.from(likeable);
     }
 
-    public static Like from(Long memberId, Long likeableId) {
+    public static Like from(Long memberId, Likeable likeable) {
         return Like.builder()
                 .memberId(memberId)
-                .likeableId(likeableId)
+                .likeable(likeable)
                 .build();
     }
 }

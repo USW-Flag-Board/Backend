@@ -2,11 +2,7 @@ package com.Flaground.backend.module.post.domain.repository.implementation;
 
 import com.Flaground.backend.module.post.controller.dto.response.*;
 import com.Flaground.backend.module.post.domain.Post;
-import com.Flaground.backend.module.post.domain.enums.PostStatus;
-import com.Flaground.backend.module.post.domain.enums.SearchOption;
-import com.Flaground.backend.module.post.domain.enums.SearchPeriod;
-import com.Flaground.backend.module.post.domain.enums.TopPostCondition;
-import com.Flaground.backend.module.post.domain.repository.LikeRepository;
+import com.Flaground.backend.module.post.domain.enums.*;
 import com.Flaground.backend.module.post.domain.repository.PostRepositoryCustom;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -22,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.Flaground.backend.module.member.domain.QMember.member;
+import static com.Flaground.backend.module.post.domain.QLike.like;
 import static com.Flaground.backend.module.post.domain.QPost.post;
 import static com.Flaground.backend.module.post.domain.QReply.reply;
 import static com.querydsl.core.types.dsl.Expressions.asNumber;
@@ -30,7 +27,6 @@ import static com.querydsl.core.types.dsl.Expressions.asNumber;
 public class PostRepositoryImpl implements PostRepositoryCustom {
     private static final int HOT_POST_LIMIT = 5;
     private final JPAQueryFactory queryFactory;
-    private final LikeRepository likeRepository;
 
     /**
      * Version 1
@@ -285,7 +281,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         post.createdAt,
                         post.viewCount,
                         new QLikeResponse(
-                                isMemberLiked(memberId, postId),
+                                isMemberLiked(memberId, postId, LikeType.POST),
                                 post.likeCount),
                         post.isEdited))
                 .from(post)
@@ -303,7 +299,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         member.avatar.profileImage,
                         reply.content,
                         new QLikeResponse(
-                                isMemberLiked(memberId, postId),
+                                isMemberLiked(memberId, postId, LikeType.REPLY),
                                 reply.likeCount),
                         reply.createdAt,
                         reply.isEdited))
@@ -321,11 +317,16 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         return condition == TopPostCondition.like ? post.likeCount.goe(HOT_POST_LIMIT) : null;
     }
 
-    private BooleanExpression isMemberLiked(Long memberId, Long likeableId) {
-        return memberId == null ? Expressions.FALSE : isLiked(memberId, likeableId);
+    private BooleanExpression isMemberLiked(Long memberId, Long likeableId, LikeType likeType) {
+        return memberId == null ? Expressions.FALSE : isLiked(memberId, likeableId, likeType);
     }
 
-    private BooleanExpression isLiked(Long memberId, Long likeableId) {
-        return likeRepository.existsByIds(memberId, likeableId) ? Expressions.TRUE : Expressions.FALSE;
+    private BooleanExpression isLiked(Long memberId, Long likeableId, LikeType likeType) {
+        return queryFactory
+                .selectFrom(like)
+                .where(like.memberId.eq(memberId),
+                        like.likeableId.eq(likeableId),
+                        like.likeType.eq(likeType))
+                .fetchFirst() != null ? Expressions.TRUE : Expressions.FALSE;
     }
 }

@@ -3,6 +3,7 @@ package com.Flaground.backend.module.post.service;
 import com.Flaground.backend.global.exception.CustomException;
 import com.Flaground.backend.global.exception.ErrorCode;
 import com.Flaground.backend.module.post.domain.Like;
+import com.Flaground.backend.module.post.domain.Likeable;
 import com.Flaground.backend.module.post.domain.repository.LikeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -90,28 +91,28 @@ public class LikeService {
     /**
      * Version 2
      */
-    public void like(Long memberId, Long likeableId) {
-        isLiked(memberId, likeableId);
-        likeRepository.save(Like.from(memberId, likeableId));
+    public void like(Long memberId, Likeable likeable) {
+        isLiked(memberId, likeable);
+        likeRepository.save(Like.from(memberId, likeable));
     }
 
-    public void dislike(Long memberId, Long likeableId) {
-        Like like = findByIds(memberId, likeableId);
+    public void dislike(Long memberId, Likeable likeable) {
+        Like like = findByIds(memberId, likeable);
         likeRepository.delete(like);
     }
 
-    private void isLiked(Long memberId, Long likeableId) {
-        if (isExist(memberId, likeableId)) {
+    private void isLiked(Long memberId, Likeable likeable) {
+        if (isExist(memberId, likeable)) {
             throw new CustomException(ErrorCode.ALREADY_LIKED);
         }
     }
 
-    private boolean isExist(Long memberId, Long likeableId) {
-        return likeRepository.existsByIds(memberId, likeableId);
+    private boolean isExist(Long memberId, Likeable likeable) {
+        return likeRepository.existsByIds(memberId, likeable);
     }
 
-    private Like findByIds(Long memberId, Long likeableId) {
-        return likeRepository.findByIds(memberId, likeableId)
+    private Like findByIds(Long memberId, Likeable likeable) {
+        return likeRepository.findByIds(memberId, likeable)
                 .orElseThrow(() -> new CustomException(ErrorCode.NEVER_LIKED));
     }
 }

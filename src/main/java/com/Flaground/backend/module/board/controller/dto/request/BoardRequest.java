@@ -1,8 +1,7 @@
 package com.Flaground.backend.module.board.controller.dto.request;
 
-import com.Flaground.backend.module.board.domain.Board;
-import com.Flaground.backend.module.board.domain.BoardType;
 import com.Flaground.backend.global.annotation.EnumFormat;
+import com.Flaground.backend.module.board.domain.BoardType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Builder;
