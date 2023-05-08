@@ -1,6 +1,8 @@
 package com.FlagHome.backend.module.post;
 
 import com.FlagHome.backend.common.IntegrationTest;
+import com.FlagHome.backend.global.exception.CustomException;
+import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.module.board.entity.Board;
 import com.FlagHome.backend.module.board.entity.enums.BoardType;
 import com.FlagHome.backend.module.board.repository.BoardRepository;
@@ -10,15 +12,14 @@ import com.FlagHome.backend.module.member.domain.enums.Role;
 import com.FlagHome.backend.module.member.domain.repository.MemberRepository;
 import com.FlagHome.backend.module.post.controller.dto.request.PostRequest;
 import com.FlagHome.backend.module.post.controller.dto.request.SearchRequest;
-import com.FlagHome.backend.module.post.entity.Post;
-import com.FlagHome.backend.module.post.entity.enums.PostStatus;
-import com.FlagHome.backend.module.post.entity.enums.SearchOption;
-import com.FlagHome.backend.module.post.entity.enums.SearchPeriod;
-import com.FlagHome.backend.module.post.like.entity.PostLike;
-import com.FlagHome.backend.module.post.like.repository.LikeRepository;
-import com.FlagHome.backend.module.post.repository.PostRepository;
-import com.FlagHome.backend.global.exception.CustomException;
-import com.FlagHome.backend.global.exception.ErrorCode;
+import com.FlagHome.backend.module.post.domain.Like;
+import com.FlagHome.backend.module.post.domain.Post;
+import com.FlagHome.backend.module.post.domain.Reply;
+import com.FlagHome.backend.module.post.domain.enums.PostStatus;
+import com.FlagHome.backend.module.post.domain.enums.SearchOption;
+import com.FlagHome.backend.module.post.domain.enums.SearchPeriod;
+import com.FlagHome.backend.module.post.domain.repository.LikeRepository;
+import com.FlagHome.backend.module.post.domain.repository.PostRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -34,8 +35,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.hamcrest.core.Is.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -74,34 +76,75 @@ public class PostControllerTest extends IntegrationTest {
                 .role(role)
                 .build());
 
-        board = boardRepository.save(Board.builder().boardType(BoardType.MAIN).name("자유 게시판").build());
+        board = boardRepository.save(Board.builder().boardType(BoardType.MAIN).name("자유게시판").build());
 
         setSecurityContext(member);
     }
 
     @Nested
     class 게시글_가져오기_테스트 {
+        private final String title = "title";
+        private final String content = "content";
+        private final String boardName = "자유게시판";
         private Post post;
         private String uri;
 
         @BeforeEach
         void setup() {
-            final String title = "title";
-            final String content = "content";
+            post = postRepository.save(Post.builder()
+                    .member(member)
+                    .boardName(boardName)
+                    .title(title)
+                    .content(content)
+                    .build());
 
-            post = postRepository.save(Post.builder().member(member).board(board).title(title).content(content).build());
             uri = BASE_URI + "/" + post.getId();
         }
 
         @Test
-        void 게시글_가져오기_성공() throws Exception {
+        public void 비회원_게시글_가져오기_성공() throws Exception {
             // given
+            final String reply = "reply";
             final int viewCount = post.getViewCount();
+            post.addReply(Reply.of(member, post.getId(), reply));
+            clearSecurityContext();
 
             // when
             mockMvc.perform(get(uri)
-                    .contentType(MediaType.APPLICATION_JSON))
+                            .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.payload.postDetail.title", is(title)))
+                    .andExpect(jsonPath("$.payload.postDetail.content", is(content)))
+                    .andExpect(jsonPath("$.payload.postDetail.like.liked", is(false)))
+                    .andExpect(jsonPath("$.payload.postDetail.like.likeCount", is(0)))
+                    .andExpect(jsonPath("$.payload.replies[0].content", is(reply)))
+                    .andExpect(jsonPath("$.payload.replies[0].like.liked", is(false)))
+                    .andExpect(jsonPath("$.payload.replies[0].like.likeCount", is(0)))
+                    .andDo(print());
+
+            // then
+            Post findPost = postRepository.findById(post.getId()).get();
+            assertThat(findPost.getViewCount()).isEqualTo(viewCount + 1);
+        }
+
+        @Test
+        public void 회원_게시글_가져오기_성공() throws Exception {
+            // given
+            final String reply = "reply";
+            final int viewCount = post.getViewCount();
+            post.addReply(Reply.of(member, post.getId(), reply));
+
+            // when
+            mockMvc.perform(get(uri)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.payload.postDetail.title", is(title)))
+                    .andExpect(jsonPath("$.payload.postDetail.content", is(content)))
+                    .andExpect(jsonPath("$.payload.postDetail.like.liked", is(false)))
+                    .andExpect(jsonPath("$.payload.postDetail.like.likeCount", is(0)))
+                    .andExpect(jsonPath("$.payload.replies[0].content", is(reply)))
+                    .andExpect(jsonPath("$.payload.replies[0].like.liked", is(false)))
+                    .andExpect(jsonPath("$.payload.replies[0].like.likeCount", is(0)))
                     .andDo(print());
 
             // then
@@ -115,7 +158,8 @@ public class PostControllerTest extends IntegrationTest {
             post.delete();
 
             // when
-            ResultActions resultActions = mockMvc.perform(get(uri).contentType(MediaType.APPLICATION_JSON));
+            ResultActions resultActions = mockMvc.perform(get(uri)
+                    .contentType(MediaType.APPLICATION_JSON));
 
             // then
             resultActions
@@ -260,7 +304,7 @@ public class PostControllerTest extends IntegrationTest {
 
         @BeforeEach
         void setup() {
-            post = postRepository.save(Post.builder().build());
+            post = postRepository.save(Post.builder().member(member).build());
             uri = BASE_URI + "/" + post.getId() + "/like";
         }
 
@@ -273,19 +317,21 @@ public class PostControllerTest extends IntegrationTest {
             mockMvc.perform(post(uri)
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.payload.liked", is(true)))
+                    .andExpect(jsonPath("$.payload.likeCount", is(likesAtFirst + 1)))
                     .andDo(print());
 
             // then
             Post findPost = postRepository.findById(post.getId()).get();
             assertThat(findPost.getLikeCount()).isEqualTo(likesAtFirst + 1);
-            boolean isLiked = likeRepository.isPostLiked(member.getId(), post.getId());
+            boolean isLiked = likeRepository.existsByIds(member.getId(), post.getId());
             assertThat(isLiked).isTrue();
         }
 
         @Test
         void 게시글_좋아요_실패() throws Exception {
             // given
-            likeRepository.save(PostLike.of(member, post));
+            likeRepository.save(Like.from(member.getId(), post.getId()));
 
             // when
             ResultActions resultActions = mockMvc.perform(post(uri)
@@ -302,19 +348,21 @@ public class PostControllerTest extends IntegrationTest {
         @Test
         void 게시글_좋아요_취소_성공() throws Exception {
             // given
-            likeRepository.save(PostLike.of(member, post));
+            likeRepository.save(Like.from(member.getId(), post.getId()));
             final int likeCountAtFirst = post.getLikeCount();
 
             // when
             mockMvc.perform(delete(uri)
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.payload.liked", is(false)))
+                    .andExpect(jsonPath("$.payload.likeCount", is(likeCountAtFirst - 1)))
                     .andDo(print());
 
             // then
             Post findPost = postRepository.findById(post.getId()).get();
             assertThat(findPost.getLikeCount()).isEqualTo(likeCountAtFirst - 1);
-            boolean shouldBeFalse = likeRepository.isPostLiked(member.getId(), post.getId());
+            boolean shouldBeFalse = likeRepository.existsByIds(member.getId(), post.getId());
             assertThat(shouldBeFalse).isFalse();
         }
 
@@ -338,11 +386,11 @@ public class PostControllerTest extends IntegrationTest {
     @Test
     public void 게시판_검색_테스트() throws Exception {
         // given
-        final String boardName = "자유 게시판";
+        final String boardName = "자유게시판";
         final String keyword = "test";
 
         Post post = Post.builder().title("test").build();
-        postRepository.save(Post.of(member, board, post));
+        postRepository.save(Post.of(member, boardName, post));
 
         SearchRequest request = SearchRequest.builder()
                 .board(boardName)
@@ -375,5 +423,9 @@ public class PostControllerTest extends IntegrationTest {
 
         UserDetails principal = new User(String.valueOf(member.getId()), "", authorities);
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(principal, "", authorities));
+    }
+
+    private void clearSecurityContext() {
+        SecurityContextHolder.getContext().setAuthentication(null);
     }
 }

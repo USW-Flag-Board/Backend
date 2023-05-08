@@ -1,19 +1,16 @@
 package com.FlagHome.backend.module.post.controller;
 
+import com.FlagHome.backend.global.common.ApplicationResponse;
+import com.FlagHome.backend.global.utility.SecurityUtils;
+import com.FlagHome.backend.global.utility.UriCreator;
 import com.FlagHome.backend.module.post.controller.dto.request.CreateReplyRequest;
 import com.FlagHome.backend.module.post.controller.dto.request.PostRequest;
 import com.FlagHome.backend.module.post.controller.dto.request.SearchRequest;
 import com.FlagHome.backend.module.post.controller.dto.request.UpdateReplyRequest;
-import com.FlagHome.backend.module.post.controller.dto.response.PostDetailResponse;
-import com.FlagHome.backend.module.post.controller.dto.response.PostResponse;
-import com.FlagHome.backend.module.post.controller.dto.response.ReplyResponse;
-import com.FlagHome.backend.module.post.controller.dto.response.SearchResponse;
-import com.FlagHome.backend.module.post.entity.enums.TopPostCondition;
-import com.FlagHome.backend.module.post.mapper.PostMapper;
+import com.FlagHome.backend.module.post.controller.dto.response.*;
+import com.FlagHome.backend.module.post.controller.mapper.PostMapper;
+import com.FlagHome.backend.module.post.domain.enums.TopPostCondition;
 import com.FlagHome.backend.module.post.service.PostService;
-import com.FlagHome.backend.global.common.ApplicationResponse;
-import com.FlagHome.backend.global.utility.SecurityUtils;
-import com.FlagHome.backend.global.utility.UriCreator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -142,7 +139,7 @@ public class PostController {
      * Version 2
      */
     @Tag(name = "post")
-    @Operation(summary = "게시글 상세보기")
+    @Operation(summary = "게시글 상세보기", description = "토큰을 넣으면 회원이 좋아요한 게시글들을 확인할 수 있다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "상세보기 성공"),
             @ApiResponse(responseCode = "400", description = "접근할 수 없는 게시글, 리다이렉트 해줄 것"),
@@ -150,8 +147,8 @@ public class PostController {
     })
     @ResponseStatus(OK)
     @GetMapping("/{id}")
-    public ApplicationResponse<PostDetailResponse> getPost(@PathVariable Long id) {
-        PostDetailResponse response = postService.getPost(id);
+    public ApplicationResponse<GetPostResponse> getPost(@PathVariable Long id) {
+        GetPostResponse response = postService.get(SecurityUtils.getMemberId(), id);
         return new ApplicationResponse<>(response);
     }
 
@@ -211,25 +208,6 @@ public class PostController {
     }
 
     @Tag(name = "post")
-    @Operation(summary = "게시글 댓글 가져오기", description = "<삭제된 게시글>로 보이는 값은 안 보이게 하면 된다.")
-    @ResponseStatus(OK)
-    @GetMapping("/{id}/replies")
-    public ApplicationResponse<List<ReplyResponse>> getAllReplies(@PathVariable Long id) {
-        List<ReplyResponse> responses = postService.getAllReplies(id);
-        return new ApplicationResponse<>(responses);
-    }
-
-    @Tag(name = "post")
-    @Operation(summary = "게시글 베스트 댓글 가져오기", description = "베스트 댓글을 가져온다. (조건 : 좋아요 5개 이상)")
-    @ApiResponse(responseCode = "200", description = "베댓의 최소 조건에 부합하지 않아 아무값도 안 가져올 수 있음 (null)")
-    @ResponseStatus(OK)
-    @GetMapping("/{id}/replies/best")
-    public ApplicationResponse<ReplyResponse> getBestReply(@PathVariable Long id) {
-        ReplyResponse response = postService.getBestReply(id);
-        return new ApplicationResponse<>(response);
-    }
-
-    @Tag(name = "post")
     @Operation(summary = "게시글 작성하기", description = "[토큰필요]")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "게시글 작성 성공"),
@@ -239,7 +217,7 @@ public class PostController {
     @ResponseStatus(CREATED)
     @PostMapping
     public ApplicationResponse<URI> createPost(@RequestBody @Valid PostRequest request) {
-        Long id = postService.createPost(SecurityUtils.getMemberId(), postMapper.mapFrom(request), request.getBoardName()).getId();
+        Long id = postService.create(SecurityUtils.getMemberId(), postMapper.mapFrom(request), request.getBoardName()).getId();
         URI uri = UriCreator.createURI(BASE_URL, id);
         return new ApplicationResponse<>(uri);
     }
@@ -269,9 +247,9 @@ public class PostController {
     })
     @ResponseStatus(CREATED)
     @PostMapping("/{id}/like")
-    public ApplicationResponse likePost(@PathVariable Long id) {
-        postService.likePost(SecurityUtils.getMemberId(), id);
-        return new ApplicationResponse<>();
+    public ApplicationResponse<LikeResponse> likePost(@PathVariable Long id) {
+        int count = postService.like(SecurityUtils.getMemberId(), id);
+        return new ApplicationResponse<>(LikeResponse.liked(count));
     }
 
     @Tag(name = "post")
@@ -284,9 +262,9 @@ public class PostController {
     })
     @ResponseStatus(CREATED)
     @PostMapping("/replies/{id}/like")
-    public ApplicationResponse likeReply(@PathVariable("id") Long replyId) {
-        postService.likeReply(SecurityUtils.getMemberId(), replyId);
-        return new ApplicationResponse<>();
+    public ApplicationResponse<LikeResponse> likeReply(@PathVariable("id") Long replyId) {
+        int count = postService.likeReply(SecurityUtils.getMemberId(), replyId);
+        return new ApplicationResponse<>(LikeResponse.liked(count));
     }
 
     @Tag(name = "post")
@@ -300,8 +278,8 @@ public class PostController {
     @PutMapping("/{id}")
     public ApplicationResponse updatePost(@PathVariable Long id,
                                           @RequestBody @Valid PostRequest request) {
-        postService.updatePost(SecurityUtils.getMemberId(), id, postMapper.mapFrom(request));
-        return new ApplicationResponse();
+        postService.update(SecurityUtils.getMemberId(), id, postMapper.mapFrom(request));
+        return new ApplicationResponse<>();
     }
 
     @Tag(name = "post")
@@ -329,7 +307,7 @@ public class PostController {
     @ResponseStatus(OK)
     @PatchMapping("/{id}")
     public ApplicationResponse deletePost(@PathVariable Long id) {
-        postService.deletePost(SecurityUtils.getMemberId(), id);
+        postService.delete(SecurityUtils.getMemberId(), id);
         return new ApplicationResponse<>();
     }
 
@@ -341,9 +319,9 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 댓글입니다.")
     })
     @ResponseStatus(OK)
-    @DeleteMapping("/replies/{id}")
-    public ApplicationResponse deleteReply(@PathVariable("id") Long replyId) {
-        postService.deleteReply(SecurityUtils.getMemberId(), replyId);
+    @DeleteMapping("/{postId}/replies/{replyId}")
+    public ApplicationResponse deleteReply(@PathVariable Long postId, @PathVariable Long replyId) {
+        postService.deleteReply(SecurityUtils.getMemberId(), postId, replyId);
         return new ApplicationResponse<>();
     }
 
@@ -356,9 +334,9 @@ public class PostController {
     })
     @ResponseStatus(OK)
     @DeleteMapping("/{id}/like")
-    public ApplicationResponse cancelLikePost(@PathVariable Long id) {
-        postService.cancelLikePost(SecurityUtils.getMemberId(), id);
-        return new ApplicationResponse<>();
+    public ApplicationResponse<LikeResponse> cancelLikePost(@PathVariable Long id) {
+        int count = postService.dislike(SecurityUtils.getMemberId(), id);
+        return new ApplicationResponse<>(LikeResponse.disliked(count));
     }
 
     @Tag(name = "post")
@@ -370,8 +348,8 @@ public class PostController {
     })
     @ResponseStatus(OK)
     @DeleteMapping("/replies/{id}/like")
-    public ApplicationResponse cancelLikeReply(@PathVariable("id") Long replyId) {
-        postService.cancelLikeReply(SecurityUtils.getMemberId(), replyId);
-        return new ApplicationResponse<>();
+    public ApplicationResponse<LikeResponse> cancelLikeReply(@PathVariable("id") Long replyId) {
+        int count = postService.dislikeReply(SecurityUtils.getMemberId(), replyId);
+        return new ApplicationResponse<>(LikeResponse.disliked(count));
     }
 }

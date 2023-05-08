@@ -14,7 +14,10 @@ public class ReplyResponse {
     @Schema(name = "댓글 번호")
     private Long id;
 
-    @Schema(name = "댓글 작성자")
+    @Schema(name = "작성자 아이디")
+    private String loginId;
+
+    @Schema(name = "작성자 활동명")
     private String nickname;
 
     @Schema(name = "작성자 프로필 사진")
@@ -23,8 +26,8 @@ public class ReplyResponse {
     @Schema(name = "댓글 내용")
     private String content;
 
-    @Schema(name = "댓글 좋아요 갯수")
-    private int likeCount;
+    @Schema(name = "좋아요 응답")
+    private LikeResponse like;
 
     @Schema(name = "댓글 작성 시간")
     private LocalDateTime createdAt;
@@ -33,13 +36,14 @@ public class ReplyResponse {
     private boolean isEdited;
 
     @QueryProjection
-    public ReplyResponse(Long id, String nickname, String profileImage, String content,
-                         int likeCount, LocalDateTime createdAt, boolean isEdited) {
+    public ReplyResponse(Long id, String loginId, String nickname, String profileImage, String content,
+                         LikeResponse like, LocalDateTime createdAt, boolean isEdited) {
         this.id = id;
+        this.loginId = loginId;
         this.nickname = nickname;
         this.profileImage = profileImage;
         this.content = content;
-        this.likeCount = likeCount;
+        this.like = like;
         this.createdAt = createdAt;
         this.isEdited = isEdited;
     }

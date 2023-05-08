@@ -7,18 +7,15 @@ import com.FlagHome.backend.module.board.repository.BoardRepository;
 import com.FlagHome.backend.module.member.domain.Avatar;
 import com.FlagHome.backend.module.member.domain.Member;
 import com.FlagHome.backend.module.member.domain.repository.MemberRepository;
-import com.FlagHome.backend.module.post.controller.dto.response.PostResponse;
-import com.FlagHome.backend.module.post.controller.dto.response.SearchResponse;
-import com.FlagHome.backend.module.post.entity.Post;
-import com.FlagHome.backend.module.post.entity.enums.SearchOption;
-import com.FlagHome.backend.module.post.entity.enums.SearchPeriod;
-import com.FlagHome.backend.module.post.entity.enums.TopPostCondition;
-import com.FlagHome.backend.module.post.like.entity.PostLike;
-import com.FlagHome.backend.module.post.like.entity.ReplyLike;
-import com.FlagHome.backend.module.post.like.repository.LikeRepository;
-import com.FlagHome.backend.module.post.reply.entity.Reply;
-import com.FlagHome.backend.module.post.reply.repository.ReplyRepository;
-import com.FlagHome.backend.module.post.repository.PostRepository;
+import com.FlagHome.backend.module.post.controller.dto.response.*;
+import com.FlagHome.backend.module.post.domain.Post;
+import com.FlagHome.backend.module.post.domain.Reply;
+import com.FlagHome.backend.module.post.domain.enums.SearchOption;
+import com.FlagHome.backend.module.post.domain.enums.SearchPeriod;
+import com.FlagHome.backend.module.post.domain.enums.TopPostCondition;
+import com.FlagHome.backend.module.post.domain.repository.LikeRepository;
+import com.FlagHome.backend.module.post.domain.repository.PostRepository;
+import com.FlagHome.backend.module.post.domain.repository.ReplyRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -50,28 +47,40 @@ public class PostRepositoryTest extends RepositoryTest {
 
     @BeforeEach
     void testSetup() {
+        final String loginId = "gmlwh124";
         final String nickname = "john";
         Avatar avatar = Avatar.builder().nickname(nickname).build();
-        member = memberRepository.save(Member.builder().avatar(avatar).build());
+        member = memberRepository.save(Member.builder().loginId(loginId).avatar(avatar).build());
         post = postRepository.save(Post.builder().member(member).build());
     }
 
     @Test
-    void 좋아요_체크_테스트() {
+    public void 게시글_상세보기_테스트() {
         // given
+        final String loginId = "gmlwh124";
+        final String nickname = "john";
         final String content = "content";
-        Reply reply = replyRepository.save(Reply.of(member, post, content));
 
-        likeRepository.save(PostLike.of(member, post));
-        likeRepository.save(ReplyLike.of(member, reply));
+        post.addReply(Reply.of(member, post.getId(), content));
+        post.addReply(Reply.of(member, post.getId(), content));
 
         // when
-        boolean postLiked = likeRepository.isPostLiked(member.getId(), post.getId());
-        boolean replyLiked = likeRepository.isPostLiked(member.getId(), reply.getId());
+        GetPostResponse response = postRepository.getWithReplies(null, post.getId());
 
         // then
-        assertThat(postLiked).isTrue();
-        assertThat(replyLiked).isTrue();
+        PostDetailResponse detailResponse = response.getPostDetail();
+        List<ReplyResponse> replyResponses = response.getReplies();
+
+        assertThat(detailResponse.getLoginId()).isEqualTo(loginId);
+        assertThat(detailResponse.getNickname()).isEqualTo(nickname);
+        assertThat(detailResponse.getLike().isLiked()).isEqualTo(false);
+        assertThat(detailResponse.getLike().getLikeCount()).isEqualTo(0);
+        assertThat(replyResponses.size()).isEqualTo(2);
+        assertThat(replyResponses.get(0).getContent()).isEqualTo(content);
+        assertThat(replyResponses.get(0).getLoginId()).isEqualTo(loginId);
+        assertThat(replyResponses.get(0).getNickname()).isEqualTo(nickname);
+        assertThat(replyResponses.get(0).getLike().isLiked()).isEqualTo(false);
+        assertThat(replyResponses.get(0).getLike().getLikeCount()).isEqualTo(0);
     }
 
     @Nested
@@ -84,11 +93,9 @@ public class PostRepositoryTest extends RepositoryTest {
 
             Post notHotPost = postRepository.save(Post.builder().member(member).build());
 
-            for (int i = 0; i < hotPostLikeCount ; i++) {
-                post.increaseLikeCount();
-                if (i > 2) {
-                    notHotPost.increaseLikeCount();
-                }
+            for (int i = 1 ; i <= hotPostLikeCount; i++) {
+                if (i > 3) notHotPost.like();
+                post.like();
             }
 
             // when
@@ -104,8 +111,8 @@ public class PostRepositoryTest extends RepositoryTest {
             // given
             final TopPostCondition condition = TopPostCondition.latest;
 
-            Post post2 = postRepository.save(Post.builder().member(member).build());
-            Post post3 = postRepository.save(Post.builder().member(member).build());
+            postRepository.save(Post.builder().member(member).build());
+            postRepository.save(Post.builder().member(member).build());
 
             // when
             List<PostResponse> responses = postRepository.getTopFiveByCondition(condition);
@@ -136,9 +143,9 @@ public class PostRepositoryTest extends RepositoryTest {
             final String title2 = "testst";
             final String title3 = "teest";
 
-            Post post1 = Post.builder().board(board).member(member).title(title).build();
-            Post post2 = Post.builder().board(board).member(member).title(title2).build();
-            Post post3 = Post.builder().board(board).member(member).title(title3).build();
+            Post post1 = Post.builder().boardName(boardName).member(member).title(title).build();
+            Post post2 = Post.builder().boardName(boardName).member(member).title(title2).build();
+            Post post3 = Post.builder().boardName(boardName).member(member).title(title3).build();
 
             postRepository.saveAll(List.of(post1, post2, post3));
 
@@ -160,9 +167,9 @@ public class PostRepositoryTest extends RepositoryTest {
             final String content2 = "this istestfor";
             final String content3 = "this is for teest";
 
-            Post post1 = Post.builder().board(board).member(member).content(content1).build();
-            Post post2 = Post.builder().board(board).member(member).content(content2).build();
-            Post post3 = Post.builder().board(board).member(member).content(content3).build();
+            Post post1 = Post.builder().boardName(boardName).member(member).content(content1).build();
+            Post post2 = Post.builder().boardName(boardName).member(member).content(content2).build();
+            Post post3 = Post.builder().boardName(boardName).member(member).content(content3).build();
 
             postRepository.saveAll(List.of(post1, post2, post3));
 
@@ -181,10 +188,10 @@ public class PostRepositoryTest extends RepositoryTest {
         void 게시글_댓글_검색_테스트() {
             // given
             final String content = "test";
-            Post searchPost = postRepository.save(Post.of(member, board, post));
+            Post searchPost = postRepository.save(Post.of(member, boardName, post));
 
-            Reply reply1 = Reply.of(member, searchPost, content);
-            Reply reply2 = Reply.of(member, searchPost, content);
+            Reply reply1 = Reply.of(member, post.getId(), content);
+            Reply reply2 = Reply.of(member, post.getId(), content);
 
             replyRepository.saveAll(List.of(reply1, reply2));
 
@@ -205,12 +212,12 @@ public class PostRepositoryTest extends RepositoryTest {
             final String content = "test";
             final String content2 = "ttest";
 
-            Post searchPost = Post.builder().member(member).board(board).content(content).build();
-            Post searchPost2 = Post.builder().member(member).board(board).content(content2).build();
+            Post searchPost = Post.builder().member(member).boardName(boardName).content(content).build();
+            Post searchPost2 = Post.builder().member(member).boardName(boardName).content(content2).build();
 
-            Reply reply1 = Reply.of(member, post, content); // 검색X : 게시판 정보가 없음
-            Reply reply2 = Reply.of(member, searchPost, content2); // 중복
-            Reply reply3 = Reply.of(member, searchPost, content2); // 중복
+            Reply reply1 = Reply.of(member, post.getId(), content); // 검색X : 게시판 정보가 없음
+            Reply reply2 = Reply.of(member, post.getId(), content2); // 중복
+            Reply reply3 = Reply.of(member, post.getId(), content2); // 중복
 
             postRepository.saveAll(List.of(searchPost, searchPost2));
             replyRepository.saveAll(List.of(reply1, reply2, reply3));
@@ -229,7 +236,7 @@ public class PostRepositoryTest extends RepositoryTest {
         @Test
         void 게시글_작성자_검색_테스트() {
             // given
-            postRepository.save(Post.builder().member(member).board(board).build());
+            postRepository.save(Post.builder().member(member).boardName(boardName).build());
 
             final String keyword = "john";
             final SearchOption option = SearchOption.author;
@@ -251,7 +258,7 @@ public class PostRepositoryTest extends RepositoryTest {
 
         postRepository.save(Post.builder().member(member).title(title).build());
         Post testPost = postRepository.save(Post.builder().member(member).content(content).build());
-        replyRepository.save(Reply.of(member, testPost, content));
+        replyRepository.save(Reply.of(member, post.getId(), content));
 
         final String keyword = "test";
 

@@ -1,22 +1,20 @@
 package com.FlagHome.backend.module.post.service;
 
-import com.FlagHome.backend.module.board.entity.Board;
+import com.FlagHome.backend.global.exception.CustomException;
+import com.FlagHome.backend.global.exception.ErrorCode;
 import com.FlagHome.backend.module.board.service.BoardService;
 import com.FlagHome.backend.module.member.domain.Member;
 import com.FlagHome.backend.module.member.service.MemberService;
-import com.FlagHome.backend.module.post.controller.dto.response.PostDetailResponse;
+import com.FlagHome.backend.module.post.controller.dto.response.GetPostResponse;
 import com.FlagHome.backend.module.post.controller.dto.response.PostResponse;
-import com.FlagHome.backend.module.post.controller.dto.response.ReplyResponse;
 import com.FlagHome.backend.module.post.controller.dto.response.SearchResponse;
-import com.FlagHome.backend.module.post.entity.Post;
-import com.FlagHome.backend.module.post.entity.enums.SearchOption;
-import com.FlagHome.backend.module.post.entity.enums.SearchPeriod;
-import com.FlagHome.backend.module.post.entity.enums.TopPostCondition;
-import com.FlagHome.backend.module.post.like.service.PostLikeService;
-import com.FlagHome.backend.module.post.reply.service.ReplyService;
-import com.FlagHome.backend.module.post.repository.PostRepository;
-import com.FlagHome.backend.global.exception.CustomException;
-import com.FlagHome.backend.global.exception.ErrorCode;
+import com.FlagHome.backend.module.post.domain.Like;
+import com.FlagHome.backend.module.post.domain.Post;
+import com.FlagHome.backend.module.post.domain.Reply;
+import com.FlagHome.backend.module.post.domain.enums.SearchOption;
+import com.FlagHome.backend.module.post.domain.enums.SearchPeriod;
+import com.FlagHome.backend.module.post.domain.enums.TopPostCondition;
+import com.FlagHome.backend.module.post.domain.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @Transactional
@@ -34,7 +31,7 @@ public class PostService {
     private final MemberService memberService;
     private final BoardService boardService;
     private final ReplyService replyService;
-    private final PostLikeService postLikeService;
+    private final LikeService likeService;
 
     /**
      * Version 1
@@ -118,21 +115,12 @@ public class PostService {
         return postRepository.findTopNPostListByDateAndLike(postCount);
     } */
 
-    @Transactional(readOnly = true)
-    public List<ReplyResponse> getAllReplies(Long postId) {
-        // 유효성 검사?
-        return replyService.getAllReplies(postId);
-    }
-
-    @Transactional(readOnly = true)
-    public ReplyResponse getBestReply(Long postId) {
-        // 유효성 검사?
-        return replyService.getBestReply(postId);
-    }
-
+    /**
+     * Version 2
+     */
     @Transactional(readOnly = true)
     public Page<PostResponse> getAllPostsByBoard(String boardName, Pageable pageable) {
-        boardService.findByName(boardName);
+        boardService.isExistBoard(boardName);
         return postRepository.getAllPostsByBoard(boardName, pageable);
     }
 
@@ -151,7 +139,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public SearchResponse searchPostsWithCondition(String boardName, String keyword,
                                                    SearchPeriod period, SearchOption option) {
-        boardService.findByName(boardName);
+        boardService.isExistBoard(boardName);
         return postRepository.searchWithCondition(boardName, keyword, period, option);
     }
 
@@ -160,66 +148,64 @@ public class PostService {
         return postRepository.integrationSearch(keyword);
     }
 
-
-    // todo : 상세보기 시 유저 이미지 가져오기
-    public PostDetailResponse getPost(Long postId) {
+    @Transactional(readOnly = true)
+    public GetPostResponse get(Long memberId, Long postId) {
         Post post = findById(postId);
         post.isAccessible();
-        post.increaseViewCount();
-        return PostDetailResponse.from(post);
+        return postRepository.getWithReplies(memberId, postId);
     }
 
-    public Post createPost(Long memberId, Post post, String boardName) {
+    public Post create(Long memberId, Post post, String boardName) {
+        boardService.isExistBoard(boardName);
         Member member = memberService.findById(memberId);
-        Board board = boardService.findByName(boardName);
-        return postRepository.save(Post.of(member, board, post));
+        return postRepository.save(Post.of(member, boardName, post));
     }
 
     public void commentReply(Long memberId, Long postId, String content) {
         Member member = memberService.findById(memberId);
         Post post = findById(postId);
-        replyService.commentReply(member, post, content);
-        post.increaseReplyCount();
+        post.addReply(Reply.of(member, postId, content));
     }
 
-    public void updatePost(Long memberId, Long postId, Post newPost) {
+    public void update(Long memberId, Long postId, Post newPost) {
+        boardService.isExistBoard(newPost.getBoardName());
         Post post = validateAuthorAndReturnPost(memberId, postId);
         post.updatePost(newPost);
     }
 
     public void updateReply(Long memberId, Long replyId, String content) {
-        replyService.updateReply(memberId, replyId, content);
+        replyService.update(memberId, replyId, content);
     }
 
-    public void deletePost(Long memberId, Long postId) {
+    public void delete(Long memberId, Long postId) {
         Post post = validateAuthorAndReturnPost(memberId, postId);
         post.delete();
     }
 
-    public void deleteReply(Long memberId, Long replyId) {
-        Long postId = replyService.deleteReply(memberId, replyId);
+    public void deleteReply(Long memberId, Long postId, Long replyId) {
         Post post = findById(postId);
-        post.decreaseReplyCount();
+        Reply reply = replyService.delete(memberId, replyId);
+        post.deleteReply(reply);
     }
 
-    public void likePost(Long memberId, Long postId) {
-        Member member = memberService.findById(memberId);
+    public int like(Long memberId, Long postId) {
         Post post = findById(postId);
-        postLikeService.like(member, post);
+        likeService.like(memberId, postId);
+        return post.like();
     }
 
-    public void likeReply(Long memberId, Long replyId) {
-        Member member = memberService.findById(memberId);
-        replyService.likeReply(member, replyId);
+    public int likeReply(Long memberId, Long replyId) {
+        return replyService.like(memberId, replyId);
     }
 
-    public void cancelLikePost(Long memberId, Long postId) {
+    public int dislike(Long memberId, Long postId) {
         Post post = findById(postId);
-        postLikeService.cancelLike(memberId, post);
+        likeService.dislike(memberId, postId);
+        return post.dislike();
     }
 
-    public void cancelLikeReply(Long memberId, Long replyId) {
-        replyService.cancelLikeReply(memberId, replyId);
+    public int dislikeReply(Long memberId, Long replyId) {
+        return replyService.dislike(memberId, replyId);
     }
 
     private Post findById(Long postId) {
@@ -229,13 +215,7 @@ public class PostService {
 
     private Post validateAuthorAndReturnPost(Long memberId, Long postId) {
         Post post = findById(postId);
-        validateAuthor(memberId, post.getMember().getId());
+        post.validateAuthor(memberId);
         return post;
-    }
-
-    private void validateAuthor(Long memberId, Long targetId) {
-        if (!Objects.equals(memberId, targetId)) {
-            throw new CustomException(ErrorCode.NOT_AUTHOR);
-        }
     }
 }

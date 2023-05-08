@@ -79,9 +79,17 @@ public class BoardService {
     /**
      * Version 2
      */
+    public void isExistBoard(String boardName) {
+        if (isNotExist(boardName)) {
+            throw new CustomException(ErrorCode.NOT_CORRECT_BOARD);
+        }
+    }
+
     public void create(Board board) {
         boardRepository.save(board);
     }
+
+    // todo : 게시판 리스트 넘겨주기
 
     public void update(Board board) {
         Board findBoard = findByName(board.getName());
@@ -92,8 +100,12 @@ public class BoardService {
         boardRepository.delete(board);
     }
 
-    public Board findByName(String name) {
+    private Board findByName(String name) {
         return boardRepository.findByName(name)
-                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_CORRECT_BOARD));
+    }
+
+    private boolean isNotExist(String boardName) {
+        return !boardRepository.existsByName(boardName);
     }
 }

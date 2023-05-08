@@ -1,6 +1,6 @@
 package com.FlagHome.backend.infra.aws.s3.entity;
 
-import com.FlagHome.backend.module.post.entity.Post;
+import com.FlagHome.backend.module.post.domain.Post;
 import com.FlagHome.backend.global.common.BaseEntity;
 import com.FlagHome.backend.infra.aws.s3.entity.enums.FileStatus;
 import lombok.AccessLevel;

@@ -8,7 +8,7 @@ import com.FlagHome.backend.module.member.domain.Member;
 import com.FlagHome.backend.module.member.service.MemberService;
 import com.FlagHome.backend.global.common.ApplicationResponse;
 import com.FlagHome.backend.global.utility.SecurityUtils;
-import com.FlagHome.backend.module.token.entity.Token;
+import com.FlagHome.backend.module.token.domain.Token;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

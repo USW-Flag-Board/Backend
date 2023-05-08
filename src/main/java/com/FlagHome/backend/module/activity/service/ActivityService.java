@@ -132,13 +132,7 @@ public class ActivityService {
 
     private Activity validateLeaderAndReturnActivity(Long memberId, Long activityId) {
         Activity activity = findById(activityId);
-        validateLeader(memberId, activity.getLeader().getId());
+        activity.validateLeader(memberId);
         return activity;
-    }
-
-    private void validateLeader(Long inputId, Long savedId) {
-        if (!Objects.equals(inputId, savedId)) {
-            throw new CustomException(ErrorCode.NOT_ACTIVITY_LEADER);
-        }
     }
 }

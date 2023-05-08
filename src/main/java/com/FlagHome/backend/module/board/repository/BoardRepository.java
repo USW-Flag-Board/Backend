@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface BoardRepository extends JpaRepository<Board,Long>, BoardRepositoryCustom {
     Optional<Board> findByName(String name);
+
+    boolean existsByName(String boardName);
 }

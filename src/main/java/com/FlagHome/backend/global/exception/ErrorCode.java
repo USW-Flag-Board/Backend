@@ -15,12 +15,12 @@ public enum ErrorCode {
     INACCESSIBLE_POST(HttpStatus.BAD_REQUEST, "삭제된 게시글입니다."),
     VALIDATE_NOT_PROCEED(HttpStatus.BAD_REQUEST, "중복검사를 진행하지 않았습니다."),
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
-    NOT_SUPPORT_ACTIVITY(HttpStatus.BAD_REQUEST, "지원하는 활동이 아닙니다."),
     NOT_RECRUITMENT_ACTIVITY(HttpStatus.BAD_REQUEST, "모집 중인 활동이 아닙니다."),
     NOT_ON_ACTIVITY(HttpStatus.BAD_REQUEST, "진행 중인 활동이 아닙니다."),
     NOT_AUTHOR(HttpStatus.BAD_REQUEST, "작성자가 아닙니다."),
     INVALID_MONTH_RANGE(HttpStatus.BAD_REQUEST, "입력범위에 벗어났습니다."),
     NEVER_LIKED(HttpStatus.BAD_REQUEST, "좋아요를 하지 않았습니다."),
+    NOT_CORRECT_BOARD(HttpStatus.BAD_REQUEST, "올바르지 않는 게시판입니다."),
 
     /** 401 - UNAUTHORIZED  */
     NONE_AUTHORIZATION_TOKEN(HttpStatus.UNAUTHORIZED, "권한 정보가 없는 토큰입니다."),
@@ -32,14 +32,11 @@ public enum ErrorCode {
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 게시물입니다."),
     REPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다."),
     AUTH_INFORMATION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 가입정보입니다."),
-    BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 게시판입니다."),
-    SEARCH_CODE_NOT_EXISTS(HttpStatus.NOT_FOUND, "존재하지 않는 검색 타입입니다."),
     APPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하는 신청 내역이 없습니다."),
     ACTIVITY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 활동입니다."),
     REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "신고이력이 존재하지 않습니다."),
     FIND_REQUEST_NONE(HttpStatus.NOT_FOUND, "아이디/비밀번호 찾기 요청이 존재하지 않습니다."),
     SLEEP_NOT_FOUND(HttpStatus.NOT_FOUND, "휴면계정이 존재하지 않습니다"),
-    NOT_ACTIVITY_MEMBER(HttpStatus.NOT_FOUND, "이 활동의 멤버가 아닙니다."),
 
     /**
      * 409 - REQUEST_CONFLICT
