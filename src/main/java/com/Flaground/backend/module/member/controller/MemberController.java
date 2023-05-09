@@ -1,13 +1,13 @@
 package com.Flaground.backend.module.member.controller;
 
-import com.Flaground.backend.module.member.controller.dto.response.*;
-import com.Flaground.backend.module.member.controller.dto.request.*;
-import com.Flaground.backend.module.member.domain.Avatar;
-import com.Flaground.backend.module.member.controller.mapper.MemberMapper;
-import com.Flaground.backend.module.member.domain.Member;
-import com.Flaground.backend.module.member.service.MemberService;
 import com.Flaground.backend.global.common.ApplicationResponse;
 import com.Flaground.backend.global.utility.SecurityUtils;
+import com.Flaground.backend.module.member.controller.dto.request.*;
+import com.Flaground.backend.module.member.controller.dto.response.*;
+import com.Flaground.backend.module.member.controller.mapper.MemberMapper;
+import com.Flaground.backend.module.member.domain.Avatar;
+import com.Flaground.backend.module.member.domain.Member;
+import com.Flaground.backend.module.member.service.MemberService;
 import com.Flaground.backend.module.token.domain.Token;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -66,7 +66,7 @@ public class MemberController {
     })
     @GetMapping("/search")
     public ApplicationResponse searchMemberByName(@RequestParam(value = "name") String name) {
-        List<SearchMemberResponse> response = memberService.searchByMemberName(name);
+        List<SearchMemberResponse> response = memberService.searchMember(name);
         return new ApplicationResponse(response);
     }
 
@@ -125,6 +125,16 @@ public class MemberController {
     @PostMapping("/avatar/image")
     public ApplicationResponse updateProfileImage(@RequestPart("image") MultipartFile profileImage) {
         memberService.updateProfileImage(SecurityUtils.getMemberId(), profileImage);
+        return new ApplicationResponse<>();
+    }
+
+    @Tag(name = "member")
+    @Operation(summary = "프로필 기본 이미지로 변경", description = "[토큰 필요]")
+    @ApiResponses({})
+    @ResponseStatus(OK)
+    @PutMapping("/avatar/reset")
+    public ApplicationResponse resetProfileImage() {
+        memberService.resetProfileImage(SecurityUtils.getMemberId());
         return new ApplicationResponse<>();
     }
 

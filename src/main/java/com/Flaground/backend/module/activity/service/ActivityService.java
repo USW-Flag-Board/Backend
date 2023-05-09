@@ -60,6 +60,10 @@ public class ActivityService {
     }
 
     // todo : 활동 검색기능 구현하기
+     @Transactional(readOnly = true)
+    public List<String> searchActivity(String keyword) {
+        return null;
+    }
 
     public Activity getActivity(Long activityId) {
         return findById(activityId);
