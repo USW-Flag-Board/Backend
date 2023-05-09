@@ -88,22 +88,24 @@ public class BoardService {
         return boardRepository.getBoards(boardType);
     }
 
-    public void isExistBoard(String boardName) {
+    public void isCorrectName(String boardName) {
         if (isNotExist(boardName)) {
             throw new CustomException(ErrorCode.NOT_CORRECT_BOARD);
         }
     }
 
-    // todo : 중복검사 추가해주기
     public void create(Board board) {
+        isDuplicate(board.getName());
         boardRepository.save(board);
     }
 
     public void update(Board board) {
+        isDuplicate(board.getName());
         Board findBoard = findByName(board.getName());
         findBoard.updateBoard(board);
     }
 
+    // todo : 삭제된 게시판의 게시글들 옮겨주기
     public void delete(String boardName) {
         Board board = findByName(boardName);
         boardRepository.delete(board);
@@ -112,6 +114,12 @@ public class BoardService {
     private Board findByName(String name) {
         return boardRepository.findByName(name)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_CORRECT_BOARD));
+    }
+
+    private void isDuplicate(String boardName) {
+        if (!isNotExist(boardName)) {
+            throw new CustomException(ErrorCode.ALREADY_EXIST_BOARD);
+        }
     }
 
     private boolean isNotExist(String boardName) {
