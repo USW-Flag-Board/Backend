@@ -9,6 +9,8 @@ import com.Flaground.backend.module.board.controller.mapper.BoardMapper;
 import com.Flaground.backend.module.board.domain.BoardType;
 import com.Flaground.backend.module.board.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -114,6 +116,12 @@ public class BoardController {
     }
 
     @Tag(name = "board")
+    @Operation(summary = "게시판 생성하기", description = "관리자만 가능")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "게시판 생성 완료"),
+            @ApiResponse(responseCode = "401", description = "관리자가 아닙니다."),
+            @ApiResponse(responseCode = "409", description = "이미 같은 게시판이 존재합니다.")
+    })
     @ResponseStatus(CREATED)
     @PostMapping
     public ApplicationResponse create(@RequestBody @Valid BoardRequest boardRequest) {
@@ -122,6 +130,13 @@ public class BoardController {
     }
 
     @Tag(name = "board")
+    @Operation(summary = "게시판 수정하기", description = "관리자만 가능")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "게시판 수정 완료"),
+            @ApiResponse(responseCode = "400", description = "올바르지 않는 게시판입니다."),
+            @ApiResponse(responseCode = "401", description = "관리자가 아닙니다."),
+            @ApiResponse(responseCode = "409", description = "이미 같은 게시판이 존재합니다.")
+    })
     @ResponseStatus(OK)
     @PutMapping
     public ApplicationResponse update(@RequestBody @Valid BoardRequest boardRequest) {
@@ -129,6 +144,13 @@ public class BoardController {
         return new ApplicationResponse<>();
     }
 
+    @Tag(name = "board")
+    @Operation(summary = "게시판 삭제하기", description = "관리자만 가능")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "게시판 삭제 완료"),
+            @ApiResponse(responseCode = "400", description = "올바르지 않는 게시판입니다."),
+            @ApiResponse(responseCode = "401", description = "관리자가 아닙니다.")
+    })
     @ResponseStatus(OK)
     @DeleteMapping("/{board}")
     public ApplicationResponse delete(@PathVariable("board") String boardName) {

@@ -22,19 +22,9 @@ public class SleepingService {
         return sleepingRepository.existsByEmail(email);
     }
 
-    public void saveAll(List<Sleeping> sleepingList) {
-        sleepingRepository.saveAll(sleepingList);
-    }
-
     public void reactivateMember(String loginId) {
         reactiveIfPresent(loginId);
         sleepingRepository.deleteByLoginId(loginId);
-    }
-
-    //@Scheduled(cron = "000000")
-    public void deleteExpiredSleep() {
-        List<Sleeping> sleepingList = sleepingRepository.getAllSleeping();
-        sleepingRepository.deleteAllInBatch(sleepingList);
     }
 
     private void reactiveIfPresent(String loginId) {

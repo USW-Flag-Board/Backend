@@ -19,7 +19,7 @@ public class SwaggerConfig {
                 .useDefaultResponseMessages(false)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.FlagHome.backend.module"))
+                .apis(RequestHandlerSelectors.basePackage("com.Flaground.backend.module"))
                 .paths(PathSelectors.any())
                 .build();
     }

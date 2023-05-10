@@ -66,6 +66,14 @@ public class Member extends BaseEntity {
         this.password = passwordEncoder.encode(password);
     }
 
+    public void changeProfileImage(String profileImage) {
+        this.avatar.changeProfileImage(profileImage);
+    }
+
+    public void resetProfileImage() {
+        this.avatar.resetProfileImage();
+    }
+
     public void updateLoginTime() {
         super.updateModifiedDate();
     }

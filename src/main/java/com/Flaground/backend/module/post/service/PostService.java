@@ -120,7 +120,7 @@ public class PostService {
      */
     @Transactional(readOnly = true)
     public Page<PostResponse> getAllPostsByBoard(String boardName, Pageable pageable) {
-        boardService.isExistBoard(boardName);
+        boardService.isCorrectName(boardName);
         return postRepository.getAllPostsByBoard(boardName, pageable);
     }
 
@@ -140,7 +140,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public SearchResponse searchPostsWithCondition(String boardName, String keyword,
                                                    SearchPeriod period, SearchOption option) {
-        boardService.isExistBoard(boardName);
+        boardService.isCorrectName(boardName);
         return postRepository.searchWithCondition(boardName, keyword, period, option);
     }
 
@@ -156,7 +156,7 @@ public class PostService {
     }
 
     public Long create(Long memberId, PostData postData) {
-        boardService.isExistBoard(postData.getBoardName());
+        boardService.isCorrectName(postData.getBoardName());
         Member member = memberService.findById(memberId);
         return postRepository.save(Post.of(member, postData)).getId();
     }
@@ -168,7 +168,7 @@ public class PostService {
     }
 
     public void update(Long memberId, Long postId, PostData postData) {
-        boardService.isExistBoard(postData.getBoardName());
+        boardService.isCorrectName(postData.getBoardName());
         Post post = validateAuthorAndReturnPost(memberId, postId);
         post.updatePost(postData);
     }

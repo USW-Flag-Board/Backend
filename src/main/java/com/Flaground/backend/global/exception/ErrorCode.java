@@ -50,6 +50,7 @@ public enum ErrorCode {
     EMAIL_ID_NOT_MATCH(HttpStatus.CONFLICT, "이메일과 아이디가 일치하지 않습니다."),
     EMAIL_NAME_NOT_MATCH(HttpStatus.CONFLICT, "이메일과 이름이 일치하지 않습니다."),
     TOKEN_NOT_MATCH(HttpStatus.CONFLICT, "토큰의 정보가 일치하지 않습니다."),
+    ALREADY_EXIST_BOARD(HttpStatus.CONFLICT, "이미 같은 게시판이 존재합니다."),
 
     /**
      * 500 - INTERNAL_SERVER_ERROR
