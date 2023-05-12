@@ -276,6 +276,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         member.loginId,
                         member.avatar.nickname,
                         member.avatar.profileImage,
+                        post.boardName,
                         post.title,
                         post.content,
                         post.createdAt,

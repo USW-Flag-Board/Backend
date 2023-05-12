@@ -66,7 +66,7 @@ public class Activity extends BaseEntity {
     public void update(Activity activity) {
         this.name = activity.getName();
         this.description = activity.getDescription();
-        this.info.updateInfo(activity);
+        this.info.updateInfo(activity.getInfo());
     }
 
     public void closeRecruitment() {

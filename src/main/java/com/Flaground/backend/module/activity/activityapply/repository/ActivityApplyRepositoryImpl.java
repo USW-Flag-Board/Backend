@@ -4,14 +4,12 @@ import com.Flaground.backend.module.activity.controller.dto.response.ActivityApp
 import com.Flaground.backend.module.activity.controller.dto.response.QActivityApplyResponse;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 import static com.Flaground.backend.module.activity.activityapply.entity.QActivityApply.activityApply;
 import static com.Flaground.backend.module.member.domain.QMember.member;
 
-@Repository
 @RequiredArgsConstructor
 public class ActivityApplyRepositoryImpl implements ActivityApplyRepositoryCustom {
     private final JPAQueryFactory queryFactory;

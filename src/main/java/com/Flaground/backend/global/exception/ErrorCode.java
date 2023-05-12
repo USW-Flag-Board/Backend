@@ -44,8 +44,8 @@ public enum ErrorCode {
      */
     PASSWORD_IS_SAME(HttpStatus.CONFLICT, "기존과 같은 비밀번호는 사용할 수 없습니다."),
     CERTIFICATION_NOT_MATCH(HttpStatus.CONFLICT, "인증번호가 일치하지 않습니다."),
-    ALREADY_REPORTED(HttpStatus.CONFLICT,"이미 신고한 대상입니다"),
-    ALREADY_APPLIED(HttpStatus.CONFLICT,"이미 신청한 활동입니다"),
+    ALREADY_REPORTED(HttpStatus.CONFLICT,"이미 신고한 대상입니다."),
+    ALREADY_APPLIED(HttpStatus.CONFLICT,"이미 신청한 활동입니다."),
     ALREADY_LIKED(HttpStatus.CONFLICT,"이미 좋아요를 눌렀습니다."),
     EMAIL_ID_NOT_MATCH(HttpStatus.CONFLICT, "이메일과 아이디가 일치하지 않습니다."),
     EMAIL_NAME_NOT_MATCH(HttpStatus.CONFLICT, "이메일과 이름이 일치하지 않습니다."),

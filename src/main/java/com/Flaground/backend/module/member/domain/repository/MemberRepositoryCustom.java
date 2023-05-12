@@ -3,13 +3,11 @@ package com.Flaground.backend.module.member.domain.repository;
 import com.Flaground.backend.module.member.controller.dto.response.AvatarResponse;
 import com.Flaground.backend.module.member.controller.dto.response.LoginLogResponse;
 import com.Flaground.backend.module.member.controller.dto.response.MyProfileResponse;
-import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.controller.dto.response.SearchMemberResponse;
-import org.springframework.stereotype.Repository;
+import com.Flaground.backend.module.member.domain.Member;
 
 import java.util.List;
 
-@Repository
 public interface MemberRepositoryCustom {
     List<Member> getDeactivateMembers();
 

@@ -1,11 +1,9 @@
 package com.Flaground.backend.module.activity.activityapply.repository;
 
 import com.Flaground.backend.module.activity.controller.dto.response.ActivityApplyResponse;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
 public interface ActivityApplyRepositoryCustom {
     List<ActivityApplyResponse> getAllApplies(long activityId);
 

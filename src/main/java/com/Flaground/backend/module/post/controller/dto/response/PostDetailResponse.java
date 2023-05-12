@@ -23,6 +23,9 @@ public class PostDetailResponse {
     @Schema(name = "작성자 프로필 사진")
     private String profileImage;
 
+    @Schema(name = "게시판 이름")
+    private String board;
+
     @Schema(name = "게시글 제목")
     private String title;
 
@@ -42,12 +45,13 @@ public class PostDetailResponse {
     private boolean isEdited;
 
     @QueryProjection
-    public PostDetailResponse(Long id, String loginId, String nickname, String profileImage, String title, String content,
-                              LocalDateTime createdAt, int viewCount, LikeResponse like, boolean isEdited) {
+    public PostDetailResponse(Long id, String loginId, String nickname, String profileImage, String board,
+                              String title, String content, LocalDateTime createdAt, int viewCount, LikeResponse like, boolean isEdited) {
         this.id = id;
         this.loginId = loginId;
         this.nickname = nickname;
         this.profileImage = profileImage;
+        this.board = board;
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
