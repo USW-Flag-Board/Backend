@@ -64,6 +64,7 @@ public class MemberController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "멤버 검색 리스트 가져오기에 성공하였습니다."),
     })
+    @ResponseStatus(OK)
     @GetMapping("/search")
     public ApplicationResponse searchMemberByName(@RequestParam(value = "name") String name) {
         List<SearchMemberResponse> response = memberService.searchMember(name);

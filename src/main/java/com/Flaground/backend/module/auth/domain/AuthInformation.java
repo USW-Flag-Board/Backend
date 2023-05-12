@@ -40,12 +40,12 @@ public class AuthInformation {
     @Column(name = "student_id")
     private String studentId;
 
-    @Column
     @Enumerated(value = EnumType.STRING)
+    @Column
     private Major major;
 
-    @Column(name = "join_type")
     @Enumerated(value = EnumType.STRING)
+    @Column(name = "join_type")
     private JoinType joinType;
 
     @Column

@@ -45,10 +45,10 @@ public class ActivityInfo {
         this.bookName = bookName;
     }
 
-    public void updateInfo(Activity activity) {
-        this.proceed = activity.getInfo().getProceed();
-        this.githubURL = activity.getInfo().getGithubURL();
-        this.bookUsage = activity.getInfo().getBookUsage();
-        this.bookName = activity.getInfo().getBookName();
+    public void updateInfo(ActivityInfo activityInfo) {
+        this.proceed = activityInfo.getProceed();
+        this.githubURL = activityInfo.getGithubURL();
+        this.bookUsage = activityInfo.getBookUsage();
+        this.bookName = activityInfo.getBookName();
     }
 }

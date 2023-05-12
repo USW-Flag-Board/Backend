@@ -10,8 +10,7 @@ import org.mapstruct.*;
 
 @Mapper(
         componentModel = "spring",
-        unmappedTargetPolicy = ReportingPolicy.WARN,
-        nullValueMappingStrategy = NullValueMappingStrategy.RETURN_NULL
+        unmappedTargetPolicy = ReportingPolicy.WARN
 )
 public interface ActivityMapper {
     @Mapping(source = "createActivityRequest", target = "info", qualifiedByName = "toInfo")
@@ -23,7 +22,7 @@ public interface ActivityMapper {
     @Mapping(target = "type", ignore = true)
     Activity mapFrom(UpdateActivityRequest updateActivityRequest);
 
-    @Mapping(source = "activity.leader.name", target = "leader")
+    @Mapping(source = "leader.name", target = "leader")
     ActivityDetailResponse toDetailResponse(Activity activity);
 
     @Named("toInfo")

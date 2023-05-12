@@ -1,19 +1,17 @@
 package com.Flaground.backend.module.auth.domain.repository.implementation;
 
+import com.Flaground.backend.module.admin.controller.dto.ApproveSignUpResponse;
 import com.Flaground.backend.module.admin.controller.dto.QApproveSignUpResponse;
 import com.Flaground.backend.module.auth.domain.AuthInformation;
-import com.Flaground.backend.module.admin.controller.dto.ApproveSignUpResponse;
 import com.Flaground.backend.module.auth.domain.repository.AuthRepositoryCustom;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.Flaground.backend.module.auth.domain.QAuthInformation.authInformation;
 
-@Repository
 @RequiredArgsConstructor
 public class AuthRepositoryImpl implements AuthRepositoryCustom {
     private final JPAQueryFactory queryFactory;

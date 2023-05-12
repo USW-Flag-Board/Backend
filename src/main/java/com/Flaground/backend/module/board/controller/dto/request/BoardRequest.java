@@ -17,7 +17,7 @@ public class BoardRequest {
     @NotBlank
     private String name;
 
-    @Schema(name = "게시판 타입", example = "MAIN / ACTIVITY")
+    @Schema(name = "게시판 타입", example = "main / activity")
     @EnumFormat(enumClass = BoardType.class)
     private BoardType boardType;
 

@@ -124,7 +124,6 @@ public class PostService {
         return postRepository.getAllPostsByBoard(boardName, pageable);
     }
 
-    // todo : 일급 객체로 수정하기
     @Transactional(readOnly = true)
     public List<PostResponse> getMemberPagePosts(String loginId) {
         Member member = memberService.findByLoginId(loginId);

@@ -72,8 +72,8 @@ public class SecurityConfig {
             .antMatchers(HttpMethod.GET, "/boards", "/activities", "/activities/{id}", "/activities/{loginId}/profile", "/members/{loginId}", "/members/search", "/posts/**", "/replies/**").permitAll()
             .antMatchers(HttpMethod.POST, "/members/certification", "/members/find/id").permitAll()
             .antMatchers("/activities/**").hasRole(ROLE_CREW.getRole())
-            .antMatchers("/posts/**", "/members/**", "/replies/**").hasAnyRole(ROLE_USER.getRole(), ROLE_CREW.getRole())
-            .antMatchers("/reports/**", "/boards/**", "/admin/**").hasRole(ROLE_ADMIN.getRole())
+            .antMatchers("/reports/**", "/posts/**", "/members/**").hasAnyRole(ROLE_USER.getRole(), ROLE_CREW.getRole())
+            .antMatchers("/boards/**", "/admin/**").hasRole(ROLE_ADMIN.getRole())
             .anyRequest().authenticated();
 
         http
