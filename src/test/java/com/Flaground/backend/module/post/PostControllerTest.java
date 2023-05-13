@@ -21,6 +21,7 @@ import com.Flaground.backend.module.post.domain.enums.SearchOption;
 import com.Flaground.backend.module.post.domain.enums.SearchPeriod;
 import com.Flaground.backend.module.post.domain.repository.LikeRepository;
 import com.Flaground.backend.module.post.domain.repository.PostRepository;
+import com.Flaground.backend.module.post.domain.repository.ReplyRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -55,6 +56,9 @@ public class PostControllerTest extends IntegrationTest {
 
     @Autowired
     private PostRepository  postRepository;
+
+    @Autowired
+    private ReplyRepository replyRepository;
 
     @Autowired
     private LikeRepository likeRepository;
@@ -131,9 +135,12 @@ public class PostControllerTest extends IntegrationTest {
         @Test
         public void 회원_게시글_가져오기_성공() throws Exception {
             // given
-            final String reply = "reply";
             final int viewCount = post.getViewCount();
-            post.addReply(Reply.of(member, post.getId(), reply));
+            post.addReply(Reply.of(member, post.getId(), content));
+
+            Reply reply = replyRepository.findAll().get(0);
+            likeRepository.save(Like.from(member.getId(), reply));
+            final int likeCount = reply.like();
 
             // when
             mockMvc.perform(get(uri)
@@ -143,9 +150,9 @@ public class PostControllerTest extends IntegrationTest {
                     .andExpect(jsonPath("$.payload.postDetail.content", is(content)))
                     .andExpect(jsonPath("$.payload.postDetail.like.liked", is(false)))
                     .andExpect(jsonPath("$.payload.postDetail.like.likeCount", is(0)))
-                    .andExpect(jsonPath("$.payload.replies[0].content", is(reply)))
-                    .andExpect(jsonPath("$.payload.replies[0].like.liked", is(false)))
-                    .andExpect(jsonPath("$.payload.replies[0].like.likeCount", is(0)))
+                    .andExpect(jsonPath("$.payload.replies[0].content", is(content)))
+                    .andExpect(jsonPath("$.payload.replies[0].like.liked", is(true)))
+                    .andExpect(jsonPath("$.payload.replies[0].like.likeCount", is(likeCount)))
                     .andDo(print());
 
             // then
