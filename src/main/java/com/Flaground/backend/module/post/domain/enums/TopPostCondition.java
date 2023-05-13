@@ -13,4 +13,8 @@ public enum TopPostCondition {
     latest(post.createdAt.desc());
 
     private final OrderSpecifier<?> order;
+
+    public boolean isLikeCondition() {
+        return this == TopPostCondition.like;
+    }
 }

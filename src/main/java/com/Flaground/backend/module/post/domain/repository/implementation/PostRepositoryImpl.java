@@ -16,6 +16,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.Flaground.backend.module.member.domain.QMember.member;
 import static com.Flaground.backend.module.post.domain.QLike.like;
@@ -145,8 +146,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
      */
     @Override
     public GetPostResponse getWithReplies(Long memberId, Long postId) {
-        PostDetailResponse postDetailResponse = fetchPost(memberId, postId);
-        List<ReplyResponse> replyResponses = fetchReplies(memberId, postId);
+        PostDetailResponse postDetailResponse = fetchPostResponse(memberId, postId);
+        List<ReplyResponse> replyResponses = fetchReplyResponses(memberId, postId);
         return GetPostResponse.of(postDetailResponse, replyResponses);
     }
 
@@ -269,7 +270,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         return SearchResponse.from(query.fetch());
     }
 
-    private PostDetailResponse fetchPost(Long memberId, Long postId) {
+    private PostDetailResponse fetchPostResponse(Long memberId, Long postId) {
         return queryFactory
                 .select(new QPostDetailResponse(
                         asNumber(postId),
@@ -282,7 +283,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         post.createdAt,
                         post.viewCount,
                         new QLikeResponse(
-                                isMemberLiked(memberId, postId, LikeType.POST),
+                                isLoggedIn(memberId, postId, LikeType.POST),
                                 post.likeCount),
                         post.isEdited))
                 .from(post)
@@ -291,7 +292,23 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .fetchOne();
     }
 
-    private List<ReplyResponse> fetchReplies(Long memberId, Long postId) {
+    // todo : 성능 이슈 해결하기
+    private List<ReplyResponse> fetchReplyResponses(Long memberId, Long postId) {
+        List<Long> replyIds = fetchReplyIds(postId);
+        return replyIds.stream()
+                .map(replyId -> fetchReplyResponse(memberId, replyId))
+                .collect(Collectors.toList());
+    }
+
+    private List<Long> fetchReplyIds(Long postId) {
+        return queryFactory
+                .select(reply.id)
+                .from(reply)
+                .where(reply.postId.eq(postId))
+                .fetch();
+    }
+
+    private ReplyResponse fetchReplyResponse(Long memberId, Long replyId) {
         return queryFactory
                 .select(new QReplyResponse(
                         reply.id,
@@ -300,34 +317,34 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         member.avatar.profileImage,
                         reply.content,
                         new QLikeResponse(
-                                isMemberLiked(memberId, postId, LikeType.REPLY),
+                                isLoggedIn(memberId, replyId, LikeType.REPLY),
                                 reply.likeCount),
                         reply.createdAt,
                         reply.isEdited))
                 .from(reply)
                 .innerJoin(reply.member, member)
-                .where(reply.postId.eq(postId))
-                .fetch();
+                .where(reply.id.eq(replyId))
+                .fetchOne();
     }
 
     private BooleanExpression isLikeAndLatest(TopPostCondition condition) {
-        return condition == TopPostCondition.like ? post.createdAt.after(LocalDateTime.now().minusWeeks(2)) : null;
+        return condition.isLikeCondition() ? post.createdAt.after(LocalDateTime.now().minusWeeks(2)) : null;
     }
 
     private BooleanExpression isLikeAndHotPost(TopPostCondition condition) {
-        return condition == TopPostCondition.like ? post.likeCount.goe(HOT_POST_LIMIT) : null;
+        return condition.isLikeCondition() ? post.likeCount.goe(HOT_POST_LIMIT) : null;
     }
 
-    private BooleanExpression isMemberLiked(Long memberId, Long likeableId, LikeType likeType) {
+    private BooleanExpression isLoggedIn(Long memberId, Long likeableId, LikeType likeType) {
         return memberId == null ? Expressions.FALSE : isLiked(memberId, likeableId, likeType);
     }
 
     private BooleanExpression isLiked(Long memberId, Long likeableId, LikeType likeType) {
-        return queryFactory
+        return Expressions.asBoolean(queryFactory
                 .selectFrom(like)
                 .where(like.memberId.eq(memberId),
                         like.likeableId.eq(likeableId),
                         like.likeType.eq(likeType))
-                .fetchFirst() != null ? Expressions.TRUE : Expressions.FALSE;
+                .fetchFirst() != null);
     }
 }

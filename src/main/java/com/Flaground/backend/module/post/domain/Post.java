@@ -85,8 +85,8 @@ public class Post extends BaseEntity implements Likeable {
     @Column(name = "likes")
     private int likeCount;
 
-    @Column(name = "status")
     @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private PostStatus status;
 
     @Column(name = "views")
