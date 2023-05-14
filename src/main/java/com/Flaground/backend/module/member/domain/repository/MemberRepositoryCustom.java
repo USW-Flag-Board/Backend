@@ -1,6 +1,5 @@
 package com.Flaground.backend.module.member.domain.repository;
 
-import com.Flaground.backend.module.member.controller.dto.response.AvatarResponse;
 import com.Flaground.backend.module.member.controller.dto.response.LoginLogResponse;
 import com.Flaground.backend.module.member.controller.dto.response.MyProfileResponse;
 import com.Flaground.backend.module.member.controller.dto.response.SearchMemberResponse;
@@ -13,13 +12,11 @@ public interface MemberRepositoryCustom {
 
     List<Member> getMembersByLoginIds(List<String> loginIdList);
 
-    List<String> getAllBeforeSleepEmails();
-
-    AvatarResponse getAvatar(String loginId);
+    List<String> getDeactivableMemberEmails();
 
     MyProfileResponse getMyProfile(Long memberId);
 
-    List<LoginLogResponse> getAllLoginLogs();
+    List<LoginLogResponse> getLoginLogs();
 
     List<SearchMemberResponse> searchMemberByName(String name);
 }

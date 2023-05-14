@@ -4,6 +4,7 @@ import com.Flaground.backend.global.exception.CustomException;
 import com.Flaground.backend.global.exception.ErrorCode;
 import com.Flaground.backend.global.jwt.JwtUtilizer;
 import com.Flaground.backend.infra.aws.ses.service.MailService;
+import com.Flaground.backend.module.auth.controller.dto.response.SignUpRequestResponse;
 import com.Flaground.backend.module.auth.domain.AuthInformation;
 import com.Flaground.backend.module.auth.domain.repository.AuthRepository;
 import com.Flaground.backend.module.member.domain.Member;
@@ -17,6 +18,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -28,10 +31,17 @@ public class AuthService {
     private final JwtUtilizer jwtUtilizer;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
+    @Transactional(readOnly = true)
+    public List<SignUpRequestResponse> getSignUpRequests() {
+        return authRepository.getSignUpRequests();
+    }
+
+    @Transactional(readOnly = true)
     public Boolean validateDuplicateLoginId(String loginId) {
         return memberService.isExistLoginId(loginId);
     }
 
+    @Transactional(readOnly = true)
     public Boolean validateDuplicateEmail(String email) {
         return memberService.isExistEmail(email);
     }
@@ -45,11 +55,10 @@ public class AuthService {
 
     public AuthInformation signUp(String email, String certification) {
         AuthInformation authInformation = findLatestAuthInformationByEmail(email);
-        authInformation.validateAuthTime();
         authInformation.validateCertification(certification);
 
         if (authInformation.isCrewJoin()) {
-            authInformation.authorized();
+            authInformation.authorize();
             return authInformation;
         }
 
@@ -71,6 +80,15 @@ public class AuthService {
 
     public TokenResponse reissueToken(String accessToken, String refreshToken) {
         return refreshTokenService.reissueToken(accessToken, refreshToken);
+    }
+
+    public AuthInformation findById(Long id) {
+        return authRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.AUTH_INFORMATION_NOT_FOUND));
+    }
+
+    public void deleteJoinRequest(Long id) {
+        authRepository.deleteById(id);
     }
 
     private void validateDuplication(String loginId, String email) {

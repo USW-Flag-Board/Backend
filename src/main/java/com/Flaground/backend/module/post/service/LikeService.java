@@ -101,6 +101,8 @@ public class LikeService {
         likeRepository.delete(like);
     }
 
+    // todo : 게시글, 댓글이 삭제될 때 어떻게 처리할지?
+
     private void isLiked(Long memberId, Likeable likeable) {
         if (isExist(memberId, likeable)) {
             throw new CustomException(ErrorCode.ALREADY_LIKED);

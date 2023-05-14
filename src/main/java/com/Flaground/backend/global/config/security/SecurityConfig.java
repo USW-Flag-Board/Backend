@@ -68,12 +68,12 @@ public class SecurityConfig {
             .authenticationEntryPoint(jwtAuthenticationEntryPoint);
 
         http.authorizeRequests()
-            .antMatchers("/auth/**", "/members/find/password", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**", "/favicon.ico").permitAll()
-            .antMatchers(HttpMethod.GET, "/boards", "/activities", "/activities/{id}", "/activities/{loginId}/profile", "/members/{loginId}", "/members/search", "/posts/**", "/replies/**").permitAll()
+            .antMatchers("/auth/**", "/boards/**", "/members/find/password", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**", "/favicon.ico").permitAll()
+            .antMatchers(HttpMethod.GET, "/activities", "/activities/{id}", "/activities/{loginId}/profile", "/members/{loginId}", "/members/search", "/posts/**").permitAll()
             .antMatchers(HttpMethod.POST, "/members/certification", "/members/find/id").permitAll()
             .antMatchers("/activities/**").hasRole(ROLE_CREW.getRole())
             .antMatchers("/reports/**", "/posts/**", "/members/**").hasAnyRole(ROLE_USER.getRole(), ROLE_CREW.getRole())
-            .antMatchers("/boards/**", "/admin/**").hasRole(ROLE_ADMIN.getRole())
+            .antMatchers("/admin/**").hasRole(ROLE_ADMIN.getRole())
             .anyRequest().authenticated();
 
         http

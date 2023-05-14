@@ -14,16 +14,19 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 @Tag(name = "member", description = "멤버 API")
+@Validated
 @RestController
 @RequestMapping("/members")
 @RequiredArgsConstructor
@@ -66,7 +69,7 @@ public class MemberController {
     })
     @ResponseStatus(OK)
     @GetMapping("/search")
-    public ApplicationResponse searchMemberByName(@RequestParam(value = "name") String name) {
+    public ApplicationResponse searchMemberByName(@RequestParam @NotBlank String name) {
         List<SearchMemberResponse> response = memberService.searchMember(name);
         return new ApplicationResponse(response);
     }
@@ -110,7 +113,7 @@ public class MemberController {
             @ApiResponse(responseCode = "409", description = "인증번호가 일치하지 않습니다.")
     })
     @ResponseStatus(OK)
-    @PostMapping("/certification")
+    @PostMapping("/certification") // todo : Controller가 member를 알고있음
     public ApplicationResponse<RecoveryResultResponse> verifyCertification(@RequestBody @Valid AuthenticationRequest authenticationRequest) {
         Member member = memberService.verifyCertification(authenticationRequest.getEmail(), authenticationRequest.getCertification());
         return new ApplicationResponse<>(memberMapper.toRecoveryResult(member));
@@ -123,7 +126,7 @@ public class MemberController {
             @ApiResponse(responseCode = "500", description = "서버 내부 오류입니다. 관리자에게 문의주세요.")
     })
     @ResponseStatus(OK)
-    @PostMapping("/avatar/image")
+    @PutMapping("/avatar/image")
     public ApplicationResponse updateProfileImage(@RequestPart("image") MultipartFile profileImage) {
         memberService.updateProfileImage(SecurityUtils.getMemberId(), profileImage);
         return new ApplicationResponse<>();

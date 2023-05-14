@@ -86,7 +86,7 @@ public class ReportControllerTest extends IntegrationTest {
         private MemberReportRequest request = MemberReportRequest.builder()
                 .target(loginId)
                 .reportCategory(category)
-                .detailReason(detailReason)
+                .detailExplanation(detailReason)
                 .build();
         private final String uri = BASE_URI + "/member";
         private Member reported;
@@ -115,7 +115,7 @@ public class ReportControllerTest extends IntegrationTest {
             assertThat(report.getReporter()).isEqualTo(member.getId());
             assertThat(report.getReported()).isEqualTo(reported.getId());
             assertThat(report.getReportCategory()).isEqualTo(category);
-            assertThat(report.getDetailReason()).isEqualTo(detailReason);
+            assertThat(report.getDetailExplanation()).isEqualTo(detailReason);
         }
 
         @Test
@@ -153,7 +153,7 @@ public class ReportControllerTest extends IntegrationTest {
                     .target(post.getId())
                     .reportType(reportType)
                     .reportCategory(category)
-                    .detailReason(detailReason)
+                    .detailExplanation(detailReason)
                     .build();
         }
 
@@ -173,7 +173,7 @@ public class ReportControllerTest extends IntegrationTest {
             assertThat(reportData.getTarget()).isEqualTo(post.getId());
             assertThat(reportData.getReportType()).isEqualTo(reportType);
             assertThat(reportData.getReportCategory()).isEqualTo(category);
-            assertThat(reportData.getDetailReason()).isEqualTo(detailReason);
+            assertThat(reportData.getDetailExplanation()).isEqualTo(detailReason);
 
             Report report = reportRepository.findAll().get(0);
             assertThat(report.getReporter()).isEqualTo(member.getId());
@@ -215,7 +215,7 @@ public class ReportControllerTest extends IntegrationTest {
                     .target(reply.getId())
                     .reportType(reportType)
                     .reportCategory(category)
-                    .detailReason(detailReason)
+                    .detailExplanation(detailReason)
                     .build();
         }
 
@@ -235,7 +235,7 @@ public class ReportControllerTest extends IntegrationTest {
             assertThat(reportData.getTarget()).isEqualTo(reply.getId());
             assertThat(reportData.getReportType()).isEqualTo(reportType);
             assertThat(reportData.getReportCategory()).isEqualTo(category);
-            assertThat(reportData.getDetailReason()).isEqualTo(detailReason);
+            assertThat(reportData.getDetailExplanation()).isEqualTo(detailReason);
 
             Report report = reportRepository.findAll().get(0);
             assertThat(report.getReporter()).isEqualTo(member.getId());

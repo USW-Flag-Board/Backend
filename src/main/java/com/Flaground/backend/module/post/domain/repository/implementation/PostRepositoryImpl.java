@@ -292,7 +292,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .fetchOne();
     }
 
-    // todo : 성능 이슈 해결하기
+    // todo : 성능 이슈 해결하기 (select 1번 => n(댓글 수)개, select 2n번, 총 2n+1회..)
     private List<ReplyResponse> fetchReplyResponses(Long memberId, Long postId) {
         List<Long> replyIds = fetchReplyIds(postId);
         return replyIds.stream()

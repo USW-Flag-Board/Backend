@@ -29,13 +29,13 @@ public class ContentReportRequest {
 
     @Schema(name = "신고 대상 Id")
     @NotBlank
-    private String detailReason;
+    private String detailExplanation;
 
     @Builder
-    public ContentReportRequest(Long target, ReportType reportType, ReportCategory reportCategory, String detailReason) {
+    public ContentReportRequest(Long target, ReportType reportType, ReportCategory reportCategory, String detailExplanation) {
         this.target = target;
         this.reportType = reportType;
         this.reportCategory = reportCategory;
-        this.detailReason = detailReason;
+        this.detailExplanation = detailExplanation;
     }
 }

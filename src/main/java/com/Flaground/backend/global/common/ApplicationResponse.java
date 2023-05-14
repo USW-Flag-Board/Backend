@@ -2,11 +2,7 @@ package com.Flaground.backend.global.common;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import lombok.Builder;
 import lombok.Data;
-import org.springframework.http.HttpStatus;
-
-import static org.springframework.http.HttpStatus.OK;
 
 @Data
 @JsonPropertyOrder({"message", "payload"})
@@ -24,11 +20,5 @@ public class ApplicationResponse<T> {
 
     public ApplicationResponse() {
         this.message = SUCCESS_MESSAGE;
-    }
-
-    @Builder
-    public ApplicationResponse(T payload, HttpStatus status, String message) {
-        this.payload = payload;
-        this.message = message;
     }
 }

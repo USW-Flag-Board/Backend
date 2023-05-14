@@ -30,7 +30,7 @@ public class MemberScheduleService {
 
     //@Scheduled(cron = "000000")
     public void sendNotificationToDeactivableMembers() {
-        List<String> emailLists = memberRepository.getAllBeforeSleepEmails();
+        List<String> emailLists = memberRepository.getDeactivableMemberEmails();
         emailLists.forEach(mailService::sendChangeSleep);
     }
 

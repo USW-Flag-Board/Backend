@@ -1,7 +1,8 @@
 package com.Flaground.backend.module.member.controller.dto.response;
 
-import com.querydsl.core.annotations.QueryProjection;
+import com.Flaground.backend.module.member.domain.Member;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,17 +11,26 @@ import lombok.NoArgsConstructor;
 public class AvatarResponse {
     private String loginId;
 
-    private String nickName;
+    private String nickname;
 
     private String bio;
 
     private String profileImg;
 
-    @QueryProjection
-    public AvatarResponse(String loginId, String nickName, String bio, String profileImg) {
+    @Builder
+    public AvatarResponse(String loginId, String nickname, String bio, String profileImg) {
         this.loginId = loginId;
-        this.nickName = nickName;
+        this.nickname = nickname;
         this.bio = bio;
         this.profileImg = profileImg;
+    }
+
+    public static AvatarResponse of(Member member) {
+        return AvatarResponse.builder()
+                .loginId(member.getLoginId())
+                .nickname(member.getAvatar().getNickname())
+                .bio(member.getAvatar().getBio())
+                .profileImg(member.getAvatar().getProfileImage())
+                .build();
     }
 }

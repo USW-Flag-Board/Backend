@@ -12,5 +12,5 @@ public class ReportData<T> {
     private T target;
     private ReportType reportType;
     private ReportCategory reportCategory;
-    private String detailReason;
+    private String detailExplanation;
 }

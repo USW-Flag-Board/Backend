@@ -5,9 +5,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import static com.Flaground.backend.global.exception.ErrorCode.*;
+import javax.validation.ConstraintViolationException;
+
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Slf4j
 @RestControllerAdvice
@@ -18,41 +22,60 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
         log.error("CustomException : {}, {}", e.getErrorCode(), e.getErrorCode().getMessage());
-        ErrorResponse errorResponse = new ErrorResponse(e.getErrorCode(), e.getMessage());
-        return ResponseEntity.status(e.getErrorCode().getHttpStatus()).body(errorResponse);
+        ErrorResponse response = new ErrorResponse(e.getErrorCode());
+        return ResponseEntity.status(e.getErrorCode().getHttpStatus()).body(response);
     }
 
     /**
      * 로그인 실패로 던져지는 예외 핸들러 (비활성, 잠금 예외는 제외)
      */
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException e) {
+    @ResponseStatus(BAD_REQUEST)
+    public ErrorResponse handleBadCredentialsException(BadCredentialsException e) {
         log.error("LoginFailed (BadCredentials) : {}", e.getMessage());
-        ErrorResponse errorResponse = new ErrorResponse(PASSWORD_NOT_MATCH, PASSWORD_NOT_MATCH.getMessage());
-        return ResponseEntity.badRequest().body(errorResponse);
+        return new ErrorResponse(ErrorCode.PASSWORD_NOT_MATCH);
     }
 
     /**
      * 예상치 못한 예외를 처리하는 핸들러
      */
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ErrorResponse> handleUnexpectedException(Exception e) {
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleUnexpectedException(Exception e) {
         log.error("UnexpectedException : {}", e.getMessage());
-        ErrorResponse errorResponse = new ErrorResponse(INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR.getMessage());
-        return ResponseEntity.internalServerError().body(errorResponse);
+        return new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR);
     }
 
     /**
      * @Valid에서 발생하는 예외를 처리하는 핸들러
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    @ResponseStatus(BAD_REQUEST)
+    public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         final String message = e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
         final String caused = e.getParameter().getExecutable().toGenericString();
         log.error("ValidateFailed : {}", caused);
-        ErrorResponse errorResponse = new ErrorResponse(BAD_REQUEST, message);
-        return ResponseEntity.badRequest().body(errorResponse);
+        return new ErrorResponse(ErrorCode.REQUEST_VALIDATION_FAIL, message);
     }
+
+    /**
+     * @Validated에서 발생하는 예외를 처리하는 핸들러
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(BAD_REQUEST)
+    public ErrorResponse handleConstraintViolationException(ConstraintViolationException e) {
+        final String message = e.getMessage();
+        log.error("ValidateFailed : {}", message);
+        return new ErrorResponse(ErrorCode.REQUEST_VALIDATION_FAIL, message);
+    }
+
+//    @ExceptionHandler(NoHandlerFoundException.class)
+//    @ResponseStatus(NOT_FOUND)
+//    public ErrorResponse handleNoHandlerFoundException(NoHandlerFoundException e, HttpServletRequest request) {
+//        final String requestURI = request.getRequestURI();
+//        log.error("Not Support URI, Request : {}", requestURI);
+//        return new ErrorResponse(ErrorCode.URI_NOT_FOUND);
+//    }
 
 //    /**
 //     * 요청 경로는 있으나 지원하지 않는 Method인 경우 발생하는 예외
