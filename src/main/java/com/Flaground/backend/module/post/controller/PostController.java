@@ -1,5 +1,6 @@
 package com.Flaground.backend.module.post.controller;
 
+import com.Flaground.backend.global.annotation.EnumFormat;
 import com.Flaground.backend.global.common.ApplicationResponse;
 import com.Flaground.backend.global.utility.SecurityUtils;
 import com.Flaground.backend.global.utility.UriCreator;
@@ -7,7 +8,10 @@ import com.Flaground.backend.module.post.controller.dto.request.CreateReplyReque
 import com.Flaground.backend.module.post.controller.dto.request.PostRequest;
 import com.Flaground.backend.module.post.controller.dto.request.SearchRequest;
 import com.Flaground.backend.module.post.controller.dto.request.UpdateReplyRequest;
-import com.Flaground.backend.module.post.controller.dto.response.*;
+import com.Flaground.backend.module.post.controller.dto.response.GetPostResponse;
+import com.Flaground.backend.module.post.controller.dto.response.LikeResponse;
+import com.Flaground.backend.module.post.controller.dto.response.PostResponse;
+import com.Flaground.backend.module.post.controller.dto.response.SearchResponse;
 import com.Flaground.backend.module.post.controller.mapper.PostMapper;
 import com.Flaground.backend.module.post.domain.enums.TopPostCondition;
 import com.Flaground.backend.module.post.service.PostService;
@@ -18,9 +22,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.net.URI;
 import java.util.List;
 
@@ -28,6 +34,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 @Tag(name = "post", description = "게시글 API")
+@Validated
 @RestController
 @RequestMapping("/posts")
 @RequiredArgsConstructor
@@ -160,8 +167,8 @@ public class PostController {
     })
     @ResponseStatus(OK)
     @GetMapping
-    public ApplicationResponse<Page<PostResponse>> getAllPostsByBoard(@RequestParam("board") String boardName, Pageable pageable) {
-        Page<PostResponse> response = postService.getAllPostsByBoard(boardName, pageable);
+    public ApplicationResponse<Page<PostResponse>> getPostsByBoard(@RequestParam("board") @NotBlank String boardName, Pageable pageable) {
+        Page<PostResponse> response = postService.getPostsByBoard(boardName, pageable);
         return new ApplicationResponse<>(response);
     }
 
@@ -183,7 +190,8 @@ public class PostController {
     @Operation(summary = "홈페이지 전용 Top 게시글 가져오기", description = "Condition(like or latest)에 따라 핫 게시글 또는 최신 게시글 5개를 가져온다.")
     @ResponseStatus(OK)
     @GetMapping("/top/{condition}")
-    public ApplicationResponse<List<PostResponse>> getTopFivePostByCondition(@PathVariable TopPostCondition condition) {
+    public ApplicationResponse<List<PostResponse>> getTopFivePostByCondition(@PathVariable @EnumFormat(enumClass = TopPostCondition.class)
+                                                                             TopPostCondition condition) {
         List<PostResponse> responses = postService.getTopFivePostByCondition(condition);
         return new ApplicationResponse<>(responses);
     }
@@ -202,7 +210,7 @@ public class PostController {
     @Operation(summary = "통합 검색", description = "통합 검색, 게시판 상관 없이 제목+내용으로 검색한다.")
     @ResponseStatus(OK)
     @GetMapping("/integration-search")
-    public ApplicationResponse<SearchResponse> integrationSearch(@RequestParam("keyword") String keyword) {
+    public ApplicationResponse<SearchResponse> integrationSearch(@RequestParam @NotBlank String keyword) {
         SearchResponse response = postService.integrationSearch(keyword);
         return new ApplicationResponse<>(response);
     }

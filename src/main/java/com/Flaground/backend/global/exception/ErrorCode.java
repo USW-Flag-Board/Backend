@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ErrorCode {
     /** 400 - BAD_REQUEST */
-    BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
+    REQUEST_VALIDATION_FAIL(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않는 토큰입니다."),
     EXPIRED_AUTHENTICATION_TIME(HttpStatus.BAD_REQUEST, "인증 시간이 만료되었습니다."),
     UNAVAILABLE_ACCOUNT(HttpStatus.BAD_REQUEST, "사용할 수 없는 계정입니다."),
@@ -27,7 +27,7 @@ public enum ErrorCode {
     NOT_ACTIVITY_LEADER(HttpStatus.UNAUTHORIZED, "활동장이 아닙니다."),
 
     /** 404 - NOT_FOUND */
-    INVALID_FOUND(HttpStatus.NOT_FOUND, "요청을 찾을 수 없습니다."),
+    URI_NOT_FOUND(HttpStatus.NOT_FOUND, "지원하지 않는 URI입니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 사용자입니다."),
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 게시물입니다."),
     REPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다."),
