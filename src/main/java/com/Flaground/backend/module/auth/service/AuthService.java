@@ -4,6 +4,7 @@ import com.Flaground.backend.global.exception.CustomException;
 import com.Flaground.backend.global.exception.ErrorCode;
 import com.Flaground.backend.global.jwt.JwtUtilizer;
 import com.Flaground.backend.infra.aws.ses.service.MailService;
+import com.Flaground.backend.module.auth.controller.dto.response.SignUpRequestResponse;
 import com.Flaground.backend.module.auth.domain.AuthInformation;
 import com.Flaground.backend.module.auth.domain.repository.AuthRepository;
 import com.Flaground.backend.module.member.domain.Member;
@@ -17,6 +18,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -27,6 +30,10 @@ public class AuthService {
     private final MailService mailService;
     private final JwtUtilizer jwtUtilizer;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+
+    public List<SignUpRequestResponse> getSignUpRequests() {
+        return authRepository.getSignUpRequests();
+    }
 
     public Boolean validateDuplicateLoginId(String loginId) {
         return memberService.isExistLoginId(loginId);
@@ -71,6 +78,15 @@ public class AuthService {
 
     public TokenResponse reissueToken(String accessToken, String refreshToken) {
         return refreshTokenService.reissueToken(accessToken, refreshToken);
+    }
+
+    public AuthInformation findById(Long id) {
+        return authRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.AUTH_INFORMATION_NOT_FOUND));
+    }
+
+    public void deleteJoinRequest(Long id) {
+        authRepository.deleteById(id);
     }
 
     private void validateDuplication(String loginId, String email) {

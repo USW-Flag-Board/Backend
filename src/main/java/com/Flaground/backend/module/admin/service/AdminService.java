@@ -1,12 +1,12 @@
 package com.Flaground.backend.module.admin.service;
 
-import com.Flaground.backend.module.admin.controller.dto.ApproveSignUpResponse;
+import com.Flaground.backend.module.auth.controller.dto.response.SignUpRequestResponse;
 import com.Flaground.backend.module.auth.domain.AuthInformation;
-import com.Flaground.backend.module.auth.domain.repository.AuthRepository;
+import com.Flaground.backend.module.auth.service.AuthService;
+import com.Flaground.backend.module.board.domain.Board;
+import com.Flaground.backend.module.board.service.BoardService;
 import com.Flaground.backend.module.member.controller.dto.response.LoginLogResponse;
 import com.Flaground.backend.module.member.service.MemberService;
-import com.Flaground.backend.global.exception.CustomException;
-import com.Flaground.backend.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,32 +14,42 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AdminService {
     private final MemberService memberService;
-    private final AuthRepository authRepository;
+    private final AuthService authService;
+    private final BoardService boardService;
 
     @Transactional(readOnly = true)
-    public List<ApproveSignUpResponse> getAllAuthorizedAuthMember() {
-        return authRepository.getAllSignUpRequests();
+    public List<SignUpRequestResponse> getSignUpRequests() {
+        return authService.getSignUpRequests();
     }
 
-    @Transactional
-    public void approveMember(long authInformationId) {
-        AuthInformation authInformation = authRepository.findById(authInformationId)
-                        .orElseThrow(() -> new CustomException(ErrorCode.AUTH_INFORMATION_NOT_FOUND));
+    @Transactional(readOnly = true)
+    public List<LoginLogResponse> getLoginLogs() {
+        return memberService.getLoginLogs();
+    }
 
+    public void approvSignUp(Long authInformationId) {
+        AuthInformation authInformation = authService.findById(authInformationId);
         memberService.initMember(authInformation.toJoinMember());
-        deleteAuthInformation(authInformationId);
+        authService.deleteJoinRequest(authInformationId);
     }
 
-    @Transactional
-    public void deleteAuthInformation(long authInformationId) {
-        authRepository.deleteById(authInformationId);
+    public void rejectSignUp(Long authInformationId) {
+        authService.deleteJoinRequest(authInformationId);
     }
 
-    @Transactional
-    public List<LoginLogResponse> viewAllLoginLogs() {
-        return memberService.getAllLoginLogs();
+    public void createBoard(Board board) {
+        boardService.create(board);
+    }
+
+    public void updateBoard(String boardName, Board board) {
+        boardService.update(boardName, board);
+    }
+
+    public void deleteBoard(String boardName) {
+        boardService.delete(boardName);
     }
 }

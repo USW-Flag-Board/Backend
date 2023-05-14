@@ -1,7 +1,7 @@
 package com.Flaground.backend.module.auth.domain.repository.implementation;
 
-import com.Flaground.backend.module.admin.controller.dto.ApproveSignUpResponse;
-import com.Flaground.backend.module.admin.controller.dto.QApproveSignUpResponse;
+import com.Flaground.backend.module.auth.controller.dto.response.QSignUpRequestResponse;
+import com.Flaground.backend.module.auth.controller.dto.response.SignUpRequestResponse;
 import com.Flaground.backend.module.auth.domain.AuthInformation;
 import com.Flaground.backend.module.auth.domain.repository.AuthRepositoryCustom;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -28,9 +28,9 @@ public class AuthRepositoryImpl implements AuthRepositoryCustom {
     }
 
     @Override
-    public List<ApproveSignUpResponse> getAllSignUpRequests() {
+    public List<SignUpRequestResponse> getSignUpRequests() {
         return queryFactory
-                .select(new QApproveSignUpResponse(
+                .select(new QSignUpRequestResponse(
                         authInformation.id,
                         authInformation.name,
                         authInformation.email,

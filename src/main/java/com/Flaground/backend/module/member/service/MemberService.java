@@ -49,7 +49,7 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public List<LoginLogResponse> getAllLoginLogs() {
+    public List<LoginLogResponse> getLoginLogs() {
         return memberRepository.getAllLoginLogs();
     }
 

@@ -88,20 +88,21 @@ public class BoardService {
         return boardRepository.getBoards(boardType);
     }
 
+    @Transactional(readOnly = true)
     public void isCorrectName(String boardName) {
-        if (isNotExist(boardName)) {
+        if (!isExist(boardName)) {
             throw new CustomException(ErrorCode.NOT_CORRECT_BOARD);
         }
     }
 
     public void create(Board board) {
-        isDuplicate(board.getName());
+        isDuplicateName(board.getName());
         boardRepository.save(board);
     }
 
-    public void update(Board board) {
-        isDuplicate(board.getName());
-        Board findBoard = findByName(board.getName());
+    public void update(String boardName, Board board) {
+        Board findBoard = findByName(boardName);
+        isDuplicateName(board.getName());
         findBoard.updateBoard(board);
     }
 
@@ -116,13 +117,13 @@ public class BoardService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_CORRECT_BOARD));
     }
 
-    private void isDuplicate(String boardName) {
-        if (!isNotExist(boardName)) {
+    private void isDuplicateName(String boardName) {
+        if (isExist(boardName)) {
             throw new CustomException(ErrorCode.ALREADY_EXIST_BOARD);
         }
     }
 
-    private boolean isNotExist(String boardName) {
-        return !boardRepository.existsByName(boardName);
+    private boolean isExist(String boardName) {
+        return boardRepository.existsByName(boardName);
     }
 }

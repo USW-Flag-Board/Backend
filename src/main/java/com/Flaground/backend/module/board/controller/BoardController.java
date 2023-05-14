@@ -2,32 +2,27 @@ package com.Flaground.backend.module.board.controller;
 
 import com.Flaground.backend.global.annotation.EnumFormat;
 import com.Flaground.backend.global.common.ApplicationResponse;
-import com.Flaground.backend.module.board.controller.dto.request.BoardRequest;
 import com.Flaground.backend.module.board.controller.dto.response.BoardInfo;
 import com.Flaground.backend.module.board.controller.dto.response.BoardResponse;
-import com.Flaground.backend.module.board.controller.mapper.BoardMapper;
 import com.Flaground.backend.module.board.domain.BoardType;
 import com.Flaground.backend.module.board.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 @Tag(name = "board", description = "게시판 API")
+@Validated
 @RestController
 @RequestMapping("/boards")
 @RequiredArgsConstructor
 public class BoardController {
     private final BoardService boardService;
-    private final BoardMapper boardMapper;
 
     /**
      * Version 1
@@ -109,52 +104,9 @@ public class BoardController {
     @Operation(summary = "게시판 목록 가져오기", description = "넘어오는 값에 따라 메인 게시판과 활동 게시판 목록을 가져온다.")
     @ResponseStatus(OK)
     @GetMapping
-    public ApplicationResponse<BoardResponse> get(@RequestParam("type") @Valid
+    public ApplicationResponse<BoardResponse> get(@RequestParam("type")
                                                   @EnumFormat(enumClass = BoardType.class) BoardType boardType) {
         List<BoardInfo> boards = boardService.get(boardType);
         return new ApplicationResponse<>(BoardResponse.of(boards, boardType));
-    }
-
-    @Tag(name = "board")
-    @Operation(summary = "게시판 생성하기", description = "관리자만 가능")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "게시판 생성 완료"),
-            @ApiResponse(responseCode = "401", description = "관리자가 아닙니다."),
-            @ApiResponse(responseCode = "409", description = "이미 같은 게시판이 존재합니다.")
-    })
-    @ResponseStatus(CREATED)
-    @PostMapping
-    public ApplicationResponse create(@RequestBody @Valid BoardRequest boardRequest) {
-        boardService.create(boardMapper.mapFrom(boardRequest));
-        return new ApplicationResponse<>();
-    }
-
-    @Tag(name = "board")
-    @Operation(summary = "게시판 수정하기", description = "관리자만 가능")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "게시판 수정 완료"),
-            @ApiResponse(responseCode = "400", description = "올바르지 않는 게시판입니다."),
-            @ApiResponse(responseCode = "401", description = "관리자가 아닙니다."),
-            @ApiResponse(responseCode = "409", description = "이미 같은 게시판이 존재합니다.")
-    })
-    @ResponseStatus(OK)
-    @PutMapping
-    public ApplicationResponse update(@RequestBody @Valid BoardRequest boardRequest) {
-        boardService.update(boardMapper.mapFrom(boardRequest));
-        return new ApplicationResponse<>();
-    }
-
-    @Tag(name = "board")
-    @Operation(summary = "게시판 삭제하기", description = "관리자만 가능")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "게시판 삭제 완료"),
-            @ApiResponse(responseCode = "400", description = "올바르지 않는 게시판입니다."),
-            @ApiResponse(responseCode = "401", description = "관리자가 아닙니다.")
-    })
-    @ResponseStatus(OK)
-    @DeleteMapping("/{board}")
-    public ApplicationResponse delete(@PathVariable("board") String boardName) {
-        boardService.delete(boardName);
-        return new ApplicationResponse<>();
     }
 }

@@ -119,7 +119,7 @@ public class PostService {
      * Version 2
      */
     @Transactional(readOnly = true)
-    public Page<PostResponse> getAllPostsByBoard(String boardName, Pageable pageable) {
+    public Page<PostResponse> getPostsByBoard(String boardName, Pageable pageable) {
         boardService.isCorrectName(boardName);
         return postRepository.getAllPostsByBoard(boardName, pageable);
     }
