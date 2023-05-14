@@ -31,14 +31,17 @@ public class AuthService {
     private final JwtUtilizer jwtUtilizer;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
+    @Transactional(readOnly = true)
     public List<SignUpRequestResponse> getSignUpRequests() {
         return authRepository.getSignUpRequests();
     }
 
+    @Transactional(readOnly = true)
     public Boolean validateDuplicateLoginId(String loginId) {
         return memberService.isExistLoginId(loginId);
     }
 
+    @Transactional(readOnly = true)
     public Boolean validateDuplicateEmail(String email) {
         return memberService.isExistEmail(email);
     }
@@ -52,11 +55,10 @@ public class AuthService {
 
     public AuthInformation signUp(String email, String certification) {
         AuthInformation authInformation = findLatestAuthInformationByEmail(email);
-        authInformation.validateAuthTime();
         authInformation.validateCertification(certification);
 
         if (authInformation.isCrewJoin()) {
-            authInformation.authorized();
+            authInformation.authorize();
             return authInformation;
         }
 

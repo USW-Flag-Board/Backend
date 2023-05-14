@@ -6,7 +6,7 @@ import com.Flaground.backend.module.auth.domain.AuthInformation;
 import java.util.List;
 
 public interface AuthRepositoryCustom {
-    List<AuthInformation> getAllNotProceedAuthInformation();
+    List<AuthInformation> getNotProceedAuthInformations();
 
     List<SignUpRequestResponse> getSignUpRequests();
 }

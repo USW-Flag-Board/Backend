@@ -37,12 +37,12 @@ public class Member extends BaseEntity {
     @Embedded
     private Avatar avatar;
 
-    @Column
     @Enumerated(EnumType.STRING)
+    @Column
     private Role role;
 
-    @Column
     @Enumerated(EnumType.STRING)
+    @Column
     private MemberStatus status;
 
     @Builder

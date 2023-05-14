@@ -40,7 +40,7 @@ public class MemberService {
     public AvatarResponse getMemberPageAvatar(String loginId) {
         Member member = findByLoginId(loginId);
         member.isAvailable();
-        return memberRepository.getAvatar(loginId);
+        return AvatarResponse.of(member);
     }
 
     @Transactional(readOnly = true)
@@ -50,7 +50,7 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public List<LoginLogResponse> getLoginLogs() {
-        return memberRepository.getAllLoginLogs();
+        return memberRepository.getLoginLogs();
     }
 
     @Transactional(readOnly = true)
@@ -58,6 +58,7 @@ public class MemberService {
         return memberRepository.searchMemberByName(name);
     }
 
+    @Transactional(readOnly = true)
     public Boolean isExistLoginId(String loginId) {
         if (memberRepository.existsByLoginId(loginId) || sleepingService.existsByLoginId(loginId)) {
             return Boolean.TRUE;
@@ -65,6 +66,7 @@ public class MemberService {
         return Boolean.FALSE;
     }
 
+    @Transactional(readOnly = true)
     public Boolean isExistEmail(String email) {
         if (memberRepository.existsByEmail(email) || sleepingService.existsByEmail(email)) {
             return Boolean.TRUE;

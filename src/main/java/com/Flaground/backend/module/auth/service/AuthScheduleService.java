@@ -17,7 +17,7 @@ public class AuthScheduleService {
 
     @Scheduled(cron = "0 0 0 * * *")
     public void deleteNotProceedAuthInformations() {
-        List<AuthInformation> unAuthInformationList = authRepository.getAllNotProceedAuthInformation();
-        authRepository.deleteAllInBatch(unAuthInformationList);
+        List<AuthInformation> notProceedAuthInformations = authRepository.getNotProceedAuthInformations();
+        authRepository.deleteAllInBatch(notProceedAuthInformations);
     }
 }

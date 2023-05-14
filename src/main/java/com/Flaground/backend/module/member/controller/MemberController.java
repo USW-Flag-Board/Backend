@@ -113,7 +113,7 @@ public class MemberController {
             @ApiResponse(responseCode = "409", description = "인증번호가 일치하지 않습니다.")
     })
     @ResponseStatus(OK)
-    @PostMapping("/certification")
+    @PostMapping("/certification") // todo : Controller가 member를 알고있음
     public ApplicationResponse<RecoveryResultResponse> verifyCertification(@RequestBody @Valid AuthenticationRequest authenticationRequest) {
         Member member = memberService.verifyCertification(authenticationRequest.getEmail(), authenticationRequest.getCertification());
         return new ApplicationResponse<>(memberMapper.toRecoveryResult(member));

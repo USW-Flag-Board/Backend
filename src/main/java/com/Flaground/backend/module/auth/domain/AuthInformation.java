@@ -73,7 +73,7 @@ public class AuthInformation {
         this.createdAt = LocalDateTime.now();
     }
 
-    public void authorized() {
+    public void authorize() {
         this.isAuthorizedCrew = true;
     }
 
@@ -81,13 +81,8 @@ public class AuthInformation {
         return this.joinType == JoinType.CREW;
     }
 
-    public void validateAuthTime() {
-        if (createdAt.plusMinutes(5).isBefore(LocalDateTime.now())) {
-            throw new CustomException(ErrorCode.EXPIRED_AUTHENTICATION_TIME);
-        }
-    }
-
     public void validateCertification(String certification) {
+        validateAuthTime();
         if (!StringUtils.equals(certification, this.certification)) {
             throw new CustomException(ErrorCode.CERTIFICATION_NOT_MATCH);
         }
@@ -104,5 +99,11 @@ public class AuthInformation {
                 .major(major)
                 .role(joinType.toRole())
                 .build();
+    }
+
+    private void validateAuthTime() {
+        if (createdAt.plusMinutes(5).isBefore(LocalDateTime.now())) {
+            throw new CustomException(ErrorCode.EXPIRED_AUTHENTICATION_TIME);
+        }
     }
 }

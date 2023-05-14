@@ -17,7 +17,7 @@ public class AuthRepositoryImpl implements AuthRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<AuthInformation> getAllNotProceedAuthInformation() {
+    public List<AuthInformation> getNotProceedAuthInformations() {
         final LocalDateTime limit = LocalDateTime.now().minusMinutes(10);
 
         return queryFactory
@@ -27,6 +27,7 @@ public class AuthRepositoryImpl implements AuthRepositoryCustom {
                 .fetch();
     }
 
+    // todo: 최신 대상으로 쿼리 날리기
     @Override
     public List<SignUpRequestResponse> getSignUpRequests() {
         return queryFactory

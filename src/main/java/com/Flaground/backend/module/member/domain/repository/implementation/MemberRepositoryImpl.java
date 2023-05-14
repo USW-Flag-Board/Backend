@@ -2,7 +2,9 @@ package com.Flaground.backend.module.member.domain.repository.implementation;
 
 import com.Flaground.backend.module.member.controller.dto.response.*;
 import com.Flaground.backend.module.member.domain.Member;
+import com.Flaground.backend.module.member.domain.enums.MemberStatus;
 import com.Flaground.backend.module.member.domain.repository.MemberRepositoryCustom;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
@@ -22,18 +24,20 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
         return queryFactory
                 .selectFrom(member)
-                .where(member.updatedAt.before(limit))
+                .where(member.updatedAt.before(limit),
+                        availableMember())
                 .fetch();
     }
 
     @Override
-    public List<String> getAllBeforeSleepEmails() {
+    public List<String> getDeactivableMemberEmails() {
         final LocalDateTime limit = LocalDateTime.now().minusDays(6);
 
         return queryFactory
                 .select(member.email)
                 .from(member)
-                .where(member.updatedAt.before(limit))
+                .where(member.updatedAt.before(limit),
+                        availableMember())
                 .fetch();
     }
 
@@ -43,19 +47,6 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
                 .selectFrom(member)
                 .where(member.loginId.in(loginIdList))
                 .fetch();
-    }
-
-    @Override
-    public AvatarResponse getAvatar(String loginId) {
-        return queryFactory
-                .select(new QAvatarResponse(
-                        asString(loginId).as(member.loginId),
-                        member.avatar.nickname,
-                        member.avatar.bio,
-                        member.avatar.profileImage))
-                .from(member)
-                .where(member.loginId.eq(loginId))
-                .fetchOne();
     }
 
     @Override
@@ -76,13 +67,14 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
     }
 
     @Override
-    public List<LoginLogResponse> getAllLoginLogs() {
+    public List<LoginLogResponse> getLoginLogs() {
         return queryFactory
                 .select(new QLoginLogResponse(
                         member.id,
                         member.name,
                         member.updatedAt))
                 .from(member)
+                .where(availableMember())
                 .fetch();
     }
 
@@ -93,7 +85,12 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
                         asString(name).as(member.name),
                         member.avatar.major))
                 .from(member)
-                .where(member.name.contains(name))
+                .where(member.name.contains(name),
+                        availableMember())
                 .fetch();
+    }
+
+    private BooleanExpression availableMember() {
+        return member.status.eq(MemberStatus.NORMAL).or(member.status.eq(MemberStatus.WATCHING));
     }
 }
