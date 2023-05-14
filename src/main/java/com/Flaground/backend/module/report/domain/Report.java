@@ -33,19 +33,19 @@ public class Report {
     @Column(name = "category")
     private ReportCategory reportCategory;
 
-    @Column
-    private String detailReason;
+    @Column(length = 300)
+    private String detailExplanation;
 
-    @Column(updatable = false)
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @Builder
-    public Report(Long reporter, Long reported, ReportType reportType, ReportCategory reportCategory, String detailReason) {
+    public Report(Long reporter, Long reported, ReportType reportType, ReportCategory reportCategory, String detailExplanation) {
         this.reporter = reporter;
         this.reported = reported;
         this.reportType = reportType;
         this.reportCategory = reportCategory;
-        this.detailReason = detailReason;
+        this.detailExplanation = detailExplanation;
         this.createdAt = LocalDateTime.now();
     }
 
@@ -55,7 +55,7 @@ public class Report {
                 .reported(reported)
                 .reportType(reportData.getReportType())
                 .reportCategory(reportData.getReportCategory())
-                .detailReason(reportData.getDetailReason())
+                .detailExplanation(reportData.getDetailExplanation())
                 .build();
     }
 
@@ -65,7 +65,7 @@ public class Report {
                 .reported(reportData.getTarget())
                 .reportType(reportData.getReportType())
                 .reportCategory(reportData.getReportCategory())
-                .detailReason(reportData.getDetailReason())
+                .detailExplanation(reportData.getDetailExplanation())
                 .build();
     }
 }

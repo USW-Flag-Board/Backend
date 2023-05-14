@@ -5,6 +5,7 @@ import com.Flaground.backend.module.admin.service.AdminService;
 import com.Flaground.backend.module.auth.controller.dto.response.SignUpRequestResponse;
 import com.Flaground.backend.module.board.controller.dto.request.BoardRequest;
 import com.Flaground.backend.module.member.controller.dto.response.LoginLogResponse;
+import com.Flaground.backend.module.report.controller.dto.response.ReportResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -43,9 +44,17 @@ public class AdminController {
 
     @Tag(name = "admin")
     @ResponseStatus(OK)
+    @GetMapping("/reports")
+    public ApplicationResponse<List<ReportResponse>> getReports() {
+        List<ReportResponse> responses = adminService.getReports();
+        return new ApplicationResponse<>(responses);
+    }
+
+    @Tag(name = "admin")
+    @ResponseStatus(CREATED)
     @PostMapping("/join-requests/{id}/approval")
     public ApplicationResponse approveSignUp(@PathVariable("id") Long authInformationId) {
-        adminService.approvSignUp(authInformationId);
+        adminService.approveSignUp(authInformationId);
         return new ApplicationResponse<>();
     }
 

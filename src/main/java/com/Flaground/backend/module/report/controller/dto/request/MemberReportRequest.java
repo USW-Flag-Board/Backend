@@ -23,12 +23,12 @@ public class MemberReportRequest {
 
     @Schema(name = "신고 대상 Id")
     @NotBlank
-    private String detailReason;
+    private String detailExplanation;
 
     @Builder
-    public MemberReportRequest(String target, ReportCategory reportCategory, String detailReason) {
+    public MemberReportRequest(String target, ReportCategory reportCategory, String detailExplanation) {
         this.target = target;
         this.reportCategory = reportCategory;
-        this.detailReason = detailReason;
+        this.detailExplanation = detailExplanation;
     }
 }

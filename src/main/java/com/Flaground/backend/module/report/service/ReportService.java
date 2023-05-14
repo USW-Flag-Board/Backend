@@ -4,6 +4,7 @@ import com.Flaground.backend.global.exception.CustomException;
 import com.Flaground.backend.global.exception.ErrorCode;
 import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.service.MemberService;
+import com.Flaground.backend.module.report.controller.dto.response.ReportResponse;
 import com.Flaground.backend.module.report.domain.Report;
 import com.Flaground.backend.module.report.domain.ReportData;
 import com.Flaground.backend.module.report.domain.enums.ReportType;
@@ -12,12 +13,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ReportService {
     private final ReportRepository reportRepository;
     private final MemberService memberService;
+
+    public List<ReportResponse> getReports() {
+        return reportRepository.getReports();
+    }
 
     @Transactional
     public void reportMember(Long memberId, ReportData<String> reportData) {

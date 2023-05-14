@@ -7,6 +7,8 @@ import com.Flaground.backend.module.board.domain.Board;
 import com.Flaground.backend.module.board.service.BoardService;
 import com.Flaground.backend.module.member.controller.dto.response.LoginLogResponse;
 import com.Flaground.backend.module.member.service.MemberService;
+import com.Flaground.backend.module.report.controller.dto.response.ReportResponse;
+import com.Flaground.backend.module.report.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,7 @@ public class AdminService {
     private final MemberService memberService;
     private final AuthService authService;
     private final BoardService boardService;
+    private final ReportService reportService;
 
     @Transactional(readOnly = true)
     public List<SignUpRequestResponse> getSignUpRequests() {
@@ -31,7 +34,12 @@ public class AdminService {
         return memberService.getLoginLogs();
     }
 
-    public void approvSignUp(Long authInformationId) {
+    @Transactional(readOnly = true)
+    public List<ReportResponse> getReports() {
+        return reportService.getReports();
+    }
+
+    public void approveSignUp(Long authInformationId) {
         AuthInformation authInformation = authService.findById(authInformationId);
         memberService.initMember(authInformation.toJoinMember());
         authService.deleteJoinRequest(authInformationId);
