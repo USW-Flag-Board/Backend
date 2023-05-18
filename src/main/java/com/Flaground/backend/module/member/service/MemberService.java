@@ -6,10 +6,7 @@ import com.Flaground.backend.global.utility.RandomGenerator;
 import com.Flaground.backend.infra.aws.s3.entity.enums.FileDirectory;
 import com.Flaground.backend.infra.aws.s3.service.AwsS3Service;
 import com.Flaground.backend.infra.aws.ses.service.MailService;
-import com.Flaground.backend.module.member.controller.dto.response.AvatarResponse;
-import com.Flaground.backend.module.member.controller.dto.response.LoginLogResponse;
-import com.Flaground.backend.module.member.controller.dto.response.MyProfileResponse;
-import com.Flaground.backend.module.member.controller.dto.response.SearchMemberResponse;
+import com.Flaground.backend.module.member.controller.dto.response.*;
 import com.Flaground.backend.module.member.domain.Avatar;
 import com.Flaground.backend.module.member.domain.JoinMember;
 import com.Flaground.backend.module.member.domain.Member;
@@ -17,7 +14,6 @@ import com.Flaground.backend.module.member.domain.repository.MemberRepository;
 import com.Flaground.backend.module.token.domain.Token;
 import com.Flaground.backend.module.token.service.RecoveryTokenService;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,43 +55,38 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public Boolean isExistLoginId(String loginId) {
-        if (memberRepository.existsByLoginId(loginId) || sleepingService.existsByLoginId(loginId)) {
-            return Boolean.TRUE;
-        }
-        return Boolean.FALSE;
+    public boolean isExistLoginId(String loginId) {
+        return memberRepository.existsByLoginId(loginId) || sleepingService.existsByLoginId(loginId);
     }
 
     @Transactional(readOnly = true)
-    public Boolean isExistEmail(String email) {
-        if (memberRepository.existsByEmail(email) || sleepingService.existsByEmail(email)) {
-            return Boolean.TRUE;
-        }
-        return Boolean.FALSE;
+    public boolean isExistEmail(String email) {
+        return memberRepository.existsByEmail(email) || sleepingService.existsByEmail(email);
     }
 
     public void withdraw(Long memberId, String password) {
-        Member member = verifyPasswordAndReturn(memberId, password);
+        Member member = validatePasswordAndReturn(memberId, password);
         member.withdraw();
     }
 
-    public Token findId(String name, String email) {
+    public RecoveryResponse findId(String name, String email) {
         Member member = findByEmail(email);
-        validateNameAndEmailMatches(member.getName(), name);
+        member.validateName(name);
         return issueTokenAndSendMail(email);
     }
 
-    public Token findPassword(String loginId, String email) {
+    public RecoveryResponse findPassword(String loginId, String email) {
         Member member = findByEmail(email);
-        validateLoginIdAndEmailMatches(member.getLoginId(), loginId);
+        member.validateLoginId(loginId);
         return issueTokenAndSendMail(email);
     }
 
-    public Member verifyCertification(String email, String certification) {
+    // todo: 아아디/비밀번호 찾기에 대해 분리할지 고민
+    public RecoveryResultResponse validateCertification(String email, String certification) {
         Token findRequestToken = recoveryTokenService.findToken(email);
-        findRequestToken.validateExpireTime();
-        findRequestToken.verifyCertification(certification);
-        return findByEmail(email);
+        findRequestToken.validateCertification(certification);
+        Member member = findByEmail(email);
+        return RecoveryResultResponse.of(member.getLoginId(), email);
     }
 
     public void changePassword(String email, String newPassword) {
@@ -104,8 +95,8 @@ public class MemberService {
     }
 
     public void updatePassword(Long memberId, String currentPassword, String newPassword) {
-        Member member = verifyPasswordAndReturn(memberId, currentPassword);
-        validatePassword(newPassword, member.getPassword());
+        Member member = validatePasswordAndReturn(memberId, currentPassword);
+        member.validateSamePassword(newPassword, passwordEncoder);
         member.updatePassword(newPassword, passwordEncoder);
     }
 
@@ -129,9 +120,9 @@ public class MemberService {
         member.changeProfileImage(profileImageUrl);
     }
 
-    public void resetProfileImage(Long memberId) {
+    public String resetProfileImage(Long memberId) {
         Member member = findById(memberId);
-        member.resetProfileImage();
+        return member.resetProfileImage();
     }
 
     public List<Member> getMembersByLoginIds(List<String> loginIdList) {
@@ -148,49 +139,21 @@ public class MemberService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
-    private Member verifyPasswordAndReturn(Long memberId, String password) {
+    private Member validatePasswordAndReturn(Long memberId, String password) {
         Member member = findById(memberId);
-        verifyPassword(password, member.getPassword());
+        member.validatePassword(password, passwordEncoder);
         return member;
     }
 
-    private Token issueTokenAndSendMail(String email) {
+    private RecoveryResponse issueTokenAndSendMail(String email) {
         String certification = RandomGenerator.getRandomNumber();
-        Token findRequestToken = recoveryTokenService.issueToken(email, certification);
         mailService.sendFindCertification(email, certification);
-        return findRequestToken;
+        Token findRequestToken = recoveryTokenService.issueToken(email, certification);
+        return RecoveryResponse.of(email, findRequestToken.getExpiredAt());
     }
 
     private Member findByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-    }
-
-    private boolean isSamePassword(String input, String saved) {
-        return passwordEncoder.matches(input, saved);
-    }
-
-    private void verifyPassword(String input, String saved) {
-        if (!isSamePassword(input, saved)) {
-            throw new CustomException(ErrorCode.PASSWORD_NOT_MATCH);
-        }
-    }
-
-    private void validatePassword(String newPassword, String currentPassword) {
-        if (isSamePassword(newPassword, currentPassword)) {
-            throw new CustomException(ErrorCode.PASSWORD_IS_SAME);
-        }
-    }
-
-    private void validateNameAndEmailMatches(String saved, String input) {
-        if (!StringUtils.equals(saved, input)) {
-            throw new CustomException(ErrorCode.EMAIL_NAME_NOT_MATCH);
-        }
-    }
-
-    private void validateLoginIdAndEmailMatches(String saved, String input) {
-        if (!StringUtils.equals(saved, input)) {
-            throw new CustomException(ErrorCode.EMAIL_ID_NOT_MATCH);
-        }
     }
 }

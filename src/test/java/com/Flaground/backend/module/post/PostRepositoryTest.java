@@ -90,21 +90,16 @@ public class PostRepositoryTest extends RepositoryTest {
         void 핫게시글_가져오기_테스트() {
             // given
             final TopPostCondition condition = TopPostCondition.like;
-            final int hotPostLikeCount = 5;
 
-            Post notHotPost = postRepository.save(Post.builder().member(member).build());
-
-            for (int i = 1 ; i <= hotPostLikeCount; i++) {
-                if (i > 3) notHotPost.like();
-                post.like();
-            }
+            postRepository.save(Post.builder().member(member).build());
+            post.like();
 
             // when
             List<PostResponse> responses = postRepository.getTopFiveByCondition(condition);
 
             // then
             assertThat(responses.size()).isEqualTo(1);
-            assertThat(responses.get(0).getLikeCount()).isEqualTo(hotPostLikeCount);
+            assertThat(responses.get(0).getLikeCount()).isEqualTo(1);
         }
 
         @Test
@@ -127,7 +122,7 @@ public class PostRepositoryTest extends RepositoryTest {
     class 게시글_검색_테스트 {
         private Board board;
         private final String boardName = "자유게시판";
-        private final SearchPeriod period = SearchPeriod.all;
+        private final SearchPeriod period = SearchPeriod.ALL;
 
         @BeforeEach
         void setup() {

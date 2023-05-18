@@ -5,10 +5,7 @@ import com.Flaground.backend.global.utility.SecurityUtils;
 import com.Flaground.backend.module.member.controller.dto.request.*;
 import com.Flaground.backend.module.member.controller.dto.response.*;
 import com.Flaground.backend.module.member.controller.mapper.MemberMapper;
-import com.Flaground.backend.module.member.domain.Avatar;
-import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.service.MemberService;
-import com.Flaground.backend.module.token.domain.Token;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -85,8 +82,8 @@ public class MemberController {
     @ResponseStatus(CREATED)
     @PostMapping("/find/id")
     public ApplicationResponse<RecoveryResponse> findId(@RequestBody @Valid FindIdRequest findIdRequest) {
-        Token token = memberService.findId(findIdRequest.getName(), findIdRequest.getEmail());
-        return new ApplicationResponse<>(memberMapper.toRecoveryResponse(token));
+        RecoveryResponse response = memberService.findId(findIdRequest.getName(), findIdRequest.getEmail());
+        return new ApplicationResponse<>(response);
     }
 
     @Tag(name = "member")
@@ -100,8 +97,8 @@ public class MemberController {
     @ResponseStatus(CREATED)
     @PostMapping("/find/password")
     public ApplicationResponse<RecoveryResponse> findPassword(@RequestBody @Valid FindPasswordRequest findPasswordRequest) {
-        Token token = memberService.findPassword(findPasswordRequest.getLoginId(), findPasswordRequest.getEmail());
-        return new ApplicationResponse<>(memberMapper.toRecoveryResponse(token));
+        RecoveryResponse response = memberService.findPassword(findPasswordRequest.getLoginId(), findPasswordRequest.getEmail());
+        return new ApplicationResponse<>(response);
     }
 
     @Tag(name = "member")
@@ -113,10 +110,10 @@ public class MemberController {
             @ApiResponse(responseCode = "409", description = "인증번호가 일치하지 않습니다.")
     })
     @ResponseStatus(OK)
-    @PostMapping("/certification") // todo : Controller가 member를 알고있음
+    @PostMapping("/certification")
     public ApplicationResponse<RecoveryResultResponse> verifyCertification(@RequestBody @Valid AuthenticationRequest authenticationRequest) {
-        Member member = memberService.verifyCertification(authenticationRequest.getEmail(), authenticationRequest.getCertification());
-        return new ApplicationResponse<>(memberMapper.toRecoveryResult(member));
+        RecoveryResultResponse response = memberService.validateCertification(authenticationRequest.getEmail(), authenticationRequest.getCertification());
+        return new ApplicationResponse<>(response);
     }
 
     @Tag(name = "member")
@@ -133,13 +130,13 @@ public class MemberController {
     }
 
     @Tag(name = "member")
-    @Operation(summary = "프로필 기본 이미지로 변경", description = "[토큰 필요]")
+    @Operation(summary = "프로필 기본 이미지로 변경", description = "[토큰 필요] 기본 이미지 URL을 내려준다.")
     @ApiResponses({})
     @ResponseStatus(OK)
     @PutMapping("/avatar/reset")
-    public ApplicationResponse resetProfileImage() {
-        memberService.resetProfileImage(SecurityUtils.getMemberId());
-        return new ApplicationResponse<>();
+    public ApplicationResponse<String> resetProfileImage() {
+        String defaultImageURL = memberService.resetProfileImage(SecurityUtils.getMemberId());
+        return new ApplicationResponse<>(defaultImageURL);
     }
 
     @Tag(name = "member")
@@ -177,10 +174,9 @@ public class MemberController {
             @ApiResponse(responseCode = "401", description = "토큰을 넣지 않으면 401 발생")
     })
     @ResponseStatus(OK)
-    @PutMapping("/avatar")
+    @PutMapping("/avatar") // todo : mapper 분리?
     public ApplicationResponse updateAvatar(@RequestBody @Valid UpdateAvatarRequest updateAvatarRequest) {
-        Avatar avatar = memberMapper.mapFrom(updateAvatarRequest);
-        memberService.updateAvatar(SecurityUtils.getMemberId(), avatar);
+        memberService.updateAvatar(SecurityUtils.getMemberId(), memberMapper.mapFrom(updateAvatarRequest));
         return new ApplicationResponse<>();
     }
 

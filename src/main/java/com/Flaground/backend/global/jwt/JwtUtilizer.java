@@ -48,7 +48,6 @@ public class JwtUtilizer {
         final Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
         final Date refreshTokenExpiresIn = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
 
-        // Access Token 생성
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())       // payload "sub": "name"
                 .claim(AUTHORITIES_KEY, authorities)        // payload "auth": "ROLE_USER"
@@ -56,18 +55,12 @@ public class JwtUtilizer {
                 .signWith(key, SignatureAlgorithm.HS512)    // header "alg": "HS512"
                 .compact();
 
-        // Refresh Token 생성
         String refreshToken = Jwts.builder()
                 .setExpiration(refreshTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
 
-        return TokenResponse.builder()
-                .grantType(BEARER_TYPE)
-                .accessToken(accessToken)
-                .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
-                .refreshToken(refreshToken)
-                .build();
+        return tokenResponse(accessToken, accessTokenExpiresIn.getTime(), refreshToken);
     }
 
     public Authentication getAuthentication(String accessToken) {
@@ -115,5 +108,14 @@ public class JwtUtilizer {
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
+    }
+
+    private TokenResponse tokenResponse(String accessToken, long accessTokenExpiresIn, String refreshToken) {
+        return TokenResponse.builder()
+                .grantType(BEARER_TYPE)
+                .accessToken(accessToken)
+                .accessTokenExpiresIn(accessTokenExpiresIn)
+                .refreshToken(refreshToken)
+                .build();
     }
 }

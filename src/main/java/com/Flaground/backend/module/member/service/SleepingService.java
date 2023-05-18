@@ -6,10 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class SleepingService {
     private final SleepingRepository sleepingRepository;
@@ -22,6 +20,7 @@ public class SleepingService {
         return sleepingRepository.existsByEmail(email);
     }
 
+    @Transactional
     public void reactivateMember(String loginId) {
         reactiveIfPresent(loginId);
         sleepingRepository.deleteByLoginId(loginId);

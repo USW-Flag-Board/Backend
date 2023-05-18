@@ -27,7 +27,6 @@ public class AuthRepositoryImpl implements AuthRepositoryCustom {
                 .fetch();
     }
 
-    // todo: 최신 대상으로 쿼리 날리기
     @Override
     public List<SignUpRequestResponse> getSignUpRequests() {
         return queryFactory
@@ -38,6 +37,7 @@ public class AuthRepositoryImpl implements AuthRepositoryCustom {
                         authInformation.major))
                 .from(authInformation)
                 .where(authInformation.isAuthorizedCrew.eq(true))
+                .orderBy(authInformation.createdAt.desc())
                 .fetch();
     }
 }

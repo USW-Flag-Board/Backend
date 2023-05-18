@@ -5,8 +5,10 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+@Builder
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class RecoveryResponse {
     @Schema(name = "이메일", example = "gmlwh124@suwon.ac.kr")
     private String email;
@@ -14,9 +16,10 @@ public class RecoveryResponse {
     @Schema(name = "제한 시간")
     private LocalDateTime deadLine;
 
-    @Builder
-    public RecoveryResponse(String email, LocalDateTime deadLine) {
-        this.email = email;
-        this.deadLine = deadLine;
+    public static RecoveryResponse of(String email, LocalDateTime deadLine) {
+        return RecoveryResponse.builder()
+                .email(email)
+                .deadLine(deadLine)
+                .build();
     }
 }
