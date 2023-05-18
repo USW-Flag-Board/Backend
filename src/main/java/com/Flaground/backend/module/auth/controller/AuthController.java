@@ -2,6 +2,7 @@ package com.Flaground.backend.module.auth.controller;
 
 import com.Flaground.backend.global.common.ApplicationResponse;
 import com.Flaground.backend.module.auth.controller.dto.request.*;
+import com.Flaground.backend.module.auth.controller.dto.response.DuplicationResponse;
 import com.Flaground.backend.module.auth.controller.dto.response.JoinResponse;
 import com.Flaground.backend.module.auth.controller.dto.response.SignUpResponse;
 import com.Flaground.backend.module.auth.domain.AuthInformation;
@@ -32,25 +33,25 @@ public class AuthController {
 
     @Tag(name = "auth")
     @Operation(summary = "아이디 중복 체크")
-    @ApiResponse(responseCode = "200", description = "중복 체크 성공. False : 사용 가능, True : 사용 불가능")
+    @ApiResponse(responseCode = "200", description = "중복 체크 성공")
     @ResponseStatus(OK)
     @PostMapping("/check/id")
-    public ApplicationResponse<Boolean> checkId(@RequestBody @Valid CheckLoginIdRequest checkLoginIdRequest) {
-        boolean check = authService.validateDuplicateLoginId(checkLoginIdRequest.getLoginId());
-        return new ApplicationResponse<>(check);
+    public ApplicationResponse<DuplicationResponse> checkId(@RequestBody @Valid CheckLoginIdRequest checkLoginIdRequest) {
+        boolean isExist = authService.validateDuplicateLoginId(checkLoginIdRequest.getLoginId());
+        return new ApplicationResponse<>(DuplicationResponse.from(isExist));
     }
 
     @Tag(name = "auth")
     @Operation(summary = "이메일 중복 체크", description = "하나의 이메일에 하나의 계정만 생성 가능")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "중복 체크 성공. False : 사용 가능, True : 사용 불가능"),
+            @ApiResponse(responseCode = "200", description = "중복 체크 성공"),
             @ApiResponse(responseCode = "400", description = "이메일 형식이 아닙니다."),
     })
     @ResponseStatus(OK)
     @PostMapping("/check/email")
-    public ApplicationResponse<Boolean> checkEmail(@RequestBody @Valid CheckEmailRequest checkEmailRequest) {
-        boolean check = authService.validateDuplicateEmail(checkEmailRequest.getEmail());
-        return new ApplicationResponse<>(check);
+    public ApplicationResponse<DuplicationResponse> checkEmail(@RequestBody @Valid CheckEmailRequest checkEmailRequest) {
+        boolean isExist = authService.validateDuplicateEmail(checkEmailRequest.getEmail());
+        return new ApplicationResponse<>(DuplicationResponse.from(isExist));
     }
 
     @Tag(name = "auth")

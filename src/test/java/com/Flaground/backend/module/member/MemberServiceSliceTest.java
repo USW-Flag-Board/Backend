@@ -3,6 +3,8 @@ package com.Flaground.backend.module.member;
 import com.Flaground.backend.common.MockServiceTest;
 import com.Flaground.backend.global.utility.RandomGenerator;
 import com.Flaground.backend.infra.aws.ses.service.MailService;
+import com.Flaground.backend.module.member.controller.dto.response.RecoveryResponse;
+import com.Flaground.backend.module.member.controller.dto.response.RecoveryResultResponse;
 import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.domain.repository.MemberRepository;
 import com.Flaground.backend.module.member.service.MemberService;
@@ -54,13 +56,13 @@ public class MemberServiceSliceTest extends MockServiceTest {
         doNothing().when(mailService).sendFindCertification(anyString(), anyString());
 
         // when
-        Token token = memberService.findId(name, email);
+        RecoveryResponse response = memberService.findId(name, email);
 
         // then
         then(recoveryTokenService).should(times(1)).issueToken(anyString(), anyString());
         then(mailService).should(times(1)).sendFindCertification(anyString(), anyString());
-        assertThat(token.getKey()).isEqualTo(email);
-        assertThat(token.getExpiredAt()).isEqualTo(findRequestToken.getExpiredAt());
+        assertThat(response.getEmail()).isEqualTo(email);
+        assertThat(response.getDeadLine()).isEqualTo(findRequestToken.getExpiredAt());
     }
 
     @Test
@@ -82,14 +84,14 @@ public class MemberServiceSliceTest extends MockServiceTest {
         doNothing().when(mailService).sendFindCertification(anyString(), anyString());
 
         // when
-        Token token = memberService.findPassword(loginId, email);
+        RecoveryResponse response = memberService.findPassword(loginId, email);
 
         // then
         then(memberRepository).should(times(1)).findByEmail(anyString());
         then(recoveryTokenService).should(times(1)).issueToken(anyString(), anyString());
         then(mailService).should(times(1)).sendFindCertification(anyString(), anyString());
-        assertThat(token.getKey()).isEqualTo(email);
-        assertThat(token.getExpiredAt()).isEqualTo(findRequestToken.getExpiredAt());
+        assertThat(response.getEmail()).isEqualTo(email);
+        assertThat(response.getDeadLine()).isEqualTo(findRequestToken.getExpiredAt());
     }
 
     @Test
@@ -106,12 +108,12 @@ public class MemberServiceSliceTest extends MockServiceTest {
         given(memberRepository.findByEmail(anyString())).willReturn(Optional.of(member));
 
         // when
-        Member returnMember = memberService.verifyCertification(email, certification);
+        RecoveryResultResponse response = memberService.validateCertification(email, certification);
 
         // then
         then(recoveryTokenService).should(times(1)).findToken(anyString());
         then(memberRepository).should(times(1)).findByEmail(anyString());
-        assertThat(returnMember.getLoginId()).isEqualTo(loginId);
-        assertThat(returnMember.getEmail()).isEqualTo(email);
+        assertThat(response.getLoginId()).isEqualTo(loginId);
+        assertThat(response.getEmail()).isEqualTo(email);
     }
 }

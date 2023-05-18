@@ -187,7 +187,9 @@ public class PostController {
     }
 
     @Tag(name = "post")
-    @Operation(summary = "홈페이지 전용 Top 게시글 가져오기", description = "Condition(like or latest)에 따라 핫 게시글 또는 최신 게시글 5개를 가져온다.")
+    @Operation(summary = "홈페이지 전용 Top 게시글 가져오기", description = "Condition(like or latest)에 게시글을 5개 가져온다.<br>" +
+            "핫게시글 : 2주 이내에 게시글 중 좋아요가 높은 게시글<br>" +
+            "최신게시글 : 1주 이내에 게시글 중 최신 게시글")
     @ResponseStatus(OK)
     @GetMapping("/top/{condition}")
     public ApplicationResponse<List<PostResponse>> getTopFivePostByCondition(@PathVariable @EnumFormat(enumClass = TopPostCondition.class)

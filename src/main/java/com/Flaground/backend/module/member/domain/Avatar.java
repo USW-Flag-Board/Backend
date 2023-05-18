@@ -45,8 +45,9 @@ public class Avatar {
         this.profileImage = profileImage;
     }
 
-    public void resetProfileImage() {
+    public String resetProfileImage() {
         this.profileImage = DEFAULT_IMAGE;
+        return DEFAULT_IMAGE;
     }
 
     @Builder

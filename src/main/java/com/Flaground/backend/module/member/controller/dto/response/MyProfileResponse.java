@@ -9,10 +9,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MyProfileResponse {
     @Schema(name = "닉네임", example = "john")
-    private String nickName;
+    private String nickname;
 
     @Schema(name = "자기소개", example = "안녕하세요?")
     private String bio;
@@ -37,9 +37,9 @@ public class MyProfileResponse {
 
     @Builder
     @QueryProjection
-    public MyProfileResponse(String nickName, String bio, String profileImg, String loginId,
+    public MyProfileResponse(String nickname, String bio, String profileImg, String loginId,
                              String name, String email, Major major, String studentId) {
-        this.nickName = nickName;
+        this.nickname = nickname;
         this.bio = bio;
         this.profileImg = profileImg;
         this.loginId = loginId;

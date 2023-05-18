@@ -44,6 +44,7 @@ public class ActivityRepositoryImpl implements ActivityRepositoryCustom {
                 .from(activity)
                 .innerJoin(activity.leader, member)
                 .where(activity.status.eq(ActivityStatus.RECRUIT))
+                .limit(3)
                 .fetch();
     }
 }

@@ -16,10 +16,4 @@ import org.mapstruct.ReportingPolicy;
 )
 public interface MemberMapper {
     Avatar mapFrom(UpdateAvatarRequest updateAvatarRequest);
-
-    @Mapping(source = "key", target = "email")
-    @Mapping(source = "expiredAt", target = "deadLine")
-    RecoveryResponse toRecoveryResponse(Token findRequestToken);
-
-    RecoveryResultResponse toRecoveryResult(Member member);
 }

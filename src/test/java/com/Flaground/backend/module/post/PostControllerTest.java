@@ -404,7 +404,7 @@ public class PostControllerTest extends IntegrationTest {
                 .board(boardName)
                 .keyword(keyword)
                 .option(SearchOption.title)
-                .period(SearchPeriod.all)
+                .period(SearchPeriod.ALL)
                 .build();
 
         final String uri = BASE_URI + "/search";

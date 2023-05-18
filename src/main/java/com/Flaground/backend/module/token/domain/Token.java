@@ -47,15 +47,16 @@ public abstract class Token {
         }
     }
 
-    public void validateExpireTime() {
-        if (this.expiredAt.isBefore(LocalDateTime.now())) {
-            throw new CustomException(ErrorCode.EXPIRED_AUTHENTICATION_TIME);
+    public void validateCertification(String certification) {
+        validateExpireTime();
+        if (!StringUtils.equals(certification, this.value)) {
+            throw new CustomException(ErrorCode.CERTIFICATION_NOT_MATCH);
         }
     }
 
-    public void verifyCertification(String certification) {
-        if (!StringUtils.equals(certification, this.value)) {
-            throw new CustomException(ErrorCode.CERTIFICATION_NOT_MATCH);
+    private void validateExpireTime() {
+        if (this.expiredAt.isBefore(LocalDateTime.now())) {
+            throw new CustomException(ErrorCode.EXPIRED_AUTHENTICATION_TIME);
         }
     }
 }

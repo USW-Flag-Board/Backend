@@ -260,13 +260,17 @@ public class ActivityRepositoryTest extends RepositoryTest {
         // given
         Member member = memberRepository.save(Member.builder().build());
         ActivityInfo info = ActivityInfo.builder().build();
-        activityRepository.save(Activity.builder().leader(member).info(info).build());
+
+        for (int i = 0; i < 5; i++) {
+            activityRepository.save(Activity.builder().leader(member).info(info).build());
+        }
+
 
         // when
         List<ActivityResponse> response = activityRepository.getRecruitActivities();
 
         // then
         assertThat(response).isNotNull();
-        assertThat(response.size()).isEqualTo(1);
+        assertThat(response.size()).isEqualTo(3);
     }
 }

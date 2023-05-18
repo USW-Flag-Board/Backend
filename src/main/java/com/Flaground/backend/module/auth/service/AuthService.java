@@ -37,12 +37,12 @@ public class AuthService {
     }
 
     @Transactional(readOnly = true)
-    public Boolean validateDuplicateLoginId(String loginId) {
+    public boolean validateDuplicateLoginId(String loginId) {
         return memberService.isExistLoginId(loginId);
     }
 
     @Transactional(readOnly = true)
-    public Boolean validateDuplicateEmail(String email) {
+    public boolean validateDuplicateEmail(String email) {
         return memberService.isExistEmail(email);
     }
 

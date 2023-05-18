@@ -26,7 +26,6 @@ import static com.querydsl.core.types.dsl.Expressions.asNumber;
 
 @RequiredArgsConstructor
 public class PostRepositoryImpl implements PostRepositoryCustom {
-    private static final int HOT_POST_LIMIT = 5;
     private final JPAQueryFactory queryFactory;
 
     /**
@@ -216,8 +215,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .from(post)
                 .innerJoin(post.member, member)
                 .orderBy(condition.getOrder())
-                .where(isLikeAndLatest(condition),
-                        isLikeAndHotPost(condition))
+                .where(isLatestPosts(condition),
+                        isHotPosts(condition))
                 .limit(5)
                 .fetch();
     }
@@ -244,6 +243,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         return SearchResponse.from(result);
     }
 
+    
+    // todo : 댓글으로 검색 시 모든 값을 넘기는 오류
     @Override
     public SearchResponse searchWithCondition(String boardName, String keyword, SearchPeriod period, SearchOption option) {
         JPAQuery<PostResponse> query = queryFactory
@@ -327,12 +328,13 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .fetchOne();
     }
 
-    private BooleanExpression isLikeAndLatest(TopPostCondition condition) {
-        return condition.isLikeCondition() ? post.createdAt.after(LocalDateTime.now().minusWeeks(2)) : null;
+    private BooleanExpression isLatestPosts(TopPostCondition condition) {
+        final LocalDateTime limit = condition.isLikeCondition() ? LocalDateTime.now().minusWeeks(2) : LocalDateTime.now().minusWeeks(1);
+        return post.createdAt.after(limit);
     }
 
-    private BooleanExpression isLikeAndHotPost(TopPostCondition condition) {
-        return condition.isLikeCondition() ? post.likeCount.goe(HOT_POST_LIMIT) : null;
+    private BooleanExpression isHotPosts(TopPostCondition condition) {
+        return condition.isLikeCondition() ? post.likeCount.goe(1) : null;
     }
 
     private BooleanExpression isLoggedIn(Long memberId, Long likeableId, LikeType likeType) {
