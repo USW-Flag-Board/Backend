@@ -403,7 +403,7 @@ public class PostControllerTest extends IntegrationTest {
         SearchRequest request = SearchRequest.builder()
                 .board(boardName)
                 .keyword(keyword)
-                .option(SearchOption.title)
+                .option(SearchOption.TITLE)
                 .period(SearchPeriod.ALL)
                 .build();
 

@@ -224,7 +224,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     @Override
     public SearchResponse integrationSearch(String keyword) {
         List<PostResponse> result = queryFactory
-                .selectDistinct(new QPostResponse(
+                .select(new QPostResponse(
                         post.id,
                         post.title,
                         member.avatar.nickname,
@@ -243,8 +243,6 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         return SearchResponse.from(result);
     }
 
-    
-    // todo : 댓글으로 검색 시 모든 값을 넘기는 오류
     @Override
     public SearchResponse searchWithCondition(String boardName, String keyword, SearchPeriod period, SearchOption option) {
         JPAQuery<PostResponse> query = queryFactory
@@ -260,12 +258,12 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .from(post)
                 .innerJoin(post.member, member)
                 .where(post.boardName.eq(boardName),
-                        period.getExpression(),
-                        option.getExpression(keyword))
+                        period.toExpression(),
+                        option.toExpression(keyword))
                 .orderBy(post.createdAt.desc());
 
-        if (option.isContainsReply()) {
-            query.leftJoin(reply).on(reply.content.contains(keyword)).distinct();
+        if (option.containsReply()) {
+            query.innerJoin(post.replies, reply);
         }
 
         return SearchResponse.from(query.fetch());

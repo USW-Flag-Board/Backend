@@ -56,7 +56,7 @@ public class MemberController {
     @GetMapping
     public ApplicationResponse<MyProfileResponse> getMyProfile() {
         MyProfileResponse response = memberService.getMyProfile(SecurityUtils.getMemberId());
-        return new ApplicationResponse(response);
+        return new ApplicationResponse<>(response);
     }
 
     @Tag(name = "member")
@@ -66,9 +66,9 @@ public class MemberController {
     })
     @ResponseStatus(OK)
     @GetMapping("/search")
-    public ApplicationResponse searchMemberByName(@RequestParam @NotBlank String name) {
+    public ApplicationResponse<List<SearchMemberResponse>> searchMemberByName(@RequestParam @NotBlank String name) {
         List<SearchMemberResponse> response = memberService.searchMember(name);
-        return new ApplicationResponse(response);
+        return new ApplicationResponse<>(response);
     }
 
     @Tag(name = "member")
