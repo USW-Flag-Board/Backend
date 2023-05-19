@@ -9,7 +9,6 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApplicationResponse<T> {
     private final static String SUCCESS_MESSAGE = "성공적으로 요청을 불러왔습니다.";
-
     private T payload;
     private String message;
 

@@ -28,9 +28,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class PostRepositoryTest extends RepositoryTest {
     @Autowired
-    private LikeRepository likeRepository;
-
-    @Autowired
     private PostRepository postRepository;
 
     @Autowired
@@ -146,7 +143,7 @@ public class PostRepositoryTest extends RepositoryTest {
             postRepository.saveAll(List.of(post1, post2, post3));
 
             final String keyword = "test";
-            final SearchOption option = SearchOption.title;
+            final SearchOption option = SearchOption.TITLE;
 
             // when
             SearchResponse response = postRepository.searchWithCondition(boardName, keyword, period, option);
@@ -170,7 +167,7 @@ public class PostRepositoryTest extends RepositoryTest {
             postRepository.saveAll(List.of(post1, post2, post3));
 
             final String keyword = "test";
-            final SearchOption option = SearchOption.content;
+            final SearchOption option = SearchOption.CONTENT;
 
             // when
             SearchResponse response = postRepository.searchWithCondition(boardName, keyword, period, option);
@@ -183,22 +180,21 @@ public class PostRepositoryTest extends RepositoryTest {
         @Test
         void 게시글_댓글_검색_테스트() {
             // given
-            final String content = "test";
-            PostData data = PostData.builder().boardName(boardName).build();
-            Post searchPost = postRepository.save(Post.of(member, data));
-
-            Reply reply1 = Reply.of(member, post.getId(), content);
-            Reply reply2 = Reply.of(member, post.getId(), content);
-
-            replyRepository.saveAll(List.of(reply1, reply2));
-
             final String keyword = "test";
-            final SearchOption option = SearchOption.reply;
+            final String notKeyword = "not";
+            final SearchOption option = SearchOption.REPLY;
+            PostData data = PostData.builder().boardName(boardName).content(keyword).build();
+            Post searchPost = postRepository.save(Post.of(member, data));
+            Post notSearchPost = postRepository.save(Post.of(member, data));
+
+            searchPost.addReply(Reply.of(member, searchPost.getId(), keyword));
+            searchPost.addReply(Reply.of(member, searchPost.getId(), keyword)); // 중복
+            notSearchPost.addReply(Reply.of(member, notSearchPost.getId(), notKeyword));
 
             // when
             SearchResponse response = postRepository.searchWithCondition(boardName, keyword, period, option);
 
-            // then
+            // then : searchPost는 댓글 때문에 출력되므로 결과는 1개
             assertThat(response).isNotNull();
             assertThat(response.getResultCount()).isEqualTo(1);
         }
@@ -206,26 +202,22 @@ public class PostRepositoryTest extends RepositoryTest {
         @Test
         void 게시글_내용_댓글_검색_테스트() {
             // given
-            final String content = "test";
-            final String content2 = "ttest";
-
-            Post searchPost = Post.builder().member(member).boardName(boardName).content(content).build();
-            Post searchPost2 = Post.builder().member(member).boardName(boardName).content(content2).build();
-
-            Reply reply1 = Reply.of(member, post.getId(), content); // 검색X : 게시판 정보가 없음
-            Reply reply2 = Reply.of(member, post.getId(), content2); // 중복
-            Reply reply3 = Reply.of(member, post.getId(), content2); // 중복
-
-            postRepository.saveAll(List.of(searchPost, searchPost2));
-            replyRepository.saveAll(List.of(reply1, reply2, reply3));
-
             final String keyword = "test";
-            final SearchOption option = SearchOption.content_and_reply;
+            final String notKeyword = "imnot";
+            final SearchOption option = SearchOption.CONTENT_AND_REPLY;
+
+            Post searchPost = Post.builder().member(member).boardName(boardName).content(notKeyword).build();
+            Post notSearchPost = Post.builder().member(member).boardName(boardName).content(keyword).build();
+            postRepository.saveAll(List.of(searchPost, notSearchPost));
+
+            searchPost.addReply(Reply.of(member, searchPost.getId(), keyword));
+            searchPost.addReply(Reply.of(member, searchPost.getId(), keyword)); // 중복
+            notSearchPost.addReply(Reply.of(member, notSearchPost.getId(), notKeyword)); // 중복
 
             // when
             SearchResponse response = postRepository.searchWithCondition(boardName, keyword, period, option);
 
-            // then
+            // then : searchPost는 댓글 때문에, notSearchPost는 본인 게시글 때문에 2개가 나와야함
             assertThat(response).isNotNull();
             assertThat(response.getResultCount()).isEqualTo(2);
         }
@@ -236,7 +228,7 @@ public class PostRepositoryTest extends RepositoryTest {
             postRepository.save(Post.builder().member(member).boardName(boardName).build());
 
             final String keyword = "john";
-            final SearchOption option = SearchOption.author;
+            final SearchOption option = SearchOption.AUTHOR;
 
             // when
             SearchResponse response = postRepository.searchWithCondition(boardName, keyword, period, option);
@@ -254,8 +246,7 @@ public class PostRepositoryTest extends RepositoryTest {
         final String content = "this is testtest content";
 
         postRepository.save(Post.builder().member(member).title(title).build());
-        Post testPost = postRepository.save(Post.builder().member(member).content(content).build());
-        replyRepository.save(Reply.of(member, post.getId(), content));
+        postRepository.save(Post.builder().member(member).content(content).build());
 
         final String keyword = "test";
 
