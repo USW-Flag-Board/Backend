@@ -110,6 +110,7 @@ public class ActivityService {
         activity.finishActivity();
     }
 
+    // todo : 외래키 조약 오류
     public void delete(Long memberId, Long activityId) {
         Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
         activityApplyService.deleteAllApplies(activityId);

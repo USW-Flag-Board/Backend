@@ -25,7 +25,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
         return queryFactory
                 .selectFrom(member)
                 .where(member.updatedAt.before(limit),
-                        availableMember())
+                        isAvailableMember())
                 .fetch();
     }
 
@@ -37,15 +37,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
                 .select(member.email)
                 .from(member)
                 .where(member.updatedAt.before(limit),
-                        availableMember())
-                .fetch();
-    }
-
-    @Override
-    public List<Member> getMembersByLoginIds(List<String> loginIdList) {
-        return queryFactory
-                .selectFrom(member)
-                .where(member.loginId.in(loginIdList))
+                        isAvailableMember())
                 .fetch();
     }
 
@@ -74,7 +66,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
                         member.name,
                         member.updatedAt))
                 .from(member)
-                .where(availableMember())
+                .where(isAvailableMember())
                 .fetch();
     }
 
@@ -86,11 +78,11 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
                         member.avatar.major))
                 .from(member)
                 .where(member.name.contains(name),
-                        availableMember())
+                        isAvailableMember())
                 .fetch();
     }
 
-    private BooleanExpression availableMember() {
-        return member.status.eq(MemberStatus.NORMAL).or(member.status.eq(MemberStatus.WATCHING));
+    private BooleanExpression isAvailableMember() {
+        return member.status.in(MemberStatus.NORMAL, MemberStatus.WATCHING);
     }
 }

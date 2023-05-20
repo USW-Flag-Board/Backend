@@ -24,9 +24,9 @@ public interface PostRepositoryCustom {
      */
     GetPostResponse getWithReplies(Long memberId, Long postId);
 
-    Page<PostResponse> getAllPostsByBoard(String boardName, Pageable pageable);
+    Page<PostResponse> getPostsOfBoard(String boardName, Pageable pageable);
 
-    List<PostResponse> getAllPostsByLoginId(String loginId);
+    List<PostResponse> getPostsByLoginId(String loginId);
 
     List<PostResponse> getTopFiveByCondition(TopPostCondition condition);
 

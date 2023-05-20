@@ -119,16 +119,16 @@ public class PostService {
      * Version 2
      */
     @Transactional(readOnly = true)
-    public Page<PostResponse> getPostsByBoard(String boardName, Pageable pageable) {
+    public Page<PostResponse> getPostsOfBoard(String boardName, Pageable pageable) {
         boardService.isCorrectName(boardName);
-        return postRepository.getAllPostsByBoard(boardName, pageable);
+        return postRepository.getPostsOfBoard(boardName, pageable);
     }
 
     @Transactional(readOnly = true)
     public List<PostResponse> getMemberPagePosts(String loginId) {
         Member member = memberService.findByLoginId(loginId);
         member.isAvailable();
-        return postRepository.getAllPostsByLoginId(loginId);
+        return postRepository.getPostsByLoginId(loginId);
     }
 
     @Transactional(readOnly = true)

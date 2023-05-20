@@ -125,8 +125,8 @@ public class MemberService {
         return member.resetProfileImage();
     }
 
-    public List<Member> getMembersByLoginIds(List<String> loginIdList) {
-        return memberRepository.getMembersByLoginIds(loginIdList);
+    public List<Member> getMembersByLoginIds(List<String> loginIds) {
+        return memberRepository.findByLoginIdIn(loginIds);
     }
 
     public Member findByLoginId(String loginId) {
