@@ -14,24 +14,22 @@ import com.Flaground.backend.module.post.domain.Reply;
 import com.Flaground.backend.module.post.domain.enums.SearchOption;
 import com.Flaground.backend.module.post.domain.enums.SearchPeriod;
 import com.Flaground.backend.module.post.domain.enums.TopPostCondition;
-import com.Flaground.backend.module.post.domain.repository.LikeRepository;
 import com.Flaground.backend.module.post.domain.repository.PostRepository;
-import com.Flaground.backend.module.post.domain.repository.ReplyRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class PostRepositoryTest extends RepositoryTest {
     @Autowired
     private PostRepository postRepository;
-
-    @Autowired
-    private ReplyRepository replyRepository;
 
     @Autowired
     private MemberRepository memberRepository;
@@ -50,6 +48,44 @@ public class PostRepositoryTest extends RepositoryTest {
         Avatar avatar = Avatar.builder().nickname(nickname).build();
         member = memberRepository.save(Member.builder().loginId(loginId).avatar(avatar).build());
         post = postRepository.save(Post.builder().member(member).build());
+    }
+
+    @Nested
+    class 게시글_페이징_테스트 {
+        private final int pageSize = 10;
+        private final String title = "title";
+        private final String boardName = "자유게시판";
+
+        @Test
+        void 일반_페이징_테스트() {
+            // given
+            final int totalSize = 100;
+            List<Post> posts = IntStream.rangeClosed(1, totalSize - 1) // beforeEach 때문에
+                    .mapToObj(i -> Post.builder().member(member).boardName(boardName).title(title + i).build())
+                    .toList();
+
+            postRepository.saveAll(posts);
+
+            PageRequest request1 = PageRequest.ofSize(pageSize);
+            PageRequest request2 = PageRequest.of(totalSize / pageSize, pageSize);
+
+            // when
+            Page<PostResponse> responses1 = postRepository.getPostsOfBoard(boardName, request1);
+            Page<PostResponse> responses2 = postRepository.getPostsOfBoard(boardName, request2);
+
+            // then
+            assertThat(responses1.getTotalPages()).isEqualTo(pageSize);
+            assertThat(responses2.getTotalPages()).isEqualTo(pageSize);
+        }
+
+        @Test
+        void 게시글_없음_페이징_테스트() {
+            // given
+
+            // when
+
+            // then
+        }
     }
 
     @Test

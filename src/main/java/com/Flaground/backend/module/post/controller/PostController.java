@@ -21,6 +21,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -167,8 +168,9 @@ public class PostController {
     })
     @ResponseStatus(OK)
     @GetMapping
-    public ApplicationResponse<Page<PostResponse>> getPostsByBoard(@RequestParam("board") @NotBlank String boardName, Pageable pageable) {
-        Page<PostResponse> response = postService.getPostsByBoard(boardName, pageable);
+    public ApplicationResponse<Page<PostResponse>> getPostsOfBoard(@RequestParam("board") @NotBlank String boardName,
+                                                                   PageRequest pageRequest) {
+        Page<PostResponse> response = postService.getPostsOfBoard(boardName, pageRequest);
         return new ApplicationResponse<>(response);
     }
 

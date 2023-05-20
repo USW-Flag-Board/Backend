@@ -150,9 +150,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         return GetPostResponse.of(postDetailResponse, replyResponses);
     }
 
-    // todo: Pageable 말고 다른 객체로 받기
     @Override
-    public Page<PostResponse> getAllPostsByBoard(String boardName, Pageable pageable) {
+    public Page<PostResponse> getPostsOfBoard(String boardName, Pageable pageable) {
         List<PostResponse> result = queryFactory
                 .select(new QPostResponse(
                         post.id,
@@ -166,7 +165,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .from(post)
                 .innerJoin(post.member, member)
                 .where(post.boardName.eq(boardName),
-                        post.status.in(PostStatus.NORMAL, PostStatus.REPORTED))
+                        isAccessiblePost())
                 .orderBy(post.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -174,15 +173,14 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
 
         JPQLQuery<Post> countQuery = queryFactory
                 .selectFrom(post)
-                .innerJoin(post.member, member)
                 .where(post.boardName.eq(boardName),
-                        post.status.in(PostStatus.NORMAL, PostStatus.REPORTED));
+                        isAccessiblePost());
 
         return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchCount);
     }
 
     @Override
-    public List<PostResponse> getAllPostsByLoginId(String loginId) {
+    public List<PostResponse> getPostsByLoginId(String loginId) {
         return queryFactory
                 .select(new QPostResponse(
                         post.id,
@@ -195,7 +193,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         post.isEdited))
                 .from(post)
                 .innerJoin(post.member, member)
-                .where(member.loginId.eq(loginId))
+                .where(member.loginId.eq(loginId),
+                        isAccessiblePost())
                 .orderBy(post.createdAt.desc())
                 .fetch();
     }
@@ -216,7 +215,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .innerJoin(post.member, member)
                 .orderBy(condition.getOrder())
                 .where(isLatestPosts(condition),
-                        isHotPosts(condition))
+                        isHotPosts(condition),
+                        isAccessiblePost())
                 .limit(5)
                 .fetch();
     }
@@ -236,7 +236,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .from(post)
                 .innerJoin(post.member, member)
                 .where(post.content.contains(keyword)
-                        .or(post.title.contains(keyword)))
+                        .or(post.title.contains(keyword)),
+                        isAccessiblePost())
                 .orderBy(post.createdAt.desc())
                 .fetch();
 
@@ -259,7 +260,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .innerJoin(post.member, member)
                 .where(post.boardName.eq(boardName),
                         period.toExpression(),
-                        option.toExpression(keyword))
+                        option.toExpression(keyword),
+                        isAccessiblePost())
                 .orderBy(post.createdAt.desc());
 
         if (option.containsReply()) {
@@ -303,7 +305,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         return queryFactory
                 .select(reply.id)
                 .from(reply)
-                .where(reply.postId.eq(postId))
+                .where(reply.postId.eq(postId),
+                        isAccessibleReply())
                 .fetch();
     }
 
@@ -322,8 +325,16 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         reply.isEdited))
                 .from(reply)
                 .innerJoin(reply.member, member)
-                .where(reply.id.eq(replyId))
+                .where(reply.id.eq(replyId)) // id를 가져오는 작업에서 접근가능한 댓글인지 확인.
                 .fetchOne();
+    }
+
+    private static BooleanExpression isAccessiblePost() {
+        return post.status.in(PostStatus.NORMAL, PostStatus.REPORTED);
+    }
+
+    private static BooleanExpression isAccessibleReply() {
+        return reply.status.ne(ReplyStatus.BANNED);
     }
 
     private BooleanExpression isLatestPosts(TopPostCondition condition) {

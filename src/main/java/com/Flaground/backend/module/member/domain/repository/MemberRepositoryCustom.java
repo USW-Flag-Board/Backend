@@ -10,8 +10,6 @@ import java.util.List;
 public interface MemberRepositoryCustom {
     List<Member> getDeactivateMembers();
 
-    List<Member> getMembersByLoginIds(List<String> loginIdList);
-
     List<String> getDeactivableMemberEmails();
 
     MyProfileResponse getMyProfile(Long memberId);
