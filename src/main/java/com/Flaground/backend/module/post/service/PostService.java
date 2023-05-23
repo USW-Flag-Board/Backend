@@ -1,5 +1,6 @@
 package com.Flaground.backend.module.post.service;
 
+import com.Flaground.backend.global.common.SearchResponse;
 import com.Flaground.backend.global.exception.CustomException;
 import com.Flaground.backend.global.exception.ErrorCode;
 import com.Flaground.backend.module.board.service.BoardService;
@@ -7,7 +8,6 @@ import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.service.MemberService;
 import com.Flaground.backend.module.post.controller.dto.response.GetPostResponse;
 import com.Flaground.backend.module.post.controller.dto.response.PostResponse;
-import com.Flaground.backend.module.post.controller.dto.response.SearchResponse;
 import com.Flaground.backend.module.post.domain.Post;
 import com.Flaground.backend.module.post.domain.PostData;
 import com.Flaground.backend.module.post.domain.Reply;

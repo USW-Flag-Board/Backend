@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SearchMemberResponse {
+    @Schema(name = "로그인 아이디")
+    private String loginId;
+
     @Schema(name = "회원 이름", example = "홍길동")
     private String name;
 
@@ -17,7 +20,8 @@ public class SearchMemberResponse {
     private String major;
 
     @QueryProjection
-    public SearchMemberResponse(String name, Major major) {
+    public SearchMemberResponse(String loginId, String name, Major major) {
+        this.loginId = loginId;
         this.name =  name;
         this.major = String.valueOf(major);
     }

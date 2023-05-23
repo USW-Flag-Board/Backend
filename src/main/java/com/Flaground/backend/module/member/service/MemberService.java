@@ -1,5 +1,6 @@
 package com.Flaground.backend.module.member.service;
 
+import com.Flaground.backend.global.common.SearchResponse;
 import com.Flaground.backend.global.exception.CustomException;
 import com.Flaground.backend.global.exception.ErrorCode;
 import com.Flaground.backend.global.utility.RandomGenerator;
@@ -50,7 +51,7 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public List<SearchMemberResponse> searchMember(String name) {
+    public SearchResponse searchMember(String name) {
         return memberRepository.searchMemberByName(name);
     }
 

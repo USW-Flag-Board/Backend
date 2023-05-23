@@ -2,6 +2,7 @@ package com.Flaground.backend.module.post.controller;
 
 import com.Flaground.backend.global.annotation.EnumFormat;
 import com.Flaground.backend.global.common.ApplicationResponse;
+import com.Flaground.backend.global.common.SearchResponse;
 import com.Flaground.backend.global.utility.SecurityUtils;
 import com.Flaground.backend.global.utility.UriCreator;
 import com.Flaground.backend.module.post.controller.dto.request.CreateReplyRequest;
@@ -11,7 +12,6 @@ import com.Flaground.backend.module.post.controller.dto.request.UpdateReplyReque
 import com.Flaground.backend.module.post.controller.dto.response.GetPostResponse;
 import com.Flaground.backend.module.post.controller.dto.response.LikeResponse;
 import com.Flaground.backend.module.post.controller.dto.response.PostResponse;
-import com.Flaground.backend.module.post.controller.dto.response.SearchResponse;
 import com.Flaground.backend.module.post.controller.mapper.PostMapper;
 import com.Flaground.backend.module.post.domain.enums.TopPostCondition;
 import com.Flaground.backend.module.post.service.PostService;

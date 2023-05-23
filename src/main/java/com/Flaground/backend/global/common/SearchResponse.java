@@ -1,4 +1,4 @@
-package com.Flaground.backend.module.post.controller.dto.response;
+package com.Flaground.backend.global.common;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
@@ -10,21 +10,21 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class SearchResponse {
+public class SearchResponse<T> {
     @Schema(name = "검색 결과")
-    private List<PostResponse> searchResults;
+    private List<T> searchResults;
 
     @Schema(name = "검색 건수")
     private int resultCount;
 
     @Builder
-    public SearchResponse(List<PostResponse> searchResults, int resultCount) {
+    public SearchResponse(List<T> searchResults, int resultCount) {
         this.searchResults = searchResults;
         this.resultCount = resultCount;
     }
 
-    public static SearchResponse from(List<PostResponse> searchResults) {
-        return SearchResponse.builder()
+    public static <T> SearchResponse<T> from(List<T> searchResults) {
+        return SearchResponse.<T>builder()
                 .searchResults(searchResults)
                 .resultCount(searchResults.size())
                 .build();

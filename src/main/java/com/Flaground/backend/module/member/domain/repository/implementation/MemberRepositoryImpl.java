@@ -1,5 +1,6 @@
 package com.Flaground.backend.module.member.domain.repository.implementation;
 
+import com.Flaground.backend.global.common.SearchResponse;
 import com.Flaground.backend.module.member.controller.dto.response.*;
 import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.domain.enums.MemberStatus;
@@ -71,15 +72,18 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
     }
 
     @Override
-    public List<SearchMemberResponse> searchMemberByName(String name) {
-        return queryFactory
+    public SearchResponse searchMemberByName(String name) {
+        List<SearchMemberResponse> responses = queryFactory
                 .select(new QSearchMemberResponse(
+                        member.loginId,
                         asString(name).as(member.name),
                         member.avatar.major))
                 .from(member)
                 .where(member.name.contains(name),
                         isAvailableMember())
                 .fetch();
+
+        return SearchResponse.from(responses);
     }
 
     private BooleanExpression isAvailableMember() {
