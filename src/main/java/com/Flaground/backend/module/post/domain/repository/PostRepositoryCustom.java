@@ -12,16 +12,6 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface PostRepositoryCustom {
-    /**
-     * Version 1
-     */
-    /* List<LightPostDto> findMyPostList(String memberId);
-    List<PostDto> findBoardWithCondition(String boardName, SearchType searchType, String searchWord);
-    List<LightPostDto> findTopNPostListByDateAndLike(int postCount); */
-
-    /**
-     * Version 2
-     */
     GetPostResponse getWithReplies(Long memberId, Long postId);
 
     Page<PostResponse> getPostsOfBoard(String boardName, Pageable pageable);

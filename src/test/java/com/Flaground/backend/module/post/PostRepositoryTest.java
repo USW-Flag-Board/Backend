@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -66,8 +67,8 @@ public class PostRepositoryTest extends RepositoryTest {
 
             postRepository.saveAll(posts);
 
-            PageRequest request1 = PageRequest.ofSize(pageSize);
-            PageRequest request2 = PageRequest.of(totalSize / pageSize, pageSize);
+            Pageable request1 = PageRequest.ofSize(pageSize);
+            Pageable request2 = PageRequest.of(totalSize / pageSize, pageSize);
 
             // when
             Page<PostResponse> responses1 = postRepository.getPostsOfBoard(boardName, request1);
@@ -81,10 +82,14 @@ public class PostRepositoryTest extends RepositoryTest {
         @Test
         void 게시글_없음_페이징_테스트() {
             // given
+            postRepository.deleteAll();
+            Pageable pageRequest = PageRequest.ofSize(10);
 
             // when
+            Page<PostResponse> responses = postRepository.getPostsOfBoard(boardName, pageRequest);
 
             // then
+            assertThat(responses.getTotalPages()).isEqualTo(0);
         }
     }
 

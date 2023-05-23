@@ -65,7 +65,7 @@ public class MemberController {
             @ApiResponse(responseCode = "200", description = "멤버 검색 리스트 가져오기에 성공하였습니다."),
     })
     @ResponseStatus(OK)
-    @GetMapping("/search")
+    @GetMapping("/search") // todo: 로그안 아이디까지 리턴하도록 수정 -> 클릭 시 정보를 불러올 수 있게.
     public ApplicationResponse<List<SearchMemberResponse>> searchMemberByName(@RequestParam @NotBlank String name) {
         List<SearchMemberResponse> response = memberService.searchMember(name);
         return new ApplicationResponse<>(response);

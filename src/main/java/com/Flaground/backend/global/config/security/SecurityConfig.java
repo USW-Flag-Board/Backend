@@ -38,7 +38,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://flaground.netlify.app"));
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://flaground.vercel.app"));
         configuration.setAllowedMethods(List.of("POST", "GET", "PUT", "PATCH", "DELETE"));
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);
