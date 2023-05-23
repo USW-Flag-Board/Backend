@@ -1,8 +1,8 @@
-package com.Flaground.backend.module.activity.entity;
+package com.Flaground.backend.module.activity.domain;
 
-import com.Flaground.backend.module.activity.entity.enums.BookUsage;
-import com.Flaground.backend.module.activity.entity.enums.Proceed;
-import com.Flaground.backend.module.activity.entity.enums.Semester;
+import com.Flaground.backend.module.activity.domain.enums.BookUsage;
+import com.Flaground.backend.module.activity.domain.enums.Proceed;
+import com.Flaground.backend.module.activity.domain.enums.Semester;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

@@ -1,18 +1,19 @@
 package com.Flaground.backend.module.activity;
 
 import com.Flaground.backend.common.RepositoryTest;
+import com.Flaground.backend.global.common.SearchResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.ActivityApplyResponse;
-import com.Flaground.backend.module.activity.activityapply.entity.ActivityApply;
-import com.Flaground.backend.module.activity.activityapply.repository.ActivityApplyRepository;
+import com.Flaground.backend.module.activity.domain.ActivityApply;
+import com.Flaground.backend.module.activity.domain.repository.ActivityApplyRepository;
 import com.Flaground.backend.module.activity.controller.dto.response.ActivityResponse;
-import com.Flaground.backend.module.activity.entity.Activity;
-import com.Flaground.backend.module.activity.entity.ActivityInfo;
-import com.Flaground.backend.module.activity.entity.enums.ActivityType;
+import com.Flaground.backend.module.activity.domain.Activity;
+import com.Flaground.backend.module.activity.domain.ActivityInfo;
+import com.Flaground.backend.module.activity.domain.enums.ActivityType;
 import com.Flaground.backend.module.activity.controller.dto.response.ParticipantResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.ParticipateResponse;
-import com.Flaground.backend.module.activity.memberactivity.entity.MemberActivity;
-import com.Flaground.backend.module.activity.memberactivity.repository.MemberActivityRepository;
-import com.Flaground.backend.module.activity.repository.ActivityRepository;
+import com.Flaground.backend.module.activity.domain.MemberActivity;
+import com.Flaground.backend.module.activity.domain.repository.MemberActivityRepository;
+import com.Flaground.backend.module.activity.domain.repository.ActivityRepository;
 import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.domain.enums.Major;
 import com.Flaground.backend.module.member.domain.repository.MemberRepository;
@@ -265,12 +266,31 @@ public class ActivityRepositoryTest extends RepositoryTest {
             activityRepository.save(Activity.builder().leader(member).info(info).build());
         }
 
-
         // when
         List<ActivityResponse> response = activityRepository.getRecruitActivities();
 
         // then
         assertThat(response).isNotNull();
         assertThat(response.size()).isEqualTo(3);
+    }
+
+    @Test
+    void 활동_검색_테스트() {
+        // given
+        final String keyword = "keyword";
+        Member member = memberRepository.save(Member.builder().build());
+        ActivityInfo info = ActivityInfo.builder().build();
+
+        Activity activity1 = Activity.builder().leader(member).name(keyword).description(keyword).info(info).build();
+        Activity activity2 = Activity.builder().leader(member).description(keyword).info(info).build();
+
+        activityRepository.saveAllAndFlush(List.of(activity1, activity2));
+
+        // when
+        SearchResponse<ActivityResponse> response = activityRepository.searchActivity(keyword);
+
+        // then
+        assertThat(response.getSearchResults()).isNotNull();
+        assertThat(response.getResultCount()).isEqualTo(2);
     }
 }

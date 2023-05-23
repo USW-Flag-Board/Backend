@@ -1,10 +1,10 @@
-package com.Flaground.backend.module.activity.memberactivity.service;
+package com.Flaground.backend.module.activity.service;
 
-import com.Flaground.backend.module.activity.entity.Activity;
+import com.Flaground.backend.module.activity.domain.Activity;
 import com.Flaground.backend.module.activity.controller.dto.response.ParticipantResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.ParticipateResponse;
-import com.Flaground.backend.module.activity.memberactivity.entity.MemberActivity;
-import com.Flaground.backend.module.activity.memberactivity.repository.MemberActivityRepository;
+import com.Flaground.backend.module.activity.domain.MemberActivity;
+import com.Flaground.backend.module.activity.domain.repository.MemberActivityRepository;
 import com.Flaground.backend.module.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

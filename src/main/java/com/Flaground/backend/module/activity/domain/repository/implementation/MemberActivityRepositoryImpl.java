@@ -1,16 +1,17 @@
-package com.Flaground.backend.module.activity.memberactivity.repository;
+package com.Flaground.backend.module.activity.domain.repository.implementation;
 
 import com.Flaground.backend.module.activity.controller.dto.response.ParticipantResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.ParticipateResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.QParticipantResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.QParticipateResponse;
+import com.Flaground.backend.module.activity.domain.repository.MemberActivityRepositoryCustom;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
-import static com.Flaground.backend.module.activity.entity.QActivity.activity;
-import static com.Flaground.backend.module.activity.memberactivity.entity.QMemberActivity.memberActivity;
+import static com.Flaground.backend.module.activity.domain.QActivity.activity;
+import static com.Flaground.backend.module.activity.domain.QMemberActivity.memberActivity;
 import static com.Flaground.backend.module.member.domain.QMember.member;
 
 @RequiredArgsConstructor

@@ -1,4 +1,4 @@
-package com.Flaground.backend.module.activity.entity.enums;
+package com.Flaground.backend.module.activity.domain.enums;
 
 import com.Flaground.backend.global.exception.CustomException;
 import com.Flaground.backend.global.exception.ErrorCode;

@@ -1,14 +1,16 @@
-package com.Flaground.backend.module.activity.repository;
+package com.Flaground.backend.module.activity.domain.repository.implementation;
 
+import com.Flaground.backend.global.common.SearchResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.ActivityResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.QActivityResponse;
-import com.Flaground.backend.module.activity.entity.enums.ActivityStatus;
+import com.Flaground.backend.module.activity.domain.enums.ActivityStatus;
+import com.Flaground.backend.module.activity.domain.repository.ActivityRepositoryCustom;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
-import static com.Flaground.backend.module.activity.entity.QActivity.activity;
+import static com.Flaground.backend.module.activity.domain.QActivity.activity;
 import static com.Flaground.backend.module.member.domain.QMember.member;
 
 @RequiredArgsConstructor
@@ -46,5 +48,24 @@ public class ActivityRepositoryImpl implements ActivityRepositoryCustom {
                 .where(activity.status.eq(ActivityStatus.RECRUIT))
                 .limit(3)
                 .fetch();
+    }
+
+    @Override
+    public SearchResponse<ActivityResponse> searchActivity(String keyword) {
+        List<ActivityResponse> responses = queryFactory
+                .selectDistinct(new QActivityResponse(
+                        activity.id,
+                        activity.name,
+                        member.name,
+                        activity.type,
+                        activity.status,
+                        activity.info.semester))
+                .from(activity)
+                .innerJoin(activity.leader, member)
+                .where(activity.name.contains(keyword)
+                        .or(activity.description.contains(keyword)))
+                .fetch();
+
+        return SearchResponse.from(responses);
     }
 }

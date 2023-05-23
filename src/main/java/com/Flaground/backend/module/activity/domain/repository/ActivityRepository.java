@@ -1,6 +1,6 @@
-package com.Flaground.backend.module.activity.repository;
+package com.Flaground.backend.module.activity.domain.repository;
 
-import com.Flaground.backend.module.activity.entity.Activity;
+import com.Flaground.backend.module.activity.domain.Activity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

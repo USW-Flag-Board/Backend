@@ -1,9 +1,9 @@
-package com.Flaground.backend.module.activity.activityapply.service;
+package com.Flaground.backend.module.activity.service;
 
 import com.Flaground.backend.module.activity.controller.dto.response.ActivityApplyResponse;
-import com.Flaground.backend.module.activity.activityapply.entity.ActivityApply;
-import com.Flaground.backend.module.activity.activityapply.repository.ActivityApplyRepository;
-import com.Flaground.backend.module.activity.entity.Activity;
+import com.Flaground.backend.module.activity.domain.ActivityApply;
+import com.Flaground.backend.module.activity.domain.repository.ActivityApplyRepository;
+import com.Flaground.backend.module.activity.domain.Activity;
 import com.Flaground.backend.module.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

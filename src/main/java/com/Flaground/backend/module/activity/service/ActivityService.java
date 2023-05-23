@@ -1,15 +1,14 @@
 package com.Flaground.backend.module.activity.service;
 
+import com.Flaground.backend.global.common.SearchResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.ActivityApplyResponse;
-import com.Flaground.backend.module.activity.activityapply.entity.ActivityApply;
-import com.Flaground.backend.module.activity.activityapply.service.ActivityApplyService;
+import com.Flaground.backend.module.activity.domain.ActivityApply;
 import com.Flaground.backend.module.activity.controller.dto.response.ActivityResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.GetAllActivitiesResponse;
-import com.Flaground.backend.module.activity.entity.Activity;
+import com.Flaground.backend.module.activity.domain.Activity;
 import com.Flaground.backend.module.activity.controller.dto.response.ParticipantResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.ParticipateResponse;
-import com.Flaground.backend.module.activity.memberactivity.service.MemberActivityService;
-import com.Flaground.backend.module.activity.repository.ActivityRepository;
+import com.Flaground.backend.module.activity.domain.repository.ActivityRepository;
 import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.service.MemberService;
 import com.Flaground.backend.global.exception.CustomException;
@@ -59,10 +58,9 @@ public class ActivityService {
         return memberActivityService.getAllParticipants(activityId);
     }
 
-    // todo : 활동 검색기능 구현하기
      @Transactional(readOnly = true)
-    public List<String> searchActivity(String keyword) {
-        return null;
+    public SearchResponse<ActivityResponse> searchActivity(String keyword) {
+         return activityRepository.searchActivity(keyword);
     }
 
     public Activity getActivity(Long activityId) {

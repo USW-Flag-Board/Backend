@@ -1,4 +1,4 @@
-package com.Flaground.backend.module.activity.memberactivity.repository;
+package com.Flaground.backend.module.activity.domain.repository;
 
 import com.Flaground.backend.module.activity.controller.dto.response.ParticipantResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.ParticipateResponse;

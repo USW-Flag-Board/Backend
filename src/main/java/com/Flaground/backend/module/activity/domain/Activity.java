@@ -1,7 +1,7 @@
-package com.Flaground.backend.module.activity.entity;
+package com.Flaground.backend.module.activity.domain;
 
-import com.Flaground.backend.module.activity.entity.enums.ActivityStatus;
-import com.Flaground.backend.module.activity.entity.enums.ActivityType;
+import com.Flaground.backend.module.activity.domain.enums.ActivityStatus;
+import com.Flaground.backend.module.activity.domain.enums.ActivityType;
 import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.global.common.BaseEntity;
 import com.Flaground.backend.global.exception.CustomException;

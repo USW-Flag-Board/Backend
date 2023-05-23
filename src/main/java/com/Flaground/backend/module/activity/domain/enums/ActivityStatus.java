@@ -1,4 +1,4 @@
-package com.Flaground.backend.module.activity.entity.enums;
+package com.Flaground.backend.module.activity.domain.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

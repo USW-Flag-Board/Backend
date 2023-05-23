@@ -1,22 +1,20 @@
-package com.Flaground.backend.module.activity.activityapply.entity;
+package com.Flaground.backend.module.activity.domain;
 
-import com.Flaground.backend.module.activity.entity.Activity;
+import com.Flaground.backend.global.common.BaseEntity;
 import com.Flaground.backend.module.member.domain.Member;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ActivityApply {
+public class MemberActivity extends BaseEntity {
     @Id
-    @Column(name = "activity_apply_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
@@ -24,18 +22,14 @@ public class ActivityApply {
     @JoinColumn(name = "activity_id")
     private Activity activity;
 
-    @Column(name = "apply_time")
-    private LocalDateTime applyTime;
-
     @Builder
-    public ActivityApply(Member member, Activity activity) {
+    public MemberActivity(Member member, Activity activity) {
         this.member = member;
         this.activity = activity;
-        this.applyTime = LocalDateTime.now();
     }
 
-    public static ActivityApply of(Member member, Activity activity) {
-        return ActivityApply.builder()
+    public static MemberActivity of(Member member, Activity activity) {
+        return MemberActivity.builder()
                 .member(member)
                 .activity(activity)
                 .build();

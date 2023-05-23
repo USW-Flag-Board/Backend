@@ -1,13 +1,14 @@
-package com.Flaground.backend.module.activity.activityapply.repository;
+package com.Flaground.backend.module.activity.domain.repository.implementation;
 
 import com.Flaground.backend.module.activity.controller.dto.response.ActivityApplyResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.QActivityApplyResponse;
+import com.Flaground.backend.module.activity.domain.repository.ActivityApplyRepositoryCustom;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
-import static com.Flaground.backend.module.activity.activityapply.entity.QActivityApply.activityApply;
+import static com.Flaground.backend.module.activity.domain.QActivityApply.activityApply;
 import static com.Flaground.backend.module.member.domain.QMember.member;
 
 @RequiredArgsConstructor

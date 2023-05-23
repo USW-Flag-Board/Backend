@@ -1,10 +1,10 @@
 package com.Flaground.backend.module.activity.controller.dto.response;
 
-import com.Flaground.backend.module.activity.entity.ActivityInfo;
-import com.Flaground.backend.module.activity.entity.enums.ActivityStatus;
-import com.Flaground.backend.module.activity.entity.enums.ActivityType;
-import com.Flaground.backend.module.activity.entity.enums.BookUsage;
-import com.Flaground.backend.module.activity.entity.enums.Proceed;
+import com.Flaground.backend.module.activity.domain.ActivityInfo;
+import com.Flaground.backend.module.activity.domain.enums.ActivityStatus;
+import com.Flaground.backend.module.activity.domain.enums.ActivityType;
+import com.Flaground.backend.module.activity.domain.enums.BookUsage;
+import com.Flaground.backend.module.activity.domain.enums.Proceed;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
