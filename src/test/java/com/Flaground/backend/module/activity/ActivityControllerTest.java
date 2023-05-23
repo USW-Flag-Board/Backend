@@ -4,12 +4,12 @@ package com.Flaground.backend.module.activity;
 import com.Flaground.backend.common.IntegrationTest;
 import com.Flaground.backend.module.activity.controller.dto.request.CreateActivityRequest;
 import com.Flaground.backend.module.activity.controller.dto.request.UpdateActivityRequest;
-import com.Flaground.backend.module.activity.entity.Activity;
-import com.Flaground.backend.module.activity.entity.enums.ActivityType;
-import com.Flaground.backend.module.activity.entity.enums.BookUsage;
-import com.Flaground.backend.module.activity.entity.enums.Proceed;
-import com.Flaground.backend.module.activity.mapper.ActivityMapper;
-import com.Flaground.backend.module.activity.repository.ActivityRepository;
+import com.Flaground.backend.module.activity.domain.Activity;
+import com.Flaground.backend.module.activity.domain.enums.ActivityType;
+import com.Flaground.backend.module.activity.domain.enums.BookUsage;
+import com.Flaground.backend.module.activity.domain.enums.Proceed;
+import com.Flaground.backend.module.activity.controller.mapper.ActivityMapper;
+import com.Flaground.backend.module.activity.domain.repository.ActivityRepository;
 import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.domain.enums.Role;
 import com.Flaground.backend.module.member.domain.repository.MemberRepository;
@@ -126,7 +126,7 @@ public class ActivityControllerTest extends IntegrationTest {
         // then
         resultActions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("payload").value(Boolean.FALSE))
+                .andExpect(jsonPath("$.payload.exist").value(Boolean.FALSE))
                 .andDo(print());
     }
 

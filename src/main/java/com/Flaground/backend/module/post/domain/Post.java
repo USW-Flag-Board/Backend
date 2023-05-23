@@ -18,49 +18,6 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends BaseEntity implements Likeable {
-    /**
-     * Version 1
-     */
-    /* @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member member;
-
-    @Column
-    private String title;
-
-    @Column
-    private String content;
-
-    @Column
-    private String imgUrl;
-
-    @Column
-    private String fileUrl;
-
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Reply> replyList;
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Like> likeList;
-
-    @ManyToOne
-    @JoinColumn(name = "board_id")
-    private Board board;
-
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private Status status;
-
-    @Column
-    private Long viewCount; */
-
-    /**
-     * Version 2
-     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

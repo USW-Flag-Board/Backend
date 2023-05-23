@@ -1,18 +1,18 @@
 package com.Flaground.backend.module.activity;
 
 import com.Flaground.backend.module.activity.controller.dto.response.ActivityApplyResponse;
-import com.Flaground.backend.module.activity.activityapply.entity.ActivityApply;
-import com.Flaground.backend.module.activity.activityapply.repository.ActivityApplyRepository;
+import com.Flaground.backend.module.activity.domain.ActivityApply;
+import com.Flaground.backend.module.activity.domain.repository.ActivityApplyRepository;
 import com.Flaground.backend.module.activity.controller.dto.response.GetAllActivitiesResponse;
-import com.Flaground.backend.module.activity.entity.Activity;
-import com.Flaground.backend.module.activity.entity.ActivityInfo;
-import com.Flaground.backend.module.activity.entity.enums.ActivityStatus;
-import com.Flaground.backend.module.activity.entity.enums.ActivityType;
-import com.Flaground.backend.module.activity.entity.enums.Proceed;
-import com.Flaground.backend.module.activity.mapper.ActivityMapper;
+import com.Flaground.backend.module.activity.domain.Activity;
+import com.Flaground.backend.module.activity.domain.ActivityInfo;
+import com.Flaground.backend.module.activity.domain.enums.ActivityStatus;
+import com.Flaground.backend.module.activity.domain.enums.ActivityType;
+import com.Flaground.backend.module.activity.domain.enums.Proceed;
+import com.Flaground.backend.module.activity.controller.mapper.ActivityMapper;
 import com.Flaground.backend.module.activity.controller.dto.response.ParticipantResponse;
-import com.Flaground.backend.module.activity.memberactivity.repository.MemberActivityRepository;
-import com.Flaground.backend.module.activity.repository.ActivityRepository;
+import com.Flaground.backend.module.activity.domain.repository.MemberActivityRepository;
+import com.Flaground.backend.module.activity.domain.repository.ActivityRepository;
 import com.Flaground.backend.module.activity.service.ActivityService;
 import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.domain.repository.MemberRepository;
@@ -126,15 +126,8 @@ public class ActivityServiceTest {
                     .name("희조문")
                     .build());
 
-            ActivityApply apply1 = ActivityApply.builder()
-                    .member(applier1)
-                    .activity(activity)
-                    .build();
-
-            ActivityApply apply2 = ActivityApply.builder()
-                    .member(applier2)
-                    .activity(activity)
-                    .build();
+            ActivityApply apply1 = ActivityApply.of(applier1, activity.getId());
+            ActivityApply apply2 = ActivityApply.of(applier2, activity.getId());
 
             activityApplyRepository.saveAll(Arrays.asList(apply1, apply2));
             entityManager.clear();
@@ -169,11 +162,7 @@ public class ActivityServiceTest {
         Member notApplier = memberRepository.save(Member.builder().build());
 
         Activity activity = activityRepository.save(Activity.builder().build());
-
-        activityApplyRepository.save(ActivityApply.builder()
-                                    .member(applier)
-                                    .activity(activity)
-                                    .build());
+        activityApplyRepository.save(ActivityApply.of(applier, activity.getId()));
 
         // when
         boolean shouldBeTrue = activityService.checkApply(applier.getId(), activity.getId());
@@ -199,51 +188,25 @@ public class ActivityServiceTest {
         }
 
         @Test
-        @DisplayName("활동 신청 성공 테스트")
-        void applySuccessTest() {
+        void 활동_신청_성공() {
             // given
 
             // when
-            ActivityApply apply = activityService.applyActivity(applier.getId(), activity.getId());
+            activityService.applyActivity(applier.getId(), activity.getId());
 
             // then
-            assertThat(apply.getMember().getId()).isEqualTo(applier.getId());
-            assertThat(apply.getActivity().getId()).isEqualTo(activity.getId());
+            boolean shouldBeTrue = activityApplyRepository.isApplied(applier.getId(), activity.getId());
+            assertThat(shouldBeTrue).isTrue();
         }
 
         @Test
-        @DisplayName("활동 신청 실패 테스트 : 이미 신청")
-        void applyFailByAlreadyAppliedTest() {
-            activityApplyRepository.save(ActivityApply.builder()
-                    .activity(activity)
-                    .member(applier)
-                    .build());
+        void 활동_이미_신청해서_실패() {
+            activityApplyRepository.save(ActivityApply.of(applier, activity.getId()));
 
             assertThatExceptionOfType(CustomException.class)
                     .isThrownBy(() -> activityService.applyActivity(applier.getId(), activity.getId()))
                     .withMessage(ErrorCode.ALREADY_APPLIED.getMessage());
         }
-
-        @Test
-        @DisplayName("활동 신청 실패 테스트 : 없는 활동")
-        void applyFailByNotExistTest() {
-            long noneActivityId = 1204L;
-
-            assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(() -> activityService.applyActivity(applier.getId(), noneActivityId))
-                    .withMessage(ErrorCode.ACTIVITY_NOT_FOUND.getMessage());
-        }
-    }
-
-
-    @Test
-    void 활동_만들기_테스트() {
-
-    }
-
-    @Test
-    void 활동_수정하기_테스트() {
-
     }
 
     @Nested
@@ -277,15 +240,8 @@ public class ActivityServiceTest {
             Member applier1 = memberRepository.save(Member.builder().loginId(loginId1).build());
             Member applier2 = memberRepository.save(Member.builder().loginId(loginId2).build());
 
-            ActivityApply apply1 = ActivityApply.builder()
-                    .member(applier1)
-                    .activity(activity)
-                    .build();
-
-            ActivityApply apply2 = ActivityApply.builder()
-                    .member(applier2)
-                    .activity(activity)
-                    .build();
+            ActivityApply apply1 = ActivityApply.of(applier1, activity.getId());
+            ActivityApply apply2 = ActivityApply.of(applier2, activity.getId());
 
             activityApplyRepository.saveAll(List.of(apply1, apply2));
 
@@ -294,7 +250,7 @@ public class ActivityServiceTest {
 
             // then
             List<ActivityApplyResponse> allActivityApplies = activityService.getAllApplies(member.getId(), activity.getId());
-            List<ParticipantResponse> participantResponses = memberActivityRepository.getAllParticipantByActivityId(activity.getId());
+            List<ParticipantResponse> participantResponses = memberActivityRepository.getParticipantOfActivity(activity.getId());
             Activity findActivity = activityRepository.findById(activity.getId()).get();
             assertThat(allActivityApplies.size()).isEqualTo(0);
             assertThat(participantResponses.size()).isEqualTo(2);

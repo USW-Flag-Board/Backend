@@ -16,43 +16,6 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Reply extends BaseEntity implements Likeable {
-    /**
-     * Version 1
-     */
-    /* @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member member;
-
-    @ManyToOne
-    @JoinColumn(name = "post_id")
-    private Post post;
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Like> likeList;
-
-    @Column
-    private String content;
-
-    @Column(name = "reply_group")
-    private Long replyGroup;
-
-    @Column(name = "reply_order")
-    private Long replyOrder;
-
-    @Column(name = "reply_depth")
-    private Long replyDepth;
-
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private Status status; */
-
-    /**
-     * Version 2
-     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

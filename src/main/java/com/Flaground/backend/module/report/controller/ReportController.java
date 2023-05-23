@@ -1,6 +1,6 @@
 package com.Flaground.backend.module.report.controller;
 
-import com.Flaground.backend.global.common.ApplicationResponse;
+import com.Flaground.backend.global.common.response.ApplicationResponse;
 import com.Flaground.backend.global.utility.SecurityUtils;
 import com.Flaground.backend.module.report.controller.dto.request.ContentReportRequest;
 import com.Flaground.backend.module.report.controller.dto.request.MemberReportRequest;

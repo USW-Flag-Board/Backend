@@ -1,15 +1,14 @@
 package com.Flaground.backend.module.activity.service;
 
+import com.Flaground.backend.global.common.response.SearchResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.ActivityApplyResponse;
-import com.Flaground.backend.module.activity.activityapply.entity.ActivityApply;
-import com.Flaground.backend.module.activity.activityapply.service.ActivityApplyService;
+import com.Flaground.backend.module.activity.domain.ActivityApply;
 import com.Flaground.backend.module.activity.controller.dto.response.ActivityResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.GetAllActivitiesResponse;
-import com.Flaground.backend.module.activity.entity.Activity;
+import com.Flaground.backend.module.activity.domain.Activity;
 import com.Flaground.backend.module.activity.controller.dto.response.ParticipantResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.ParticipateResponse;
-import com.Flaground.backend.module.activity.memberactivity.service.MemberActivityService;
-import com.Flaground.backend.module.activity.repository.ActivityRepository;
+import com.Flaground.backend.module.activity.domain.repository.ActivityRepository;
 import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.service.MemberService;
 import com.Flaground.backend.global.exception.CustomException;
@@ -50,7 +49,7 @@ public class ActivityService {
     @Transactional(readOnly = true)
     public List<ActivityApplyResponse> getAllApplies(Long memberId, Long activityId) {
         Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
-        return activityApplyService.getAllApplies(activity.getId());
+        return activityApplyService.getApplies(activity.getId());
     }
 
     @Transactional(readOnly = true)
@@ -59,25 +58,23 @@ public class ActivityService {
         return memberActivityService.getAllParticipants(activityId);
     }
 
-    // todo : 활동 검색기능 구현하기
      @Transactional(readOnly = true)
-    public List<String> searchActivity(String keyword) {
-        return null;
+    public SearchResponse<ActivityResponse> searchActivity(String keyword) {
+         return activityRepository.searchActivity(keyword);
     }
 
     public Activity getActivity(Long activityId) {
         return findById(activityId);
     }
 
-    public Boolean checkApply(Long memberId, Long activityId) {
+    public boolean checkApply(Long memberId, Long activityId) {
         return activityApplyService.checkApply(memberId, activityId);
     }
 
-    public ActivityApply applyActivity(Long memberId, Long activityId) {
+    public void applyActivity(Long memberId, Long activityId) {
         isApplied(memberId, activityId);
         Member member = memberService.findById(memberId);
-        Activity activity = findById(activityId);
-        return activityApplyService.apply(member, activity);
+        activityApplyService.apply(member, activityId);
     }
 
     public void cancelApply(Long memberId, Long activityId) {

@@ -1,5 +1,6 @@
 package com.Flaground.backend.module.post.service;
 
+import com.Flaground.backend.global.common.response.SearchResponse;
 import com.Flaground.backend.global.exception.CustomException;
 import com.Flaground.backend.global.exception.ErrorCode;
 import com.Flaground.backend.module.board.service.BoardService;
@@ -7,7 +8,6 @@ import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.service.MemberService;
 import com.Flaground.backend.module.post.controller.dto.response.GetPostResponse;
 import com.Flaground.backend.module.post.controller.dto.response.PostResponse;
-import com.Flaground.backend.module.post.controller.dto.response.SearchResponse;
 import com.Flaground.backend.module.post.domain.Post;
 import com.Flaground.backend.module.post.domain.PostData;
 import com.Flaground.backend.module.post.domain.Reply;
@@ -33,91 +33,6 @@ public class PostService {
     private final ReplyService replyService;
     private final LikeService likeService;
 
-    /**
-     * Version 1
-     */
-    /* @Transactional
-    public long createPost(CreatePostRequest postDto) {
-        Member memberEntity = memberRepository.findById(postDto.getUserId()).orElse(null);
-        if(memberEntity == null)
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
-
-        if(!memberEntity.getId().equals(SecurityUtils.getMemberId()))
-            throw new CustomException(ErrorCode.HAVE_NO_AUTHORITY);
-
-        Board boardEntity = boardRepository.findById(postDto.getBoardId()).orElse(null);
-        if(boardEntity == null)
-            throw new CustomException(ErrorCode.BOARD_NOT_FOUND);
-
-        Post post = postRepository.save(Post.builder()
-                .member(memberEntity)
-                .title(postDto.getTitle())
-                .content(postDto.getContent())
-                .imgUrl(postDto.getImgUrl())
-                .fileUrl(postDto.getFileUrl())
-                .board(boardEntity)
-                .status(Status.NORMAL)
-                .replyList(new ArrayList<>())
-                .likeList(new ArrayList<>())
-                .viewCount(0L)
-                .build());
-
-        return post.getId();
-    }
-    @Transactional
-    public GetPostResponse getPost(long postId) {
-        Post postEntity = postRepository.findById(postId).orElse(null);
-        if(postEntity == null)
-            throw new CustomException(ErrorCode.POST_NOT_FOUND);
-
-        return new GetPostResponse(postEntity);
-    }
-
-    @Transactional(readOnly = true)
-    public List<LightPostDto> getMemberPostByLoginId(String loginId) {
-        return postRepository.findMyPostList(loginId);
-    }
-
-    @Transactional
-    public CreatePostRequest updatePost(CreatePostRequest postDto) {
-        Post postEntity = postRepository.findById(postDto.getId()).orElse(null);
-        if(postEntity == null)
-            throw new CustomException(ErrorCode.POST_NOT_FOUND);
-
-        if(!postEntity.getMember().getId().equals(SecurityUtils.getMemberId()))
-            throw new CustomException(ErrorCode.HAVE_NO_AUTHORITY);
-
-        Board boardEntity = boardRepository.findById(postDto.getBoardId()).orElse(null);
-        if(boardEntity == null)
-            throw new CustomException(ErrorCode.BOARD_NOT_FOUND);
-
-        postEntity.setTitle(postDto.getTitle());
-        postEntity.setContent(postDto.getContent());
-        postEntity.setBoard(boardEntity);
-
-        return new CreatePostRequest(postEntity);
-    }
-
-    @Transactional
-    public void deletePost(long postId) {
-        Post postEntity = postRepository.findById(postId).orElse(null);
-        if(postEntity == null)
-            throw new CustomException(ErrorCode.POST_NOT_FOUND);
-
-        if(!postEntity.getMember().getId().equals(SecurityUtils.getMemberId()))
-            throw new CustomException(ErrorCode.HAVE_NO_AUTHORITY);
-
-        postRepository.deleteById(postId);
-    }
-
-    @Transactional
-    public List<LightPostDto> getTopNPostListByDateAndLike(int postCount) {
-        return postRepository.findTopNPostListByDateAndLike(postCount);
-    } */
-
-    /**
-     * Version 2
-     */
     @Transactional(readOnly = true)
     public Page<PostResponse> getPostsOfBoard(String boardName, Pageable pageable) {
         boardService.isCorrectName(boardName);

@@ -1,7 +1,7 @@
 package com.Flaground.backend.module.activity.controller.dto.response;
 
-import com.Flaground.backend.module.activity.entity.enums.ActivityStatus;
-import com.Flaground.backend.module.activity.entity.enums.Semester;
+import com.Flaground.backend.module.activity.domain.enums.ActivityStatus;
+import com.Flaground.backend.module.activity.domain.enums.Semester;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AccessLevel;
 import lombok.Getter;

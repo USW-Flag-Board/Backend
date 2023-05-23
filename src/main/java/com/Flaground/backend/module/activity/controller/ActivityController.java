@@ -1,5 +1,7 @@
 package com.Flaground.backend.module.activity.controller;
 
+import com.Flaground.backend.global.common.response.DuplicationResponse;
+import com.Flaground.backend.global.common.response.SearchResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.ActivityApplyResponse;
 import com.Flaground.backend.module.activity.controller.dto.request.CloseRecruitRequest;
 import com.Flaground.backend.module.activity.controller.dto.request.CreateActivityRequest;
@@ -7,12 +9,12 @@ import com.Flaground.backend.module.activity.controller.dto.request.UpdateActivi
 import com.Flaground.backend.module.activity.controller.dto.response.ActivityDetailResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.ActivityResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.GetAllActivitiesResponse;
-import com.Flaground.backend.module.activity.entity.Activity;
-import com.Flaground.backend.module.activity.mapper.ActivityMapper;
+import com.Flaground.backend.module.activity.domain.Activity;
+import com.Flaground.backend.module.activity.controller.mapper.ActivityMapper;
 import com.Flaground.backend.module.activity.controller.dto.response.ParticipantResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.ParticipateResponse;
 import com.Flaground.backend.module.activity.service.ActivityService;
-import com.Flaground.backend.global.common.ApplicationResponse;
+import com.Flaground.backend.global.common.response.ApplicationResponse;
 import com.Flaground.backend.global.utility.SecurityUtils;
 import com.Flaground.backend.global.utility.UriCreator;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.net.URI;
 import java.util.List;
 
@@ -76,8 +79,8 @@ public class ActivityController {
     }
 
     @Tag(name = "activity")
-    @Operation(summary = "활동원 리스트 가져오기", description = "[토큰필요] 활동장 전용기능" +
-            "\n\n활동원 관리용 API, 활동원들 리스트를 가져온다.")
+    @Operation(summary = "활동원 리스트 가져오기", description = "[토큰필요] 활동장 전용기능<br>" +
+            "활동원 관리용 API, 활동원들 리스트를 가져온다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "활동원들 정보를 가져왔습니다."),
             @ApiResponse(responseCode = "401", description = "활동장이 아닙니다.")
@@ -113,6 +116,15 @@ public class ActivityController {
     }
 
     @Tag(name = "activity")
+    @Operation(summary = "활동 검색", description = "키워드로 관련있는 활동 목록을 가져온다.")
+    @ResponseStatus(OK)
+    @GetMapping("/search")
+    public ApplicationResponse<SearchResponse> searchActivityByKeyword(@RequestParam @NotBlank String keyword) {
+        SearchResponse<ActivityResponse> response = activityService.searchActivity(keyword);
+        return new ApplicationResponse<>(response);
+    }
+
+    @Tag(name = "activity")
     @Operation(summary = "활동 만들기", description = "[토큰필요] 활동 만들기는 동아리원만 가능하다.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "만들기 성공"),
@@ -128,14 +140,13 @@ public class ActivityController {
     }
 
     @Tag(name = "activity")
-    @Operation(summary = "활동 신청여부 확인하기", description = "[토큰필요] 한 멤버가 한 활동에 한번만 신청할 수 있다.\n\n" +
-            "False : 미신청, True : 신청")
+    @Operation(summary = "활동 신청여부 확인하기", description = "[토큰필요] 한 멤버가 한 활동에 한번만 신청할 수 있다.")
     @ApiResponse(responseCode = "200", description = "신청여부 조회에 성공하였습니다.")
     @ResponseStatus(OK)
     @PostMapping("/{id}/check")
-    public ApplicationResponse<Boolean> checkApply(@PathVariable Long id) {
-        Boolean check = activityService.checkApply(SecurityUtils.getMemberId(), id);
-        return new ApplicationResponse<>(check);
+    public ApplicationResponse<DuplicationResponse> checkApply(@PathVariable Long id) {
+        boolean check = activityService.checkApply(SecurityUtils.getMemberId(), id);
+        return new ApplicationResponse<>(DuplicationResponse.from(check));
     }
 
     @Tag(name = "activity")

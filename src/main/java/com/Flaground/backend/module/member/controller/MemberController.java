@@ -1,6 +1,7 @@
 package com.Flaground.backend.module.member.controller;
 
-import com.Flaground.backend.global.common.ApplicationResponse;
+import com.Flaground.backend.global.common.response.ApplicationResponse;
+import com.Flaground.backend.global.common.response.SearchResponse;
 import com.Flaground.backend.global.utility.SecurityUtils;
 import com.Flaground.backend.module.member.controller.dto.request.*;
 import com.Flaground.backend.module.member.controller.dto.response.*;
@@ -17,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
@@ -66,8 +66,8 @@ public class MemberController {
     })
     @ResponseStatus(OK)
     @GetMapping("/search")
-    public ApplicationResponse<List<SearchMemberResponse>> searchMemberByName(@RequestParam @NotBlank String name) {
-        List<SearchMemberResponse> response = memberService.searchMember(name);
+    public ApplicationResponse<SearchResponse> searchMemberByName(@RequestParam @NotBlank String name) {
+        SearchResponse response = memberService.searchMember(name);
         return new ApplicationResponse<>(response);
     }
 

@@ -38,7 +38,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://flaground.netlify.app"));
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://flaground.vercel.app"));
         configuration.setAllowedMethods(List.of("POST", "GET", "PUT", "PATCH", "DELETE"));
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);
@@ -69,7 +69,7 @@ public class SecurityConfig {
 
         http.authorizeRequests()
             .antMatchers("/auth/**", "/boards/**", "/members/find/password", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**", "/favicon.ico").permitAll()
-            .antMatchers(HttpMethod.GET, "/activities", "/activities/{id}", "/activities/{loginId}/profile", "/members/{loginId}", "/members/search", "/posts/**").permitAll()
+            .antMatchers(HttpMethod.GET, whiteGetList()).permitAll()
             .antMatchers(HttpMethod.POST, "/members/certification", "/members/find/id").permitAll()
             .antMatchers("/activities/**").hasRole(ROLE_CREW.getRole())
             .antMatchers("/reports/**", "/posts/**", "/members/**").hasAnyRole(ROLE_USER.getRole(), ROLE_CREW.getRole())
@@ -84,5 +84,12 @@ public class SecurityConfig {
 
     private JwtSecurityConfig jwtSecurityConfig(JwtUtilizer jwtUtilizer) {
         return new JwtSecurityConfig(jwtUtilizer);
+    }
+
+    private String[] whiteGetList() {
+        return new String[]{
+                "/activities", "/activities/{id}", "/activities/{loginId}/profile", "/activities/search",
+                "/members/{loginId}", "/members/search",
+                "/posts/**"};
     }
 }
