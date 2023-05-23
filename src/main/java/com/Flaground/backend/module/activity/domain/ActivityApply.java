@@ -1,7 +1,10 @@
 package com.Flaground.backend.module.activity.domain;
 
 import com.Flaground.backend.module.member.domain.Member;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -19,24 +22,23 @@ public class ActivityApply {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "activity_id")
-    private Activity activity;
+    @Column(name = "activity_id")
+    private Long activityId;
 
     @Column(name = "apply_time", updatable = false)
     private LocalDateTime applyTime;
 
     @Builder
-    public ActivityApply(Member member, Activity activity) {
+    public ActivityApply(Member member, Long activityId) {
         this.member = member;
-        this.activity = activity;
+        this.activityId = activityId;
         this.applyTime = LocalDateTime.now();
     }
 
-    public static ActivityApply of(Member member, Activity activity) {
+    public static ActivityApply of(Member member, Long activityId) {
         return ActivityApply.builder()
                 .member(member)
-                .activity(activity)
+                .activityId(activityId)
                 .build();
     }
 }

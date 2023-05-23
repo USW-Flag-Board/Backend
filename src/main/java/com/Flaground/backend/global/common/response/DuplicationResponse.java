@@ -1,4 +1,4 @@
-package com.Flaground.backend.module.auth.controller.dto.response;
+package com.Flaground.backend.global.common.response;
 
 import lombok.*;
 

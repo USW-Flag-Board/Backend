@@ -16,7 +16,7 @@ public class ActivityApplyRepositoryImpl implements ActivityApplyRepositoryCusto
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<ActivityApplyResponse> getAllApplies(long activityId) {
+    public List<ActivityApplyResponse> getApplies(Long activityId) {
         return queryFactory
                 .select(new QActivityApplyResponse(
                         activityApply.id,
@@ -24,36 +24,35 @@ public class ActivityApplyRepositoryImpl implements ActivityApplyRepositoryCusto
                         member.name,
                         member.avatar.major))
                 .from(activityApply)
-                .where(activityApply.activity.id.eq(activityId))
+                .where(activityApply.activityId.eq(activityId))
                 .innerJoin(activityApply.member, member)
                 .orderBy(activityApply.applyTime.desc())
                 .fetch();
     }
 
     @Override
-    public void deleteAllApplies(long activityId) {
+    public void deleteAll(Long activityId) {
         queryFactory
                 .delete(activityApply)
-                .where(activityApply.activity.id.eq(activityId))
+                .where(activityApply.activityId.eq(activityId))
                 .execute();
     }
 
     @Override
-    public boolean isApplied(long memberId, long activityId) {
+    public boolean isApplied(Long memberId, Long activityId) {
         return queryFactory
                 .selectFrom(activityApply)
-                .innerJoin(activityApply.member)
                 .where(activityApply.member.id.eq(memberId),
-                        activityApply.activity.id.eq(activityId))
+                        activityApply.activityId.eq(activityId))
                 .fetchFirst() != null;
     }
 
     @Override
-    public void deleteByMemberIdAndActivityId(long memberId, long activityId) {
+    public void deleteByIds(Long memberId, Long activityId) {
         queryFactory
             .delete(activityApply)
             .where(activityApply.member.id.eq(memberId),
-                    activityApply.activity.id.eq(activityId))
+                    activityApply.activityId.eq(activityId))
             .execute();
     }
 }

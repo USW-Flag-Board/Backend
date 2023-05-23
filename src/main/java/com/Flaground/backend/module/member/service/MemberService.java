@@ -1,6 +1,6 @@
 package com.Flaground.backend.module.member.service;
 
-import com.Flaground.backend.global.common.SearchResponse;
+import com.Flaground.backend.global.common.response.SearchResponse;
 import com.Flaground.backend.global.exception.CustomException;
 import com.Flaground.backend.global.exception.ErrorCode;
 import com.Flaground.backend.global.utility.RandomGenerator;

@@ -46,17 +46,16 @@ public class ActivityApplyServiceSliceTest extends MockServiceTest {
     }
 
     @Test
-    @DisplayName("활동 신청하기 테스트")
-    void applyActivityTest() {
+    void 활동_신청_테스트() {
         // given
-        Activity activity = Activity.builder().build();
+        final Long id = 1L;
         ActivityApply apply = ActivityApply.builder().build();
         Member member = Member.builder().build();
 
         given(activityApplyRepository.save(any())).willReturn(apply);
 
         // when
-        activityApplyService.apply(member, activity);
+        activityApplyService.apply(member, id);
 
         // then
         then(activityApplyRepository).should(times(1)).save(any());
@@ -68,13 +67,13 @@ public class ActivityApplyServiceSliceTest extends MockServiceTest {
         // given
         long testId = 1L;
         List<ActivityApplyResponse> activityApplyResponses = new ArrayList<>();
-        given(activityApplyRepository.getAllApplies(anyLong())).willReturn(activityApplyResponses);
+        given(activityApplyRepository.getApplies(anyLong())).willReturn(activityApplyResponses);
 
         // when
-        activityApplyService.getAllApplies(testId);
+        activityApplyService.getApplies(testId);
 
         // then
-        then(activityApplyRepository).should(times(1)).getAllApplies(anyLong());
+        then(activityApplyRepository).should(times(1)).getApplies(anyLong());
     }
 
     @Test
@@ -82,13 +81,13 @@ public class ActivityApplyServiceSliceTest extends MockServiceTest {
     void deleteAllAppliesTest() {
         // given
         long testId = 1L;
-        doNothing().when(activityApplyRepository).deleteAllApplies(testId);
+        doNothing().when(activityApplyRepository).deleteAll(testId);
 
         // then
         activityApplyService.deleteAllApplies(testId);
 
         // when
-        then(activityApplyRepository).should(times(1)).deleteAllApplies(testId);
+        then(activityApplyRepository).should(times(1)).deleteAll(testId);
     }
 
     @Test
@@ -96,12 +95,12 @@ public class ActivityApplyServiceSliceTest extends MockServiceTest {
     void cancelApplyTest() {
         // given
         long testId = 1L;
-        doNothing().when(activityApplyRepository).deleteByMemberIdAndActivityId(anyLong(), anyLong());
+        doNothing().when(activityApplyRepository).deleteByIds(anyLong(), anyLong());
 
         // when
         activityApplyService.cancelApply(testId, testId);
 
         // then
-        then(activityApplyRepository).should(times(1)).deleteByMemberIdAndActivityId(anyLong(), anyLong());
+        then(activityApplyRepository).should(times(1)).deleteByIds(anyLong(), anyLong());
     }
 }

@@ -19,7 +19,7 @@ public class MemberActivityRepositoryImpl implements MemberActivityRepositoryCus
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<ParticipateResponse> getAllActivitiesOfMember(String loginId) {
+    public List<ParticipateResponse> getActivitiesByLoginId(String loginId) {
         return queryFactory
                 .select(new QParticipateResponse(
                         activity.id,
@@ -35,14 +35,13 @@ public class MemberActivityRepositoryImpl implements MemberActivityRepositoryCus
     }
 
     @Override
-    public List<ParticipantResponse> getAllParticipantByActivityId(Long activityId) {
+    public List<ParticipantResponse> getParticipantOfActivity(Long activityId) {
         return queryFactory
                 .select(new QParticipantResponse(
                         member.name,
                         member.loginId,
                         member.avatar.major))
                 .from(memberActivity)
-                .innerJoin(memberActivity.activity, activity)
                 .innerJoin(memberActivity.member, member)
                 .where(memberActivity.activity.id.eq(activityId))
                 .fetch();

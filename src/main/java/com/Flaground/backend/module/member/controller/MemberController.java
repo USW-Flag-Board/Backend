@@ -1,7 +1,7 @@
 package com.Flaground.backend.module.member.controller;
 
-import com.Flaground.backend.global.common.ApplicationResponse;
-import com.Flaground.backend.global.common.SearchResponse;
+import com.Flaground.backend.global.common.response.ApplicationResponse;
+import com.Flaground.backend.global.common.response.SearchResponse;
 import com.Flaground.backend.global.utility.SecurityUtils;
 import com.Flaground.backend.module.member.controller.dto.request.*;
 import com.Flaground.backend.module.member.controller.dto.response.*;
@@ -18,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;

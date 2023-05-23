@@ -18,24 +18,24 @@ public class ActivityApplyService {
     private final ActivityApplyRepository activityApplyRepository;
 
     @Transactional(readOnly = true)
-    public List<ActivityApplyResponse> getAllApplies(Long activityId) {
-        return activityApplyRepository.getAllApplies(activityId);
+    public List<ActivityApplyResponse> getApplies(Long activityId) {
+        return activityApplyRepository.getApplies(activityId);
     }
 
-    public Boolean checkApply(Long memberId, Long activityId) {
+    public boolean checkApply(Long memberId, Long activityId) {
         return activityApplyRepository.isApplied(memberId, activityId);
     }
 
-    public ActivityApply apply(Member member, Activity activity) {
-        ActivityApply apply = ActivityApply.of(member, activity);
-        return activityApplyRepository.save(apply);
+    public void apply(Member member, Long activityId) {
+        ActivityApply apply = ActivityApply.of(member, activityId);
+        activityApplyRepository.save(apply);
     }
 
     public void cancelApply(Long memberId, Long activityId) {
-        activityApplyRepository.deleteByMemberIdAndActivityId(memberId, activityId);
+        activityApplyRepository.deleteByIds(memberId, activityId);
     }
 
     public void deleteAllApplies(Long activityId) {
-        activityApplyRepository.deleteAllApplies(activityId);
+        activityApplyRepository.deleteAll(activityId);
     }
 }

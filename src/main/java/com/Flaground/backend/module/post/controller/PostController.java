@@ -1,8 +1,8 @@
 package com.Flaground.backend.module.post.controller;
 
 import com.Flaground.backend.global.annotation.EnumFormat;
-import com.Flaground.backend.global.common.ApplicationResponse;
-import com.Flaground.backend.global.common.SearchResponse;
+import com.Flaground.backend.global.common.response.ApplicationResponse;
+import com.Flaground.backend.global.common.response.SearchResponse;
 import com.Flaground.backend.global.utility.SecurityUtils;
 import com.Flaground.backend.global.utility.UriCreator;
 import com.Flaground.backend.module.post.controller.dto.request.CreateReplyRequest;

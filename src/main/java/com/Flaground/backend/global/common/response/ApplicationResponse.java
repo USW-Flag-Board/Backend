@@ -1,4 +1,4 @@
-package com.Flaground.backend.global.common;
+package com.Flaground.backend.global.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;

@@ -1,8 +1,8 @@
 package com.Flaground.backend.module.auth.controller;
 
-import com.Flaground.backend.global.common.ApplicationResponse;
+import com.Flaground.backend.global.common.response.ApplicationResponse;
 import com.Flaground.backend.module.auth.controller.dto.request.*;
-import com.Flaground.backend.module.auth.controller.dto.response.DuplicationResponse;
+import com.Flaground.backend.global.common.response.DuplicationResponse;
 import com.Flaground.backend.module.auth.controller.dto.response.JoinResponse;
 import com.Flaground.backend.module.auth.controller.dto.response.SignUpResponse;
 import com.Flaground.backend.module.auth.domain.AuthInformation;

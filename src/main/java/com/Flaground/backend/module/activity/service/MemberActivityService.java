@@ -21,12 +21,12 @@ public class MemberActivityService {
 
     @Transactional(readOnly = true)
     public List<ParticipateResponse> getAllActivitiesOfMember(String loginId) {
-        return memberActivityRepository.getAllActivitiesOfMember(loginId);
+        return memberActivityRepository.getActivitiesByLoginId(loginId);
     }
 
     @Transactional(readOnly = true)
     public List<ParticipantResponse> getAllParticipants(Long activityId) {
-        return memberActivityRepository.getAllParticipantByActivityId(activityId);
+        return memberActivityRepository.getParticipantOfActivity(activityId);
     }
 
     public void registerMembers(Activity activity, List<Member> memberList) {

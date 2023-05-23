@@ -1,6 +1,6 @@
 package com.Flaground.backend.module.member.domain.repository.implementation;
 
-import com.Flaground.backend.global.common.SearchResponse;
+import com.Flaground.backend.global.common.response.SearchResponse;
 import com.Flaground.backend.module.member.controller.dto.response.*;
 import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.domain.enums.MemberStatus;

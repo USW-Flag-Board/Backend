@@ -1,6 +1,6 @@
 package com.Flaground.backend.module.admin.controller;
 
-import com.Flaground.backend.global.common.ApplicationResponse;
+import com.Flaground.backend.global.common.response.ApplicationResponse;
 import com.Flaground.backend.module.admin.service.AdminService;
 import com.Flaground.backend.module.auth.controller.dto.response.SignUpRequestResponse;
 import com.Flaground.backend.module.board.controller.dto.request.BoardRequest;

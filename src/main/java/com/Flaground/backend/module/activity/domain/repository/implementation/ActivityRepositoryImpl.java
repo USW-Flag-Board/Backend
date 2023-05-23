@@ -1,6 +1,6 @@
 package com.Flaground.backend.module.activity.domain.repository.implementation;
 
-import com.Flaground.backend.global.common.SearchResponse;
+import com.Flaground.backend.global.common.response.SearchResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.ActivityResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.QActivityResponse;
 import com.Flaground.backend.module.activity.domain.enums.ActivityStatus;

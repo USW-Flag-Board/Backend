@@ -5,11 +5,11 @@ import com.Flaground.backend.module.activity.controller.dto.response.ActivityApp
 import java.util.List;
 
 public interface ActivityApplyRepositoryCustom {
-    List<ActivityApplyResponse> getAllApplies(long activityId);
+    List<ActivityApplyResponse> getApplies(Long activityId);
 
-    void deleteAllApplies(long activityId);
+    void deleteAll(Long activityId);
 
-    boolean isApplied(long memberId, long activityId);
+    boolean isApplied(Long memberId, Long activityId);
 
-    void deleteByMemberIdAndActivityId(long memberId, long activityId);
+    void deleteByIds(Long memberId, Long activityId);
 }

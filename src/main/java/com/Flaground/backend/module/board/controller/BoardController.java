@@ -1,7 +1,7 @@
 package com.Flaground.backend.module.board.controller;
 
 import com.Flaground.backend.global.annotation.EnumFormat;
-import com.Flaground.backend.global.common.ApplicationResponse;
+import com.Flaground.backend.global.common.response.ApplicationResponse;
 import com.Flaground.backend.module.board.controller.dto.response.BoardInfo;
 import com.Flaground.backend.module.board.controller.dto.response.BoardResponse;
 import com.Flaground.backend.module.board.domain.BoardType;

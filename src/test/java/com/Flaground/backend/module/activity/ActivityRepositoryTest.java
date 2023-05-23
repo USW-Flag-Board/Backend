@@ -1,7 +1,7 @@
 package com.Flaground.backend.module.activity;
 
 import com.Flaground.backend.common.RepositoryTest;
-import com.Flaground.backend.global.common.SearchResponse;
+import com.Flaground.backend.global.common.response.SearchResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.ActivityApplyResponse;
 import com.Flaground.backend.module.activity.domain.ActivityApply;
 import com.Flaground.backend.module.activity.domain.repository.ActivityApplyRepository;
@@ -82,13 +82,13 @@ public class ActivityRepositoryTest extends RepositoryTest {
 
             Activity activity = activityRepository.saveAndFlush(Activity.builder().leader(member1).build());
 
-            ActivityApply activityApply1 = ActivityApply.builder().member(member2).activity(activity).build();
-            ActivityApply activityApply2 = ActivityApply.builder().member(member3).activity(activity).build();
+            ActivityApply activityApply1 = ActivityApply.builder().member(member2).activityId(activity.getId()).build();
+            ActivityApply activityApply2 = ActivityApply.builder().member(member3).activityId(activity.getId()).build();
 
             activityApplyRepository.saveAll(Arrays.asList(activityApply1, activityApply2));
 
             // when
-            List<ActivityApplyResponse> responses = activityApplyRepository.getAllApplies(activity.getId());
+            List<ActivityApplyResponse> responses = activityApplyRepository.getApplies(activity.getId());
 
             // then
             assertThat(responses.size()).isEqualTo(2);
@@ -107,14 +107,14 @@ public class ActivityRepositoryTest extends RepositoryTest {
 
             Activity activity = activityRepository.saveAndFlush(Activity.builder().leader(member1).build());
 
-            ActivityApply activityApply1 = ActivityApply.builder().member(member2).activity(activity).build();
-            ActivityApply activityApply2 = ActivityApply.builder().member(member3).activity(activity).build();
+            ActivityApply activityApply1 = ActivityApply.builder().member(member2).activityId(activity.getId()).build();
+            ActivityApply activityApply2 = ActivityApply.builder().member(member3).activityId(activity.getId()).build();
 
             activityApplyRepository.saveAll(Arrays.asList(activityApply1, activityApply2));
 
             // when
-            activityApplyRepository.deleteAllApplies(activity.getId());
-            List<ActivityApplyResponse> responses = activityApplyRepository.getAllApplies(activity.getId());
+            activityApplyRepository.deleteAll(activity.getId());
+            List<ActivityApplyResponse> responses = activityApplyRepository.getApplies(activity.getId());
 
             // then
             assertThat(responses.size()).isEqualTo(0);
@@ -128,10 +128,7 @@ public class ActivityRepositoryTest extends RepositoryTest {
 
             Activity activity = activityRepository.save(Activity.builder().leader(member1).build());
 
-            activityApplyRepository.save(ActivityApply.builder()
-                    .member(member2)
-                    .activity(activity)
-                    .build());
+            activityApplyRepository.save(ActivityApply.of(member2, activity.getId()));
 
             // when
             boolean check1 = activityApplyRepository.isApplied(member1.getId(), activity.getId());
@@ -148,14 +145,11 @@ public class ActivityRepositoryTest extends RepositoryTest {
             Member member = memberRepository.save(Member.builder().build());
             Activity activity = activityRepository.save(Activity.builder().leader(member).build());
 
-            ActivityApply apply = activityApplyRepository.save(ActivityApply.builder()
-                    .member(member)
-                    .activity(activity)
-                    .build());
+            ActivityApply apply = activityApplyRepository.save(ActivityApply.of(member, activity.getId()));
 
             // when
             entityManager.clear();
-            activityApplyRepository.deleteByMemberIdAndActivityId(member.getId(), activity.getId());
+            activityApplyRepository.deleteByIds(member.getId(), activity.getId());
 
             // then
             Optional<ActivityApply> findApply = activityApplyRepository.findById(apply.getId());
@@ -199,7 +193,7 @@ public class ActivityRepositoryTest extends RepositoryTest {
             memberActivityRepository.saveAll(Arrays.asList(memberActivity1, memberActivity2, memberActivity3));
 
             // when
-            List<ParticipateResponse> responseList = memberActivityRepository.getAllActivitiesOfMember(loginId);
+            List<ParticipateResponse> responseList = memberActivityRepository.getActivitiesByLoginId(loginId);
 
             // then
             assertThat(responseList.size()).isEqualTo(3);
@@ -242,7 +236,7 @@ public class ActivityRepositoryTest extends RepositoryTest {
             memberActivityRepository.saveAll(Arrays.asList(memberActivity1, memberActivity2));
 
             // when
-            List<ParticipantResponse> participantResponses = memberActivityRepository.getAllParticipantByActivityId(activity.getId());
+            List<ParticipantResponse> participantResponses = memberActivityRepository.getParticipantOfActivity(activity.getId());
 
             // then
             ParticipantResponse response1 = participantResponses.get(0);

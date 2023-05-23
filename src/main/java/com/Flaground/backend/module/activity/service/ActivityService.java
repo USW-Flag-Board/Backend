@@ -1,6 +1,6 @@
 package com.Flaground.backend.module.activity.service;
 
-import com.Flaground.backend.global.common.SearchResponse;
+import com.Flaground.backend.global.common.response.SearchResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.ActivityApplyResponse;
 import com.Flaground.backend.module.activity.domain.ActivityApply;
 import com.Flaground.backend.module.activity.controller.dto.response.ActivityResponse;
@@ -49,7 +49,7 @@ public class ActivityService {
     @Transactional(readOnly = true)
     public List<ActivityApplyResponse> getAllApplies(Long memberId, Long activityId) {
         Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
-        return activityApplyService.getAllApplies(activity.getId());
+        return activityApplyService.getApplies(activity.getId());
     }
 
     @Transactional(readOnly = true)
@@ -67,15 +67,14 @@ public class ActivityService {
         return findById(activityId);
     }
 
-    public Boolean checkApply(Long memberId, Long activityId) {
+    public boolean checkApply(Long memberId, Long activityId) {
         return activityApplyService.checkApply(memberId, activityId);
     }
 
-    public ActivityApply applyActivity(Long memberId, Long activityId) {
+    public void applyActivity(Long memberId, Long activityId) {
         isApplied(memberId, activityId);
         Member member = memberService.findById(memberId);
-        Activity activity = findById(activityId);
-        return activityApplyService.apply(member, activity);
+        activityApplyService.apply(member, activityId);
     }
 
     public void cancelApply(Long memberId, Long activityId) {

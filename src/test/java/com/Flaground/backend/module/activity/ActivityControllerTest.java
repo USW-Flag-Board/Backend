@@ -126,7 +126,7 @@ public class ActivityControllerTest extends IntegrationTest {
         // then
         resultActions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("payload").value(Boolean.FALSE))
+                .andExpect(jsonPath("$.payload.exist").value(Boolean.FALSE))
                 .andDo(print());
     }
 

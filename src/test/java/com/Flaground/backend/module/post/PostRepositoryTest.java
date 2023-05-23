@@ -1,7 +1,7 @@
 package com.Flaground.backend.module.post;
 
 import com.Flaground.backend.common.RepositoryTest;
-import com.Flaground.backend.global.common.SearchResponse;
+import com.Flaground.backend.global.common.response.SearchResponse;
 import com.Flaground.backend.module.board.domain.Board;
 import com.Flaground.backend.module.board.domain.BoardType;
 import com.Flaground.backend.module.board.domain.repository.BoardRepository;

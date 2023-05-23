@@ -1,6 +1,7 @@
 package com.Flaground.backend.module.activity.controller;
 
-import com.Flaground.backend.global.common.SearchResponse;
+import com.Flaground.backend.global.common.response.DuplicationResponse;
+import com.Flaground.backend.global.common.response.SearchResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.ActivityApplyResponse;
 import com.Flaground.backend.module.activity.controller.dto.request.CloseRecruitRequest;
 import com.Flaground.backend.module.activity.controller.dto.request.CreateActivityRequest;
@@ -13,7 +14,7 @@ import com.Flaground.backend.module.activity.controller.mapper.ActivityMapper;
 import com.Flaground.backend.module.activity.controller.dto.response.ParticipantResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.ParticipateResponse;
 import com.Flaground.backend.module.activity.service.ActivityService;
-import com.Flaground.backend.global.common.ApplicationResponse;
+import com.Flaground.backend.global.common.response.ApplicationResponse;
 import com.Flaground.backend.global.utility.SecurityUtils;
 import com.Flaground.backend.global.utility.UriCreator;
 import io.swagger.v3.oas.annotations.Operation;
@@ -139,14 +140,13 @@ public class ActivityController {
     }
 
     @Tag(name = "activity")
-    @Operation(summary = "활동 신청여부 확인하기", description = "[토큰필요] 한 멤버가 한 활동에 한번만 신청할 수 있다.<br>" +
-            "False : 미신청, True : 신청")
+    @Operation(summary = "활동 신청여부 확인하기", description = "[토큰필요] 한 멤버가 한 활동에 한번만 신청할 수 있다.")
     @ApiResponse(responseCode = "200", description = "신청여부 조회에 성공하였습니다.")
     @ResponseStatus(OK)
     @PostMapping("/{id}/check")
-    public ApplicationResponse<Boolean> checkApply(@PathVariable Long id) {
-        Boolean check = activityService.checkApply(SecurityUtils.getMemberId(), id);
-        return new ApplicationResponse<>(check);
+    public ApplicationResponse<DuplicationResponse> checkApply(@PathVariable Long id) {
+        boolean check = activityService.checkApply(SecurityUtils.getMemberId(), id);
+        return new ApplicationResponse<>(DuplicationResponse.from(check));
     }
 
     @Tag(name = "activity")

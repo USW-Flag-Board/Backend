@@ -6,7 +6,7 @@ import com.Flaground.backend.module.activity.controller.dto.response.Participate
 import java.util.List;
 
 public interface MemberActivityRepositoryCustom {
-    List<ParticipateResponse> getAllActivitiesOfMember(String loginId);
+    List<ParticipateResponse> getActivitiesByLoginId(String loginId);
 
-    List<ParticipantResponse> getAllParticipantByActivityId(Long activityId);
+    List<ParticipantResponse> getParticipantOfActivity(Long activityId);
 }
