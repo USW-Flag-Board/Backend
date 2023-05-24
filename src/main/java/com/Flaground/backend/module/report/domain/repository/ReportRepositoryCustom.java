@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ReportRepositoryCustom {
     boolean existByIdsAndType(Long reporter, Long reported, ReportType reportType);
-    List<ReportResponse> getReports();
+    ReportResponse getReports();
 }

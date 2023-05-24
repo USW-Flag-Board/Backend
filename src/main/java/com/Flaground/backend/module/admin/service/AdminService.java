@@ -35,7 +35,7 @@ public class AdminService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReportResponse> getReports() {
+    public ReportResponse getReports() {
         return reportService.getReports();
     }
 

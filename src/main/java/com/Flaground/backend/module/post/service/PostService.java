@@ -58,7 +58,7 @@ public class PostService {
         return postRepository.searchWithCondition(boardName, keyword, period, option);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true) // todo: pagination
     public SearchResponse integrationSearch(String keyword) {
         return postRepository.integrationSearch(keyword);
     }
@@ -122,7 +122,7 @@ public class PostService {
         return replyService.dislike(memberId, replyId);
     }
 
-    private Post findById(Long postId) {
+    public Post findById(Long postId) {
         return postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
     }

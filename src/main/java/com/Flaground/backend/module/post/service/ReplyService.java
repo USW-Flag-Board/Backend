@@ -44,7 +44,7 @@ public class ReplyService {
         return reply;
     }
 
-    private Reply findById(Long replyId) {
+    public Reply findById(Long replyId) {
         return replyRepository.findById(replyId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REPLY_NOT_FOUND));
     }

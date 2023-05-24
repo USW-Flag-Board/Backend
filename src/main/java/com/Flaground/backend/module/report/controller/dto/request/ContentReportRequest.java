@@ -9,11 +9,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ContentReportRequest {
     @Schema(name = "신고 대상의 번호(Id)")
     @NotNull
@@ -27,8 +26,8 @@ public class ContentReportRequest {
     @EnumFormat(enumClass = ReportCategory.class)
     private ReportCategory reportCategory;
 
-    @Schema(name = "신고 대상 Id")
-    @NotBlank
+    @Schema(name = "신고 상세 내용")
+    @NotNull
     private String detailExplanation;
 
     @Builder

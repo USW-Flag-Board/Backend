@@ -9,25 +9,26 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberReportRequest {
     @Schema(name = "신고 대상 로그인 ID")
     @NotBlank
-    private String target;
+    private String loginId;
 
     @Schema(name = "신고 카테고리", example = "음란물 / 홍보 / 도배 / 욕설 / 개인정보 / 기타")
     @EnumFormat(enumClass = ReportCategory.class)
     private ReportCategory reportCategory;
 
-    @Schema(name = "신고 대상 Id")
-    @NotBlank
+    @Schema(name = "신고 상세 내용")
+    @NotNull
     private String detailExplanation;
 
     @Builder
-    public MemberReportRequest(String target, ReportCategory reportCategory, String detailExplanation) {
-        this.target = target;
+    public MemberReportRequest(String loginId, ReportCategory reportCategory, String detailExplanation) {
+        this.loginId = loginId;
         this.reportCategory = reportCategory;
         this.detailExplanation = detailExplanation;
     }

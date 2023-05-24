@@ -34,6 +34,24 @@ public class Avatar {
     @Column(name = "profile_img")
     private String profileImage;
 
+    @Builder
+    public Avatar(String nickname, String studentId, Major major, String bio) {
+        this.nickname = nickname;
+        this.studentId = studentId;
+        this.major = major;
+        this.bio = bio;
+        this.profileImage = DEFAULT_IMAGE;
+    }
+
+    public static Avatar of(String nickName, String studentId, Major major) {
+        return Avatar.builder()
+                .nickname(nickName)
+                .studentId(studentId)
+                .major(major)
+                .bio(" ")
+                .build();
+    }
+
     public void updateAvatar(Avatar avatar) {
         this.nickname = avatar.getNickname();
         this.studentId = avatar.getStudentId();
@@ -50,27 +68,9 @@ public class Avatar {
         return DEFAULT_IMAGE;
     }
 
-    @Builder
-    public Avatar(String nickname, String studentId, Major major, String bio) {
-        this.nickname = nickname;
-        this.studentId = studentId;
-        this.major = major;
-        this.bio = bio;
-        this.profileImage = DEFAULT_IMAGE;
-    }
-
     public void deactivate() {
         this.studentId = null;
         this.major = null;
         this.profileImage = DEFAULT_IMAGE;
-    }
-
-    public static Avatar of(String nickName, String studentId, Major major) {
-        return Avatar.builder()
-                .nickname(nickName)
-                .studentId(studentId)
-                .major(major)
-                .bio(" ")
-                .build();
     }
 }

@@ -1,7 +1,6 @@
 package com.Flaground.backend.module.report.domain.repository.implementation;
 
-import com.Flaground.backend.module.report.controller.dto.response.QReportResponse;
-import com.Flaground.backend.module.report.controller.dto.response.ReportResponse;
+import com.Flaground.backend.module.report.controller.dto.response.*;
 import com.Flaground.backend.module.report.domain.enums.ReportType;
 import com.Flaground.backend.module.report.domain.repository.ReportRepositoryCustom;
 import com.querydsl.jpa.JPQLQueryFactory;
@@ -9,6 +8,9 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
+import static com.Flaground.backend.module.report.domain.QMemberReport.memberReport;
+import static com.Flaground.backend.module.report.domain.QPostReport.postReport;
+import static com.Flaground.backend.module.report.domain.QReplyReport.replyReport;
 import static com.Flaground.backend.module.report.domain.QReport.report;
 
 @RequiredArgsConstructor
@@ -21,20 +23,47 @@ public class ReportRepositoryImpl implements ReportRepositoryCustom {
                 .selectFrom(report)
                 .where(report.reporter.eq(reporter),
                         report.reported.eq(reported),
-                        report.reportType.eq(reportType))
+                        report.reportInfo.reportType.eq(reportType))
                 .fetchFirst() != null;
     }
 
     @Override
-    public List<ReportResponse> getReports() {
-        return queryFactory
-                .select(new QReportResponse(
-                        report.reported,
-                        report.reportType,
-                        report.reportCategory,
-                        report.detailExplanation,
-                        report.createdAt))
-                .from(report)
+    public ReportResponse getReports() {
+        return ReportResponse.of(fetchMemberReports(), fetchPostReports(), fetchReplyReports());
+    }
+
+    private List<MemberReportResponse> fetchMemberReports() {
+        return queryFactory.select(new QMemberReportResponse(
+                        memberReport.reported,
+                        memberReport.loginId,
+                        memberReport.reportInfo.reportCategory,
+                        memberReport.reportInfo.detailExplanation))
+                .from(memberReport)
+                .orderBy(memberReport.id.desc())
+                .fetch();
+    }
+
+    private List<PostReportResponse> fetchPostReports() {
+        return queryFactory.select(new QPostReportResponse(
+                        postReport.reported,
+                        postReport.postId,
+                        postReport.board,
+                        postReport.reportInfo.reportCategory,
+                        postReport.reportInfo.detailExplanation))
+                .from(postReport)
+                .orderBy(postReport.id.desc())
+                .fetch();
+    }
+
+    private List<ReplyReportResponse> fetchReplyReports() {
+        return queryFactory.select(new QReplyReportResponse(
+                        replyReport.reported,
+                        replyReport.postId,
+                        replyReport.replyId,
+                        replyReport.reportInfo.reportCategory,
+                        replyReport.reportInfo.detailExplanation))
+                .from(replyReport)
+                .orderBy(postReport.id.desc())
                 .fetch();
     }
 }
