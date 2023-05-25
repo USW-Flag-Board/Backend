@@ -21,12 +21,12 @@ public class SleepingService {
     }
 
     @Transactional
-    public void reactivateMember(String loginId) {
+    public void reactivateMember(String loginId) { // todo: 불필요한 삭제쿼리 발생
         reactiveIfPresent(loginId);
         sleepingRepository.deleteByLoginId(loginId);
     }
 
-    private void reactiveIfPresent(String loginId) {
+    private void reactiveIfPresent(String loginId) { // todo: reactive 되는지 테스트 작성하기
         sleepingRepository.findByLoginId(loginId)
                 .ifPresent(Sleeping::reactivate);
     }

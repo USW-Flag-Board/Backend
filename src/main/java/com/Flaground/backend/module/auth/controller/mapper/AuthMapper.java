@@ -3,7 +3,9 @@ package com.Flaground.backend.module.auth.controller.mapper;
 import com.Flaground.backend.global.utility.RandomGenerator;
 import com.Flaground.backend.module.auth.controller.dto.request.JoinRequest;
 import com.Flaground.backend.module.auth.domain.AuthInformation;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
 @Mapper(
         componentModel = "spring",

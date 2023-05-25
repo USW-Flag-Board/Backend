@@ -1,8 +1,8 @@
 package com.Flaground.backend.infra.aws.s3.entity;
 
-import com.Flaground.backend.module.post.domain.Post;
 import com.Flaground.backend.global.common.BaseEntity;
 import com.Flaground.backend.infra.aws.s3.entity.enums.FileStatus;
+import com.Flaground.backend.module.post.domain.Post;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

@@ -42,7 +42,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public List<PostResponse> getMemberPagePosts(String loginId) {
         Member member = memberService.findByLoginId(loginId);
-        member.isAvailable();
+        member.isWithdraw();
         return postRepository.getPostsByLoginId(loginId);
     }
 
@@ -52,14 +52,14 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public SearchResponse searchPostsWithCondition(String boardName, String keyword,
+    public SearchResponse<PostResponse> searchPostsWithCondition(String boardName, String keyword,
                                                    SearchPeriod period, SearchOption option) {
         boardService.isCorrectName(boardName);
         return postRepository.searchWithCondition(boardName, keyword, period, option);
     }
 
     @Transactional(readOnly = true) // todo: pagination
-    public SearchResponse integrationSearch(String keyword) {
+    public SearchResponse<PostResponse> integrationSearch(String keyword) {
         return postRepository.integrationSearch(keyword);
     }
 

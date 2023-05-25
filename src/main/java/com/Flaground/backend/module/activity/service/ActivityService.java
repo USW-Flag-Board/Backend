@@ -1,18 +1,13 @@
 package com.Flaground.backend.module.activity.service;
 
 import com.Flaground.backend.global.common.response.SearchResponse;
-import com.Flaground.backend.module.activity.controller.dto.response.ActivityApplyResponse;
-import com.Flaground.backend.module.activity.domain.ActivityApply;
-import com.Flaground.backend.module.activity.controller.dto.response.ActivityResponse;
-import com.Flaground.backend.module.activity.controller.dto.response.GetAllActivitiesResponse;
+import com.Flaground.backend.global.exception.CustomException;
+import com.Flaground.backend.global.exception.ErrorCode;
+import com.Flaground.backend.module.activity.controller.dto.response.*;
 import com.Flaground.backend.module.activity.domain.Activity;
-import com.Flaground.backend.module.activity.controller.dto.response.ParticipantResponse;
-import com.Flaground.backend.module.activity.controller.dto.response.ParticipateResponse;
 import com.Flaground.backend.module.activity.domain.repository.ActivityRepository;
 import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.service.MemberService;
-import com.Flaground.backend.global.exception.CustomException;
-import com.Flaground.backend.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +37,7 @@ public class ActivityService {
     @Transactional(readOnly = true)
     public List<ParticipateResponse> getMemberPageActivities(String loginId) {
         Member member = memberService.findByLoginId(loginId);
-        member.isAvailable();
+        member.isWithdraw();
         return memberActivityService.getAllActivitiesOfMember(loginId);
     }
 

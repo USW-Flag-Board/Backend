@@ -108,7 +108,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     }
 
     @Override
-    public SearchResponse integrationSearch(String keyword) {
+    public SearchResponse<PostResponse> integrationSearch(String keyword) {
         List<PostResponse> result = queryFactory
                 .select(new QPostResponse(
                         post.id,
@@ -131,7 +131,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     }
 
     @Override
-    public SearchResponse searchWithCondition(String boardName, String keyword, SearchPeriod period, SearchOption option) {
+    public SearchResponse<PostResponse> searchWithCondition(String boardName, String keyword, SearchPeriod period, SearchOption option) {
         JPAQuery<PostResponse> query = queryFactory
                 .selectDistinct(new QPostResponse(
                         post.id,

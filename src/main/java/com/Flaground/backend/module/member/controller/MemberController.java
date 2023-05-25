@@ -67,7 +67,7 @@ public class MemberController {
     @ResponseStatus(OK)
     @GetMapping("/search")
     public ApplicationResponse<SearchResponse> searchMemberByName(@RequestParam @NotBlank String name) {
-        SearchResponse response = memberService.searchMember(name);
+        SearchResponse<SearchMemberResponse> response = memberService.searchMember(name);
         return new ApplicationResponse<>(response);
     }
 
@@ -131,7 +131,7 @@ public class MemberController {
 
     @Tag(name = "member")
     @Operation(summary = "프로필 기본 이미지로 변경", description = "[토큰 필요] 기본 이미지 URL을 내려준다.")
-    @ApiResponses({})
+    @ApiResponse(responseCode = "200", description = "프로필 사진 초기화완료")
     @ResponseStatus(OK)
     @PutMapping("/avatar/reset")
     public ApplicationResponse<String> resetProfileImage() {

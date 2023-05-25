@@ -75,7 +75,7 @@ public class MemberControllerTest extends IntegrationTest {
         // then
         Member withdrawMember = memberRepository.findById(member.getId()).get();
         assertThat(withdrawMember.getStatus()).isEqualTo(MemberStatus.WITHDRAW);
-        assertThatExceptionOfType(CustomException.class).isThrownBy(withdrawMember::isAvailable);
+        assertThatExceptionOfType(CustomException.class).isThrownBy(withdrawMember::isWithdraw);
     }
 
     private void setSecurityContext(Member member) {

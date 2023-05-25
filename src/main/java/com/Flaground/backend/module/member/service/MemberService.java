@@ -36,7 +36,7 @@ public class MemberService {
     @Transactional(readOnly = true)
     public AvatarResponse getMemberPageAvatar(String loginId) {
         Member member = findByLoginId(loginId);
-        member.isAvailable();
+        member.isWithdraw();
         return AvatarResponse.of(member);
     }
 
@@ -51,7 +51,7 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public SearchResponse searchMember(String name) {
+    public SearchResponse<SearchMemberResponse> searchMember(String name) {
         return memberRepository.searchMemberByName(name);
     }
 

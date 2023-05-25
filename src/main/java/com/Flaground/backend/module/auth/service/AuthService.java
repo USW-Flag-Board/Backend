@@ -2,6 +2,7 @@ package com.Flaground.backend.module.auth.service;
 
 import com.Flaground.backend.global.exception.CustomException;
 import com.Flaground.backend.global.exception.ErrorCode;
+import com.Flaground.backend.global.exception.domain.CustomBadCredentialException;
 import com.Flaground.backend.global.jwt.JwtUtilizer;
 import com.Flaground.backend.infra.aws.ses.service.MailService;
 import com.Flaground.backend.module.auth.controller.dto.response.SignUpRequestResponse;
@@ -12,16 +13,18 @@ import com.Flaground.backend.module.member.service.MemberService;
 import com.Flaground.backend.module.token.dto.TokenResponse;
 import com.Flaground.backend.module.token.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AuthService {
     private final AuthRepository authRepository;
@@ -31,21 +34,19 @@ public class AuthService {
     private final JwtUtilizer jwtUtilizer;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
-    @Transactional(readOnly = true)
     public List<SignUpRequestResponse> getSignUpRequests() {
         return authRepository.getSignUpRequests();
     }
 
-    @Transactional(readOnly = true)
     public boolean validateDuplicateLoginId(String loginId) {
         return memberService.isExistLoginId(loginId);
     }
 
-    @Transactional(readOnly = true)
     public boolean validateDuplicateEmail(String email) {
         return memberService.isExistEmail(email);
     }
 
+    @Transactional
     public String join(AuthInformation authInformation) {
         validateDuplication(authInformation.getLoginId(), authInformation.getEmail());
         authRepository.save(authInformation);
@@ -53,6 +54,7 @@ public class AuthService {
         return authInformation.getEmail();
     }
 
+    @Transactional
     public AuthInformation signUp(String email, String certification) {
         AuthInformation authInformation = findLatestAuthInformationByEmail(email);
         authInformation.validateCertification(certification);
@@ -66,9 +68,10 @@ public class AuthService {
         return authInformation;
     }
 
+    @Transactional
     public TokenResponse login(String loginId, String password) {
         Member member = memberService.reactivateIfSleeping(loginId);
-        member.isAvailable();
+        member.isLoginnable();
 
         Authentication authentication = authenticate(loginId, password);
         TokenResponse tokenResponse = jwtUtilizer.generateTokenDto(authentication);
@@ -78,15 +81,24 @@ public class AuthService {
         return tokenResponse;
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public int loginFailed(String loginId) {
+        Member member = memberService.findByLoginId(loginId);
+        return member.loginFail();
+    }
+
+    @Transactional
     public TokenResponse reissueToken(String accessToken, String refreshToken) {
         return refreshTokenService.reissueToken(accessToken, refreshToken);
     }
 
+    @Transactional
     public AuthInformation findById(Long id) {
         return authRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.AUTH_INFORMATION_NOT_FOUND));
     }
 
+    @Transactional
     public void deleteJoinRequest(Long id) {
         authRepository.deleteById(id);
     }
@@ -103,7 +115,12 @@ public class AuthService {
     }
 
     private Authentication authenticate(String loginId, String password) {
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginId, password);
-        return authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        try {
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginId, password);
+            return authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        } catch (BadCredentialsException e) {
+            int failCount = loginFailed(loginId);
+            throw new CustomBadCredentialException(ErrorCode.PASSWORD_NOT_MATCH, failCount);
+        }
     }
 }

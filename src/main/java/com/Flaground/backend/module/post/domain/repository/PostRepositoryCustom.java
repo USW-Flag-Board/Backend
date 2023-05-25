@@ -20,7 +20,7 @@ public interface PostRepositoryCustom {
 
     List<PostResponse> getTopFiveByCondition(TopPostCondition condition);
 
-    SearchResponse integrationSearch(String keyword);
+    SearchResponse<PostResponse> integrationSearch(String keyword);
 
-    SearchResponse searchWithCondition(String boardName, String keyword, SearchPeriod period, SearchOption option);
+    SearchResponse<PostResponse> searchWithCondition(String boardName, String keyword, SearchPeriod period, SearchOption option);
 }

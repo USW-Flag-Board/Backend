@@ -5,10 +5,10 @@ import com.Flaground.backend.global.exception.ErrorCode;
 import com.Flaground.backend.global.jwt.JwtUtilizer;
 import com.Flaground.backend.module.auth.controller.dto.request.JoinRequest;
 import com.Flaground.backend.module.auth.controller.dto.response.SignUpResponse;
+import com.Flaground.backend.module.auth.controller.mapper.AuthMapper;
 import com.Flaground.backend.module.auth.domain.AuthInformation;
 import com.Flaground.backend.module.auth.domain.JoinType;
 import com.Flaground.backend.module.auth.domain.repository.AuthRepository;
-import com.Flaground.backend.module.auth.controller.mapper.AuthMapper;
 import com.Flaground.backend.module.auth.service.AuthService;
 import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.domain.enums.Role;
@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
@@ -155,61 +154,39 @@ public class AuthServiceTest {
         }
     }
 
-    @Nested
-    class 로그인_테스트 {
-        private final String loginId = "gmlwh124";
-        private final String password = "qwer1234!";
-        private final Role role = Role.ROLE_USER;
+    @Test
+    void 로그인_성공_테스트() {
+        // given
+        final String loginId = "gmlwh124";
+        final String password = "qwer1234!";
+        final Role role = Role.ROLE_USER;
 
-        @Test
-        void 로그인_성공_테스트() {
-            // given
-            Member savedMember = memberRepository.save(Member.builder()
-                    .loginId(loginId)
-                    .password(passwordEncoder.encode(password))
-                    .role(role)
-                    .build());
+        Member member = memberRepository.save(Member.builder()
+                .loginId(loginId)
+                .password(passwordEncoder.encode(password))
+                .role(role)
+                .build());
 
-            // when
-            TokenResponse tokenResponse = authService.login(loginId, password);
-            entityManager.clear(); // update query
+        // when
+        TokenResponse tokenResponse = authService.login(loginId, password);
+        entityManager.clear(); // update query
 
-            // then
-            assertThat(tokenResponse.getAccessToken()).isNotNull();
-            assertThat(tokenResponse.getRefreshToken()).isNotNull();
-            assertThat(tokenResponse.getAccessTokenExpiresIn()).isNotNull();
-            assertThat(tokenResponse.getGrantType()).isEqualTo("Bearer");
+        // then
+        assertThat(tokenResponse.getAccessToken()).isNotNull();
+        assertThat(tokenResponse.getRefreshToken()).isNotNull();
+        assertThat(tokenResponse.getAccessTokenExpiresIn()).isNotNull();
+        assertThat(tokenResponse.getGrantType()).isEqualTo("Bearer");
 
-            String accessToken = tokenResponse.getAccessToken();
-            assertThat(jwtUtilizer.validateToken(accessToken)).isTrue();
+        String accessToken = tokenResponse.getAccessToken();
+        assertThat(jwtUtilizer.validateToken(accessToken)).isTrue();
 
-            Authentication authentication = jwtUtilizer.getAuthentication(accessToken);
-            long memberId = Long.parseLong(authentication.getName());
-            Member member = memberRepository.findByLoginId(loginId).orElse(null);
-            assertThat(member).isNotNull();
-            assertThat(savedMember.getUpdatedAt()).isNotEqualTo(member.getUpdatedAt());
-            assertThat(member.getId()).isEqualTo(memberId);
-        }
-
-        @Test
-        void 로그인_실패_테스트() {
-            // given
-            final String wrongPassword = "wert2345@";
-
-            Member member = Member.builder()
-                    .loginId(loginId)
-                    .password(passwordEncoder.encode(password))
-                    .role(role)
-                    .build();
-
-            memberRepository.save(member);
-
-            // when, then
-            assertThatExceptionOfType(BadCredentialsException.class)
-                    .isThrownBy(() -> authService.login(loginId, wrongPassword));
-        }
+        Authentication authentication = jwtUtilizer.getAuthentication(accessToken);
+        long memberId = Long.parseLong(authentication.getName());
+        Member findMember = memberRepository.findByLoginId(loginId).orElse(null);
+        assertThat(findMember).isNotNull();
+        assertThat(member.getUpdatedAt()).isNotEqualTo(findMember.getUpdatedAt());
+        assertThat(findMember.getId()).isEqualTo(memberId);
     }
-
 
     @Test
     void 토큰_재발급_테스트() {

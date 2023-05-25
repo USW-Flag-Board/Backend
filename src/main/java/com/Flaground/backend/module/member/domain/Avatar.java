@@ -17,6 +17,7 @@ import javax.persistence.Enumerated;
 @Embeddable
 public class Avatar {
     private static final String DEFAULT_IMAGE = "https://flaground-s3.s3.ap-northeast-2.amazonaws.com/avatar/default_image.jpg";
+    private static final String BLANK = " ";
 
     @Column(length = 20)
     private String nickname;
@@ -48,7 +49,7 @@ public class Avatar {
                 .nickname(nickName)
                 .studentId(studentId)
                 .major(major)
-                .bio(" ")
+                .bio(BLANK)
                 .build();
     }
 
@@ -68,7 +69,7 @@ public class Avatar {
         return DEFAULT_IMAGE;
     }
 
-    public void deactivate() {
+    public void cleanUp() {
         this.studentId = null;
         this.major = null;
         this.profileImage = DEFAULT_IMAGE;
