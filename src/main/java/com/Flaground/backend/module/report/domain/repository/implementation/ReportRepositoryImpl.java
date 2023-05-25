@@ -34,6 +34,7 @@ public class ReportRepositoryImpl implements ReportRepositoryCustom {
 
     private List<MemberReportResponse> fetchMemberReports() {
         return queryFactory.select(new QMemberReportResponse(
+                        memberReport.id,
                         memberReport.reported,
                         memberReport.loginId,
                         memberReport.reportInfo.reportCategory,
@@ -45,9 +46,10 @@ public class ReportRepositoryImpl implements ReportRepositoryCustom {
 
     private List<PostReportResponse> fetchPostReports() {
         return queryFactory.select(new QPostReportResponse(
+                        postReport.id,
                         postReport.reported,
-                        postReport.postId,
                         postReport.board,
+                        postReport.postId,
                         postReport.reportInfo.reportCategory,
                         postReport.reportInfo.detailExplanation))
                 .from(postReport)
@@ -57,13 +59,14 @@ public class ReportRepositoryImpl implements ReportRepositoryCustom {
 
     private List<ReplyReportResponse> fetchReplyReports() {
         return queryFactory.select(new QReplyReportResponse(
+                        replyReport.id,
                         replyReport.reported,
                         replyReport.postId,
                         replyReport.replyId,
                         replyReport.reportInfo.reportCategory,
                         replyReport.reportInfo.detailExplanation))
                 .from(replyReport)
-                .orderBy(postReport.id.desc())
+                .orderBy(replyReport.id.desc())
                 .fetch();
     }
 }

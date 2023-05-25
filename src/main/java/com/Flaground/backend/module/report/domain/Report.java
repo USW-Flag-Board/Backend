@@ -1,7 +1,6 @@
 package com.Flaground.backend.module.report.domain;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,5 +29,9 @@ public abstract class Report {
         this.reporter = reporter;
         this.reported = reported;
         this.reportInfo = reportInfo;
+    }
+
+    public int getPenalty() {
+        return reportInfo.getReportCategory().getPenaltyPoint();
     }
 }

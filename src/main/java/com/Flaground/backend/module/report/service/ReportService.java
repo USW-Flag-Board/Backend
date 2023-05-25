@@ -9,10 +9,7 @@ import com.Flaground.backend.module.post.domain.Reply;
 import com.Flaground.backend.module.post.service.PostService;
 import com.Flaground.backend.module.post.service.ReplyService;
 import com.Flaground.backend.module.report.controller.dto.response.ReportResponse;
-import com.Flaground.backend.module.report.domain.AbstractReport;
-import com.Flaground.backend.module.report.domain.MemberReport;
-import com.Flaground.backend.module.report.domain.PostReport;
-import com.Flaground.backend.module.report.domain.ReplyReport;
+import com.Flaground.backend.module.report.domain.*;
 import com.Flaground.backend.module.report.domain.enums.ReportType;
 import com.Flaground.backend.module.report.domain.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +50,11 @@ public class ReportService {
 
     public void delete(Long reportId) {
         reportRepository.deleteById(reportId);
+    }
+
+    public Report findById(Long id) {
+        return reportRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.REPORT_NOT_FOUND));
     }
 
     private void validateDuplicate(Long reporterId, Long reportedId, ReportType reportType) {

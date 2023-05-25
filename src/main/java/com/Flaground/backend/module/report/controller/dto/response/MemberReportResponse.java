@@ -9,13 +9,16 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberReportResponse {
+    private Long id;
     private Long reported;
     private String loginId;
     private ReportCategory reportCategory;
     private String detailExplanation;
 
     @QueryProjection
-    public MemberReportResponse(Long reported, String loginId, ReportCategory reportCategory, String detailExplanation) {
+    public MemberReportResponse(Long id, Long reported, String loginId,
+                                ReportCategory reportCategory, String detailExplanation) {
+        this.id = id;
         this.reported = reported;
         this.loginId = loginId;
         this.reportCategory = reportCategory;

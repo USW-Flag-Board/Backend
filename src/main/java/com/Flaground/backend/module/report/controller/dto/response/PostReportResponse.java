@@ -9,18 +9,20 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostReportResponse {
+    private Long id;
     private Long reported;
-    private Long postId;
     private String board;
+    private Long postId;
     private ReportCategory reportCategory;
     private String detailExplanation;
 
     @QueryProjection
-    public PostReportResponse(Long reported, Long postId, String board, ReportCategory reportCategory,
-                              String detailExplanation) {
+    public PostReportResponse(Long id, Long reported, String board, Long postId,
+                              ReportCategory reportCategory, String detailExplanation) {
+        this.id = id;
         this.reported = reported;
-        this.postId = postId;
         this.board = board;
+        this.postId = postId;
         this.reportCategory = reportCategory;
         this.detailExplanation = detailExplanation;
     }

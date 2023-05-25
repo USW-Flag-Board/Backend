@@ -2,8 +2,10 @@ package com.Flaground.backend.module.report.domain.enums;
 
 import com.Flaground.backend.global.common.CustomEnumDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+@Getter
 @JsonDeserialize(using = CustomEnumDeserializer.class)
 @RequiredArgsConstructor
 public enum ReportCategory {
