@@ -4,15 +4,16 @@ import com.Flaground.backend.infra.aws.ses.MailType;
 import com.Flaground.backend.infra.aws.ses.dto.MailRequest;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-@Log4j2
+@Slf4j
 @Service
 @RequiredArgsConstructor
-public class MailService {
+public class AwsSESServiceImpl implements AwsSESService {
     private final AmazonSimpleEmailService emailService;
 
+    @Override
     public void sendCertification(String email, String result) {
         MailRequest mailRequest = MailRequest.builder()
                 .to(email)
@@ -24,6 +25,7 @@ public class MailService {
         log.info("Email sent : " + email);
     }
 
+    @Override
     public void sendFindCertification(String email, String result) {
         MailRequest mailRequest = MailRequest.builder()
                 .to(email)
@@ -35,6 +37,7 @@ public class MailService {
         log.info("Email sent : " + email);
     }
 
+    @Override
     public void sendChangeSleep(String email) {
         MailRequest mailRequest = MailRequest.builder()
                 .to(email)
