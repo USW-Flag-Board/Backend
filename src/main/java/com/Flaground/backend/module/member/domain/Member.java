@@ -104,7 +104,7 @@ public class Member extends BaseEntity {
     }
 
     public void changeProfileImage(String profileImage) {
-        this.avatar.changeProfileImage(profileImage);
+        avatar.changeProfileImage(profileImage);
     }
 
     public String resetProfileImage() {
@@ -113,6 +113,10 @@ public class Member extends BaseEntity {
 
     public void updateLoginTime() {
         super.updateModifiedDate();
+    }
+
+    public int getFailCount() {
+        return issueRecord.getLoginFailCount();
     }
 
     public void reactivate(String loginId, String password, String email, String name) {
@@ -132,20 +136,15 @@ public class Member extends BaseEntity {
         this.avatar.cleanUp();
     }
 
-    public int loginFail() {
-        return issueRecord.loginFail();
+    public void loginFail() {
+        issueRecord.increaseFailCount();
+        if (issueRecord.isMaxLoginFailCount()) {
+            lock();
+        }
     }
 
     public void applyPenalty(int penaltyPoint) {
         issueRecord.applyPenalty(penaltyPoint);
-    }
-
-    public void lock() {
-        this.status = MemberStatus.LOCKED;
-    }
-
-    public void ban() {
-        this.status = MemberStatus.BANNED;
     }
 
     public void withdraw() {
@@ -169,5 +168,13 @@ public class Member extends BaseEntity {
         if (this.status == MemberStatus.LOCKED) {
             throw new LoginFailException(ErrorCode.LOCKED_ACCOUNT);
         }
+    }
+
+    private void lock() {
+        this.status = MemberStatus.LOCKED;
+    }
+
+    private void ban() {
+        this.status = MemberStatus.BANNED;
     }
 }

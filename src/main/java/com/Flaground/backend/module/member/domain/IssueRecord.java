@@ -8,6 +8,7 @@ import javax.persistence.Embeddable;
 @Getter
 @Embeddable
 public class IssueRecord {
+    private static final int LOCK_VALUE = 5;
     private static final int START_VALUE = 0;
 
     @Column(name = "login_failed")
@@ -25,8 +26,12 @@ public class IssueRecord {
         this.penaltyPoint = START_VALUE;
     }
 
-    public int loginFail() {
-        return ++this.loginFailCount;
+    public boolean isMaxLoginFailCount() {
+        return this.loginFailCount == LOCK_VALUE;
+    }
+
+    public void increaseFailCount() {
+        this.loginFailCount++;
     }
 
     public void resetLoginFailCount() {

@@ -4,7 +4,7 @@ import com.Flaground.backend.global.exception.CustomException;
 import com.Flaground.backend.global.exception.ErrorCode;
 import com.Flaground.backend.global.exception.domain.CustomBadCredentialException;
 import com.Flaground.backend.global.jwt.JwtUtilizer;
-import com.Flaground.backend.infra.aws.ses.service.MailService;
+import com.Flaground.backend.infra.aws.ses.service.AwsSESServiceImpl;
 import com.Flaground.backend.module.auth.controller.dto.response.SignUpRequestResponse;
 import com.Flaground.backend.module.auth.domain.AuthInformation;
 import com.Flaground.backend.module.auth.domain.repository.AuthRepository;
@@ -30,7 +30,7 @@ public class AuthService {
     private final AuthRepository authRepository;
     private final MemberService memberService;
     private final RefreshTokenService refreshTokenService;
-    private final MailService mailService;
+    private final AwsSESServiceImpl mailService;
     private final JwtUtilizer jwtUtilizer;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
@@ -81,12 +81,6 @@ public class AuthService {
         return tokenResponse;
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public int loginFailed(String loginId) {
-        Member member = memberService.findByLoginId(loginId);
-        return member.loginFail();
-    }
-
     @Transactional
     public TokenResponse reissueToken(String accessToken, String refreshToken) {
         return refreshTokenService.reissueToken(accessToken, refreshToken);
@@ -119,7 +113,7 @@ public class AuthService {
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginId, password);
             return authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         } catch (BadCredentialsException e) {
-            int failCount = loginFailed(loginId);
+            int failCount = memberService. loginFailed(loginId);
             throw new CustomBadCredentialException(ErrorCode.PASSWORD_NOT_MATCH, failCount);
         }
     }
