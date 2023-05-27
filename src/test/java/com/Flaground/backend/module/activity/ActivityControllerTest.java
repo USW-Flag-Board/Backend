@@ -4,15 +4,17 @@ package com.Flaground.backend.module.activity;
 import com.Flaground.backend.common.IntegrationTest;
 import com.Flaground.backend.module.activity.controller.dto.request.CreateActivityRequest;
 import com.Flaground.backend.module.activity.controller.dto.request.UpdateActivityRequest;
+import com.Flaground.backend.module.activity.controller.mapper.ActivityMapper;
 import com.Flaground.backend.module.activity.domain.Activity;
 import com.Flaground.backend.module.activity.domain.enums.ActivityType;
 import com.Flaground.backend.module.activity.domain.enums.BookUsage;
 import com.Flaground.backend.module.activity.domain.enums.Proceed;
-import com.Flaground.backend.module.activity.controller.mapper.ActivityMapper;
 import com.Flaground.backend.module.activity.domain.repository.ActivityRepository;
 import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.domain.enums.Role;
 import com.Flaground.backend.module.member.domain.repository.MemberRepository;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class ActivityControllerTest extends IntegrationTest {
+class ActivityControllerTest extends IntegrationTest {
     private static final String BASE_URL = "/activities";
 
     @Autowired
@@ -69,9 +71,16 @@ public class ActivityControllerTest extends IntegrationTest {
         setSecurityContext(member);
     }
 
+    @AfterEach
+    void clean() {
+        activityRepository.deleteAllInBatch();
+        memberRepository.deleteAllInBatch();
+    }
+
     @Test
     public void 활동_생성_테스트() throws Exception {
         // given
+        activityRepository.deleteAllInBatch();
         setCreateActivityRequest();
 
         // when
@@ -176,6 +185,11 @@ public class ActivityControllerTest extends IntegrationTest {
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(principal, "", authorities));
     }
 
+    private void setActivity(Member member) {
+        setCreateActivityRequest();
+        activity = activityRepository.save(Activity.of(member, activityMapper.mapFrom(createActivityRequest)));
+    }
+
     private void setCreateActivityRequest() {
         final String name = "name";
         final String description = "description";
@@ -193,10 +207,5 @@ public class ActivityControllerTest extends IntegrationTest {
                 .bookUsage(bookUsage)
                 .bookName("")
                 .build();
-    }
-
-    private void setActivity(Member member) {
-        setCreateActivityRequest();
-        activity = activityRepository.save(Activity.of(member, activityMapper.mapFrom(createActivityRequest)));
     }
 }

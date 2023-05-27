@@ -13,7 +13,10 @@ import com.Flaground.backend.module.post.domain.repository.ReplyRepository;
 import com.Flaground.backend.module.report.controller.dto.request.ContentReportRequest;
 import com.Flaground.backend.module.report.controller.dto.request.MemberReportRequest;
 import com.Flaground.backend.module.report.controller.mapper.ReportMapper;
-import com.Flaground.backend.module.report.domain.*;
+import com.Flaground.backend.module.report.domain.MemberReport;
+import com.Flaground.backend.module.report.domain.PostReport;
+import com.Flaground.backend.module.report.domain.ReplyReport;
+import com.Flaground.backend.module.report.domain.Report;
 import com.Flaground.backend.module.report.domain.enums.ReportCategory;
 import com.Flaground.backend.module.report.domain.enums.ReportType;
 import com.Flaground.backend.module.report.domain.repository.ReportRepository;
@@ -40,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class ReportControllerTest extends IntegrationTest {
+class ReportControllerTest extends IntegrationTest {
     private static final String BASE_URI = "/reports";
 
     @Autowired
@@ -83,7 +86,8 @@ public class ReportControllerTest extends IntegrationTest {
 
     @AfterEach
     void cleanUp() {
-        reportRepository.deleteAll();
+        reportRepository.deleteAllInBatch();
+        memberRepository.deleteAllInBatch();
     }
 
     @Nested
@@ -92,7 +96,7 @@ public class ReportControllerTest extends IntegrationTest {
         private final ReportCategory category = ReportCategory.욕설;
         private final String detailReason = "test";
         private final ReportType reportType = ReportType.MEMBER;
-        private MemberReportRequest request = MemberReportRequest.builder()
+        private final MemberReportRequest request = MemberReportRequest.builder()
                 .loginId(loginId)
                 .reportCategory(category)
                 .detailExplanation(detailReason)
@@ -158,6 +162,11 @@ public class ReportControllerTest extends IntegrationTest {
                     .build();
         }
 
+        @AfterEach
+        void cleanPost() {
+            postRepository.deleteAllInBatch();
+        }
+
         @Test
         void 게시글_신고_성공() throws Exception {
             // given
@@ -218,6 +227,12 @@ public class ReportControllerTest extends IntegrationTest {
                     .reportCategory(category)
                     .detailExplanation(detailReason)
                     .build();
+        }
+
+        @AfterEach
+        void cleanPostAndReply() {
+            replyRepository.deleteAllInBatch();
+            postRepository.deleteAllInBatch();
         }
 
         @Test

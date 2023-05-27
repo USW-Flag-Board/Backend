@@ -14,22 +14,19 @@ import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.domain.enums.Role;
 import com.Flaground.backend.module.member.domain.repository.MemberRepository;
 import com.Flaground.backend.module.token.dto.TokenResponse;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @SpringBootTest
-@Transactional
-public class AuthServiceTest {
+class AuthServiceTest {
     @Autowired
     private AuthService authService;
 
@@ -48,8 +45,10 @@ public class AuthServiceTest {
     @Autowired
     private JwtUtilizer jwtUtilizer;
 
-    @Autowired
-    private EntityManager entityManager;
+    @AfterEach
+    void cleanUp() {
+        memberRepository.deleteAllInBatch();
+    }
 
     @Test
     void 아이디_유효성_검사_테스트() {
@@ -169,7 +168,6 @@ public class AuthServiceTest {
 
         // when
         TokenResponse tokenResponse = authService.login(loginId, password);
-        entityManager.clear(); // update query
 
         // then
         assertThat(tokenResponse.getAccessToken()).isNotNull();

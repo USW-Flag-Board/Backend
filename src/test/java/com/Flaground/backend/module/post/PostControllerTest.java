@@ -33,6 +33,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,7 +46,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class PostControllerTest extends IntegrationTest {
+@Transactional
+class PostControllerTest extends IntegrationTest {
     private static final String BASE_URI = "/posts";
 
     @Autowired
@@ -107,12 +109,12 @@ public class PostControllerTest extends IntegrationTest {
         }
 
         @Test
-        public void 비회원_게시글_가져오기_성공() throws Exception {
+        void 비회원_게시글_가져오기_성공() throws Exception {
             // given
+            clearSecurityContext();
             final String reply = "reply";
             final int viewCount = post.getViewCount();
             post.addReply(Reply.of(member, post.getId(), reply));
-            clearSecurityContext();
 
             // when
             mockMvc.perform(get(uri)

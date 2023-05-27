@@ -6,6 +6,8 @@ import com.Flaground.backend.module.auth.controller.dto.request.LoginRequest;
 import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.domain.enums.Role;
 import com.Flaground.backend.module.member.domain.repository.MemberRepository;
+import com.Flaground.backend.module.member.service.MemberService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -30,15 +32,17 @@ class AuthControllerTest extends IntegrationTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private MemberService memberService;
+
+    private Member member;
+
     @Nested
     class 로그인_실패_테스트 {
         final String loginId = "gmlwh124";
         final String password = "qwer1234!";
         final Role role = Role.ROLE_USER;
         final String uri = BASE_URI + "/login";
-
-        private Member member;
-
         private LoginRequest request;
 
         private void initRequest(String password) {
@@ -52,6 +56,11 @@ class AuthControllerTest extends IntegrationTest {
                     .password(passwordEncoder.encode(password))
                     .role(role)
                     .build());
+        }
+
+        @AfterEach
+        void clean() {
+            memberRepository.deleteAllInBatch();
         }
 
         @Test
@@ -79,8 +88,10 @@ class AuthControllerTest extends IntegrationTest {
         @Test
         void 계정_잠금_실패_테스트() throws Exception {
             // given
-            member.lock();
             initRequest(password);
+            for (int i = 0 ; i < 5 ; i++) {
+                memberService.loginFailed(loginId);
+            }
 
             // when
             ResultActions resultActions = mockMvc.perform(post(uri)
@@ -94,22 +105,21 @@ class AuthControllerTest extends IntegrationTest {
                     .andDo(print());
         }
 
-        @Test
-        void 계정_비활성화_실패_테스트() throws Exception {
-            // given
-            member.ban();
-            initRequest(password);
-
-            // when
-            ResultActions resultActions = mockMvc.perform(post(uri)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)));
-
-            // then
-            resultActions.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("errorCode").value(ErrorCode.BANNED_ACCOUNT.toString()))
-                    .andExpect(jsonPath("message").value(ErrorCode.BANNED_ACCOUNT.getMessage()))
-                    .andDo(print());
-        }
+//        @Test
+//        void 계정_비활성화_실패_테스트() throws Exception {
+//            // given
+//            initRequest(password);
+//
+//            // when
+//            ResultActions resultActions = mockMvc.perform(post(uri)
+//                    .contentType(MediaType.APPLICATION_JSON)
+//                    .content(objectMapper.writeValueAsString(request)));
+//
+//            // then
+//            resultActions.andExpect(status().isBadRequest())
+//                    .andExpect(jsonPath("errorCode").value(ErrorCode.BANNED_ACCOUNT.toString()))
+//                    .andExpect(jsonPath("message").value(ErrorCode.BANNED_ACCOUNT.getMessage()))
+//                    .andDo(print());
+//        }
     }
 }

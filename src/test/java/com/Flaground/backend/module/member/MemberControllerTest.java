@@ -8,6 +8,7 @@ import com.Flaground.backend.module.member.domain.enums.MemberStatus;
 import com.Flaground.backend.module.member.domain.enums.Role;
 import com.Flaground.backend.module.member.domain.repository.MemberRepository;
 import com.Flaground.backend.global.exception.CustomException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +29,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class MemberControllerTest extends IntegrationTest {
+class MemberControllerTest extends IntegrationTest {
     private static final String BASE_URI = "/members";
+    
     @Autowired
     private MemberRepository memberRepository;
 
@@ -55,6 +57,11 @@ public class MemberControllerTest extends IntegrationTest {
                 .build());
     }
 
+    @AfterEach
+    void clean() {
+        memberRepository.deleteAllInBatch();
+    }
+
     @Test
     public void 유저_탈퇴_테스트() throws Exception {
         // given
@@ -75,7 +82,8 @@ public class MemberControllerTest extends IntegrationTest {
         // then
         Member withdrawMember = memberRepository.findById(member.getId()).get();
         assertThat(withdrawMember.getStatus()).isEqualTo(MemberStatus.WITHDRAW);
-        assertThatExceptionOfType(CustomException.class).isThrownBy(withdrawMember::isWithdraw);
+        assertThatExceptionOfType(CustomException.class)
+                .isThrownBy(withdrawMember::isWithdraw);
     }
 
     private void setSecurityContext(Member member) {

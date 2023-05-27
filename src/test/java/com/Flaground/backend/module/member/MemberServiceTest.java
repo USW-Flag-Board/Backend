@@ -224,7 +224,7 @@ public class MemberServiceTest {
     }
 
     @Test
-    public void 휴면계정_활성화_테스트() {
+    void 휴면계정_활성화_테스트() {
         // given
         final String loginId = "gmlwh124";
         initAvatar();
