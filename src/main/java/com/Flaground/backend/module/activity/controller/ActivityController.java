@@ -1,22 +1,17 @@
 package com.Flaground.backend.module.activity.controller;
 
+import com.Flaground.backend.global.common.response.ApplicationResponse;
 import com.Flaground.backend.global.common.response.DuplicationResponse;
 import com.Flaground.backend.global.common.response.SearchResponse;
-import com.Flaground.backend.module.activity.controller.dto.response.ActivityApplyResponse;
+import com.Flaground.backend.global.utility.SecurityUtils;
+import com.Flaground.backend.global.utility.UriCreator;
 import com.Flaground.backend.module.activity.controller.dto.request.CloseRecruitRequest;
 import com.Flaground.backend.module.activity.controller.dto.request.CreateActivityRequest;
 import com.Flaground.backend.module.activity.controller.dto.request.UpdateActivityRequest;
-import com.Flaground.backend.module.activity.controller.dto.response.ActivityDetailResponse;
-import com.Flaground.backend.module.activity.controller.dto.response.ActivityResponse;
-import com.Flaground.backend.module.activity.controller.dto.response.GetAllActivitiesResponse;
-import com.Flaground.backend.module.activity.domain.Activity;
+import com.Flaground.backend.module.activity.controller.dto.response.*;
 import com.Flaground.backend.module.activity.controller.mapper.ActivityMapper;
-import com.Flaground.backend.module.activity.controller.dto.response.ParticipantResponse;
-import com.Flaground.backend.module.activity.controller.dto.response.ParticipateResponse;
+import com.Flaground.backend.module.activity.domain.Activity;
 import com.Flaground.backend.module.activity.service.ActivityService;
-import com.Flaground.backend.global.common.response.ApplicationResponse;
-import com.Flaground.backend.global.utility.SecurityUtils;
-import com.Flaground.backend.global.utility.UriCreator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

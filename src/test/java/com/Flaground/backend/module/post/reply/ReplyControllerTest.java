@@ -13,6 +13,7 @@ import com.Flaground.backend.module.post.domain.Reply;
 import com.Flaground.backend.module.post.domain.repository.LikeRepository;
 import com.Flaground.backend.module.post.domain.repository.PostRepository;
 import com.Flaground.backend.module.post.domain.repository.ReplyRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,7 +38,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class ReplyControllerTest extends IntegrationTest {
+@Transactional
+class ReplyControllerTest extends IntegrationTest {
     private static final String BASE_URI = "/posts";
 
     @Autowired

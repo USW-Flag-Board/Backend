@@ -8,7 +8,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class ReportData<T> {
+public class AbstractReport<T> {
     private T target;
     private ReportType reportType;
     private ReportCategory reportCategory;

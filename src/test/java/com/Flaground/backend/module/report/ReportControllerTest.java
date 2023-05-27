@@ -13,11 +13,14 @@ import com.Flaground.backend.module.post.domain.repository.ReplyRepository;
 import com.Flaground.backend.module.report.controller.dto.request.ContentReportRequest;
 import com.Flaground.backend.module.report.controller.dto.request.MemberReportRequest;
 import com.Flaground.backend.module.report.controller.mapper.ReportMapper;
+import com.Flaground.backend.module.report.domain.MemberReport;
+import com.Flaground.backend.module.report.domain.PostReport;
+import com.Flaground.backend.module.report.domain.ReplyReport;
 import com.Flaground.backend.module.report.domain.Report;
 import com.Flaground.backend.module.report.domain.enums.ReportCategory;
-import com.Flaground.backend.module.report.domain.ReportData;
 import com.Flaground.backend.module.report.domain.enums.ReportType;
 import com.Flaground.backend.module.report.domain.repository.ReportRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -40,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class ReportControllerTest extends IntegrationTest {
+class ReportControllerTest extends IntegrationTest {
     private static final String BASE_URI = "/reports";
 
     @Autowired
@@ -58,23 +61,33 @@ public class ReportControllerTest extends IntegrationTest {
     @Autowired
     private ReportMapper reportMapper;
 
-    private Member member;
+    private Member reporter;
+    private Member reported;
 
     @BeforeEach
     void testSetup() {
+        final String loginId = "gmlwh124";
         final String email = "gmlwh124@suwon.ac.kr";
         final String nickname = "john";
         final Role role = Role.ROLE_USER;
 
         Avatar avatar = Avatar.builder().nickname(nickname).build();
 
-        member = memberRepository.save(Member.builder()
+        reporter = memberRepository.save(Member.builder()
                 .email(email)
                 .avatar(avatar)
                 .role(role)
                 .build());
 
-        setSecurityContext(member);
+        reported = memberRepository.save(Member.builder().loginId(loginId).build());
+
+        setSecurityContext(reporter);
+    }
+
+    @AfterEach
+    void cleanUp() {
+        reportRepository.deleteAllInBatch();
+        memberRepository.deleteAllInBatch();
     }
 
     @Nested
@@ -83,21 +96,15 @@ public class ReportControllerTest extends IntegrationTest {
         private final ReportCategory category = ReportCategory.욕설;
         private final String detailReason = "test";
         private final ReportType reportType = ReportType.MEMBER;
-        private MemberReportRequest request = MemberReportRequest.builder()
-                .target(loginId)
+        private final MemberReportRequest request = MemberReportRequest.builder()
+                .loginId(loginId)
                 .reportCategory(category)
                 .detailExplanation(detailReason)
                 .build();
         private final String uri = BASE_URI + "/member";
-        private Member reported;
-
-        @BeforeEach
-        private void testSetup() {
-            reported = memberRepository.save(Member.builder().loginId(loginId).build());
-        }
 
         @Test
-        public void 멤버_신고_성공() throws Exception {
+        void 멤버_신고_성공() throws Exception {
             // given
 
             // when
@@ -108,20 +115,18 @@ public class ReportControllerTest extends IntegrationTest {
                     .andDo(print());
 
             // then
-            ReportData<String> reportData = reportMapper.mapFrom(request);
-            assertThat(reportData.getReportType()).isEqualTo(reportType);
-
-            Report report = reportRepository.findAll().get(0);
-            assertThat(report.getReporter()).isEqualTo(member.getId());
-            assertThat(report.getReported()).isEqualTo(reported.getId());
-            assertThat(report.getReportCategory()).isEqualTo(category);
-            assertThat(report.getDetailExplanation()).isEqualTo(detailReason);
+            MemberReport report = (MemberReport) reportRepository.findAll().get(0);
+            assertThat(report.getLoginId()).isEqualTo(loginId);
+            assertThat(report.getReportInfo().getReportType()).isEqualTo(reportType);
+            assertThat(report.getReportInfo().getReportCategory()).isEqualTo(category);
+            assertThat(report.getReportInfo().getDetailExplanation()).isEqualTo(detailReason);
         }
 
         @Test
-        public void 멤버_신고_실패() throws Exception {
+        void 멤버_신고_실패() throws Exception {
             // given
-            reportRepository.save(Report.member(member.getId(), reported.getId(), reportMapper.mapFrom(request)));
+            Report report = MemberReport.of(reporter.getId(), reported.getId(), reportMapper.mapFrom(request));
+            reportRepository.save(report);
 
             // when
             ResultActions resultActions = mockMvc.perform(post(uri)
@@ -142,13 +147,13 @@ public class ReportControllerTest extends IntegrationTest {
         private final ReportCategory category = ReportCategory.도배;
         private final String detailReason = "test";
         private final ReportType reportType = ReportType.POST;
-        private final String uri = BASE_URI + "/content";
+        private final String uri = BASE_URI + "/post";
         private Post post;
         private ContentReportRequest request;
 
         @BeforeEach
         void testSetup() {
-            post = postRepository.save(Post.builder().build());
+            post = postRepository.save(Post.builder().member(reported).build());
             request = ContentReportRequest.builder()
                     .target(post.getId())
                     .reportType(reportType)
@@ -157,8 +162,13 @@ public class ReportControllerTest extends IntegrationTest {
                     .build();
         }
 
+        @AfterEach
+        void cleanPost() {
+            postRepository.deleteAllInBatch();
+        }
+
         @Test
-        public void 게시글_신고_성공() throws Exception {
+        void 게시글_신고_성공() throws Exception {
             // given
 
             // when
@@ -169,21 +179,19 @@ public class ReportControllerTest extends IntegrationTest {
                     .andDo(print());
 
             // then
-            ReportData<Long> reportData = reportMapper.mapFrom(request);
-            assertThat(reportData.getTarget()).isEqualTo(post.getId());
-            assertThat(reportData.getReportType()).isEqualTo(reportType);
-            assertThat(reportData.getReportCategory()).isEqualTo(category);
-            assertThat(reportData.getDetailExplanation()).isEqualTo(detailReason);
-
-            Report report = reportRepository.findAll().get(0);
-            assertThat(report.getReporter()).isEqualTo(member.getId());
-            assertThat(report.getReported()).isEqualTo(post.getId());
+            PostReport report = (PostReport) reportRepository.findAll().get(0);
+            assertThat(report.getPostId()).isEqualTo(post.getId());
+            assertThat(report.getReportInfo().getReportType()).isEqualTo(reportType);
+            assertThat(report.getReportInfo().getReportCategory()).isEqualTo(category);
+            assertThat(report.getReportInfo().getDetailExplanation()).isEqualTo(detailReason);
         }
 
         @Test
-        public void 게시글_신고_실패() throws Exception {
+        void 게시글_신고_실패() throws Exception {
             // given
-            reportRepository.save(Report.content(member.getId(), reportMapper.mapFrom(request)));
+            final String board = "자유게시판";
+            Report report = PostReport.of(reporter.getId(), reported.getId(), board, reportMapper.mapFrom(request));
+            reportRepository.save(report);
 
             // when
             ResultActions resultActions = mockMvc.perform(post(uri)
@@ -204,19 +212,27 @@ public class ReportControllerTest extends IntegrationTest {
         private final ReportCategory category = ReportCategory.홍보;
         private final String detailReason = "test";
         private final ReportType reportType = ReportType.REPLY;
-        private final String uri = BASE_URI + "/content";
+        private final String uri = BASE_URI + "/reply";
+        private Post post;
         private Reply reply;
         private ContentReportRequest request;
 
         @BeforeEach
         void testSetup() {
-            reply = replyRepository.save(Reply.builder().build());
+            post = postRepository.save(Post.builder().member(reporter).build());
+            reply = replyRepository.save(Reply.of(reported, post.getId(), "test"));
             request = ContentReportRequest.builder()
                     .target(reply.getId())
                     .reportType(reportType)
                     .reportCategory(category)
                     .detailExplanation(detailReason)
                     .build();
+        }
+
+        @AfterEach
+        void cleanPostAndReply() {
+            replyRepository.deleteAllInBatch();
+            postRepository.deleteAllInBatch();
         }
 
         @Test
@@ -231,21 +247,19 @@ public class ReportControllerTest extends IntegrationTest {
                     .andDo(print());
 
             // then
-            ReportData<Long> reportData = reportMapper.mapFrom(request);
-            assertThat(reportData.getTarget()).isEqualTo(reply.getId());
-            assertThat(reportData.getReportType()).isEqualTo(reportType);
-            assertThat(reportData.getReportCategory()).isEqualTo(category);
-            assertThat(reportData.getDetailExplanation()).isEqualTo(detailReason);
-
-            Report report = reportRepository.findAll().get(0);
-            assertThat(report.getReporter()).isEqualTo(member.getId());
-            assertThat(report.getReported()).isEqualTo(reply.getId());
+            ReplyReport report = (ReplyReport) reportRepository.findAll().get(0);
+            assertThat(report.getPostId()).isEqualTo(post.getId());
+            assertThat(report.getReplyId()).isEqualTo(reply.getId());
+            assertThat(report.getReportInfo().getReportType()).isEqualTo(reportType);
+            assertThat(report.getReportInfo().getReportCategory()).isEqualTo(category);
+            assertThat(report.getReportInfo().getDetailExplanation()).isEqualTo(detailReason);
         }
 
         @Test
         public void 댓글_신고_실패() throws Exception {
             // given
-            reportRepository.save(Report.content(member.getId(), reportMapper.mapFrom(request)));
+            Report report = ReplyReport.of(reporter.getId(), reported.getId(), post.getId(), reportMapper.mapFrom(request));
+            reportRepository.save(report);
 
             // when
             ResultActions resultActions = mockMvc.perform(post(uri)

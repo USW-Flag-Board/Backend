@@ -45,8 +45,8 @@ public class AdminController {
     @Tag(name = "admin")
     @ResponseStatus(OK)
     @GetMapping("/reports")
-    public ApplicationResponse<List<ReportResponse>> getReports() {
-        List<ReportResponse> responses = adminService.getReports();
+    public ApplicationResponse<ReportResponse> getReports() {
+        ReportResponse responses = adminService.getReports();
         return new ApplicationResponse<>(responses);
     }
 

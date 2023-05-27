@@ -5,8 +5,8 @@ import com.Flaground.backend.global.exception.CustomException;
 import com.Flaground.backend.global.exception.ErrorCode;
 import com.Flaground.backend.global.utility.RandomGenerator;
 import com.Flaground.backend.infra.aws.s3.entity.enums.FileDirectory;
-import com.Flaground.backend.infra.aws.s3.service.AwsS3Service;
-import com.Flaground.backend.infra.aws.ses.service.MailService;
+import com.Flaground.backend.infra.aws.s3.service.AwsS3ServiceImpl;
+import com.Flaground.backend.infra.aws.ses.service.AwsSESServiceImpl;
 import com.Flaground.backend.module.member.controller.dto.response.*;
 import com.Flaground.backend.module.member.domain.Avatar;
 import com.Flaground.backend.module.member.domain.JoinMember;
@@ -17,6 +17,7 @@ import com.Flaground.backend.module.token.service.RecoveryTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,14 +30,14 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final RecoveryTokenService recoveryTokenService;
     private final SleepingService sleepingService;
-    private final MailService mailService;
-    private final AwsS3Service awsS3Service;
+    private final AwsSESServiceImpl mailService;
+    private final AwsS3ServiceImpl awsS3Service;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public AvatarResponse getMemberPageAvatar(String loginId) {
         Member member = findByLoginId(loginId);
-        member.isAvailable();
+        member.isWithdraw();
         return AvatarResponse.of(member);
     }
 
@@ -51,7 +52,7 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public SearchResponse searchMember(String name) {
+    public SearchResponse<SearchMemberResponse> searchMember(String name) {
         return memberRepository.searchMemberByName(name);
     }
 
@@ -63,6 +64,13 @@ public class MemberService {
     @Transactional(readOnly = true)
     public boolean isExistEmail(String email) {
         return memberRepository.existsByEmail(email) || sleepingService.existsByEmail(email);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public int loginFailed(String loginId) {
+        Member member = findByLoginId(loginId);
+        member.loginFail();
+        return member.getFailCount();
     }
 
     public void withdraw(Long memberId, String password) {
@@ -106,7 +114,7 @@ public class MemberService {
     }
 
     public Member reactivateIfSleeping(String loginId) {
-        sleepingService.reactivateMember(loginId);
+        sleepingService.reactiveIfSleeping(loginId);
         return findByLoginId(loginId);
     }
 

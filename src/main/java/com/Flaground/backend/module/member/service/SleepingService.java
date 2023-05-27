@@ -1,6 +1,5 @@
 package com.Flaground.backend.module.member.service;
 
-import com.Flaground.backend.module.member.domain.Sleeping;
 import com.Flaground.backend.module.member.domain.repository.SleepingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,13 +20,11 @@ public class SleepingService {
     }
 
     @Transactional
-    public void reactivateMember(String loginId) {
-        reactiveIfPresent(loginId);
-        sleepingRepository.deleteByLoginId(loginId);
-    }
-
-    private void reactiveIfPresent(String loginId) {
+    public void reactiveIfSleeping(String loginId) {
         sleepingRepository.findByLoginId(loginId)
-                .ifPresent(Sleeping::reactivate);
+                .ifPresent(sleeping -> {
+                    sleeping.reactivate();
+                    sleepingRepository.deleteByLoginId(loginId);
+                });
     }
 }

@@ -2,8 +2,8 @@ package com.Flaground.backend.module.report.controller;
 
 import com.Flaground.backend.global.common.response.ApplicationResponse;
 import com.Flaground.backend.global.utility.SecurityUtils;
-import com.Flaground.backend.module.report.controller.dto.request.ContentReportRequest;
 import com.Flaground.backend.module.report.controller.dto.request.MemberReportRequest;
+import com.Flaground.backend.module.report.controller.dto.request.ContentReportRequest;
 import com.Flaground.backend.module.report.controller.mapper.ReportMapper;
 import com.Flaground.backend.module.report.service.ReportService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,15 +40,30 @@ public class ReportController {
     }
 
     @Tag(name = "report")
-    @Operation(summary = "게시글/댓글 신고하기", description = "[토큰필요] type을 지정해줘야한다.")
+    @Operation(summary = "게시글 신고하기", description = "[토큰필요] type을 지정해줘야한다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "신고 완료"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글입니다."),
             @ApiResponse(responseCode = "409", description = "이미 신고한 대상입니다.")
     })
     @ResponseStatus(CREATED)
-    @PostMapping("/content")
-    public ApplicationResponse reportContent(@RequestBody @Valid ContentReportRequest request) {
-        reportService.reportContent(SecurityUtils.getMemberId(), reportMapper.mapFrom(request));
+    @PostMapping("/post")
+    public ApplicationResponse reportPost(@RequestBody @Valid ContentReportRequest request) {
+        reportService.reportPost(SecurityUtils.getMemberId(), reportMapper.mapFrom(request));
+        return new ApplicationResponse<>();
+    }
+
+    @Tag(name = "report")
+    @Operation(summary = "댓글 신고하기", description = "[토큰필요] type을 지정해줘야한다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "신고 완료"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 댓글입니다."),
+            @ApiResponse(responseCode = "409", description = "이미 신고한 대상입니다.")
+    })
+    @ResponseStatus(CREATED)
+    @PostMapping("/reply")
+    public ApplicationResponse reportReply(@RequestBody @Valid ContentReportRequest request) {
+        reportService.reportReply(SecurityUtils.getMemberId(), reportMapper.mapFrom(request));
         return new ApplicationResponse<>();
     }
 }

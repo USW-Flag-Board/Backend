@@ -8,6 +8,7 @@ import com.Flaground.backend.module.member.domain.Avatar;
 import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.domain.enums.Role;
 import com.Flaground.backend.module.member.domain.repository.MemberRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class BoardControllerTest extends IntegrationTest {
+class BoardControllerTest extends IntegrationTest {
     private static final String BASE_URI = "/boards";
     @Autowired
     private MemberRepository memberRepository;
@@ -57,6 +58,12 @@ public class BoardControllerTest extends IntegrationTest {
 
         board = boardRepository.save(Board.builder().boardType(boardType).name(boardName).build());
         setSecurityContext(member);
+    }
+
+    @AfterEach
+    void clean() {
+        memberRepository.deleteAllInBatch();
+        boardRepository.deleteAllInBatch();
     }
 
     @Test

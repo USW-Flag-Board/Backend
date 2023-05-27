@@ -1,12 +1,15 @@
 package com.Flaground.backend.module.activity.controller.mapper;
 
-import com.Flaground.backend.module.activity.controller.dto.request.CreateActivityRequest;
 import com.Flaground.backend.module.activity.controller.dto.request.ActivityInfoRequest;
+import com.Flaground.backend.module.activity.controller.dto.request.CreateActivityRequest;
 import com.Flaground.backend.module.activity.controller.dto.request.UpdateActivityRequest;
 import com.Flaground.backend.module.activity.controller.dto.response.ActivityDetailResponse;
 import com.Flaground.backend.module.activity.domain.Activity;
 import com.Flaground.backend.module.activity.domain.ActivityInfo;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
+import org.mapstruct.ReportingPolicy;
 
 @Mapper(
         componentModel = "spring",

@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ErrorCode {
     /** 400 - BAD_REQUEST */
-    REQUEST_VALIDATION_FAIL(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
+    REQUEST_VALIDATION_FAIL(HttpStatus.BAD_REQUEST, "잘못된 요청값입니다."),
+    LOCKED_ACCOUNT(HttpStatus.BAD_REQUEST, "잠겨있는 계정입니다. 비밀번호를 재설정하기 바랍니다."),
+    BANNED_ACCOUNT(HttpStatus.BAD_REQUEST, "일시정지된 계정입니다."),
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않는 토큰입니다."),
     EXPIRED_AUTHENTICATION_TIME(HttpStatus.BAD_REQUEST, "인증 시간이 만료되었습니다."),
     UNAVAILABLE_ACCOUNT(HttpStatus.BAD_REQUEST, "사용할 수 없는 계정입니다."),

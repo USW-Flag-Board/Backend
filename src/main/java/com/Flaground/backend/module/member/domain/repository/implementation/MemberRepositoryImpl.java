@@ -72,7 +72,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
     }
 
     @Override
-    public SearchResponse searchMemberByName(String name) {
+    public SearchResponse<SearchMemberResponse> searchMemberByName(String name) {
         List<SearchMemberResponse> responses = queryFactory
                 .select(new QSearchMemberResponse(
                         member.loginId,
@@ -87,6 +87,6 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
     }
 
     private BooleanExpression isAvailableMember() {
-        return member.status.in(MemberStatus.NORMAL, MemberStatus.WATCHING);
+        return member.status.eq(MemberStatus.NORMAL);
     }
 }

@@ -1,23 +1,22 @@
 package com.Flaground.backend.module.activity;
 
+import com.Flaground.backend.global.exception.CustomException;
+import com.Flaground.backend.global.exception.ErrorCode;
 import com.Flaground.backend.module.activity.controller.dto.response.ActivityApplyResponse;
-import com.Flaground.backend.module.activity.domain.ActivityApply;
-import com.Flaground.backend.module.activity.domain.repository.ActivityApplyRepository;
 import com.Flaground.backend.module.activity.controller.dto.response.GetAllActivitiesResponse;
+import com.Flaground.backend.module.activity.controller.dto.response.ParticipantResponse;
 import com.Flaground.backend.module.activity.domain.Activity;
+import com.Flaground.backend.module.activity.domain.ActivityApply;
 import com.Flaground.backend.module.activity.domain.ActivityInfo;
 import com.Flaground.backend.module.activity.domain.enums.ActivityStatus;
 import com.Flaground.backend.module.activity.domain.enums.ActivityType;
 import com.Flaground.backend.module.activity.domain.enums.Proceed;
-import com.Flaground.backend.module.activity.controller.mapper.ActivityMapper;
-import com.Flaground.backend.module.activity.controller.dto.response.ParticipantResponse;
-import com.Flaground.backend.module.activity.domain.repository.MemberActivityRepository;
+import com.Flaground.backend.module.activity.domain.repository.ActivityApplyRepository;
 import com.Flaground.backend.module.activity.domain.repository.ActivityRepository;
+import com.Flaground.backend.module.activity.domain.repository.MemberActivityRepository;
 import com.Flaground.backend.module.activity.service.ActivityService;
 import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.domain.repository.MemberRepository;
-import com.Flaground.backend.global.exception.CustomException;
-import com.Flaground.backend.global.exception.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -52,9 +51,6 @@ public class ActivityServiceTest {
 
     @Autowired
     private MemberRepository memberRepository;
-
-    @Autowired
-    private ActivityMapper activityMapper;
 
     @Autowired
     private EntityManager entityManager;

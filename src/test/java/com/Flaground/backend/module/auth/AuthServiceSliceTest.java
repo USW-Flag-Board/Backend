@@ -7,7 +7,7 @@ import com.Flaground.backend.module.auth.domain.AuthInformation;
 import com.Flaground.backend.module.auth.domain.repository.AuthRepository;
 import com.Flaground.backend.module.auth.service.AuthService;
 import com.Flaground.backend.module.member.service.MemberService;
-import com.Flaground.backend.infra.aws.ses.service.MailService;
+import com.Flaground.backend.infra.aws.ses.service.AwsSESServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -21,7 +21,7 @@ public class AuthServiceSliceTest extends MockServiceTest {
     private AuthService authService;
 
     @Mock
-    private MailService mailService;
+    private AwsSESServiceImpl mailService;
 
     @Mock
     private AuthRepository authRepository;

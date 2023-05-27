@@ -104,7 +104,7 @@ public class PostController {
     @ResponseStatus(OK)
     @GetMapping("/search")
     public ApplicationResponse<SearchResponse> searchPostsWithCondition(@ModelAttribute @Valid SearchRequest request) {
-        SearchResponse responses = postService
+        SearchResponse<PostResponse> responses = postService
                 .searchPostsWithCondition(request.getBoard(), request.getKeyword(), request.getPeriod(), request.getOption());
         return new ApplicationResponse<>(responses);
     }
@@ -114,7 +114,7 @@ public class PostController {
     @ResponseStatus(OK)
     @GetMapping("/integration-search")
     public ApplicationResponse<SearchResponse> integrationSearch(@RequestParam @NotBlank String keyword) {
-        SearchResponse response = postService.integrationSearch(keyword);
+        SearchResponse<PostResponse> response = postService.integrationSearch(keyword);
         return new ApplicationResponse<>(response);
     }
 

@@ -1,8 +1,8 @@
 package com.Flaground.backend.global.exception;
 
+import com.Flaground.backend.global.exception.domain.CustomBadCredentialException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -27,13 +27,13 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 로그인 실패로 던져지는 예외 핸들러 (비활성, 잠금 예외는 제외)
+     * 로그인 실패(비밀번호 불일치)를 처리하는 예외 핸들러
      */
-    @ExceptionHandler(BadCredentialsException.class)
+    @ExceptionHandler(CustomBadCredentialException.class)
     @ResponseStatus(BAD_REQUEST)
-    public ErrorResponse handleBadCredentialsException(BadCredentialsException e) {
-        log.error("LoginFailed (BadCredentials) : {}", e.getMessage());
-        return new ErrorResponse(ErrorCode.PASSWORD_NOT_MATCH);
+    public ErrorResponse handleBadCredentialsException(CustomBadCredentialException e) {
+        log.error("LoginFailed (BadCredential) : {}", e.getMessage());
+        return new ErrorResponse(e);
     }
 
     /**

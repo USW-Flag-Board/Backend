@@ -3,6 +3,7 @@ package com.Flaground.backend.module.member.domain;
 import com.Flaground.backend.global.common.BaseEntity;
 import com.Flaground.backend.global.exception.CustomException;
 import com.Flaground.backend.global.exception.ErrorCode;
+import com.Flaground.backend.global.exception.domain.LoginFailException;
 import com.Flaground.backend.module.member.domain.enums.MemberStatus;
 import com.Flaground.backend.module.member.domain.enums.Role;
 import lombok.AccessLevel;
@@ -38,6 +39,9 @@ public class Member extends BaseEntity {
     @Embedded
     private Avatar avatar;
 
+    @Embedded
+    private IssueRecord issueRecord;
+
     @Enumerated(EnumType.STRING)
     @Column
     private Role role;
@@ -53,14 +57,21 @@ public class Member extends BaseEntity {
         this.email = email;
         this.name = name;
         this.avatar = avatar;
+        this.issueRecord = new IssueRecord();
         this.role = role;
         this.status = MemberStatus.NORMAL;
     }
 
-    public void isAvailable() {
-        if (this.status == MemberStatus.WITHDRAW || this.status == MemberStatus.BANNED) {
+    public void isWithdraw() {
+        if (this.status == MemberStatus.WITHDRAW) {
             throw new CustomException(ErrorCode.UNAVAILABLE_ACCOUNT);
         }
+    }
+
+    public void isLoginnable() {
+        isBanned();
+        isLocked();
+        isWithdraw();
     }
 
     public void validateName(String name) {
@@ -89,10 +100,11 @@ public class Member extends BaseEntity {
 
     public void updatePassword(String password, PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(password);
+        unLock();
     }
 
     public void changeProfileImage(String profileImage) {
-        this.avatar.changeProfileImage(profileImage);
+        avatar.changeProfileImage(profileImage);
     }
 
     public String resetProfileImage() {
@@ -101,6 +113,10 @@ public class Member extends BaseEntity {
 
     public void updateLoginTime() {
         super.updateModifiedDate();
+    }
+
+    public int getFailCount() {
+        return issueRecord.getLoginFailCount();
     }
 
     public void reactivate(String loginId, String password, String email, String name) {
@@ -117,10 +133,48 @@ public class Member extends BaseEntity {
         this.password = null;
         this.email = null;
         this.name = null;
-        this.avatar.deactivate();
+        this.avatar.cleanUp();
+    }
+
+    public void loginFail() {
+        issueRecord.increaseFailCount();
+        if (issueRecord.isMaxLoginFailCount()) {
+            lock();
+        }
+    }
+
+    public void applyPenalty(int penaltyPoint) {
+        issueRecord.applyPenalty(penaltyPoint);
     }
 
     public void withdraw() {
         this.status = MemberStatus.WITHDRAW;
+    }
+
+    private void unLock() {
+        if (this.status == MemberStatus.LOCKED) {
+            this.status = MemberStatus.NORMAL;
+            issueRecord.resetLoginFailCount();
+        }
+    }
+
+    private void isBanned() {
+        if (this.status == MemberStatus.BANNED) {
+            throw new LoginFailException(ErrorCode.BANNED_ACCOUNT);
+        }
+    }
+
+    private void isLocked() {
+        if (this.status == MemberStatus.LOCKED) {
+            throw new LoginFailException(ErrorCode.LOCKED_ACCOUNT);
+        }
+    }
+
+    private void lock() {
+        this.status = MemberStatus.LOCKED;
+    }
+
+    private void ban() {
+        this.status = MemberStatus.BANNED;
     }
 }

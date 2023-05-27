@@ -1,8 +1,10 @@
 package com.Flaground.backend.module.token.domain;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
 import java.time.LocalDateTime;
 
 @Entity

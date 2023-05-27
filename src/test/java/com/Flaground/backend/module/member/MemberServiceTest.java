@@ -99,7 +99,7 @@ public class MemberServiceTest {
             Member findMember = memberRepository.findById(savedMember.getId()).get();
             assertThat(findMember.getStatus()).isEqualTo(withdraw);
             assertThatExceptionOfType(CustomException.class)
-                    .isThrownBy(findMember::isAvailable)
+                    .isThrownBy(findMember::isWithdraw)
                     .withMessage(ErrorCode.UNAVAILABLE_ACCOUNT.getMessage());
         }
 
@@ -224,7 +224,7 @@ public class MemberServiceTest {
     }
 
     @Test
-    public void 휴면계정_활성화_테스트() {
+    void 휴면계정_활성화_테스트() {
         // given
         final String loginId = "gmlwh124";
         initAvatar();
@@ -244,31 +244,6 @@ public class MemberServiceTest {
         assertThat(reactivateMember.getAvatar().getStudentId()).isNull();
         assertThat(reactivateMember.getAvatar().getMajor()).isNull();
     }
-
-//    @Test
-//    @DisplayName("로그보기")
-//    void viewLogTest() {
-//        //given
-//        String loginId = "minjung123";
-//        String name = "김민정";
-//        LocalDateTime lastLoginTime = LocalDateTime.of(2023,2,5,2,59);
-//
-//        Member member = memberRepository.save(Member.builder()
-//                .loginId(loginId)
-//                .name(name)
-//                .lastLoginTime(lastLoginTime)
-//                .build());
-//
-//        //when
-//        List<LoginLogResponse> memberList = memberService.getAllLoginLogs();
-//
-//        //then
-//        LoginLogResponse testMember = memberList.get(0);
-//
-//        assertThat(testMember.getId()).isEqualTo(member.getId());
-//        assertThat(testMember.getName()).isEqualTo(member.getName());
-//        assertThat(testMember.getLastLoginTime()).isEqualTo(member.getLastLoginTime());
-//    }
 
     private void initAvatar() {
         final String nickname = "john";

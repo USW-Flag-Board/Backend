@@ -6,8 +6,10 @@ import com.Flaground.backend.module.auth.service.AuthService;
 import com.Flaground.backend.module.board.domain.Board;
 import com.Flaground.backend.module.board.service.BoardService;
 import com.Flaground.backend.module.member.controller.dto.response.LoginLogResponse;
+import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.service.MemberService;
 import com.Flaground.backend.module.report.controller.dto.response.ReportResponse;
+import com.Flaground.backend.module.report.domain.Report;
 import com.Flaground.backend.module.report.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,7 +37,7 @@ public class AdminService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReportResponse> getReports() {
+    public ReportResponse getReports() {
         return reportService.getReports();
     }
 
@@ -59,5 +61,12 @@ public class AdminService {
 
     public void deleteBoard(String boardName) {
         boardService.delete(boardName);
+    }
+
+    public void handleReport(Long reportId) {
+        Report report = reportService.findById(reportId);
+        Member member = memberService.findById(report.getReported());
+        member.applyPenalty(report.getPenalty());
+        reportService.delete(reportId);
     }
 }

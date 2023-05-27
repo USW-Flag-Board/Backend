@@ -2,7 +2,7 @@ package com.Flaground.backend.module.member;
 
 import com.Flaground.backend.common.MockServiceTest;
 import com.Flaground.backend.global.utility.RandomGenerator;
-import com.Flaground.backend.infra.aws.ses.service.MailService;
+import com.Flaground.backend.infra.aws.ses.service.AwsSESServiceImpl;
 import com.Flaground.backend.module.member.controller.dto.response.RecoveryResponse;
 import com.Flaground.backend.module.member.controller.dto.response.RecoveryResultResponse;
 import com.Flaground.backend.module.member.domain.Member;
@@ -29,7 +29,7 @@ public class MemberServiceSliceTest extends MockServiceTest {
     private MemberService memberService;
 
     @Mock
-    private MailService mailService;
+    private AwsSESServiceImpl mailService;
 
     @Mock
     private MemberRepository memberRepository;

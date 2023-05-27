@@ -1,29 +1,23 @@
 package com.Flaground.backend.module.report.controller.dto.response;
 
-import com.Flaground.backend.module.report.domain.enums.ReportCategory;
-import com.Flaground.backend.module.report.domain.enums.ReportType;
-import com.querydsl.core.annotations.QueryProjection;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class ReportResponse {
-    private Long reported;
-    private String type;
-    private String category;
-    private String detailReason;
-    private LocalDateTime createdAt;
+    private List<MemberReportResponse> memberReportResponses;
+    private List<PostReportResponse> postReportResponses;
+    private List<ReplyReportResponse> replyReportResponses;
 
-    @QueryProjection
-    public ReportResponse(Long reported, ReportType type, ReportCategory category, String detailReason, LocalDateTime createdAt) {
-        this.reported = reported;
-        this.type = type.getType();
-        this.category = category.toString();
-        this.detailReason = detailReason;
-        this.createdAt = createdAt;
+    public static ReportResponse of(List<MemberReportResponse> memberReportResponses,
+                                    List<PostReportResponse> postReportResponses,
+                                    List<ReplyReportResponse> replyReportResponses) {
+        return new ReportResponse(memberReportResponses, postReportResponses, replyReportResponses);
     }
 }

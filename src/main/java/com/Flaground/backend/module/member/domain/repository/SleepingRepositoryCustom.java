@@ -1,7 +1,6 @@
 package com.Flaground.backend.module.member.domain.repository;
 
 import com.Flaground.backend.module.member.domain.Sleeping;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
