@@ -83,6 +83,7 @@ public class JwtUtilizer {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
+    // todo: 예외로 바꾸기
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);

@@ -83,7 +83,7 @@ class PostControllerTest extends IntegrationTest {
                 .role(role)
                 .build());
 
-        board = boardRepository.save(Board.builder().boardType(BoardType.main).name("자유게시판").build());
+        board = boardRepository.save(Board.builder().boardType(BoardType.MAIN).name("자유게시판").build());
 
         setSecurityContext(member);
     }

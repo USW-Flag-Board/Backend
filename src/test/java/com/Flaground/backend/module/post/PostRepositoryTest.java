@@ -166,7 +166,7 @@ public class PostRepositoryTest extends RepositoryTest {
         @BeforeEach
         void setup() {
             board = boardRepository.save(Board.builder()
-                    .boardType(BoardType.main)
+                    .boardType(BoardType.MAIN)
                     .name(boardName)
                     .build());
         }

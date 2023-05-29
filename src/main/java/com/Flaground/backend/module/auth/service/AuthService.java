@@ -4,7 +4,7 @@ import com.Flaground.backend.global.exception.CustomException;
 import com.Flaground.backend.global.exception.ErrorCode;
 import com.Flaground.backend.global.exception.domain.CustomBadCredentialException;
 import com.Flaground.backend.global.jwt.JwtUtilizer;
-import com.Flaground.backend.infra.aws.ses.service.AwsSESServiceImpl;
+import com.Flaground.backend.infra.aws.ses.service.AwsSESService;
 import com.Flaground.backend.module.auth.controller.dto.response.SignUpRequestResponse;
 import com.Flaground.backend.module.auth.domain.AuthInformation;
 import com.Flaground.backend.module.auth.domain.repository.AuthRepository;
@@ -31,7 +31,7 @@ public class AuthService {
     private final MemberService memberService;
     private final RefreshTokenService refreshTokenService;
     private final BlackListService blackListService;
-    private final AwsSESServiceImpl mailService;
+    private final AwsSESService mailService;
     private final JwtUtilizer jwtUtilizer;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 

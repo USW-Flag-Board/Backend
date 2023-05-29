@@ -1,10 +1,8 @@
-package com.Flaground.backend.infra.aws.s3.entity;
+package com.Flaground.backend.infra.aws.s3.domain;
 
 import com.Flaground.backend.global.common.BaseEntity;
-import com.Flaground.backend.infra.aws.s3.entity.enums.FileStatus;
 import com.Flaground.backend.module.post.domain.Post;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,7 +11,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class File extends BaseEntity {
+public class Image extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,16 +21,10 @@ public class File extends BaseEntity {
     private Post post;
 
     @Column
-    private String url;
+    private String key;
 
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private FileStatus status;
-
-    @Builder
-    public File(Post post, String url, FileStatus status) {
+    public Image(Post post, String key) {
         this.post = post;
-        this.url = url;
-        this.status = status;
+        this.key = key;
     }
 }

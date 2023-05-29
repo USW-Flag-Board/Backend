@@ -52,7 +52,7 @@ public class PostServiceTest {
                 .build());
 
         final String boardName = "자유 게시판";
-        final BoardType boardType = BoardType.main;
+        final BoardType boardType = BoardType.MAIN;
 
         boardRepository.saveAndFlush(Board.builder()
                 .name(boardName)

@@ -20,7 +20,7 @@ public class BoardRepositoryTest extends RepositoryTest {
     public void 게시판_목록_가져오기_테스트() {
         // given
         final String boardName = "자유게시판";
-        final BoardType boardType = BoardType.main;
+        final BoardType boardType = BoardType.MAIN;
 
         Board board = boardRepository.save(Board.builder().name(boardName).boardType(boardType).build());
 

@@ -20,6 +20,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class AwsS3ServiceImpl implements AwsS3Service {
+    private static final String SLASH = "/";
     private final AmazonS3Client amazonS3Client;
 
     @Value("${cloud.aws.s3.bucket}")
@@ -27,10 +28,9 @@ public class AwsS3ServiceImpl implements AwsS3Service {
 
     @Override
     public String upload(MultipartFile file, String directory) {
-        String fileName = createFileName(file, directory);
-        String fileUrl = putS3(file, fileName);
-        log.info("[File Uploaded] directory : {}, URL : {}", directory , fileUrl);
-        return fileUrl;
+        String key = putS3(file, directory);
+        log.info("[Image Uploaded] directory : {}, key : {}", directory , key);
+        return key;
     }
 
 //    public List<String> upload(List<MultipartFile> fileList) {
@@ -46,33 +46,34 @@ public class AwsS3ServiceImpl implements AwsS3Service {
 //    }
 
     @Override
-    public void delete(String imageName, String directory) {
-        String fileName = directory + "/" + imageName;
-        amazonS3Client.deleteObject(bucket, fileName);
-        log.info("[File Deleted] Directory : {}, FileName : {}", directory, fileName);
+    public void delete(String key) {
+        String[] split = key.split(SLASH);
+        amazonS3Client.deleteObject(bucket, key);
+        log.info("[File Deleted] Directory : {}, file : {}", split[0], split[1]);
     }
 
-    private String createFileName(MultipartFile file, String directory) {
-        String[] split = Objects.requireNonNull(Objects.requireNonNull(file.getContentType()).split("/"));
+    private String putS3(MultipartFile file, String directory) {
+        String key = createKey(file, directory);
+        amazonS3Client.putObject(putObjectRequest(file, key));
+        return key;
+    }
+
+    private String createKey(MultipartFile file, String directory) {
+        String[] split = Objects.requireNonNull(Objects.requireNonNull(file.getContentType()).split(SLASH));
         String extension = split[split.length - 1];
-        return directory + "/" + UUID.randomUUID() + "." + extension;
+        return directory + SLASH + UUID.randomUUID() + "." + extension;
     }
 
-    private String putS3(MultipartFile file, String fileName) {
-        amazonS3Client.putObject(createPutObjectRequest(file, fileName));
-        return amazonS3Client.getUrl(bucket, fileName).toString();
-    }
-
-    private PutObjectRequest createPutObjectRequest(MultipartFile file, String fileName) {
+    private PutObjectRequest putObjectRequest(MultipartFile file, String key) {
         try {
-            return new PutObjectRequest(bucket, fileName, file.getInputStream(), createObjectMetaData(file))
+            return new PutObjectRequest(bucket, key, file.getInputStream(), objectMetaData(file))
                     .withCannedAcl(CannedAccessControlList.PublicRead);
         } catch (IOException e) {
             throw new CustomException(ErrorCode.FILE_CONVERT_FAIL);
         }
     }
 
-    private ObjectMetadata createObjectMetaData(MultipartFile file) {
+    private ObjectMetadata objectMetaData(MultipartFile file) {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(file.getContentType());
         objectMetadata.setContentLength(file.getSize());
