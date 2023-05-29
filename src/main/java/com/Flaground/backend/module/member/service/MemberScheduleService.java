@@ -3,6 +3,7 @@ package com.Flaground.backend.module.member.service;
 import com.Flaground.backend.infra.aws.ses.service.AwsSESServiceImpl;
 import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.domain.Sleeping;
+import com.Flaground.backend.module.member.domain.repository.BlackListRepository;
 import com.Flaground.backend.module.member.domain.repository.MemberRepository;
 import com.Flaground.backend.module.member.domain.repository.SleepingRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 public class MemberScheduleService {
     private final MemberRepository memberRepository;
     private final SleepingRepository sleepingRepository;
+    private final BlackListRepository blackListRepository;
     private final AwsSESServiceImpl mailService;
 
     //@Scheduled(cron = "000000")
@@ -38,6 +40,11 @@ public class MemberScheduleService {
     public void deleteExpiredSleep() {
         List<Sleeping> sleepingList = sleepingRepository.getAllSleeping();
         sleepingRepository.deleteAllInBatch(sleepingList);
+    }
+
+//    @Scheduled(cron = "000000")
+    public void releaseBannedMembers() {
+        blackListRepository.releaseBannedMembers();
     }
 
     private List<Sleeping> convertToSleepings(List<Member> deactivateMembers) {

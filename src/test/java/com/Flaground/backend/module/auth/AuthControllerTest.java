@@ -3,12 +3,13 @@ package com.Flaground.backend.module.auth;
 import com.Flaground.backend.common.IntegrationTest;
 import com.Flaground.backend.global.exception.ErrorCode;
 import com.Flaground.backend.module.auth.controller.dto.request.LoginRequest;
+import com.Flaground.backend.module.member.domain.IssueRecord;
 import com.Flaground.backend.module.member.domain.Member;
+import com.Flaground.backend.module.member.domain.enums.MemberStatus;
 import com.Flaground.backend.module.member.domain.enums.Role;
 import com.Flaground.backend.module.member.domain.repository.MemberRepository;
 import com.Flaground.backend.module.member.service.MemberService;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,11 +50,11 @@ class AuthControllerTest extends IntegrationTest {
             request = LoginRequest.builder().loginId(loginId).password(password).build();
         }
 
-        @BeforeEach
-        void setup() {
+        private void initMember(IssueRecord issueRecord) {
             member = memberRepository.save(Member.builder()
                     .loginId(loginId)
                     .password(passwordEncoder.encode(password))
+                    .issueRecord(issueRecord)
                     .role(role)
                     .build());
         }
@@ -66,8 +67,10 @@ class AuthControllerTest extends IntegrationTest {
         @Test
         void 비밀번호_불일치_테스트() throws Exception {
             // given
-            final int expectFailCount = 1;
+            IssueRecord issueRecord = new IssueRecord();
+            final int expectFailCount = issueRecord.getLoginFailCount() + 1;
             final String wrongPassword = "wert2345@";
+            initMember(issueRecord);
             initRequest(wrongPassword);
 
             // when
@@ -82,16 +85,17 @@ class AuthControllerTest extends IntegrationTest {
 
             // then
             Member findMember = memberRepository.findByLoginId(loginId).orElse(null);
-            assertThat(findMember.getIssueRecord().getLoginFailCount()).isEqualTo(expectFailCount);
+            assertThat(findMember).isNotNull();
+            assertThat(findMember.getFailCount()).isEqualTo(expectFailCount);
         }
 
         @Test
-        void 계정_잠금_실패_테스트() throws Exception {
+        void 계정_잠금_테스트() throws Exception {
             // given
+            IssueRecord issueRecord = new IssueRecord(4, 0, 0);
+            initMember(issueRecord);
             initRequest(password);
-            for (int i = 0 ; i < 5 ; i++) {
-                memberService.loginFailed(loginId);
-            }
+            memberService.loginFailed(loginId);
 
             // when
             ResultActions resultActions = mockMvc.perform(post(uri)
@@ -105,21 +109,23 @@ class AuthControllerTest extends IntegrationTest {
                     .andDo(print());
         }
 
-//        @Test
-//        void 계정_비활성화_실패_테스트() throws Exception {
-//            // given
-//            initRequest(password);
-//
-//            // when
-//            ResultActions resultActions = mockMvc.perform(post(uri)
-//                    .contentType(MediaType.APPLICATION_JSON)
-//                    .content(objectMapper.writeValueAsString(request)));
-//
-//            // then
-//            resultActions.andExpect(status().isBadRequest())
-//                    .andExpect(jsonPath("errorCode").value(ErrorCode.BANNED_ACCOUNT.toString()))
-//                    .andExpect(jsonPath("message").value(ErrorCode.BANNED_ACCOUNT.getMessage()))
-//                    .andDo(print());
-//        }
+        @Test
+        void 계정_비활성화_테스트() throws Exception {
+            // given
+            final MemberStatus status = MemberStatus.BANNED;
+            member = memberRepository.save(Member.builder().loginId(loginId).status(status).build());
+            initRequest(password);
+
+            // when
+            ResultActions resultActions = mockMvc.perform(post(uri)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request)));
+
+            // then
+            resultActions.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value(ErrorCode.BANNED_ACCOUNT.toString()))
+                    .andExpect(jsonPath("message").value(ErrorCode.BANNED_ACCOUNT.getMessage()))
+                    .andDo(print());
+        }
     }
 }

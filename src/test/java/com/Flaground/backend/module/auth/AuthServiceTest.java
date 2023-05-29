@@ -10,6 +10,7 @@ import com.Flaground.backend.module.auth.domain.AuthInformation;
 import com.Flaground.backend.module.auth.domain.JoinType;
 import com.Flaground.backend.module.auth.domain.repository.AuthRepository;
 import com.Flaground.backend.module.auth.service.AuthService;
+import com.Flaground.backend.module.member.domain.IssueRecord;
 import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.domain.enums.Role;
 import com.Flaground.backend.module.member.domain.repository.MemberRepository;
@@ -53,8 +54,8 @@ class AuthServiceTest {
     @Test
     void 아이디_유효성_검사_테스트() {
         // given
-        String loginId = "gmlwh124";
-        String noneLoginId = "hejow124";
+        final String loginId = "gmlwh124";
+        final String noneLoginId = "hejow124";
 
         memberRepository.save(Member.builder().loginId(loginId).build());
 
@@ -71,8 +72,8 @@ class AuthServiceTest {
     @Test
     void 이메일_유효성_검사_테스트() {
         // given
-        String email = "gmlwh124@suwon.ac.kr";
-        String noneEmail = "hejow124@suwon.ac.kr";
+        final String email = "gmlwh124@suwon.ac.kr";
+        final String noneEmail = "hejow124@suwon.ac.kr";
 
         memberRepository.save(Member.builder().email(email).build());
 
@@ -164,6 +165,7 @@ class AuthServiceTest {
                 .loginId(loginId)
                 .password(passwordEncoder.encode(password))
                 .role(role)
+                .issueRecord(new IssueRecord())
                 .build());
 
         // when
@@ -196,6 +198,7 @@ class AuthServiceTest {
         memberRepository.save(Member.builder()
                         .loginId(loginId)
                         .password(passwordEncoder.encode(password))
+                        .issueRecord(new IssueRecord())
                         .role(role)
                         .build());
 

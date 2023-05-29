@@ -59,14 +59,6 @@ public class AdminController {
     }
 
     @Tag(name = "admin")
-    @ResponseStatus(OK)
-    @DeleteMapping("/join-requests/{id}/rejection")
-    public ApplicationResponse rejectSignUp(@PathVariable("id") Long authInformationId) {
-        adminService.rejectSignUp(authInformationId);
-        return new ApplicationResponse<>();
-    }
-
-    @Tag(name = "admin")
     @Operation(summary = "게시판 생성하기")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "게시판 생성 완료"),
@@ -97,6 +89,14 @@ public class AdminController {
     }
 
     @Tag(name = "admin")
+    @ResponseStatus(OK)
+    @DeleteMapping("/join-requests/{id}/rejection")
+    public ApplicationResponse rejectSignUp(@PathVariable("id") Long authInformationId) {
+        adminService.rejectSignUp(authInformationId);
+        return new ApplicationResponse<>();
+    }
+
+    @Tag(name = "admin")
     @Operation(summary = "게시판 삭제하기")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "게시판 삭제 완료"),
@@ -108,5 +108,13 @@ public class AdminController {
     public ApplicationResponse delete(@PathVariable("name") String boardName) {
         adminService.deleteBoard(boardName);
         return new ApplicationResponse<>();
+    }
+
+    @Tag(name = "admin")
+    @ResponseStatus(OK)
+    @DeleteMapping("/reports/{id}")
+    public ApplicationResponse handleReport(@PathVariable("id") Long reportId) {
+        String message = adminService.dealReport(reportId);
+        return new ApplicationResponse<>(message);
     }
 }
