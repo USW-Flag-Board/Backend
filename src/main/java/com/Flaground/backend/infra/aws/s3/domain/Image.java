@@ -23,6 +23,8 @@ public class Image extends BaseEntity {
     @Column
     private String key;
 
+    // todo: 멤버와의 연관관계
+
     public Image(Post post, String key) {
         this.post = post;
         this.key = key;

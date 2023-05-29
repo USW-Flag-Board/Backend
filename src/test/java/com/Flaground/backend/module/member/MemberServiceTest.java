@@ -224,6 +224,22 @@ public class MemberServiceTest {
     }
 
     @Test
+    void 프로필_이미지_변경_테스트() {
+        // given
+        final String profileImage = "test";
+        initAvatar();
+        Member member = memberRepository.save(Member.builder().avatar(avatar).build());
+
+        // when
+        memberService.updateProfileImage(member.getId(), profileImage);
+
+        // then
+        Member findMember = memberRepository.findById(member.getId()).orElse(null);
+        assertThat(findMember).isNotNull();
+        assertThat(findMember.getAvatar().getProfileImage()).isEqualTo(profileImage);
+    }
+
+    @Test
     void 휴면계정_활성화_테스트() {
         // given
         final String loginId = "gmlwh124";

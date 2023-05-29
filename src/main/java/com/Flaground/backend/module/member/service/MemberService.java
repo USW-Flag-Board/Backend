@@ -123,15 +123,9 @@ public class MemberService {
         member.getAvatar().updateAvatar(avatar);
     }
 
-    public void updateProfileImage(Long memberId, MultipartFile file) {
+    public void updateProfileImage(Long memberId, String profileImage) {
         Member member = findById(memberId);
-        String profileImageUrl = awsS3Service.upload(file, ImageDirectory.profile.getDirectory());
-        member.changeProfileImage(profileImageUrl);
-    }
-
-    public String resetProfileImage(Long memberId) {
-        Member member = findById(memberId);
-        return member.resetProfileImage();
+        member.changeProfileImage(profileImage);
     }
 
     public List<Member> getMembersByLoginIds(List<String> loginIds) {

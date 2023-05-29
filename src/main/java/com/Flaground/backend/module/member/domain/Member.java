@@ -109,11 +109,6 @@ public class Member extends BaseEntity {
         avatar.changeProfileImage(profileImage);
     }
 
-    // todo: 기본 이미지 변경 삭제
-    public String resetProfileImage() {
-        return avatar.resetProfileImage();
-    }
-
     public void updateLoginTime() {
         super.updateModifiedDate();
         issueRecord.resetLoginFailCount();
