@@ -100,7 +100,7 @@ public class MemberServiceTest {
             assertThat(findMember.getStatus()).isEqualTo(withdraw);
             assertThatExceptionOfType(CustomException.class)
                     .isThrownBy(findMember::isWithdraw)
-                    .withMessage(ErrorCode.UNAVAILABLE_ACCOUNT.getMessage());
+                    .withMessage(ErrorCode.WITHDRAW_ACCOUNT.getMessage());
         }
 
         @Test

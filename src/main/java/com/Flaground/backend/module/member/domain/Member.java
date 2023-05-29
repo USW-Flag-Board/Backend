@@ -4,6 +4,7 @@ import com.Flaground.backend.global.common.BaseEntity;
 import com.Flaground.backend.global.exception.CustomException;
 import com.Flaground.backend.global.exception.ErrorCode;
 import com.Flaground.backend.global.exception.domain.LoginFailException;
+import com.Flaground.backend.module.member.domain.BlackState.BlackState;
 import com.Flaground.backend.module.member.domain.enums.MemberStatus;
 import com.Flaground.backend.module.member.domain.enums.Role;
 import lombok.AccessLevel;
@@ -51,27 +52,28 @@ public class Member extends BaseEntity {
     private MemberStatus status;
 
     @Builder
-    public Member(String loginId, String password, String email, String name, Avatar avatar, Role role) {
+    public Member(String loginId, String password, String email, String name, Avatar avatar,
+                  IssueRecord issueRecord, Role role, MemberStatus status) {
         this.loginId = loginId;
         this.password = password;
         this.email = email;
         this.name = name;
         this.avatar = avatar;
-        this.issueRecord = new IssueRecord();
+        this.issueRecord = issueRecord;
         this.role = role;
-        this.status = MemberStatus.NORMAL;
-    }
-
-    public void isWithdraw() {
-        if (this.status == MemberStatus.WITHDRAW) {
-            throw new CustomException(ErrorCode.UNAVAILABLE_ACCOUNT);
-        }
+        this.status = status;
     }
 
     public void isLoginnable() {
         isBanned();
         isLocked();
         isWithdraw();
+    }
+
+    public void isWithdraw() {
+        if (this.status == MemberStatus.WITHDRAW) {
+            throw new CustomException(ErrorCode.WITHDRAW_ACCOUNT);
+        }
     }
 
     public void validateName(String name) {
@@ -113,6 +115,7 @@ public class Member extends BaseEntity {
 
     public void updateLoginTime() {
         super.updateModifiedDate();
+        issueRecord.resetLoginFailCount();
     }
 
     public int getFailCount() {
@@ -143,8 +146,16 @@ public class Member extends BaseEntity {
         }
     }
 
-    public void applyPenalty(int penaltyPoint) {
-        issueRecord.applyPenalty(penaltyPoint);
+    public BlackState getState() {
+        return issueRecord.blackState();
+    }
+
+    public int applyPenalty(int penalty) {
+        return issueRecord.applyPenalty(penalty);
+    }
+
+    public void ban() {
+        this.status = MemberStatus.BANNED;
     }
 
     public void withdraw() {
@@ -172,9 +183,5 @@ public class Member extends BaseEntity {
 
     private void lock() {
         this.status = MemberStatus.LOCKED;
-    }
-
-    private void ban() {
-        this.status = MemberStatus.BANNED;
     }
 }

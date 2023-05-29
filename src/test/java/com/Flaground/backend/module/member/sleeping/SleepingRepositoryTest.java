@@ -1,4 +1,4 @@
-package com.Flaground.backend.module.member;
+package com.Flaground.backend.module.member.sleeping;
 
 import com.Flaground.backend.common.RepositoryTest;
 import com.Flaground.backend.module.member.domain.Avatar;

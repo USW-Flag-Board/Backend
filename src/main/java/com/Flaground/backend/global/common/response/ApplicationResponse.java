@@ -20,4 +20,8 @@ public class ApplicationResponse<T> {
     public ApplicationResponse() {
         this.message = SUCCESS_MESSAGE;
     }
+
+    public ApplicationResponse(String message) {
+        this.message = message;
+    }
 }

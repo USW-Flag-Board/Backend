@@ -7,6 +7,7 @@ import com.Flaground.backend.module.board.domain.Board;
 import com.Flaground.backend.module.board.service.BoardService;
 import com.Flaground.backend.module.member.controller.dto.response.LoginLogResponse;
 import com.Flaground.backend.module.member.domain.Member;
+import com.Flaground.backend.module.member.service.BlackListService;
 import com.Flaground.backend.module.member.service.MemberService;
 import com.Flaground.backend.module.report.controller.dto.response.ReportResponse;
 import com.Flaground.backend.module.report.domain.Report;
@@ -25,6 +26,7 @@ public class AdminService {
     private final AuthService authService;
     private final BoardService boardService;
     private final ReportService reportService;
+    private final BlackListService blackListService;
 
     @Transactional(readOnly = true)
     public List<SignUpRequestResponse> getSignUpRequests() {
@@ -63,10 +65,10 @@ public class AdminService {
         boardService.delete(boardName);
     }
 
-    public void handleReport(Long reportId) {
+    public String dealReport(Long reportId) {
         Report report = reportService.findById(reportId);
         Member member = memberService.findById(report.getReported());
-        member.applyPenalty(report.getPenalty());
-        reportService.delete(reportId);
+        reportService.handled(reportId);
+        return blackListService.dealReport(member, report.getPenalty());
     }
 }

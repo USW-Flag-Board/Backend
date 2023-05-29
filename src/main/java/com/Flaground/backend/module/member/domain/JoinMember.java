@@ -1,6 +1,7 @@
 package com.Flaground.backend.module.member.domain;
 
 import com.Flaground.backend.module.member.domain.enums.Major;
+import com.Flaground.backend.module.member.domain.enums.MemberStatus;
 import com.Flaground.backend.module.member.domain.enums.Role;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,7 +27,9 @@ public class JoinMember {
                 .name(name)
                 .email(email)
                 .avatar(Avatar.of(nickname, studentId, major))
+                .issueRecord(new IssueRecord())
                 .role(role)
+                .status(MemberStatus.NORMAL)
                 .build();
     }
 }

@@ -48,7 +48,7 @@ public class ReportService {
         reportRepository.save(ReplyReport.of(memberId, reply.getMember().getId(), reply.getPostId(), abstractReport));
     }
 
-    public void delete(Long reportId) {
+    public void handled(Long reportId) {
         reportRepository.deleteById(reportId);
     }
 

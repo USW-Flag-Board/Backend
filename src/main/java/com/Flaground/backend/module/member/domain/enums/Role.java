@@ -15,9 +15,6 @@ public enum Role {
     private final String role;
 
     public static Role from(JoinType joinType) {
-        if (joinType == JoinType.CREW) {
-            return ROLE_CREW;
-        }
-        return ROLE_USER;
+        return joinType == JoinType.CREW ? ROLE_CREW : ROLE_USER;
     }
 }

@@ -9,6 +9,7 @@ import com.Flaground.backend.module.auth.controller.dto.response.SignUpRequestRe
 import com.Flaground.backend.module.auth.domain.AuthInformation;
 import com.Flaground.backend.module.auth.domain.repository.AuthRepository;
 import com.Flaground.backend.module.member.domain.Member;
+import com.Flaground.backend.module.member.service.BlackListService;
 import com.Flaground.backend.module.member.service.MemberService;
 import com.Flaground.backend.module.token.dto.TokenResponse;
 import com.Flaground.backend.module.token.service.RefreshTokenService;
@@ -18,7 +19,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -30,6 +30,7 @@ public class AuthService {
     private final AuthRepository authRepository;
     private final MemberService memberService;
     private final RefreshTokenService refreshTokenService;
+    private final BlackListService blackListService;
     private final AwsSESServiceImpl mailService;
     private final JwtUtilizer jwtUtilizer;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -43,6 +44,7 @@ public class AuthService {
     }
 
     public boolean validateDuplicateEmail(String email) {
+        blackListService.validateBlackList(email);
         return memberService.isExistEmail(email);
     }
 
@@ -98,9 +100,13 @@ public class AuthService {
     }
 
     private void validateDuplication(String loginId, String email) {
-        if (validateDuplicateLoginId(loginId) || validateDuplicateEmail(email)) {
+        if (isDuplicated(loginId, email)) {
             throw new CustomException(ErrorCode.VALIDATE_NOT_PROCEED);
         }
+    }
+
+    private boolean isDuplicated(String loginId, String email) {
+        return memberService.isExistLoginId(loginId) && memberService.isExistEmail(email);
     }
 
     private AuthInformation findLatestAuthInformationByEmail(String email) {
@@ -113,7 +119,7 @@ public class AuthService {
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginId, password);
             return authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         } catch (BadCredentialsException e) {
-            int failCount = memberService. loginFailed(loginId);
+            int failCount = memberService.loginFailed(loginId);
             throw new CustomBadCredentialException(ErrorCode.PASSWORD_NOT_MATCH, failCount);
         }
     }
