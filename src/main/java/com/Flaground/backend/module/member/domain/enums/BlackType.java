@@ -9,7 +9,7 @@ public enum BlackType {
 
     private final int blackPeriod;
 
-    private int getPeriod() {
+    public int getPeriod() {
         return this.blackPeriod;
     }
 }

@@ -6,6 +6,8 @@ import com.Flaground.backend.module.member.domain.repository.BlackListRepository
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class BlackListRepositoryTest extends RepositoryTest {
@@ -27,5 +29,19 @@ class BlackListRepositoryTest extends RepositoryTest {
         // then
         assertThat(exists).isTrue();
         assertThat(notExists).isFalse();
+    }
+
+    @Test
+    void 정지_유저_풀어주기_테스트() {
+        // given
+        final String email = "gmlwh124@suwon.ac.kr";
+        blackListRepository.save(BlackList.ban(email));
+
+        // when
+        blackListRepository.releaseBannedMembers();
+
+        // then : 삭제가 안되어야함
+        List<BlackList> blackLists = blackListRepository.findAll();
+        assertThat(blackLists.size()).isEqualTo(1);
     }
 }
