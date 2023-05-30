@@ -3,7 +3,7 @@ package com.Flaground.backend.infra.aws.s3.controller;
 import com.Flaground.backend.global.annotation.EnumFormat;
 import com.Flaground.backend.global.common.response.ApplicationResponse;
 import com.Flaground.backend.global.utility.SecurityUtils;
-import com.Flaground.backend.infra.aws.s3.domain.ImageDirectory;
+import com.Flaground.backend.module.post.domain.enums.ImageDirectory;
 import com.Flaground.backend.infra.aws.s3.service.AwsS3Service;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

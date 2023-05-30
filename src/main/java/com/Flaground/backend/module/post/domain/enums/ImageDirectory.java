@@ -1,4 +1,4 @@
-package com.Flaground.backend.infra.aws.s3.domain;
+package com.Flaground.backend.module.post.domain.enums;
 
 import com.Flaground.backend.global.common.CustomEnumDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

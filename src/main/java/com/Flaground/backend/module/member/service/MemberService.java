@@ -4,7 +4,6 @@ import com.Flaground.backend.global.common.response.SearchResponse;
 import com.Flaground.backend.global.exception.CustomException;
 import com.Flaground.backend.global.exception.ErrorCode;
 import com.Flaground.backend.global.utility.RandomGenerator;
-import com.Flaground.backend.infra.aws.s3.domain.ImageDirectory;
 import com.Flaground.backend.infra.aws.s3.service.AwsS3Service;
 import com.Flaground.backend.infra.aws.ses.service.AwsSESService;
 import com.Flaground.backend.module.member.controller.dto.response.*;
@@ -19,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
