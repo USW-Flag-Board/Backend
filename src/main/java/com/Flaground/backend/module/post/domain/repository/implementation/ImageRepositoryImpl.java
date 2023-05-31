@@ -20,4 +20,12 @@ public class ImageRepositoryImpl implements ImageRepositoryCustom {
                 .where(image.postId.eq(postId))
                 .fetch();
     }
+
+    @Override
+    public void deleteImagesByKeys(List<String> keys) { // jpa 사용시 select query 이후 개별로 delete query 발생
+        queryFactory
+                .delete(image)
+                .where(image.key.in(keys))
+                .execute();
+    }
 }

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,10 +24,18 @@ public class PostRequest {
     @NotBlank
     private String boardName;
 
+    @Schema(name = "최종적으로 반영되는 이미지들")
+    private List<String> saveImages;
+
+    @Schema(name = "유저의 변심으로 삭제된 이미지들")
+    private List<String> deleteImages;
+
     @Builder
-    public PostRequest(String title, String content, String boardName) {
+    public PostRequest(String title, String content, String boardName, List<String> saveImages, List<String> deleteImages) {
         this.title = title;
         this.content = content;
         this.boardName = boardName;
+        this.saveImages = saveImages;
+        this.deleteImages = deleteImages;
     }
 }
