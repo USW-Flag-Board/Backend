@@ -19,6 +19,7 @@ import com.Flaground.backend.module.post.domain.Reply;
 import com.Flaground.backend.module.post.domain.enums.PostStatus;
 import com.Flaground.backend.module.post.domain.enums.SearchOption;
 import com.Flaground.backend.module.post.domain.enums.SearchPeriod;
+import com.Flaground.backend.module.post.domain.repository.ImageRepository;
 import com.Flaground.backend.module.post.domain.repository.LikeRepository;
 import com.Flaground.backend.module.post.domain.repository.PostRepository;
 import com.Flaground.backend.module.post.domain.repository.ReplyRepository;
@@ -37,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -65,9 +67,12 @@ class PostControllerTest extends IntegrationTest {
     @Autowired
     private LikeRepository likeRepository;
 
-    private Member member;
+    @Autowired
+    private ImageRepository imageRepository;
 
+    private Member member;
     private Board board;
+    private static final List<String> deleteKeys = List.of("key3", "key4");
 
     @BeforeEach
     void setup() {
@@ -83,7 +88,7 @@ class PostControllerTest extends IntegrationTest {
                 .role(role)
                 .build());
 
-        board = boardRepository.save(Board.builder().boardType(BoardType.main).name("자유게시판").build());
+        board = boardRepository.save(Board.builder().boardType(BoardType.MAIN).name("자유게시판").build());
 
         setSecurityContext(member);
     }
@@ -181,88 +186,30 @@ class PostControllerTest extends IntegrationTest {
     }
 
     @Test
-    void 게시글_생성_테스트() throws Exception {
+    void 게시글_수정_실패_작성자가_아님() throws Exception {
         // given
         final String title = "title";
         final String content = "content";
-
         PostRequest request = PostRequest.builder()
                 .title(title)
                 .content(content)
                 .boardName(board.getName())
                 .build();
 
+        Member newMember = memberRepository.save(Member.builder().build());
+        Post post = postRepository.save(Post.builder().member(newMember).build());
+        String uri = BASE_URI + "/" + post.getId();
+
         // when
-        mockMvc.perform(post(BASE_URI)
+        ResultActions resultActions = mockMvc.perform(put(uri)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isCreated())
-                .andDo(print());
+                .content(objectMapper.writeValueAsString(request)));
 
         // then
-        Post post = postRepository.findAll().get(0);
-        assertThat(post.getMember().getId()).isEqualTo(member.getId());
-        assertThat(post.getTitle()).isEqualTo(title);
-        assertThat(post.getContent()).isEqualTo(content);
-        assertThat(post.getViewCount()).isEqualTo(0);
-    }
-
-    @Nested
-    class 게시글_수정_테스트 {
-        private PostRequest request;
-
-        @BeforeEach
-        void setup() {
-            final String title = "title";
-            final String content = "content";
-            final String boardName = board.getName();
-
-            request = PostRequest.builder()
-                    .title(title)
-                    .content(content)
-                    .boardName(boardName)
-                    .build();
-        }
-
-        @Test
-        void 게시글_수정_성공() throws Exception {
-            // given
-            final String oldTitle = "old";
-
-            Post post = postRepository.save(Post.builder().member(member).title(oldTitle).build());
-            String uri = BASE_URI + "/" + post.getId();
-
-            // when
-            mockMvc.perform(put(uri)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(status().isOk())
-                    .andDo(print());
-
-            // then
-            Post updatedPost = postRepository.findById(post.getId()).get();
-            assertThat(updatedPost.getTitle()).isNotEqualTo(oldTitle);
-            assertThat(updatedPost.isEdited()).isTrue();
-        }
-
-        @Test
-        void 게시글_수정_실패() throws Exception {
-            // given
-            Member newMember = memberRepository.save(Member.builder().build());
-            Post post = postRepository.save(Post.builder().member(newMember).build());
-            String uri = BASE_URI + "/" + post.getId();
-
-            // when
-            ResultActions resultActions = mockMvc.perform(put(uri)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)));
-
-            // then
-            resultActions.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("errorCode").value(ErrorCode.NOT_AUTHOR.toString()))
-                    .andExpect(jsonPath("message").value(ErrorCode.NOT_AUTHOR.getMessage()))
-                    .andDo(print());
-        }
+        resultActions.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("errorCode").value(ErrorCode.NOT_AUTHOR.toString()))
+                .andExpect(jsonPath("message").value(ErrorCode.NOT_AUTHOR.getMessage()))
+                .andDo(print());
     }
 
     @Nested
@@ -288,7 +235,7 @@ class PostControllerTest extends IntegrationTest {
         }
 
         @Test
-        void 게시글_삭제_실패() throws Exception {
+        void 게시글_삭제_실패_작성자가_아님() throws Exception {
             // given
             Member anotherMember = memberRepository.save(Member.builder().build());
             Post post = postRepository.save(Post.builder().member(anotherMember).build());

@@ -24,7 +24,7 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
-    public void isCorrectName(String boardName) {
+    public void validateBoard(String boardName) {
         if (!isExist(boardName)) {
             throw new CustomException(ErrorCode.NOT_CORRECT_BOARD);
         }

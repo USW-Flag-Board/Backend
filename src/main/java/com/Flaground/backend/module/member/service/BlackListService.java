@@ -27,8 +27,6 @@ public class BlackListService {
         return blackState.dealPenalty(member, penalty, blackListRepository);
     }
 
-    // todo: 정지 풀어줄 때 블랙리스트 조심하기
-
     private boolean isBlackList(String email) {
         return blackListRepository.existsByEmail(email);
     }

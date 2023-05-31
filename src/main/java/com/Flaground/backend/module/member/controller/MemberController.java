@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -123,20 +122,10 @@ public class MemberController {
             @ApiResponse(responseCode = "500", description = "서버 내부 오류입니다. 관리자에게 문의주세요.")
     })
     @ResponseStatus(OK)
-    @PutMapping("/avatar/image")
-    public ApplicationResponse updateProfileImage(@RequestPart("image") MultipartFile profileImage) {
-        memberService.updateProfileImage(SecurityUtils.getMemberId(), profileImage);
+    @PutMapping("/avatar/profile-image")
+    public ApplicationResponse updateProfileImage(@RequestBody @Valid UpdateProfileImageRequest request) {
+        memberService.updateProfileImage(SecurityUtils.getMemberId(), request.getProfileImage());
         return new ApplicationResponse<>();
-    }
-
-    @Tag(name = "member")
-    @Operation(summary = "프로필 기본 이미지로 변경", description = "[토큰 필요] 기본 이미지 URL을 내려준다.")
-    @ApiResponse(responseCode = "200", description = "프로필 사진 초기화완료")
-    @ResponseStatus(OK)
-    @PutMapping("/avatar/reset")
-    public ApplicationResponse<String> resetProfileImage() {
-        String defaultImageURL = memberService.resetProfileImage(SecurityUtils.getMemberId());
-        return new ApplicationResponse<>(defaultImageURL);
     }
 
     @Tag(name = "member")

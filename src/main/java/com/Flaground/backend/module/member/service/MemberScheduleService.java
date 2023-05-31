@@ -1,6 +1,6 @@
 package com.Flaground.backend.module.member.service;
 
-import com.Flaground.backend.infra.aws.ses.service.AwsSESServiceImpl;
+import com.Flaground.backend.infra.aws.ses.service.AwsSESService;
 import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.domain.Sleeping;
 import com.Flaground.backend.module.member.domain.repository.BlackListRepository;
@@ -20,7 +20,7 @@ public class MemberScheduleService {
     private final MemberRepository memberRepository;
     private final SleepingRepository sleepingRepository;
     private final BlackListRepository blackListRepository;
-    private final AwsSESServiceImpl mailService;
+    private final AwsSESService awsSESService;
 
     //@Scheduled(cron = "000000")
     public void selectingDeactivateMembers() {
@@ -33,7 +33,7 @@ public class MemberScheduleService {
     //@Scheduled(cron = "000000")
     public void sendNotificationToDeactivableMembers() {
         List<String> emailLists = memberRepository.getDeactivableMemberEmails();
-        emailLists.forEach(mailService::sendChangeSleep);
+        emailLists.forEach(awsSESService::sendChangeSleep);
     }
 
     //@Scheduled(cron = "000000")

@@ -46,7 +46,7 @@ class BoardControllerTest extends IntegrationTest {
         final String email = "gmlwh124@suwon.ac.kr";
         final String nickname = "john";
         final String boardName = "자유게시판";
-        final BoardType boardType = BoardType.main;
+        final BoardType boardType = BoardType.MAIN;
         final Role role = Role.ROLE_ADMIN;
 
         Avatar avatar = Avatar.builder().nickname(nickname).build();
@@ -69,7 +69,7 @@ class BoardControllerTest extends IntegrationTest {
     @Test
     public void 게시판_목록_가져오기_테스트() throws Exception {
         // given
-        final BoardType boardType = BoardType.main;
+        final BoardType boardType = BoardType.MAIN;
 
         // when
         ResultActions resultActions = mockMvc.perform(get(BASE_URI)

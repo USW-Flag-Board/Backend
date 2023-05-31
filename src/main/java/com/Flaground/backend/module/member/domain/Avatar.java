@@ -65,11 +65,6 @@ public class Avatar {
         this.profileImage = profileImage;
     }
 
-    public String resetProfileImage() {
-        this.profileImage = DEFAULT_IMAGE;
-        return DEFAULT_IMAGE;
-    }
-
     public void cleanUp() {
         this.studentId = null;
         this.major = null;

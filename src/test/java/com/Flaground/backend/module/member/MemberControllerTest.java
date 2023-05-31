@@ -1,6 +1,7 @@
 package com.Flaground.backend.module.member;
 
 import com.Flaground.backend.common.IntegrationTest;
+import com.Flaground.backend.module.member.controller.dto.request.UpdateProfileImageRequest;
 import com.Flaground.backend.module.member.controller.dto.request.WithdrawRequest;
 import com.Flaground.backend.module.member.domain.Avatar;
 import com.Flaground.backend.module.member.domain.Member;
@@ -84,6 +85,28 @@ class MemberControllerTest extends IntegrationTest {
         assertThat(withdrawMember.getStatus()).isEqualTo(MemberStatus.WITHDRAW);
         assertThatExceptionOfType(CustomException.class)
                 .isThrownBy(withdrawMember::isWithdraw);
+    }
+
+    @Test
+    void 프로필_이미지_변경_테스트() throws Exception {
+        // given
+        final String profileImage = "test";
+        setSecurityContext(member);
+
+        UpdateProfileImageRequest request = new UpdateProfileImageRequest(profileImage);
+        String uri = BASE_URI + "/avatar/profile-image";
+
+        // when
+        mockMvc.perform(put(uri)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        // then
+        Member findMember = memberRepository.findById(member.getId()).orElse(null);
+        assertThat(findMember).isNotNull();
+        assertThat(findMember.getAvatar().getProfileImage()).isEqualTo(profileImage);
     }
 
     private void setSecurityContext(Member member) {

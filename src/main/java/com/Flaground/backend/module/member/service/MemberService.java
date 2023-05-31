@@ -4,9 +4,8 @@ import com.Flaground.backend.global.common.response.SearchResponse;
 import com.Flaground.backend.global.exception.CustomException;
 import com.Flaground.backend.global.exception.ErrorCode;
 import com.Flaground.backend.global.utility.RandomGenerator;
-import com.Flaground.backend.infra.aws.s3.entity.enums.FileDirectory;
-import com.Flaground.backend.infra.aws.s3.service.AwsS3ServiceImpl;
-import com.Flaground.backend.infra.aws.ses.service.AwsSESServiceImpl;
+import com.Flaground.backend.infra.aws.s3.service.AwsS3Service;
+import com.Flaground.backend.infra.aws.ses.service.AwsSESService;
 import com.Flaground.backend.module.member.controller.dto.response.*;
 import com.Flaground.backend.module.member.domain.Avatar;
 import com.Flaground.backend.module.member.domain.JoinMember;
@@ -19,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -30,8 +28,8 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final RecoveryTokenService recoveryTokenService;
     private final SleepingService sleepingService;
-    private final AwsSESServiceImpl mailService;
-    private final AwsS3ServiceImpl awsS3Service;
+    private final AwsSESService awsSESService;
+    private final AwsS3Service awsS3Service;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
@@ -123,15 +121,9 @@ public class MemberService {
         member.getAvatar().updateAvatar(avatar);
     }
 
-    public void updateProfileImage(Long memberId, MultipartFile file) {
+    public void updateProfileImage(Long memberId, String profileImage) {
         Member member = findById(memberId);
-        String profileImageUrl = awsS3Service.upload(file, FileDirectory.PROFILE.getDirectory());
-        member.changeProfileImage(profileImageUrl);
-    }
-
-    public String resetProfileImage(Long memberId) {
-        Member member = findById(memberId);
-        return member.resetProfileImage();
+        member.changeProfileImage(profileImage);
     }
 
     public List<Member> getMembersByLoginIds(List<String> loginIds) {
@@ -156,7 +148,7 @@ public class MemberService {
 
     private RecoveryResponse issueTokenAndSendMail(String email) {
         String certification = RandomGenerator.getRandomNumber();
-        mailService.sendFindCertification(email, certification);
+        awsSESService.sendFindCertification(email, certification);
         Token findRequestToken = recoveryTokenService.issueToken(email, certification);
         return RecoveryResponse.of(email, findRequestToken.getExpiredAt());
     }

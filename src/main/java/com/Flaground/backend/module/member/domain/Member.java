@@ -109,10 +109,6 @@ public class Member extends BaseEntity {
         avatar.changeProfileImage(profileImage);
     }
 
-    public String resetProfileImage() {
-        return avatar.resetProfileImage();
-    }
-
     public void updateLoginTime() {
         super.updateModifiedDate();
         issueRecord.resetLoginFailCount();
@@ -158,6 +154,7 @@ public class Member extends BaseEntity {
         this.status = MemberStatus.BANNED;
     }
 
+    // todo: 진짜로 삭제하기
     public void withdraw() {
         this.status = MemberStatus.WITHDRAW;
     }

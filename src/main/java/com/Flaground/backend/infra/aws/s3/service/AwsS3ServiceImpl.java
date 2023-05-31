@@ -4,6 +4,8 @@ import com.Flaground.backend.global.exception.CustomException;
 import com.Flaground.backend.global.exception.ErrorCode;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectsRequest;
+import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -20,6 +23,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class AwsS3ServiceImpl implements AwsS3Service {
+    private static final String SLASH = "/";
     private final AmazonS3Client amazonS3Client;
 
     @Value("${cloud.aws.s3.bucket}")
@@ -27,52 +31,64 @@ public class AwsS3ServiceImpl implements AwsS3Service {
 
     @Override
     public String upload(MultipartFile file, String directory) {
-        String fileName = createFileName(file, directory);
-        String fileUrl = putS3(file, fileName);
-        log.info("[File Uploaded] directory : {}, URL : {}", directory , fileUrl);
-        return fileUrl;
+        String key = putS3(file, directory);
+        log.info("[Image Uploaded] directory : {}, key : {}", directory , key);
+        return key;
     }
-
-//    public List<String> upload(List<MultipartFile> fileList) {
-//        List<String> uploadedFileUriList = new ArrayList<>();
-//
-//        for(MultipartFile eachFile : fileList) {
-//            String fileName = createFileName(eachFile);
-//            String uploadedFileUri = putS3(eachFile, fileName);
-//            uploadedFileUriList.add(uploadedFileUri);
-//        }
-//
-//        return uploadedFileUriList;
-//    }
 
     @Override
-    public void delete(String imageName, String directory) {
-        String fileName = directory + "/" + imageName;
-        amazonS3Client.deleteObject(bucket, fileName);
-        log.info("[File Deleted] Directory : {}, FileName : {}", directory, fileName);
+    public void delete(String key) {
+        String[] split = key.split(SLASH);
+        amazonS3Client.deleteObject(bucket, key);
+        log.info("[File Deleted] Directory : {}, file : {}", split[0], split[1]);
     }
 
-    private String createFileName(MultipartFile file, String directory) {
-        String[] split = Objects.requireNonNull(Objects.requireNonNull(file.getContentType()).split("/"));
+    @Override
+    public void deleteAll(List<String> keys) {
+        DeleteObjectsRequest deleteObjectsRequest = deleteObjectsRequest(keys);
+        amazonS3Client.deleteObjects(deleteObjectsRequest);
+        log.info("[Images Deleted] {}", keys);
+    }
+
+    @Override // test용
+    public int size() {
+        return 0;
+    }
+
+    private String putS3(MultipartFile file, String directory) {
+        String key = createKey(file, directory);
+        amazonS3Client.putObject(putObjectRequest(file, key));
+        return key;
+    }
+
+    private String createKey(MultipartFile file, String directory) {
+        String[] split = Objects.requireNonNull(Objects.requireNonNull(file.getContentType()).split(SLASH));
         String extension = split[split.length - 1];
-        return directory + "/" + UUID.randomUUID() + "." + extension;
+        return directory + SLASH + UUID.randomUUID() + "." + extension;
     }
 
-    private String putS3(MultipartFile file, String fileName) {
-        amazonS3Client.putObject(createPutObjectRequest(file, fileName));
-        return amazonS3Client.getUrl(bucket, fileName).toString();
-    }
-
-    private PutObjectRequest createPutObjectRequest(MultipartFile file, String fileName) {
+    private PutObjectRequest putObjectRequest(MultipartFile file, String key) {
         try {
-            return new PutObjectRequest(bucket, fileName, file.getInputStream(), createObjectMetaData(file))
-                    .withCannedAcl(CannedAccessControlList.PublicRead);
+            return new PutObjectRequest(bucket, key, file.getInputStream(), objectMetaData(file))
+                        .withCannedAcl(CannedAccessControlList.PublicRead);
         } catch (IOException e) {
             throw new CustomException(ErrorCode.FILE_CONVERT_FAIL);
         }
     }
 
-    private ObjectMetadata createObjectMetaData(MultipartFile file) {
+    private DeleteObjectsRequest deleteObjectsRequest(List<String> keys) {
+        DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(bucket);
+        deleteObjectsRequest.setKeys(toKeyVersions(keys));
+        return deleteObjectsRequest;
+    }
+
+    private List<KeyVersion> toKeyVersions(List<String> keys) {
+        return keys.stream()
+                .map(KeyVersion::new)
+                .toList();
+    }
+
+    private ObjectMetadata objectMetaData(MultipartFile file) {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(file.getContentType());
         objectMetadata.setContentLength(file.getSize());
