@@ -11,18 +11,12 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GetPostResponse {
     private PostDetailResponse postDetail;
+    private List<String> imageKeys;
     private List<ReplyResponse> replies;
 
-    @Builder
-    public GetPostResponse(PostDetailResponse postDetail, List<ReplyResponse> replies) {
+    public GetPostResponse(PostDetailResponse postDetail, List<String> imageKeys, List<ReplyResponse> replies) {
         this.postDetail = postDetail;
+        this.imageKeys = imageKeys;
         this.replies = replies;
-    }
-
-    public static GetPostResponse of(PostDetailResponse postDetailResponse, List<ReplyResponse> replyResponses) {
-        return GetPostResponse.builder()
-                .postDetail(postDetailResponse)
-                .replies(replyResponses)
-                .build();
     }
 }

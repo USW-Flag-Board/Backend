@@ -63,12 +63,11 @@ public class PostService {
         return postRepository.searchWithCondition(boardName, keyword, period, option);
     }
 
-    @Transactional(readOnly = true) // todo: pagination
+    @Transactional(readOnly = true)
     public SearchResponse<PostResponse> integrationSearch(String keyword) {
         return postRepository.integrationSearch(keyword);
     }
 
-    @Transactional(readOnly = true)
     public GetPostResponse get(Long memberId, Long postId) {
         Post post = findById(postId);
         post.isAccessible();
