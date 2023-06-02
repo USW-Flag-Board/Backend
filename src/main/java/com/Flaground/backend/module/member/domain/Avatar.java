@@ -16,8 +16,7 @@ import javax.persistence.Enumerated;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Embeddable
 public class Avatar {
-    // todo: 보안을 위해 앞에 엔드포인트 제거하도록 수정
-    private static final String DEFAULT_IMAGE = "https://flaground-s3.s3.ap-northeast-2.amazonaws.com/avatar/default_image.jpg";
+    private static final String DEFAULT_IMAGE = "avatar/default_image.jpg";
     private static final String BLANK = " ";
 
     @Column(length = 20)

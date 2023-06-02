@@ -19,7 +19,6 @@ import com.Flaground.backend.module.post.domain.Reply;
 import com.Flaground.backend.module.post.domain.enums.PostStatus;
 import com.Flaground.backend.module.post.domain.enums.SearchOption;
 import com.Flaground.backend.module.post.domain.enums.SearchPeriod;
-import com.Flaground.backend.module.post.domain.repository.ImageRepository;
 import com.Flaground.backend.module.post.domain.repository.LikeRepository;
 import com.Flaground.backend.module.post.domain.repository.PostRepository;
 import com.Flaground.backend.module.post.domain.repository.ReplyRepository;
@@ -38,7 +37,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -67,12 +65,8 @@ class PostControllerTest extends IntegrationTest {
     @Autowired
     private LikeRepository likeRepository;
 
-    @Autowired
-    private ImageRepository imageRepository;
-
     private Member member;
     private Board board;
-    private static final List<String> deleteKeys = List.of("key3", "key4");
 
     @BeforeEach
     void setup() {
@@ -97,7 +91,6 @@ class PostControllerTest extends IntegrationTest {
     class 게시글_가져오기_테스트 {
         private final String title = "title";
         private final String content = "content";
-        private final String boardName = "자유게시판";
         private Post post;
         private String uri;
 
@@ -105,7 +98,7 @@ class PostControllerTest extends IntegrationTest {
         void setup() {
             post = postRepository.save(Post.builder()
                     .member(member)
-                    .boardName(boardName)
+                    .boardName(board.getName())
                     .title(title)
                     .content(content)
                     .build());
@@ -127,6 +120,7 @@ class PostControllerTest extends IntegrationTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.payload.postDetail.title", is(title)))
                     .andExpect(jsonPath("$.payload.postDetail.content", is(content)))
+                    .andExpect(jsonPath("$.payload.postDetail.viewCount", is(viewCount + 1)))
                     .andExpect(jsonPath("$.payload.postDetail.like.liked", is(false)))
                     .andExpect(jsonPath("$.payload.postDetail.like.likeCount", is(0)))
                     .andExpect(jsonPath("$.payload.replies[0].content", is(reply)))
@@ -135,7 +129,8 @@ class PostControllerTest extends IntegrationTest {
                     .andDo(print());
 
             // then
-            Post findPost = postRepository.findById(post.getId()).get();
+            Post findPost = postRepository.findById(post.getId()).orElse(null);
+            assertThat(findPost).isNotNull();
             assertThat(findPost.getViewCount()).isEqualTo(viewCount + 1);
         }
 
@@ -155,6 +150,7 @@ class PostControllerTest extends IntegrationTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.payload.postDetail.title", is(title)))
                     .andExpect(jsonPath("$.payload.postDetail.content", is(content)))
+                    .andExpect(jsonPath("$.payload.postDetail.viewCount", is(viewCount + 1)))
                     .andExpect(jsonPath("$.payload.postDetail.like.liked", is(false)))
                     .andExpect(jsonPath("$.payload.postDetail.like.likeCount", is(0)))
                     .andExpect(jsonPath("$.payload.replies[0].content", is(content)))
@@ -163,7 +159,8 @@ class PostControllerTest extends IntegrationTest {
                     .andDo(print());
 
             // then
-            Post findPost = postRepository.findById(post.getId()).get();
+            Post findPost = postRepository.findById(post.getId()).orElse(null);
+            assertThat(findPost).isNotNull();
             assertThat(findPost.getViewCount()).isEqualTo(viewCount + 1);
         }
 

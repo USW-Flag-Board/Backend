@@ -29,7 +29,6 @@ public class MemberService {
     private final RecoveryTokenService recoveryTokenService;
     private final SleepingService sleepingService;
     private final AwsSESService awsSESService;
-    private final AwsS3Service awsS3Service;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)

@@ -17,4 +17,8 @@ public class JwtSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
         JwtFilter customFilter = new JwtFilter(jwtUtilizer);
         http.addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class);
     }
+
+    public static JwtSecurityConfig from(JwtUtilizer jwtUtilizer) {
+        return new JwtSecurityConfig(jwtUtilizer);
+    }
 }

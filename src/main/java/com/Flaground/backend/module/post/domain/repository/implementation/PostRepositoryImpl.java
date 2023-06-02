@@ -4,6 +4,7 @@ import com.Flaground.backend.global.common.response.SearchResponse;
 import com.Flaground.backend.module.post.controller.dto.response.*;
 import com.Flaground.backend.module.post.domain.Post;
 import com.Flaground.backend.module.post.domain.enums.*;
+import com.Flaground.backend.module.post.domain.repository.ImageRepository;
 import com.Flaground.backend.module.post.domain.repository.PostRepositoryCustom;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.Flaground.backend.module.member.domain.QMember.member;
+import static com.Flaground.backend.module.post.domain.QImage.image;
 import static com.Flaground.backend.module.post.domain.QLike.like;
 import static com.Flaground.backend.module.post.domain.QPost.post;
 import static com.Flaground.backend.module.post.domain.QReply.reply;
@@ -27,13 +29,23 @@ import static com.querydsl.core.types.dsl.Expressions.asNumber;
 
 @RequiredArgsConstructor
 public class PostRepositoryImpl implements PostRepositoryCustom {
+    private final ImageRepository imageRepository;
     private final JPAQueryFactory queryFactory;
 
     @Override
     public GetPostResponse getWithReplies(Long memberId, Long postId) {
         PostDetailResponse postDetailResponse = fetchPostResponse(memberId, postId);
+        List<String> keys = imageRepository.getKeysByPostId(postId);
         List<ReplyResponse> replyResponses = fetchReplyResponses(memberId, postId);
-        return GetPostResponse.of(postDetailResponse, replyResponses);
+        return new GetPostResponse(postDetailResponse, keys, replyResponses);
+    }
+
+    private List<String> fetchImageKeys(Long postId) {
+        return queryFactory
+                .select(image.key)
+                .from(image)
+                .where(image.postId.eq(postId))
+                .fetch();
     }
 
     @Override

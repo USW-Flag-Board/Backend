@@ -77,13 +77,9 @@ public class SecurityConfig {
             .anyRequest().authenticated();
 
         http
-            .apply(jwtSecurityConfig(jwtUtilizer));
+            .apply(JwtSecurityConfig.from(jwtUtilizer));
 
         return http.build();
-    }
-
-    private JwtSecurityConfig jwtSecurityConfig(JwtUtilizer jwtUtilizer) {
-        return new JwtSecurityConfig(jwtUtilizer);
     }
 
     private String[] whiteGetList() {
