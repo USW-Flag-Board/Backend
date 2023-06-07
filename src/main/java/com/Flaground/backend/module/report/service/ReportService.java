@@ -48,8 +48,12 @@ public class ReportService {
         reportRepository.save(ReplyReport.of(memberId, reply.getMember().getId(), reply.getPostId(), abstractReport));
     }
 
-    public void handled(Long reportId) {
+    public void delete(Long reportId) {
         reportRepository.deleteById(reportId);
+    }
+
+    public void deleteAll() {
+        reportRepository.deleteAllInBatch();
     }
 
     public Report findById(Long id) {

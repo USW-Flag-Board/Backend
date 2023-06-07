@@ -27,6 +27,11 @@ public class AdminController {
     private final AdminService adminService;
 
     @Tag(name = "admin")
+    @Operation(summary = "동아리 회원가입 요청 가져오기")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "이상 없이 처리"),
+            @ApiResponse(responseCode = "401", description = "관리자가 아닙니다.")
+    })
     @ResponseStatus(OK)
     @GetMapping("/join-requests")
     public ApplicationResponse<List<SignUpRequestResponse>> getSignUpRequests() {
@@ -35,6 +40,11 @@ public class AdminController {
     }
 
     @Tag(name = "admin")
+    @Operation(summary = "유저 로그인 이력 가져오기")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "이상 없이 처리"),
+            @ApiResponse(responseCode = "401", description = "관리자가 아닙니다.")
+    })
     @ResponseStatus(OK)
     @GetMapping("/members/login-log")
     public ApplicationResponse<List<LoginLogResponse>> getLoginLogs() {
@@ -43,6 +53,11 @@ public class AdminController {
     }
 
     @Tag(name = "admin")
+    @Operation(summary = "신고 목록 가져오기")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "이상 없이 처리"),
+            @ApiResponse(responseCode = "401", description = "관리자가 아닙니다.")
+    })
     @ResponseStatus(OK)
     @GetMapping("/reports")
     public ApplicationResponse<ReportResponse> getReports() {
@@ -51,6 +66,12 @@ public class AdminController {
     }
 
     @Tag(name = "admin")
+    @Operation(summary = "동아리 회원가입 요청 승인하기", description = "일반 회원은 자동으로 회원가입 처리가 된다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "이상 없이 가입 처리"),
+            @ApiResponse(responseCode = "401", description = "관리자가 아닙니다."),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 가입정보입니다.")
+    })
     @ResponseStatus(CREATED)
     @PostMapping("/join-requests/{id}/approval")
     public ApplicationResponse approveSignUp(@PathVariable("id") Long authInformationId) {
@@ -66,7 +87,7 @@ public class AdminController {
             @ApiResponse(responseCode = "409", description = "이미 같은 게시판이 존재합니다.")
     })
     @ResponseStatus(CREATED)
-    @PostMapping("/board")
+    @PostMapping("/boards")
     public ApplicationResponse create(@RequestBody @Valid BoardRequest boardRequest) {
         adminService.createBoard(boardRequest.toEntity());
         return new ApplicationResponse<>();
@@ -81,7 +102,7 @@ public class AdminController {
             @ApiResponse(responseCode = "409", description = "이미 같은 게시판이 존재합니다.")
     })
     @ResponseStatus(OK)
-    @PutMapping("/board/{name}")
+    @PutMapping("/boards/{name}")
     public ApplicationResponse update(@PathVariable("name") String boardName,
                                       @RequestBody @Valid BoardRequest boardRequest) {
         adminService.updateBoard(boardName, boardRequest.toEntity());
@@ -89,6 +110,11 @@ public class AdminController {
     }
 
     @Tag(name = "admin")
+    @Operation(summary = "동아리 회원가입 요청 거절하기")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "이상 없이 처리완료"),
+            @ApiResponse(responseCode = "401", description = "관리자가 아닙니다."),
+    })
     @ResponseStatus(OK)
     @DeleteMapping("/join-requests/{id}/rejection")
     public ApplicationResponse rejectSignUp(@PathVariable("id") Long authInformationId) {
@@ -104,17 +130,48 @@ public class AdminController {
             @ApiResponse(responseCode = "401", description = "관리자가 아닙니다.")
     })
     @ResponseStatus(OK)
-    @DeleteMapping("/board/{name}")
+    @DeleteMapping("/boards/{name}")
     public ApplicationResponse delete(@PathVariable("name") String boardName) {
         adminService.deleteBoard(boardName);
         return new ApplicationResponse<>();
     }
 
     @Tag(name = "admin")
+    @Operation(summary = "신고 요청 처리하기")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "이상 없이 처리완료"),
+            @ApiResponse(responseCode = "401", description = "관리자가 아닙니다."),
+    })
     @ResponseStatus(OK)
-    @DeleteMapping("/reports/{id}")
+    @DeleteMapping("/reports/handle/{id}")
     public ApplicationResponse handleReport(@PathVariable("id") Long reportId) {
         String message = adminService.dealReport(reportId);
         return new ApplicationResponse<>(message);
+    }
+
+    @Tag(name = "admin")
+    @Operation(summary = "모든 신고 요청 삭제하기", description = "모든 요청을 삭제한다. 주의하기")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "이상 없이 처리완료"),
+            @ApiResponse(responseCode = "401", description = "관리자가 아닙니다."),
+    })
+    @ResponseStatus(OK)
+    @DeleteMapping("/reports")
+    public ApplicationResponse deleteAllReports() {
+        adminService.ignoreAllReports();
+        return new ApplicationResponse<>();
+    }
+
+    @Tag(name = "admin")
+    @Operation(summary = "신고 요청 삭제하기", description = "하나만 삭제한다")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "이상 없이 처리완료"),
+            @ApiResponse(responseCode = "401", description = "관리자가 아닙니다."),
+    })
+    @ResponseStatus(OK)
+    @DeleteMapping("/reports/{id}")
+    public ApplicationResponse deleteReport(@PathVariable("id") Long reportId) {
+        adminService.ignoreReport(reportId);
+        return new ApplicationResponse<>();
     }
 }

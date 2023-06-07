@@ -68,7 +68,15 @@ public class AdminService {
     public String dealReport(Long reportId) {
         Report report = reportService.findById(reportId);
         Member member = memberService.findById(report.getReported());
-        reportService.handled(reportId);
+        reportService.delete(reportId);
         return blackListService.dealReport(member, report.getPenalty());
+    }
+
+    public void ignoreAllReports() {
+        reportService.deleteAll();
+    }
+
+    public void ignoreReport(Long reportId) {
+        reportService.delete(reportId);
     }
 }
