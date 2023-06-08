@@ -3,7 +3,10 @@ package com.Flaground.backend.module.activity;
 import com.Flaground.backend.common.RepositoryTest;
 import com.Flaground.backend.global.common.response.SearchResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.ActivityApplyResponse;
+import com.Flaground.backend.module.activity.controller.dto.response.ActivityDetailResponse;
 import com.Flaground.backend.module.activity.domain.ActivityApply;
+import com.Flaground.backend.module.activity.domain.enums.BookUsage;
+import com.Flaground.backend.module.activity.domain.enums.Proceed;
 import com.Flaground.backend.module.activity.domain.repository.ActivityApplyRepository;
 import com.Flaground.backend.module.activity.controller.dto.response.ActivityResponse;
 import com.Flaground.backend.module.activity.domain.Activity;
@@ -46,8 +49,7 @@ public class ActivityRepositoryTest extends RepositoryTest {
     private EntityManager entityManager;
 
     @Nested
-    @DisplayName("활동 테스트")
-    class activityTest {
+    class 활동_테스트 {
         @Test
         void 모든_활동_가져오기_테스트() {
             // given
@@ -66,11 +68,35 @@ public class ActivityRepositoryTest extends RepositoryTest {
             // then
             assertThat(activityResponseList.size()).isEqualTo(3);
         }
+
+        @Test
+        void 활동_상세보기_테스트() {
+            // given
+            final String name = "john";
+            final Proceed proceed = Proceed.BOTH;
+            final BookUsage notUse = BookUsage.NOT_USE;
+            final String empty = "";
+
+            Member member = memberRepository.save(Member.builder().name(name).build());
+            ActivityInfo info = ActivityInfo.builder().proceed(proceed).bookUsage(notUse).bookName(empty).githubURL(empty).build();
+            Activity activity = Activity.builder().leader(member).info(info).build();
+            activityRepository.save(activity);
+
+            // when
+            ActivityDetailResponse activityDetail = activityRepository.getActivityDetail(activity.getId());
+
+            // then
+            assertThat(activityDetail.getLeader()).isEqualTo(name);
+            assertThat(activityDetail.getProceed()).isEqualTo(proceed);
+            assertThat(activityDetail.getBookUsage()).isEqualTo(notUse);
+            assertThat(activityDetail.getBookName()).isEqualTo(empty);
+            assertThat(activityDetail.getGithubURL()).isEqualTo(empty);
+            assertThat(activityDetail.getSemester()).isNotNull();
+        }
     }
 
     @Nested
-    @DisplayName("활동 신청 테스트")
-    public class activityApplyTest {
+    class 활동신청_테스트 {
         @Test
         void 모든_활동_신청_가져오기_테스트() {
             // given
@@ -158,8 +184,7 @@ public class ActivityRepositoryTest extends RepositoryTest {
     }
 
     @Nested
-    @DisplayName("멤버활동 테스트")
-    class memberActivityTest {
+    class 멤버활동_테스트 {
         @Test
         @DisplayName("멤버 참가활동 가져오기 테스트")
         void getAllParticipateActivityTest() {
@@ -247,6 +272,21 @@ public class ActivityRepositoryTest extends RepositoryTest {
             assertThat(response1.getLoginId()).isNotNull();
             assertThat(response2.getName()).isNotNull();
             assertThat(response2.getLoginId()).isNotNull();
+        }
+
+        @Test
+        void 멤버활동_지우기_테스트() {
+            // given
+            Member member = memberRepository.save(Member.builder().build());
+            Activity activity = activityRepository.save(Activity.builder().build());
+            memberActivityRepository.save(MemberActivity.of(member, activity));
+
+            // when
+            memberActivityRepository.deleteAllByActivity(activity.getId());
+
+            // then
+            List<MemberActivity> memberActivities = memberActivityRepository.findAll();
+            assertThat(memberActivities).isEmpty();
         }
     }
 

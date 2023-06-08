@@ -8,16 +8,30 @@ import com.Flaground.backend.global.utility.UriCreator;
 import com.Flaground.backend.module.activity.controller.dto.request.CloseRecruitRequest;
 import com.Flaground.backend.module.activity.controller.dto.request.CreateActivityRequest;
 import com.Flaground.backend.module.activity.controller.dto.request.UpdateActivityRequest;
-import com.Flaground.backend.module.activity.controller.dto.response.*;
+import com.Flaground.backend.module.activity.controller.dto.response.ActivityApplyResponse;
+import com.Flaground.backend.module.activity.controller.dto.response.ActivityDetailResponse;
+import com.Flaground.backend.module.activity.controller.dto.response.ActivityResponse;
+import com.Flaground.backend.module.activity.controller.dto.response.GetAllActivitiesResponse;
+import com.Flaground.backend.module.activity.controller.dto.response.ParticipantResponse;
+import com.Flaground.backend.module.activity.controller.dto.response.ParticipateResponse;
 import com.Flaground.backend.module.activity.controller.mapper.ActivityMapper;
-import com.Flaground.backend.module.activity.domain.Activity;
 import com.Flaground.backend.module.activity.service.ActivityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -45,8 +59,8 @@ public class ActivityController {
     @ResponseStatus(OK)
     @GetMapping("/{id}")
     public ApplicationResponse<ActivityDetailResponse> getActivity(@PathVariable Long id) {
-        Activity activity = activityService.getActivity(id);
-        return new ApplicationResponse<>(activityMapper.toDetailResponse(activity));
+        ActivityDetailResponse response = activityService.getDetails(id);
+        return new ApplicationResponse<>(response);
     }
 
     @Tag(name = "activity")
@@ -128,8 +142,7 @@ public class ActivityController {
     @ResponseStatus(CREATED)
     @PostMapping
     public ApplicationResponse<URI> createActivity(@RequestBody @Valid CreateActivityRequest createActivityRequest) {
-        Activity activity = activityMapper.mapFrom(createActivityRequest);
-        Long id = activityService.create(SecurityUtils.getMemberId(), activity).getId();
+        Long id = activityService.create(SecurityUtils.getMemberId(), activityMapper.mapFrom(createActivityRequest));
         URI uri = UriCreator.createURI(DEFAULT_URL, id);
         return new ApplicationResponse<>(uri);
     }

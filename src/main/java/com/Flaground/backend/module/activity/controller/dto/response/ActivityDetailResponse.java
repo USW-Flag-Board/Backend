@@ -5,8 +5,8 @@ import com.Flaground.backend.module.activity.domain.enums.ActivityStatus;
 import com.Flaground.backend.module.activity.domain.enums.ActivityType;
 import com.Flaground.backend.module.activity.domain.enums.BookUsage;
 import com.Flaground.backend.module.activity.domain.enums.Proceed;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,7 +28,7 @@ public class ActivityDetailResponse {
     private String semester;
     private LocalDateTime createdAt;
 
-    @Builder
+    @QueryProjection
     public ActivityDetailResponse(Long id, String name, String description, String leader, ActivityInfo info,
                                   ActivityType type, ActivityStatus status, LocalDateTime createdAt) {
         this.id = id;
@@ -41,7 +41,7 @@ public class ActivityDetailResponse {
         this.bookName = info.getBookName();
         this.type = type;
         this.status = status;
-        this.semester = info.getSemester().toString();
+        this.semester = info.getSemester();
         this.createdAt = createdAt;
     }
 }

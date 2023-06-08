@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
         log.error("CustomException : {}, {}", e.getErrorCode(), e.getErrorCode().getMessage());
-        ErrorResponse response = new ErrorResponse(e.getErrorCode());
+        ErrorResponse response = ErrorResponse.from(e.getErrorCode());
         return ResponseEntity.status(e.getErrorCode().getHttpStatus()).body(response);
     }
 
@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(BAD_REQUEST)
     public ErrorResponse handleBadCredentialsException(CustomBadCredentialException e) {
         log.error("LoginFailed (BadCredential) : {}", e.getMessage());
-        return new ErrorResponse(e);
+        return ErrorResponse.loginFail(e);
     }
 
     /**
@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(INTERNAL_SERVER_ERROR)
     public ErrorResponse handleUnexpectedException(Exception e) {
         log.error("UnexpectedException : {}", e.getMessage());
-        return new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR);
+        return ErrorResponse.from(ErrorCode.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -55,7 +55,7 @@ public class GlobalExceptionHandler {
         final String message = e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
         final String caused = e.getParameter().getExecutable().toGenericString();
         log.error("ValidateFailed : {}", caused);
-        return new ErrorResponse(ErrorCode.REQUEST_VALIDATION_FAIL, message);
+        return ErrorResponse.withMessage(ErrorCode.REQUEST_VALIDATION_FAIL, message);
     }
 
     /**
@@ -66,7 +66,7 @@ public class GlobalExceptionHandler {
     public ErrorResponse handleConstraintViolationException(ConstraintViolationException e) {
         final String message = e.getMessage();
         log.error("ValidateFailed : {}", message);
-        return new ErrorResponse(ErrorCode.REQUEST_VALIDATION_FAIL, message);
+        return ErrorResponse.withMessage(ErrorCode.REQUEST_VALIDATION_FAIL, message);
     }
 
 //    @ExceptionHandler(NoHandlerFoundException.class)

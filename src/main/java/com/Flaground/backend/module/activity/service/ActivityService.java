@@ -3,8 +3,14 @@ package com.Flaground.backend.module.activity.service;
 import com.Flaground.backend.global.common.response.SearchResponse;
 import com.Flaground.backend.global.exception.CustomException;
 import com.Flaground.backend.global.exception.ErrorCode;
-import com.Flaground.backend.module.activity.controller.dto.response.*;
+import com.Flaground.backend.module.activity.controller.dto.response.ActivityApplyResponse;
+import com.Flaground.backend.module.activity.controller.dto.response.ActivityDetailResponse;
+import com.Flaground.backend.module.activity.controller.dto.response.ActivityResponse;
+import com.Flaground.backend.module.activity.controller.dto.response.GetAllActivitiesResponse;
+import com.Flaground.backend.module.activity.controller.dto.response.ParticipantResponse;
+import com.Flaground.backend.module.activity.controller.dto.response.ParticipateResponse;
 import com.Flaground.backend.module.activity.domain.Activity;
+import com.Flaground.backend.module.activity.domain.ActivityData;
 import com.Flaground.backend.module.activity.domain.repository.ActivityRepository;
 import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.service.MemberService;
@@ -58,8 +64,9 @@ public class ActivityService {
          return activityRepository.searchActivity(keyword);
     }
 
-    public Activity getActivity(Long activityId) {
-        return findById(activityId);
+    @Transactional(readOnly = true)
+    public ActivityDetailResponse getDetails(Long activityId) {
+        return activityRepository.getActivityDetail(activityId);
     }
 
     public boolean checkApply(Long memberId, Long activityId) {
@@ -77,14 +84,15 @@ public class ActivityService {
         activityApplyService.cancelApply(memberId, activityId);
     }
 
-    public Activity create(Long memberId, Activity activity) {
+    public Long create(Long memberId, ActivityData activityData) {
         Member member = memberService.findById(memberId);
-        return activityRepository.save(Activity.of(member, activity));
+        Activity activity = activityRepository.save(Activity.of(member, activityData));
+        return activity.getId();
     }
 
-    public void update(Long memberId, Long activityId, Activity activity) {
+    public void update(Long memberId, Long activityId, ActivityData activityData) {
         Activity savedActivity = validateLeaderAndReturnActivity(memberId, activityId);
-        savedActivity.update(activity);
+        savedActivity.update(activityData);
     }
 
     public void closeRecruitment(Long memberId, Long activityId, List<String> loginIdList) {
@@ -102,10 +110,10 @@ public class ActivityService {
         activity.finishActivity();
     }
 
-    // todo : 외래키 조약 오류
     public void delete(Long memberId, Long activityId) {
         Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
         activityApplyService.deleteAllApplies(activityId);
+        memberActivityService.deleteAll(activityId);
         activityRepository.delete(activity);
     }
 

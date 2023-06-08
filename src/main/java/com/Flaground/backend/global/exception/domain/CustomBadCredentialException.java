@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class CustomBadCredentialException extends LoginFailException {
-    private final int failCount;
+    private final Integer failCount;
 
     public CustomBadCredentialException(ErrorCode errorCode, int failCount) {
         super(errorCode);

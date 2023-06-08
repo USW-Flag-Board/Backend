@@ -53,20 +53,20 @@ public class Activity extends BaseEntity {
         this.info = info;
     }
 
-    public static Activity of(Member member, Activity activity) {
+    public static Activity of(Member member, ActivityData activityData) {
         return Activity.builder()
-                .name(activity.getName())
-                .description(activity.getDescription())
+                .name(activityData.getName())
+                .description(activityData.getDescription())
                 .leader(member)
-                .type(activity.getType())
-                .info(activity.getInfo())
+                .type(activityData.getType())
+                .info(activityData.getInfo())
                 .build();
     }
 
-    public void update(Activity activity) {
-        this.name = activity.getName();
-        this.description = activity.getDescription();
-        this.info.updateInfo(activity.getInfo());
+    public void update(ActivityData activityData) {
+        this.name = activityData.getName();
+        this.description = activityData.getDescription();
+        this.info.updateInfo(activityData.getInfo());
     }
 
     public void closeRecruitment() {
