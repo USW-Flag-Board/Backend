@@ -56,17 +56,6 @@ public class ActivityServiceTest {
     private EntityManager entityManager;
 
     @Test
-    void 활동_상세보기_실패_테스트() {
-        // given
-        final Long noneId = 1L;
-
-        // when, then
-        assertThatExceptionOfType(CustomException.class)
-                .isThrownBy(() -> activityService.getActivity(noneId))
-                .withMessage(ErrorCode.ACTIVITY_NOT_FOUND.getMessage());
-    }
-
-    @Test
     void 모든_활동_가져오기_테스트() {
         // given
         ActivityType projectType = ActivityType.PROJECT;

@@ -34,6 +34,10 @@ public class MemberActivityService {
         memberActivityRepository.saveAll(memberActivityList);
     }
 
+    public void deleteAll(Long activityId) {
+        memberActivityRepository.deleteAllByActivity(activityId);
+    }
+
     private List<MemberActivity> convertToMemberActivity(Activity activity, List<Member> memberList) {
         return memberList.stream()
                 .map(member -> MemberActivity.of(member, activity))

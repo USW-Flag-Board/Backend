@@ -51,4 +51,8 @@ public class ActivityInfo {
         this.bookUsage = activityInfo.getBookUsage();
         this.bookName = activityInfo.getBookName();
     }
+
+    public String getSemester() {
+        return this.semester.toString();
+    }
 }
