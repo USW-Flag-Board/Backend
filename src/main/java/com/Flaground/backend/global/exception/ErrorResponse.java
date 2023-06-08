@@ -4,6 +4,7 @@ import com.Flaground.backend.global.exception.domain.CustomBadCredentialExceptio
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,26 +12,39 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @JsonPropertyOrder({"errorCode", "message"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ErrorResponse {
+public class ErrorResponse<P> {
     private ErrorCode errorCode;
     private String message;
-    private Integer payload; // todo: 제네릭하게 수정하거나, 다른 방법 찾기
+    private P payload;
 
-    public ErrorResponse(ErrorCode errorCode) {
-        this.errorCode = errorCode;
-        this.message = errorCode.getMessage();
-        this.payload = null;
-    }
-
-    public ErrorResponse(ErrorCode errorCode, String message) {
+    @Builder
+    public ErrorResponse(ErrorCode errorCode, String message, P payload) {
         this.errorCode = errorCode;
         this.message = message;
-        this.payload = null;
+        this.payload = payload;
     }
 
-    public ErrorResponse(CustomBadCredentialException e) {
-        this.errorCode = e.getErrorCode();
-        this.message = e.getMessage();
-        this.payload = e.getFailCount();
+    public static ErrorResponse from(ErrorCode errorCode) {
+        return ErrorResponse.builder()
+                .errorCode(errorCode)
+                .message(errorCode.getMessage())
+                .payload(null)
+                .build();
+    }
+
+    public static ErrorResponse withMessage(ErrorCode errorCode, String message) {
+        return ErrorResponse.builder()
+                .errorCode(errorCode)
+                .message(message)
+                .payload(null)
+                .build();
+    }
+
+    public static ErrorResponse loginFail(CustomBadCredentialException e) {
+        return ErrorResponse.builder()
+                .errorCode(e.getErrorCode())
+                .message(e.getMessage())
+                .payload(e.getFailCount())
+                .build();
     }
 }
