@@ -4,9 +4,13 @@ import com.Flaground.backend.global.common.response.SearchResponse;
 import com.Flaground.backend.global.exception.CustomException;
 import com.Flaground.backend.global.exception.ErrorCode;
 import com.Flaground.backend.global.utility.RandomGenerator;
-import com.Flaground.backend.infra.aws.s3.service.AwsS3Service;
 import com.Flaground.backend.infra.aws.ses.service.AwsSESService;
-import com.Flaground.backend.module.member.controller.dto.response.*;
+import com.Flaground.backend.module.member.controller.dto.response.AvatarResponse;
+import com.Flaground.backend.module.member.controller.dto.response.LoginLogResponse;
+import com.Flaground.backend.module.member.controller.dto.response.MyProfileResponse;
+import com.Flaground.backend.module.member.controller.dto.response.RecoveryResponse;
+import com.Flaground.backend.module.member.controller.dto.response.RecoveryResultResponse;
+import com.Flaground.backend.module.member.controller.dto.response.SearchMemberResponse;
 import com.Flaground.backend.module.member.domain.Avatar;
 import com.Flaground.backend.module.member.domain.JoinMember;
 import com.Flaground.backend.module.member.domain.Member;
@@ -61,6 +65,11 @@ public class MemberService {
     @Transactional(readOnly = true)
     public boolean isExistEmail(String email) {
         return memberRepository.existsByEmail(email) || sleepingService.existsByEmail(email);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Member> getMembersByLoginIds(List<String> loginIds) {
+        return memberRepository.findByLoginIdIn(loginIds);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -123,10 +132,6 @@ public class MemberService {
     public void updateProfileImage(Long memberId, String profileImage) {
         Member member = findById(memberId);
         member.changeProfileImage(profileImage);
-    }
-
-    public List<Member> getMembersByLoginIds(List<String> loginIds) {
-        return memberRepository.findByLoginIdIn(loginIds);
     }
 
     public Member findByLoginId(String loginId) {

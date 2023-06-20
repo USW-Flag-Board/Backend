@@ -89,14 +89,13 @@ public class AuthService {
     }
 
     @Transactional
+    public void deleteJoinRequest(Long id) {
+        authRepository.deleteById(id);
+    }
+
     public AuthInformation findById(Long id) {
         return authRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.AUTH_INFORMATION_NOT_FOUND));
-    }
-
-    @Transactional
-    public void deleteJoinRequest(Long id) {
-        authRepository.deleteById(id);
     }
 
     private void validateDuplication(String loginId, String email) {

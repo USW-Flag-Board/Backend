@@ -55,4 +55,11 @@ public class ActivityApplyRepositoryImpl implements ActivityApplyRepositoryCusto
                     activityApply.activityId.eq(activityId))
             .execute();
     }
+
+    @Override
+    public void deleteAllOfMember(Long memberId) {
+        queryFactory.delete(activityApply)
+                .where(activityApply.member.id.eq(memberId))
+                .execute();
+    }
 }

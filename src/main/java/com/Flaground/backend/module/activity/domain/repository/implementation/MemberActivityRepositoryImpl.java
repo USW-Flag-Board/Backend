@@ -53,4 +53,11 @@ public class MemberActivityRepositoryImpl implements MemberActivityRepositoryCus
                 .where(memberActivity.activity.id.eq(activityId))
                 .execute();
     }
+
+    @Override
+    public void deleteAllOfMember(Long memberId) {
+        queryFactory.delete(memberActivity)
+                .where(memberActivity.member.id.eq(memberId))
+                .execute();
+    }
 }

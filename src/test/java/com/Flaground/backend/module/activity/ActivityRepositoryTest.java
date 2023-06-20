@@ -4,21 +4,20 @@ import com.Flaground.backend.common.RepositoryTest;
 import com.Flaground.backend.global.common.response.SearchResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.ActivityApplyResponse;
 import com.Flaground.backend.module.activity.controller.dto.response.ActivityDetailResponse;
+import com.Flaground.backend.module.activity.controller.dto.response.ActivityResponse;
+import com.Flaground.backend.module.activity.controller.dto.response.ParticipantResponse;
+import com.Flaground.backend.module.activity.controller.dto.response.ParticipateResponse;
+import com.Flaground.backend.module.activity.domain.Activity;
 import com.Flaground.backend.module.activity.domain.ActivityApply;
+import com.Flaground.backend.module.activity.domain.ActivityInfo;
+import com.Flaground.backend.module.activity.domain.MemberActivity;
+import com.Flaground.backend.module.activity.domain.enums.ActivityType;
 import com.Flaground.backend.module.activity.domain.enums.BookUsage;
 import com.Flaground.backend.module.activity.domain.enums.Proceed;
 import com.Flaground.backend.module.activity.domain.repository.ActivityApplyRepository;
-import com.Flaground.backend.module.activity.controller.dto.response.ActivityResponse;
-import com.Flaground.backend.module.activity.domain.Activity;
-import com.Flaground.backend.module.activity.domain.ActivityInfo;
-import com.Flaground.backend.module.activity.domain.enums.ActivityType;
-import com.Flaground.backend.module.activity.controller.dto.response.ParticipantResponse;
-import com.Flaground.backend.module.activity.controller.dto.response.ParticipateResponse;
-import com.Flaground.backend.module.activity.domain.MemberActivity;
-import com.Flaground.backend.module.activity.domain.repository.MemberActivityRepository;
 import com.Flaground.backend.module.activity.domain.repository.ActivityRepository;
+import com.Flaground.backend.module.activity.domain.repository.MemberActivityRepository;
 import com.Flaground.backend.module.member.domain.Member;
-import com.Flaground.backend.module.member.domain.enums.Major;
 import com.Flaground.backend.module.member.domain.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -98,10 +97,24 @@ public class ActivityRepositoryTest extends RepositoryTest {
     @Nested
     class 활동신청_테스트 {
         @Test
+        void 멤버가_신청한_모든_활동_지우기_테스트() {
+            // given
+            Member leader = memberRepository.save(Member.builder().build());
+            Member applier = memberRepository.save(Member.builder().build());
+            Activity activity = activityRepository.save(Activity.builder().leader(leader).build());
+            activityApplyRepository.save(ActivityApply.of(applier, activity.getId()));
+
+            // when
+            activityApplyRepository.deleteAllOfMember(applier.getId());
+
+            // then
+            List<ActivityApply> applies = activityApplyRepository.findAll();
+            assertThat(applies).isEmpty();
+        }
+
+        @Test
         void 모든_활동_신청_가져오기_테스트() {
             // given
-            Major major = Major.컴퓨터SW;
-
             Member member1 = memberRepository.save(Member.builder().build());
             Member member2 = memberRepository.save(Member.builder().build());
             Member member3 = memberRepository.save(Member.builder().build());
@@ -125,8 +138,6 @@ public class ActivityRepositoryTest extends RepositoryTest {
         @DisplayName("모든 신청 삭제하기 테스트")
         void deleteAllAppliesTest() {
             // given
-            Major major = Major.컴퓨터SW;
-
             Member member1 = memberRepository.save(Member.builder().build());
             Member member2 = memberRepository.save(Member.builder().build());
             Member member3 = memberRepository.save(Member.builder().build());
@@ -185,6 +196,23 @@ public class ActivityRepositoryTest extends RepositoryTest {
 
     @Nested
     class 멤버활동_테스트 {
+        @Test
+        @DisplayName("주어진 멤버 아이디로 멤버활동이 모두 삭제되어야 한다")
+        void deleteAllOfMemberTest() {
+            // given
+            Member leader = memberRepository.save(Member.builder().build());
+            Member applier = memberRepository.save(Member.builder().build());
+            Activity activity = activityRepository.save(Activity.builder().leader(leader).build());
+            memberActivityRepository.save(MemberActivity.of(applier, activity));
+
+            // when
+            memberActivityRepository.deleteAllOfMember(applier.getId());
+
+            // then
+            List<MemberActivity> memberActivities = memberActivityRepository.findAll();
+            assertThat(memberActivities).isEmpty();
+        }
+
         @Test
         @DisplayName("멤버 참가활동 가져오기 테스트")
         void getAllParticipateActivityTest() {

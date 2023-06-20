@@ -10,12 +10,9 @@ import java.util.List;
 
 public interface MemberRepositoryCustom {
     List<Member> getDeactivateMembers();
-
+    List<Long> getWithdrawMembers();
     List<String> getDeactivableMemberEmails();
-
     MyProfileResponse getMyProfile(Long memberId);
-
     List<LoginLogResponse> getLoginLogs();
-
     SearchResponse<SearchMemberResponse> searchMemberByName(String name);
 }

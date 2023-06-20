@@ -38,14 +38,14 @@ public class ReplyService {
         return reply.dislike();
     }
 
+    public Reply findById(Long replyId) {
+        return replyRepository.findById(replyId)
+                .orElseThrow(() -> new CustomException(ErrorCode.REPLY_NOT_FOUND));
+    }
+
     private Reply validateAuthorAndReturnReply(Long memberId, Long replyId) {
         Reply reply = findById(replyId);
         reply.validateAuthor(memberId);
         return reply;
-    }
-
-    public Reply findById(Long replyId) {
-        return replyRepository.findById(replyId)
-                .orElseThrow(() -> new CustomException(ErrorCode.REPLY_NOT_FOUND));
     }
 }

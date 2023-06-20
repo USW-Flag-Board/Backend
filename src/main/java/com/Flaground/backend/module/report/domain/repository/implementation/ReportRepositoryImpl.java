@@ -32,6 +32,15 @@ public class ReportRepositoryImpl implements ReportRepositoryCustom {
         return ReportResponse.of(fetchMemberReports(), fetchPostReports(), fetchReplyReports());
     }
 
+    @Override
+    public void deleteAllOfMember(Long memberId) {
+        queryFactory
+                .delete(report)
+                .where(report.reporter.eq(memberId)
+                        .or(report.reported.eq(memberId)))
+                .execute();
+    }
+
     private List<MemberReportResponse> fetchMemberReports() {
         return queryFactory.select(new QMemberReportResponse(
                         memberReport.id,

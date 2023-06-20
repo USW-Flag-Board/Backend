@@ -31,6 +31,15 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
     }
 
     @Override
+    public List<Long> getWithdrawMembers() {
+        return queryFactory
+                .select(member.id)
+                .from(member)
+                .where(member.status.eq(MemberStatus.WITHDRAW))
+                .fetch();
+    }
+
+    @Override
     public List<String> getDeactivableMemberEmails() {
         final LocalDateTime limit = LocalDateTime.now().minusDays(6);
 

@@ -1,9 +1,21 @@
 package com.Flaground.backend.module.post.domain.repository.implementation;
 
 import com.Flaground.backend.global.common.response.SearchResponse;
-import com.Flaground.backend.module.post.controller.dto.response.*;
+import com.Flaground.backend.module.post.controller.dto.response.GetPostResponse;
+import com.Flaground.backend.module.post.controller.dto.response.PostDetailResponse;
+import com.Flaground.backend.module.post.controller.dto.response.PostResponse;
+import com.Flaground.backend.module.post.controller.dto.response.QLikeResponse;
+import com.Flaground.backend.module.post.controller.dto.response.QPostDetailResponse;
+import com.Flaground.backend.module.post.controller.dto.response.QPostResponse;
+import com.Flaground.backend.module.post.controller.dto.response.QReplyResponse;
+import com.Flaground.backend.module.post.controller.dto.response.ReplyResponse;
 import com.Flaground.backend.module.post.domain.Post;
-import com.Flaground.backend.module.post.domain.enums.*;
+import com.Flaground.backend.module.post.domain.enums.LikeType;
+import com.Flaground.backend.module.post.domain.enums.PostStatus;
+import com.Flaground.backend.module.post.domain.enums.ReplyStatus;
+import com.Flaground.backend.module.post.domain.enums.SearchOption;
+import com.Flaground.backend.module.post.domain.enums.SearchPeriod;
+import com.Flaground.backend.module.post.domain.enums.TopPostCondition;
 import com.Flaground.backend.module.post.domain.repository.ImageRepository;
 import com.Flaground.backend.module.post.domain.repository.PostRepositoryCustom;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -21,7 +33,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.Flaground.backend.module.member.domain.QMember.member;
-import static com.Flaground.backend.module.post.domain.QImage.image;
 import static com.Flaground.backend.module.post.domain.QLike.like;
 import static com.Flaground.backend.module.post.domain.QPost.post;
 import static com.Flaground.backend.module.post.domain.QReply.reply;
@@ -38,14 +49,6 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         List<String> keys = imageRepository.getKeysByPostId(postId);
         List<ReplyResponse> replyResponses = fetchReplyResponses(memberId, postId);
         return new GetPostResponse(postDetailResponse, keys, replyResponses);
-    }
-
-    private List<String> fetchImageKeys(Long postId) {
-        return queryFactory
-                .select(image.key)
-                .from(image)
-                .where(image.postId.eq(postId))
-                .fetch();
     }
 
     @Override

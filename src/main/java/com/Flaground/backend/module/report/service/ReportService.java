@@ -56,6 +56,10 @@ public class ReportService {
         reportRepository.deleteAllInBatch();
     }
 
+    public void cleanReports(Long memberId) {
+        reportRepository.deleteAllOfMember(memberId);
+    }
+
     public Report findById(Long id) {
         return reportRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.REPORT_NOT_FOUND));

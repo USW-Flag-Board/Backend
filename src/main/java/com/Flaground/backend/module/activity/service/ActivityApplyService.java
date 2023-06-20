@@ -37,4 +37,8 @@ public class ActivityApplyService {
     public void deleteAllApplies(Long activityId) {
         activityApplyRepository.deleteAll(activityId);
     }
+
+    public void deleteAllAppliesOfMember(Long memberId) {
+        activityApplyRepository.deleteAllOfMember(memberId);
+    }
 }

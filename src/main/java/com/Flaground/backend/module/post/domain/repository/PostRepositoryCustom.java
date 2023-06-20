@@ -13,14 +13,9 @@ import java.util.List;
 
 public interface PostRepositoryCustom {
     GetPostResponse getWithReplies(Long memberId, Long postId);
-
     Page<PostResponse> getPostsOfBoard(String boardName, Pageable pageable);
-
     List<PostResponse> getPostsByLoginId(String loginId);
-
     List<PostResponse> getTopFiveByCondition(TopPostCondition condition);
-
     SearchResponse<PostResponse> integrationSearch(String keyword);
-
     SearchResponse<PostResponse> searchWithCondition(String boardName, String keyword, SearchPeriod period, SearchOption option);
 }
