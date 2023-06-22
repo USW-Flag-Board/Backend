@@ -18,7 +18,7 @@ public enum SearchOption {
     CONTENT(post.content::contains),
     REPLY(reply.content::contains),
     CONTENT_AND_REPLY(keyword -> post.content.contains(keyword).or(reply.content.contains(keyword))),
-    AUTHOR(member.avatar.nickname::like);
+    AUTHOR(member.avatar.nickname::contains);
 
     private final Function<String, BooleanExpression> expression;
 

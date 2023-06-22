@@ -6,10 +6,8 @@ import java.util.List;
 
 public interface ActivityApplyRepositoryCustom {
     List<ActivityApplyResponse> getApplies(Long activityId);
-
     void deleteAll(Long activityId);
-
     boolean isApplied(Long memberId, Long activityId);
-
     void deleteByIds(Long memberId, Long activityId);
+    void deleteAllOfMember(Long memberId);
 }

@@ -23,7 +23,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RequiredArgsConstructor
 public class BoardController {
     private final BoardService boardService;
-    
+
     @Tag(name = "board")
     @Operation(summary = "게시판 목록 가져오기", description = "넘어오는 값에 따라 메인 게시판과 활동 게시판 목록을 가져온다.")
     @ResponseStatus(OK)

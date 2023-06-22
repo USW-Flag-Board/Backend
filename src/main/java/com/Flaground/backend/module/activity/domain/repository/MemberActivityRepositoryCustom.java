@@ -9,4 +9,5 @@ public interface MemberActivityRepositoryCustom {
     List<ParticipateResponse> getActivitiesByLoginId(String loginId);
     List<ParticipantResponse> getParticipantOfActivity(Long activityId);
     void deleteAllByActivity(Long activityId);
+    void deleteAllOfMember(Long memberId);
 }

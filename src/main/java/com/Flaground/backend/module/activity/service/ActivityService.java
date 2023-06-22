@@ -98,6 +98,7 @@ public class ActivityService {
     public void closeRecruitment(Long memberId, Long activityId, List<String> loginIdList) {
         Activity activity = validateLeaderAndReturnActivity(memberId, activityId);
         activity.isRecruiting();
+
         List<Member> memberList = memberService.getMembersByLoginIds(loginIdList);
         activityApplyService.deleteAllApplies(activityId);
         memberActivityService.registerMembers(activity, memberList);
@@ -115,6 +116,11 @@ public class ActivityService {
         activityApplyService.deleteAllApplies(activityId);
         memberActivityService.deleteAll(activityId);
         activityRepository.delete(activity);
+    }
+
+    public void cleanActivities(Long memberId) {
+        activityApplyService.deleteAllAppliesOfMember(memberId);
+        memberActivityService.deleteAllOfMember(memberId);
     }
 
     private Activity findById(Long activityId) {

@@ -38,6 +38,10 @@ public class MemberActivityService {
         memberActivityRepository.deleteAllByActivity(activityId);
     }
 
+    public void deleteAllOfMember(Long memberId) {
+        memberActivityRepository.deleteAllOfMember(memberId);
+    }
+
     private List<MemberActivity> convertToMemberActivity(Activity activity, List<Member> memberList) {
         return memberList.stream()
                 .map(member -> MemberActivity.of(member, activity))

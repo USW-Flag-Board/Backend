@@ -12,6 +12,7 @@ import com.Flaground.backend.module.report.domain.*;
 import com.Flaground.backend.module.report.domain.enums.ReportType;
 import com.Flaground.backend.module.report.domain.repository.ReportRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -44,6 +45,42 @@ class ReportRepositoryTest extends RepositoryTest {
         reported = memberRepository.save(Member.builder().loginId(loginId).build());
         post = postRepository.save(Post.builder().member(reported).build());
         reply = replyRepository.save(Reply.of(reported, post.getId(), "test"));
+    }
+
+    @Test
+    @DisplayName("멤버 id로 모든 신고 이력이 삭제되어야 한다.")
+    void deleteAllOfMemberTest() {
+        // given
+        ReportInfo memberReport = ReportInfo.builder().reportType(ReportType.MEMBER).build();
+        ReportInfo postReport = ReportInfo.builder().reportType(ReportType.POST).build();
+        ReportInfo replyReport = ReportInfo.builder().reportType(ReportType.REPLY).build();
+
+        Report report = MemberReport.builder()
+                .reporter(reporter.getId())
+                .reported(reported.getId())
+                .reportInfo(memberReport)
+                .build();
+
+        Report report2 = PostReport.builder()
+                .reporter(reporter.getId())
+                .reported(reported.getId())
+                .reportInfo(postReport)
+                .build();
+
+        Report report3 = ReplyReport.builder()
+                .reporter(reported.getId())
+                .reported(reporter.getId())
+                .reportInfo(replyReport)
+                .build();
+
+        reportRepository.saveAll(List.of(report, report2, report3));
+
+        // when
+        reportRepository.deleteAllOfMember(reported.getId());
+
+        // then
+        List<Report> reports = reportRepository.findAll();
+        assertThat(reports).isEmpty();
     }
 
     @Test

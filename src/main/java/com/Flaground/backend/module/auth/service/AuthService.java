@@ -50,7 +50,7 @@ public class AuthService {
 
     @Transactional
     public String join(AuthInformation authInformation) {
-        validateDuplication(authInformation.getLoginId(), authInformation.getEmail());
+        validateLoginIdAndEmail(authInformation.getLoginId(), authInformation.getEmail());
         authRepository.save(authInformation);
         mailService.sendCertification(authInformation.getEmail(), authInformation.getCertification());
         return authInformation.getEmail();
@@ -89,17 +89,16 @@ public class AuthService {
     }
 
     @Transactional
+    public void deleteJoinRequest(Long id) {
+        authRepository.deleteById(id);
+    }
+
     public AuthInformation findById(Long id) {
         return authRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.AUTH_INFORMATION_NOT_FOUND));
     }
 
-    @Transactional
-    public void deleteJoinRequest(Long id) {
-        authRepository.deleteById(id);
-    }
-
-    private void validateDuplication(String loginId, String email) {
+    private void validateLoginIdAndEmail(String loginId, String email) {
         if (isDuplicated(loginId, email)) {
             throw new CustomException(ErrorCode.VALIDATE_NOT_PROCEED);
         }

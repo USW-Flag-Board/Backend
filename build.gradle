@@ -19,15 +19,11 @@ repositories {
     mavenCentral()
 }
 
-// plain.jar 방지
 jar {
     enabled = false
 }
 
 dependencies {
-    // Spring Batch
-    implementation 'org.springframework.boot:spring-boot-starter-batch'
-
     // Spring Mail
     implementation 'org.springframework.boot:spring-boot-starter-mail:'
 
@@ -65,7 +61,6 @@ dependencies {
 
     // Web Basic
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
     // Utils
     compileOnly 'org.projectlombok:lombok'
@@ -77,7 +72,6 @@ dependencies {
 
     // TEST Implementation
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.batch:spring-batch-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.assertj:assertj-core:3.24.2'
     testImplementation 'com.google.code.gson:gson'
