@@ -13,21 +13,21 @@ import static com.Flaground.backend.module.post.domain.QPost.post;
 @RequiredArgsConstructor
 @JsonDeserialize(using = CustomEnumDeserializer.class)
 public enum SearchPeriod {
-    ALL(null),
+    ALL((time) -> null),
     DAY(post.createdAt::after),
     WEEK(post.createdAt::after),
     MONTH(post.createdAt::after),
     HALF_YEAR(post.createdAt::after),
     YEAR(post.createdAt::after);
 
-    private final Function<LocalDateTime, BooleanExpression> expression;
+    private final Function<LocalDateTime, BooleanExpression> periodExpression;
 
     public BooleanExpression toExpression() {
-        LocalDateTime time = mapTime();
-        return expression.apply(time);
+        LocalDateTime time = mapTo();
+        return periodExpression.apply(time);
     }
 
-    private LocalDateTime mapTime() {
+    private LocalDateTime mapTo() {
         return switch (this) {
             case DAY -> LocalDateTime.now().minusDays(1);
             case WEEK -> LocalDateTime.now().minusWeeks(1);
