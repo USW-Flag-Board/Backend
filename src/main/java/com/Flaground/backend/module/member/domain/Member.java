@@ -135,7 +135,7 @@ public class Member extends BaseEntity {
         this.avatar.cleanUp();
     }
 
-    public void loginFail() {
+    public void loginFailed() {
         issueRecord.increaseFailCount();
         if (issueRecord.isMaxLoginFailCount()) {
             lock();
@@ -154,7 +154,6 @@ public class Member extends BaseEntity {
         this.status = MemberStatus.BANNED;
     }
 
-    // todo: 진짜로 삭제하기
     public void withdraw() {
         this.status = MemberStatus.WITHDRAW;
     }

@@ -20,10 +20,11 @@ import com.Flaground.backend.module.token.service.RecoveryTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
 @Service
 @Transactional
@@ -72,10 +73,10 @@ public class MemberService {
         return memberRepository.findByLoginIdIn(loginIds);
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = REQUIRES_NEW)
     public int loginFailed(String loginId) {
         Member member = findByLoginId(loginId);
-        member.loginFail();
+        member.loginFailed();
         return member.getFailCount();
     }
 

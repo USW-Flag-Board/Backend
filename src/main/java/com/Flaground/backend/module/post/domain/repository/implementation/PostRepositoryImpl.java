@@ -142,7 +142,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .orderBy(post.createdAt.desc())
                 .fetch();
 
-        return SearchResponse.from(result);
+        return new SearchResponse<>(result);
     }
 
     @Override
@@ -169,7 +169,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
             query.innerJoin(post.replies, reply);
         }
 
-        return SearchResponse.from(query.fetch());
+        return new SearchResponse<>(query.fetch());
     }
 
     private PostDetailResponse fetchPostResponse(Long memberId, Long postId) {

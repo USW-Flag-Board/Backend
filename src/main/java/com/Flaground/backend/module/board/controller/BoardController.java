@@ -24,7 +24,6 @@ import static org.springframework.http.HttpStatus.OK;
 public class BoardController {
     private final BoardService boardService;
 
-    // todo: 공지사항?
     @Tag(name = "board")
     @Operation(summary = "게시판 목록 가져오기", description = "넘어오는 값에 따라 메인 게시판과 활동 게시판 목록을 가져온다.")
     @ResponseStatus(OK)

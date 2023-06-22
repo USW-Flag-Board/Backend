@@ -87,6 +87,6 @@ public class ActivityRepositoryImpl implements ActivityRepositoryCustom {
                         .or(activity.description.contains(keyword)))
                 .fetch();
 
-        return SearchResponse.from(responses);
+        return new SearchResponse<>(responses);
     }
 }

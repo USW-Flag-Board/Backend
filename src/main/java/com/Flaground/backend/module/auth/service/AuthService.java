@@ -50,7 +50,7 @@ public class AuthService {
 
     @Transactional
     public String join(AuthInformation authInformation) {
-        validateDuplication(authInformation.getLoginId(), authInformation.getEmail());
+        validateLoginIdAndEmail(authInformation.getLoginId(), authInformation.getEmail());
         authRepository.save(authInformation);
         mailService.sendCertification(authInformation.getEmail(), authInformation.getCertification());
         return authInformation.getEmail();
@@ -98,7 +98,7 @@ public class AuthService {
                 .orElseThrow(() -> new CustomException(ErrorCode.AUTH_INFORMATION_NOT_FOUND));
     }
 
-    private void validateDuplication(String loginId, String email) {
+    private void validateLoginIdAndEmail(String loginId, String email) {
         if (isDuplicated(loginId, email)) {
             throw new CustomException(ErrorCode.VALIDATE_NOT_PROCEED);
         }

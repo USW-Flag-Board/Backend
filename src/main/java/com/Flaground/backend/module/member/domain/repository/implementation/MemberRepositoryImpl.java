@@ -92,7 +92,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
                         isAvailableMember())
                 .fetch();
 
-        return SearchResponse.from(responses);
+        return new SearchResponse<>(responses);
     }
 
     private BooleanExpression isAvailableMember() {
