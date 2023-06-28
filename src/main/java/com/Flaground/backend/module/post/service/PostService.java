@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -58,6 +57,11 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
+    public List<PostResponse> getNotice() {
+        return postRepository.getNotice();
+    }
+
+    @Transactional(readOnly = true)
     public SearchResponse<PostResponse> searchPostsWithCondition(String boardName, String keyword, SearchPeriod period, SearchOption option) {
         boardService.validateBoard(boardName);
         return postRepository.searchWithCondition(boardName, keyword, period, option);
@@ -76,10 +80,13 @@ public class PostService {
 
     public Long create(Long memberId, PostData postData) {
         boardService.validateBoard(postData.getBoardName());
+
         Member member = memberService.findById(memberId);
         Long postId = postRepository.save(Post.of(member, postData)).getId();
+
         saveImages(postId, postData.getSaveImages());
         deleteNotUseImagesFromS3(postData.getDeleteImages());
+
         return postId;
     }
 
@@ -187,7 +194,7 @@ public class PostService {
     private List<String> filterKeysFromTo(List<String> from, List<String> to) {
         return from.stream()
                 .filter(key -> isNotContainsKey(to, key))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<Image> toImages(Long postId, List<String> imageKeys) {

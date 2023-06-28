@@ -8,7 +8,10 @@ import com.Flaground.backend.module.board.domain.repository.BoardRepository;
 import com.Flaground.backend.module.member.domain.Avatar;
 import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.domain.repository.MemberRepository;
-import com.Flaground.backend.module.post.controller.dto.response.*;
+import com.Flaground.backend.module.post.controller.dto.response.GetPostResponse;
+import com.Flaground.backend.module.post.controller.dto.response.PostDetailResponse;
+import com.Flaground.backend.module.post.controller.dto.response.PostResponse;
+import com.Flaground.backend.module.post.controller.dto.response.ReplyResponse;
 import com.Flaground.backend.module.post.domain.Post;
 import com.Flaground.backend.module.post.domain.PostData;
 import com.Flaground.backend.module.post.domain.Reply;
@@ -17,6 +20,7 @@ import com.Flaground.backend.module.post.domain.enums.SearchPeriod;
 import com.Flaground.backend.module.post.domain.enums.TopPostCondition;
 import com.Flaground.backend.module.post.domain.repository.PostRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +33,7 @@ import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class PostRepositoryTest extends RepositoryTest {
+class PostRepositoryTest extends RepositoryTest {
     @Autowired
     private PostRepository postRepository;
 
@@ -50,6 +54,28 @@ public class PostRepositoryTest extends RepositoryTest {
         Avatar avatar = Avatar.builder().nickname(nickname).build();
         member = memberRepository.save(Member.builder().loginId(loginId).avatar(avatar).build());
         post = postRepository.save(Post.builder().member(member).build());
+    }
+
+    @Test
+    @DisplayName("공지사항 5개를 가져와야 한다.")
+    void getNoticeTest() {
+        // given
+        String boardName = "NOTICE";
+        List<Post> posts = IntStream.range(0, 6)
+                .mapToObj(i -> Post.builder()
+                        .title(String.valueOf(i))
+                        .boardName(boardName)
+                        .build())
+                .toList();
+
+        postRepository.saveAll(posts);
+
+        // when
+        List<PostResponse> notice = postRepository.getNotice();
+
+        // then
+        assertThat(notice).isNotEmpty().hasSize(5);
+        assertThat(notice.get(0).getAuthor()).isEqualTo("관리자");
     }
 
     @Nested
@@ -90,12 +116,12 @@ public class PostRepositoryTest extends RepositoryTest {
             Page<PostResponse> responses = postRepository.getPostsOfBoard(boardName, pageRequest);
 
             // then
-            assertThat(responses.getTotalPages()).isEqualTo(0);
+            assertThat(responses.getTotalPages()).isZero();
         }
     }
 
     @Test
-    public void 게시글_상세보기_테스트() {
+    void 게시글_상세보기_테스트() {
         // given
         final String loginId = "gmlwh124";
         final String nickname = "john";
@@ -113,14 +139,14 @@ public class PostRepositoryTest extends RepositoryTest {
 
         assertThat(detailResponse.getLoginId()).isEqualTo(loginId);
         assertThat(detailResponse.getNickname()).isEqualTo(nickname);
-        assertThat(detailResponse.getLike().isLiked()).isEqualTo(false);
-        assertThat(detailResponse.getLike().getLikeCount()).isEqualTo(0);
-        assertThat(replyResponses.size()).isEqualTo(2);
+        assertThat(detailResponse.getLike().isLiked()).isFalse();
+        assertThat(detailResponse.getLike().getLikeCount()).isZero();
+        assertThat(replyResponses).hasSize(2);
         assertThat(replyResponses.get(0).getContent()).isEqualTo(content);
         assertThat(replyResponses.get(0).getLoginId()).isEqualTo(loginId);
         assertThat(replyResponses.get(0).getNickname()).isEqualTo(nickname);
-        assertThat(replyResponses.get(0).getLike().isLiked()).isEqualTo(false);
-        assertThat(replyResponses.get(0).getLike().getLikeCount()).isEqualTo(0);
+        assertThat(replyResponses.get(0).getLike().isLiked()).isFalse();
+        assertThat(replyResponses.get(0).getLike().getLikeCount()).isZero();
     }
 
     @Nested
@@ -137,7 +163,7 @@ public class PostRepositoryTest extends RepositoryTest {
             List<PostResponse> responses = postRepository.getTopFiveByCondition(condition);
 
             // then
-            assertThat(responses.size()).isEqualTo(1);
+            assertThat(responses).hasSize(1);
             assertThat(responses.get(0).getLikeCount()).isEqualTo(1);
         }
 
@@ -153,7 +179,7 @@ public class PostRepositoryTest extends RepositoryTest {
             List<PostResponse> responses = postRepository.getTopFiveByCondition(condition);
 
             // then
-            assertThat(responses.size()).isEqualTo(3);
+            assertThat(responses).hasSize(3);
         }
     }
 

@@ -10,6 +10,8 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PostData {
+    private static final String NOTICE = "NOTICE";
+
     private String title;
     private String content;
     private String boardName;
@@ -23,5 +25,15 @@ public class PostData {
         this.boardName = boardName;
         this.saveImages = saveImages;
         this.deleteImages = deleteImages;
+    }
+
+    public static PostData notice(String title, String content) {
+        return PostData.builder()
+                .title(title)
+                .content(content)
+                .boardName(NOTICE)
+                .saveImages(List.of())
+                .deleteImages(List.of())
+                .build();
     }
 }

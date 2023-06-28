@@ -40,7 +40,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/posts")
 @RequiredArgsConstructor
 public class PostController {
-    private final static String BASE_URL = "/posts";
+    private static final String BASE_URL = "/posts";
     private final PostService postService;
     private final PostMapper postMapper;
 
@@ -59,8 +59,7 @@ public class PostController {
     }
 
     @Tag(name = "post")
-    @Operation(summary = "게시글 모두 가져오기", description = "게시판 이름에 맞춰서 페이징 처리<br>" +
-            "page만 요청하면 된다.")
+    @Operation(summary = "게시글 모두 가져오기", description = "게시판 이름에 맞춰서 페이징 처리<br> page만 요청하면 된다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "게시판의 모든 게시글 불러오기 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 게시판입니다.")
@@ -96,6 +95,15 @@ public class PostController {
     public ApplicationResponse<List<PostResponse>> getTopFivePostByCondition(@PathVariable @EnumFormat(enumClass = TopPostCondition.class)
                                                                              TopPostCondition condition) {
         List<PostResponse> responses = postService.getTopFivePostByCondition(condition);
+        return new ApplicationResponse<>(responses);
+    }
+
+    @Tag(name = "post")
+    @Operation(summary = "홈페이지 전용 공지사항 가져오기")
+    @ResponseStatus(OK)
+    @GetMapping("/notice")
+    public ApplicationResponse<List<PostResponse>> getNotice() {
+        List<PostResponse> responses = postService.getNotice();
         return new ApplicationResponse<>(responses);
     }
 

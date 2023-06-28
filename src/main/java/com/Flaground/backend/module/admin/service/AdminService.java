@@ -9,6 +9,8 @@ import com.Flaground.backend.module.member.controller.dto.response.LoginLogRespo
 import com.Flaground.backend.module.member.domain.Member;
 import com.Flaground.backend.module.member.service.BlackListService;
 import com.Flaground.backend.module.member.service.MemberService;
+import com.Flaground.backend.module.post.domain.PostData;
+import com.Flaground.backend.module.post.service.PostService;
 import com.Flaground.backend.module.report.controller.dto.response.ReportResponse;
 import com.Flaground.backend.module.report.domain.Report;
 import com.Flaground.backend.module.report.service.ReportService;
@@ -26,6 +28,7 @@ public class AdminService {
     private final AuthService authService;
     private final BoardService boardService;
     private final ReportService reportService;
+    private final PostService postService;
     private final BlackListService blackListService;
 
     @Transactional(readOnly = true)
@@ -55,6 +58,11 @@ public class AdminService {
 
     public void createBoard(Board board) {
         boardService.create(board);
+    }
+
+    public void createNotice(Long adminId, String title, String content) {
+        PostData postData = PostData.notice(title, content);
+        postService.create(adminId, postData);
     }
 
     public void updateBoard(String boardName, Board board) {
