@@ -16,6 +16,7 @@ public interface PostRepositoryCustom {
     Page<PostResponse> getPostsOfBoard(String boardName, Pageable pageable);
     List<PostResponse> getPostsByLoginId(String loginId);
     List<PostResponse> getTopFiveByCondition(TopPostCondition condition);
+    List<PostResponse> getNotice();
     SearchResponse<PostResponse> integrationSearch(String keyword);
     SearchResponse<PostResponse> searchWithCondition(String boardName, String keyword, SearchPeriod period, SearchOption option);
 }

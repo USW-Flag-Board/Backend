@@ -30,8 +30,8 @@ import org.springframework.data.support.PageableExecutionUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import static com.Flaground.backend.module.board.domain.BoardType.NOTICE;
 import static com.Flaground.backend.module.member.domain.QMember.member;
 import static com.Flaground.backend.module.post.domain.QLike.like;
 import static com.Flaground.backend.module.post.domain.QPost.post;
@@ -123,6 +123,26 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     }
 
     @Override
+    public List<PostResponse> getNotice() {
+        return queryFactory
+                .select(new QPostResponse(
+                        post.id,
+                        post.title,
+                        Expressions.constant("관리자"),
+                        post.createdAt,
+                        post.viewCount,
+                        post.replies.size(),
+                        post.likeCount,
+                        post.isEdited))
+                .from(post)
+                .orderBy(post.createdAt.desc())
+                .where(post.boardName.eq(NOTICE.getBoardName()),
+                        isAccessiblePost())
+                .limit(5)
+                .fetch();
+    }
+
+    @Override
     public SearchResponse<PostResponse> integrationSearch(String keyword) {
         List<PostResponse> result = queryFactory
                 .select(new QPostResponse(
@@ -199,7 +219,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         List<Long> replyIds = fetchReplyIds(postId);
         return replyIds.stream()
                 .map(replyId -> fetchReplyResponse(memberId, replyId))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<Long> fetchReplyIds(Long postId) {
