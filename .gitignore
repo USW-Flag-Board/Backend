@@ -8,6 +8,7 @@ build/
 /src/main/resources/application-ses.yml
 /src/main/resources/application-db.yml
 **/.DS_Store
+/logs
 
 ### STS ###
 .apt_generated
