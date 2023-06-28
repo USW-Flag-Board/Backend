@@ -178,16 +178,17 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         post.likeCount,
                         post.isEdited))
                 .from(post)
-                .innerJoin(post.member, member)
-                .where(post.boardName.eq(boardName),
+                .innerJoin(post.member, member);
+
+        if (option.containsReply()) {
+            query.innerJoin(reply).on(reply.postId.eq(post.id));
+        }
+
+        query.where(post.boardName.eq(boardName),
                         period.toExpression(),
                         option.toExpression(keyword),
                         isAccessiblePost())
                 .orderBy(post.createdAt.desc());
-
-        if (option.containsReply()) {
-            query.innerJoin(post.replies, reply);
-        }
 
         return new SearchResponse<>(query.fetch());
     }
