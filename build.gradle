@@ -24,8 +24,14 @@ jar {
 }
 
 dependencies {
-    // Spring Mail
+    // Spring dependencies
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'org.springframework.boot:spring-boot-starter-mail:'
+    implementation 'org.springframework.boot:spring-boot-starter-quartz'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     // DB Communication
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -50,21 +56,8 @@ dependencies {
     runtimeOnly('io.jsonwebtoken:jjwt-impl:0.11.5')
     runtimeOnly('io.jsonwebtoken:jjwt-jackson:0.11.5')
 
-    // Spring Scheduler
-    implementation 'org.springframework.boot:spring-boot-starter-quartz'
-
-    // Spring Security
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-
-    // Validation
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-
-    // Web Basic
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-
     // Utils
     compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.8'
     implementation 'org.mapstruct:mapstruct:1.5.3.Final'
@@ -80,6 +73,7 @@ dependencies {
     implementation("io.springfox:springfox-boot-starter:3.0.0")
     implementation("io.springfox:springfox-swagger-ui:3.0.0")
 
+    // To Prevent Error
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
 }
 
